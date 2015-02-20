@@ -34,3 +34,4 @@ Opalenko Evgenij (Opalenko) - oz_on@mail.ua
 Berezhniy Oleksiy (SgtSailer) - pqmz94@mail.ru  
 Mironyuk Yura (vavilon) overon4ek@gmail.com  
 Gumenyuk Andrey (gumenyuk) - gumenyuk92@ukr.net  
+Dudka Lyuda (DudkaLyuda) - dudka_lyuda@mail.ru
