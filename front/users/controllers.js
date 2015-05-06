@@ -1,4 +1,4 @@
-app.controller('usersListCtrl', ['$scope', '$http', '$filter', function ($scope, $http, $filter) {
+app.controller('usersListCtrl', function ($scope, $http, $filter) {
     $scope.username = "";
     $scope.filteredUsers = [];
 
@@ -27,10 +27,9 @@ app.controller('usersListCtrl', ['$scope', '$http', '$filter', function ($scope,
     $scope.$watch('username', function (newval, oldval) {
         if ($scope.lastExpandedUser) $scope.lastExpandedUser.expanded = false;
     });
-}]);
+});
 
-app.controller('profileCtrl', ['$scope', '$routeParams', '$http',
-    function ($scope, $routeParams, $http) {
+app.controller('profileCtrl', function ($scope, $routeParams, $http) {
         $http.get('models/users.json').success(function (data) {
             $scope.users = data;
             $scope.user = data[$routeParams.user_id];
@@ -51,4 +50,4 @@ app.controller('profileCtrl', ['$scope', '$routeParams', '$http',
                 if ($scope.users[user].id === id) return $scope.users[user];
         };
     }
-]);
+);

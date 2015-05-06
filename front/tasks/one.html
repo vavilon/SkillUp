@@ -76,11 +76,9 @@
                     <div layout="row" layout-align="start center">
                         <img src="/bower_components/material-design-icons/action/svg/design/ic_account_circle_24px.svg"
                              class="authorFace">
-
                         <div>
-                            <h4 style="margin-top: 25px; margin-bottom: 10px;"><a class="authorToolLink"
-                                                                                  href="/users/{{users.indexOf(author)}}"
-                                                                                  ng-click="goToAuthor()">{{author.fullName}}</a>
+                            <h4 style="margin-top: 25px; margin-bottom: 10px;"><a class="authorToolLink" href="/users/{{users.indexOf(author)}}">
+                                {{author.fullName}}</a>
                             </h4>
                             <h5 style="margin-top: 0px;">exp: {{author.exp | thousand}}</h5>
                         </div>

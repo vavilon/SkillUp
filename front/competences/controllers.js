@@ -1,3 +1,3 @@
-app.controller('competencesCtrl', ['$scope', '$http', function ($scope, $http) {
+app.controller('competencesCtrl', function ($scope, $http) {
 
-}]);
+});

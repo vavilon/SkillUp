@@ -1,4 +1,4 @@
-app.controller('allTasksCtrl', ['$scope', '$http', '$mdSidenav', function ($scope, $http, $mdSidenav) {
+app.controller('allTasksCtrl', function ($scope, $http, $mdSidenav) {
     $http.get('models/skills.json').success(function (skills) {
         $scope.skills = skills;
         $http.get('models/tasks_list.json').success(function (tasks) {
@@ -26,16 +26,9 @@ app.controller('allTasksCtrl', ['$scope', '$http', '$mdSidenav', function ($scop
     $scope.$watch('taskName', function (newval, oldval) {
         if ($scope.lastExpandedTask) $scope.lastExpandedTask.expanded = false;
     });
+});
 
-    $scope.toggleFilter = function () {
-    };
-
-    $scope.closeFilter = function () {
-    };
-}]);
-
-app.controller('oneTaskCtrl', ['$rootScope', '$scope', '$routeParams', '$http', 'navbarSelectedIndex',
-    function ($rootScope, $scope, $routeParams, $http, navbarSelectedIndex) {
+app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, $rootScope) {
         $http.get('models/skills.json').success(function (skills) {
             $scope.skills = skills;
             $http.get('models/tasks_list.json').success(function (tasks) {
@@ -56,9 +49,5 @@ app.controller('oneTaskCtrl', ['$rootScope', '$scope', '$routeParams', '$http', 
         $scope.previous = function () {
             $scope.selectedIndex = Math.max($scope.selectedIndex - 1, 0);
         };
-
-        $scope.goToAuthor = function () {
-            navbarSelectedIndex.set(3);
-        };
     }
-]);
+);

@@ -33,7 +33,6 @@ app.filter('thousand', function () {
         for (var i = num.length - 1; i > -1; i--) {
             arr = num[i] + "" + arr;
             count++;
-
             if (count == 3 && i != 0) {
                 arr = "," + arr;
                 count = 0;

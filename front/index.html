@@ -46,16 +46,16 @@
                 </div>
             </div>
             <div class="md-toolbar-tools" hide show-gt-md flex="65" flex-gt-lg="60">
-                <a href ng-click="goToMain()"><h5 ng-class="{'navbar-active': getNavbarSelectedIndex() == 0}">
+                <a href="/main"><h5 ng-class="{'navbar-active': getSelectedIndex() == 0}">
                     Главная</h5></a>
-                <a href ng-click="goToSkills()"><h5 ng-class="{'navbar-active': getNavbarSelectedIndex() == 1}">Дерево
+                <a href="/skills" ng-click="goToSkills()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
                     умений</h5></a>
-                <a href ng-click="goToTasks()"><h5 ng-class="{'navbar-active': getNavbarSelectedIndex() == 2}">
+                <a href="/tasks" ng-click="goToTasks()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
                     Задания</h5></a>
-                <a href ng-click="goToUsers()"><h5 ng-class="{'navbar-active': getNavbarSelectedIndex() == 3}">
+                <a href="/users" ng-click="goToUsers()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
                     Пользователи</h5></a>
-                <a href ng-click="goToCompetences()"><h5 style="margin-right: 0px;"
-                                                         ng-class="{'navbar-active': getNavbarSelectedIndex() == 4}">
+                <a href="/competences" ng-click="goToCompetences()"><h5 style="margin-right: 0px;"
+                                                         ng-class="{'navbar-active': getSelectedIndex() == 4}">
                     Компетенции</h5></a>
             </div>
             <div class="md-toolbar-tools" layout="row" layout-align="end center" flex>
