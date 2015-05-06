@@ -1,6 +1,5 @@
 var app = angular.module('skills', [
     'ngRoute',
-    'allProfilesFilters',
     'ngMaterial',
     'ngAnimate',
     'hljs'
@@ -46,30 +45,6 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
     hljsServiceProvider.setOptions({
         tabReplace: '    '
     });
-});
-
-app.filter('objectByKeyValFilter', function () {
-    return function (input, filterKey, filterVal) {
-        var filteredInput = {};
-        angular.forEach(input, function (value, key) {
-            if (value[filterKey] && (new RegExp(filterVal, "i")).test(value[filterKey])) {
-                filteredInput[key] = value;
-            }
-        });
-        return filteredInput;
-    }
-});
-
-app.filter('objectByKeyValFilterArr', function () {
-    return function (input, filterKey, filterVal) {
-        var filteredInput = [];
-        angular.forEach(input, function (value, key) {
-            if (value[filterKey] && (new RegExp(filterVal, "i")).test(value[filterKey])) {
-                filteredInput.push(value);
-            }
-        });
-        return filteredInput;
-    }
 });
 
 app.factory('navbarSelectedIndex', function () {
