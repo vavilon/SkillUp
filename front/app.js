@@ -11,7 +11,6 @@ app.config(function($locationProvider,$routeProvider,$mdThemingProvider,hljsServ
 
     $routeProvider
         .when('/main', {templateUrl:'/front/main.html', controller: 'mainPageCtrl'})
-        .when('/about_me', {templateUrl:'/front/users/about_me.html'})
         .when('/users', {templateUrl:'/front/users/all.html'})
         .when('/tasks', {templateUrl:'/front/tasks/all.html', controller:'allTasksCtrl'})
         .when('/tasks/:task_id', {templateUrl:'/front/tasks/view.html', controller:'oneTaskCtrl'})
@@ -80,7 +79,7 @@ app.factory('navbarSelectedIndex', function() {
     return service;
 });
 
-app.controller('navbar_controller',['$scope', '$http', '$routeParams', '$location', 'navbarSelectedIndex',
+app.controller('navbarCtrl',['$scope', '$http', '$routeParams', '$location', 'navbarSelectedIndex',
     function($scope, $http, $routeParams, $location, navbarSelectedIndex) {
         $http.get('models/users.json').success(function(data) {
             $scope.users = data;
@@ -97,3 +96,60 @@ app.controller('navbar_controller',['$scope', '$http', '$routeParams', '$locatio
         $scope.goToUsers = function(){$location.path('/users'); navbarSelectedIndex.set(3);};
         $scope.goToCompetences = function(){$location.path('/competences'); navbarSelectedIndex.set(4);};
     }]);
+
+app.controller('mainPageCtrl', ['$scope', '$http', function($scope, $http)
+{
+    $http.get('models/skills.json').success(function(data) {
+        $scope.skills = data;
+    });
+    $http.get('models/users.json').success(function(data) {
+        $scope.users = data;
+    });
+    $http.get('models/tasks_list.json').success(function(data) {
+        $scope.tasks = data;
+        $scope.lastExpandedTask = $scope.tasks[Object.keys($scope.tasks)[0]];
+        $scope.lastExpandedTask.expanded = false;
+    });
+    $http.get('models/solutions.json').success(function(data) {
+        $scope.solutions = data;
+    });
+
+    $scope.tooltips = ['Решить', 'Проверить', 'Подтвердить', 'Создать'];
+    $scope.tooltipsShow = [true, false, false, false];
+    $scope.tooltipClicked = 0;
+    $scope.tooltipsMSOver = function(index) {
+        for (var i = 0; i < $scope.tooltipsShow.length; i++) if (i != $scope.tooltipClicked) $scope.tooltipsShow[i] = false;
+        $scope.tooltipsShow[index] = true;
+    };
+    $scope.tooltipsMSLeave = function(index) {
+        for (var i = 0; i < $scope.tooltipsShow.length; i++) $scope.tooltipsShow[i] = false;
+        $scope.tooltipsShow[$scope.tooltipClicked] = true;
+    };
+    $scope.tooltipsClick = function(index) {
+        for (var i = 0; i < $scope.tooltipsShow.length; i++) if (i != index) $scope.tooltipsShow[i] = false;
+        $scope.tooltipClicked = index;
+    };
+
+    $scope.findUser = function(id) {
+        for(var user in $scope.users)
+            if($scope.users[user].id === id) return $scope.users[user];
+    };
+
+    $scope.expand = function(task) {
+        if ($scope.lastExpandedTask !== task) $scope.lastExpandedTask.expanded = false;
+        task.expanded = !task.expanded;
+        $scope.lastExpandedTask = task;
+    };
+
+    $scope.data = {
+        selectedIndex : 0,
+        secondLocked : true,
+        secondLabel : "Item Two"
+    };
+    $scope.next = function() {
+        $scope.data.selectedIndex = Math.min($scope.data.selectedIndex + 1, $scope.tooltips.length - 1) ;
+    };
+    $scope.previous = function() {
+        $scope.data.selectedIndex = Math.max($scope.data.selectedIndex - 1, 0);
+    };
+}]);

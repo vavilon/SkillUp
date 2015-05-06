@@ -61,6 +61,9 @@
     <script src="/bower_components/lodash/lodash.min.js"></script>
 
     <script src="/front/app.js"></script>
+    <script src="/front/competences/controllers.js"></script>
+    <script src="/front/skills/controllers.js"></script>
+    <script src="/front/tasks/controllers.js"></script>
     <script src="/front/users/controllers.js"></script>
     <script src="/front/users/filter.js"></script>
 
@@ -68,7 +71,7 @@
 
 <body layout="row">
 <div layout="column" layout-fill tabindex="-1" role="main">
-    <md-toolbar class="md-hue-2" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);" ng-controller="navbar_controller">
+    <md-toolbar class="md-hue-2" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);" ng-controller="navbarCtrl">
         <div layout="row" layout-align="space-between center">
             <div flex="50" flex-gt-md="15" layout="row">
                 <div class="md-toolbar-tools" flex="30" flex-md="25" hide-gt-md>

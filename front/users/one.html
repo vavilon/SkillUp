@@ -102,18 +102,22 @@
                                                 <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{task}}">
                                                     {{tasks[task].title}}
                                                 </a></h3>
+
                                                 <p style="float: right;">exp: +{{tasks[task].exp | thousand}}</p>
                                             </div>
                                             <div>
                                                 <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                                <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
+                                                <md-button class="md-raised md-primary label-button"
+                                                           aria-label="skillBtn"
                                                            ng-repeat="skill in tasks[task].skills">
                                                     {{skills[skill].title}}
                                                 </md-button>
                                             </div>
                                             <div layout="row">
-                                                <div class="my-subheader">Дата решения: {{tasks[task].dateCreated}}</div>
-                                                <div class="my-subheader">Автор: <a href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
+                                                <div class="my-subheader">Дата решения: {{tasks[task].dateCreated}}
+                                                </div>
+                                                <div class="my-subheader">Автор: <a
+                                                        href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
                                                     {{findUser(tasks[task].author).fullName}}
                                                 </a>
                                                 </div>
@@ -141,18 +145,22 @@
                                                 <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{task}}">
                                                     {{tasks[task].title}}
                                                 </a></h3>
+
                                                 <p style="float: right;">exp: +{{tasks[task].exp | thousand}}</p>
                                             </div>
                                             <div>
                                                 <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                                <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
+                                                <md-button class="md-raised md-primary label-button"
+                                                           aria-label="skillBtn"
                                                            ng-repeat="skill in tasks[task].skills">
                                                     {{skills[skill].title}}
                                                 </md-button>
                                             </div>
                                             <div layout="row">
-                                                <div class="my-subheader">Дата проверки: {{tasks[task].dateCreated}}</div>
-                                                <div class="my-subheader">Решил: <a href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
+                                                <div class="my-subheader">Дата проверки: {{tasks[task].dateCreated}}
+                                                </div>
+                                                <div class="my-subheader">Решил: <a
+                                                        href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
                                                     {{findUser(tasks[task].author).fullName}}
                                                 </a>
                                                 </div>
@@ -180,18 +188,23 @@
                                                 <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{task}}">
                                                     {{tasks[task].title}}
                                                 </a></h3>
+
                                                 <p style="float: right;">exp: +{{tasks[task].exp | thousand}}</p>
                                             </div>
                                             <div>
                                                 <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                                <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
+                                                <md-button class="md-raised md-primary label-button"
+                                                           aria-label="skillBtn"
                                                            ng-repeat="skill in tasks[task].skills">
                                                     {{skills[skill].title}}
                                                 </md-button>
                                             </div>
                                             <div layout="row">
-                                                <div class="my-subheader">Дата подтверждения: {{tasks[task].dateCreated}}</div>
-                                                <div class="my-subheader">Автор: <a href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
+                                                <div class="my-subheader">Дата подтверждения:
+                                                    {{tasks[task].dateCreated}}
+                                                </div>
+                                                <div class="my-subheader">Автор: <a
+                                                        href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
                                                     {{findUser(tasks[task].author).fullName}}
                                                 </a>
                                                 </div>
@@ -219,17 +232,20 @@
                                                 <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{task}}">
                                                     {{tasks[task].title}}
                                                 </a></h3>
+
                                                 <p style="float: right;">exp: +{{tasks[task].exp | thousand}}</p>
                                             </div>
                                             <div>
                                                 <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                                <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
+                                                <md-button class="md-raised md-primary label-button"
+                                                           aria-label="skillBtn"
                                                            ng-repeat="skill in tasks[task].skills">
                                                     {{skills[skill].title}}
                                                 </md-button>
                                             </div>
                                             <div layout="row">
-                                                <div class="my-subheader">Дата создания: {{tasks[task].dateCreated}}</div>
+                                                <div class="my-subheader">Дата создания: {{tasks[task].dateCreated}}
+                                                </div>
                                             </div>
                                         </div>
                                     </md-item-content>
