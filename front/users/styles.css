@@ -1,4 +1,6 @@
 
+/* all.html */
+
 .face {
     border-radius: 30px;
     border: 1px solid #ddd;
@@ -69,4 +71,27 @@ md-toolbar.demo-toolbar {
 
 .md-tile-content p {
     margin: 0px;
+}
+
+/* one.html */
+
+.info-length-aria {
+    padding-left: 2px;
+    padding-right: 5px;
+}
+
+.info-length-aria h5 {
+    margin-top: 0px;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+md-tabs-ink-bar {
+    background-color: #E91E63 !important;
+}
+
+.my-subheader {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.54);
+    margin-right: 30px;
 }
