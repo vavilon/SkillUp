@@ -57,10 +57,10 @@
                     <md-button ng-click="expand(skill)" class="md-raised label-button">
                         {{skill.title}}
                     </md-button>
-                <ul class="my-show-hide-animation" ng-show="skill.expanded">
-                    <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">
-                    </li>
-                </ul>
+                    <ul class="my-show-hide-animation" ng-show="skill.expanded">
+                        <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

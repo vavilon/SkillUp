@@ -18,13 +18,11 @@
  *                      id          (string)  id скилла
  *
  */
-function extendedSkills(skills)
-{
+function extendedSkills(skills) {
     this.leaves = []; //хранит ССЫЛКИ (не id) на все листья
     this.skills = {}; //объект, в котором свойствами являются скиллы
 
-    for (var id in skills)
-    {
+    for (var id in skills) {
         //копируем имеющиеся свойства
         this.skills[id] = this.skills[id] || {}; //проверка нужна, потому что дальше объекты могут создаваться
         this.skills[id].title = skills[id].title;
@@ -35,15 +33,13 @@ function extendedSkills(skills)
         this.skills[id].allLeaves = [];
         this.skills[id].id = id;
 
-        for (var i = 0; i < skills[id].parents.length; i++)
-        {
+        for (var i = 0; i < skills[id].parents.length; i++) {
             this.skills[skills[id].parents[i]] = this.skills[skills[id].parents[i]] || {};
             if (!_.includes(this.skills[id].parents, this.skills[skills[id].parents[i]]))
                 this.skills[id].parents.push(this.skills[skills[id].parents[i]]);
         }
 
-        for (i = 0; i < this.skills[id].parents.length; i++)
-        {
+        for (i = 0; i < this.skills[id].parents.length; i++) {
             this.skills[id].parents[i].leaves = this.skills[id].parents[i].leaves || [];
             if (skills[id].isLeaf)
                 if (!_.includes(this.skills[id].parents[i].leaves, this.skills[id]))
@@ -56,8 +52,7 @@ function extendedSkills(skills)
 
         //создаем массив ССЫЛОК (не id) на детей
         this.skills[id].children = this.skills[id].children || []; //проверка нужна, чтобы children сохранялись
-        for (i = 0; i < this.skills[id].parents.length; i++)
-        {
+        for (i = 0; i < this.skills[id].parents.length; i++) {
             this.skills[id].parents[i].children = this.skills[id].parents[i].children || [];
             if (!_.includes(this.skills[id].parents[i].children, this.skills[id]))
                 this.skills[id].parents[i].children.push(this.skills[id]);
@@ -65,8 +60,7 @@ function extendedSkills(skills)
     }
 
     //рекурсия для добавления всех детей вплоть до листьев и всех листьев
-    function addAllChildrenRec(to, from)
-    {
+    function addAllChildrenRec(to, from) {
         for (var i = 0; i < from.children.length; i++)
             if (!_.includes(to.allChildren, from.children[i]))
                 to.allChildren.push(from.children[i]);
@@ -75,44 +69,40 @@ function extendedSkills(skills)
             if (!_.includes(to.allLeaves, from.leaves[i]))
                 to.allLeaves.push(from.leaves[i]);
 
-        for (var chid in from.children)
-        {
+        for (var chid in from.children) {
             addAllChildrenRec(to, from.children[chid]);
         }
     }
 
     //рекурсия для добавления всех родителей вплоть до корня
-    function addAllParentsRec(to, from)
-    {
+    function addAllParentsRec(to, from) {
         for (var i = 0; i < from.parents.length; i++)
             if (!_.includes(to.allParents, from.parents[i]))
                 to.allParents.push(from.parents[i]);
 
-        for (var pid in from.parents)
-        {
+        for (var pid in from.parents) {
             addAllParentsRec(to, from.parents[pid]);
         }
     }
 
     //добавление ссылок на всех детей и всех родителей
-    for (id in this.skills)
-    {
+    for (id in this.skills) {
         addAllChildrenRec(this.skills[id], this.skills[id]);
         addAllParentsRec(this.skills[id], this.skills[id]);
     }
 
     //для дебага
-    this.log = function() {
+    this.log = function () {
         for (var prop in this) console.log(this[prop]);
     };
 
     this.root = this.skills['root'];
 }
 
-angular.module('skills').controller('skillsCtrl',function($scope,$http,$filter){
+app.controller('skillsCtrl', function ($scope, $http, $filter) {
     $http.get('/models/skills.json').success(function (skills) {
 
-        $http.get('models/users.json').success(function(data) {
+        $http.get('models/users.json').success(function (data) {
             $scope.users = data;
         });
 
@@ -124,7 +114,7 @@ angular.module('skills').controller('skillsCtrl',function($scope,$http,$filter){
 
         $scope.exs = new extendedSkills(skills);
 
-        $scope.toogleExpandedForAll = function(expand) {
+        $scope.toogleExpandedForAll = function (expand) {
             for (var skill in $scope.exs.skills) {
                 $scope.exs.skills[skill].expanded = expand;
             }
@@ -132,21 +122,21 @@ angular.module('skills').controller('skillsCtrl',function($scope,$http,$filter){
 
         $scope.toogleExpandedForAll(true);
 
-        $scope.expand = function(skill){
+        $scope.expand = function (skill) {
             skill.expanded = !skill.expanded;
         };
 
-        $scope.isInUserSkills = function(skill) {
+        $scope.isInUserSkills = function (skill) {
             return angular.isUndefined($scope.users) || (_.includes($scope.users[0].skills, skill.id));
         };
 
-        $scope.isInUserNeeds = function(skill) {
+        $scope.isInUserNeeds = function (skill) {
             return angular.isUndefined($scope.users) || (_.includes($scope.users[0].needs, skill.id));
         };
 
-        $scope.$watch('skillTitle', function(newval, oldval) {
+        $scope.$watch('skillTitle', function (newval, oldval) {
             if ($scope.skillTitle && $scope.filteredSkills)
-            $scope.filteredSkills = $filter('objectByKeyValFilterArr')($scope.exs.skills, 'title', newval);
+                $scope.filteredSkills = $filter('objectByKeyValFilterArr')($scope.exs.skills, 'title', newval);
             for (var skill in $scope.filteredSkills) {
                 $scope.filteredSkills[skill].expanded = false;
             }
