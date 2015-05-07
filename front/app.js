@@ -95,11 +95,6 @@ app.controller('mainPageCtrl', function ($scope, $http) {
         $scope.lastExpandedTask = task;
     };
 
-    $scope.data = {
-        selectedIndex: 0,
-        secondLocked: true,
-        secondLabel: "Item Two"
-    };
     $scope.next = function () {
         $scope.data.selectedIndex = Math.min($scope.data.selectedIndex + 1, $scope.tooltips.length - 1);
     };

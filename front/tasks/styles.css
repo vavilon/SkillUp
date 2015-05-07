@@ -56,16 +56,6 @@
     color: rgba(0, 0, 0, 0.54);
 }
 
-.label-button {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-transform: none;
-    font-size: 14px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 3px;
-    padding-top: 1px;
-}
-
 /* one.html */
 
 .taskTabs .tab-content {

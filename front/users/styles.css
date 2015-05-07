@@ -54,16 +54,6 @@ md-toolbar.demo-toolbar {
     opacity: 0;
 }
 
-.label-button {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-transform: none;
-    font-size: 14px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 3px;
-    padding-top: 1px;
-}
-
 .md-toolbar-tools md-input-container .md-placeholder {
     top: -18px;
 }

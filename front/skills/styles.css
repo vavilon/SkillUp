@@ -1,15 +1,5 @@
 /* skills.html */
 
-.label-button {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-transform: none;
-    font-size: 14px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 3px;
-    padding-top: 1px;
-}
-
 .my-show-hide-animation.ng-hide-add,
 .my-show-hide-animation.ng-hide-remove {
     -webkit-transition: 500ms linear all;
