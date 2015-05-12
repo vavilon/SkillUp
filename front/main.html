@@ -1,135 +1,11 @@
-<style>
-    .face {
-        border-radius: 30px;
-        border: 1px solid #ddd;
-        width: 48px;
-        margin: 16px;
-    }
+<link rel="stylesheet" href="/front/styles.css">
 
-    md-toolbar.demo-toolbar {
-        background: rgba(0, 0, 0, 0.12) !important;
-        color: rgba(0, 0, 0, 0.54);
-    }
-
-    .animate.ng-enter,
-    .animate.ng-leave {
-        -webkit-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-        -moz-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-        -ms-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-        -o-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-        transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-        position: relative;
-        display: block;
-        overflow: hidden;
-        text-overflow: clip;
-        white-space: nowrap;
-    }
-
-    .animate.ng-leave.animate.ng-leave-active,
-    .animate.ng-enter {
-        opacity: 0;
-        width: auto;
-        height: auto;
-        max-width: 0;
-        max-height: 0;
-    }
-
-    .animate.ng-enter.ng-enter-active,
-    .animate.ng-leave {
-        opacity: 1;
-        max-width: 2000px;
-        max-height: 150px;
-    }
-
-    .show-hide.ng-hide-add,
-    .show-hide.ng-hide-remove {
-        -webkit-transition: 400ms cubic-bezier(0.25, 0.8, 0.25, 1) all;
-        transition: 400ms cubic-bezier(0.25, 0.8, 0.25, 1) all;
-
-        /* remember to add this */
-        display: block !important;
-        max-height: 40px;
-        overflow: hidden;
-        opacity: 1;
-    }
-
-    .show-hide.ng-hide {
-        height: auto;
-        max-height: 0;
-        opacity: 0;
-    }
-
-    .show-hide-list.ng-hide-add,
-    .show-hide-list.ng-hide-remove {
-        -webkit-transition: 500ms ease-in-out all;
-        transition: 500ms ease-in-out all;
-        /* remember to add this */
-        display: block !important;
-        max-height: 300px;
-        overflow: hidden;
-        opacity: 1;
-    }
-
-    .show-hide-list.ng-hide {
-        height: auto;
-        max-height: 0;
-        opacity: 0;
-    }
-
-    .my-subheader {
-        font-size: 12px;
-        color: rgba(0, 0, 0, 0.54);
-    }
-    .label-button {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        text-transform: none;
-        font-size: 14px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        padding: 3px;
-        padding-top: 1px;
-    }
-    code {
-        white-space: pre-wrap !important;
-        background-color: rgba(0,0,0,0) !important;
-        padding: 0px !important;
-    }
-
-    pre {
-        margin: 0px !important;
-    }
-
-    .task-description {
-        padding: 10px;
-        padding-top: 14px;
-        padding-bottom: 14px;
-        margin-bottom: 10px;
-        border-radius: 0px 0px 3px 3px;
-        border: 1px solid #BDBDBD;
-    }
-
-    .task-desc-header {
-        margin-top: 6px;
-        background-color: #E8EAF6;
-        padding: 10px;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        border-radius: 3px 3px 0px 0px;
-        border: 1px solid #BDBDBD;
-        border-bottom: none;
-    }
-
-    md-tabs-ink-bar {
-        background-color: #E91E63 !important;
-    }
-</style>
-
-<div ng-controller="mainPageCtrl" style="position: relative; min-height: calc(100vh - 64px);">
+<div style="position: relative; min-height: calc(100vh - 64px);">
     <div layout="row">
         <div flex="15" flex-md="5" hide-sm></div>
         <div flex layout="column"
              style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
-            <md-tabs md-selected="tooltipClicked">
+            <md-tabs md-selected="selectedTab">
                 <md-tab>
                     Решить
                 </md-tab>
@@ -144,21 +20,23 @@
                 </md-tab>
             </md-tabs>
             <md-content style="min-height: 350px; max-height: calc(100vh - 175px);">
-                <ng-switch on="tooltipClicked">
+                <ng-switch on="selectedTab">
                     <div role="tabpanel"
                          aria-labelledby="tab1"
                          ng-switch-when="0"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
                         <md-list layout="column">
-                            <md-item class="animate"
+                            <md-item class="item-animate"
                                      ng-repeat="(taskKey, taskVal) in tasks">
                                 <md-item-content style="align-items: flex-start !important;">
                                     <div class="md-tile-content" layout="column">
                                         <div>
                                             <h3 style="float: left; margin-right: 20px"><a
                                                     href="#">{{taskVal.title}}</a></h3>
+
                                             <h3 style="float: left; color: #4CAF50">ЛЕГКО</h3>
+
                                             <p style="float: right;">exp: {{taskVal.exp | thousand}}</p>
                                         </div>
                                         <div>
@@ -183,19 +61,24 @@
                                             <div class="task-description" style="margin-top: 0px;">
                                                 <md-input-container flex>
                                                     <label>Текст решения</label>
-                                                    <textarea style="min-height: 56px !important;" ng-model="taskSolution" multiple></textarea>
+                                                    <textarea style="min-height: 56px !important;"
+                                                              ng-model="taskSolution" multiple></textarea>
                                                 </md-input-container>
                                                 <div layout="row" layout-align="space-between center">
                                                     <div layout="row">
                                                         <md-button aria-label="attachFileBtn">
-                                                            <img style="opacity: 0.54;" src="/bower_components/material-design-icons/editor/svg/design/ic_attach_file_18px.svg">
+                                                            <img style="opacity: 0.54;"
+                                                                 src="/bower_components/material-design-icons/editor/svg/design/ic_attach_file_18px.svg">
                                                         </md-button>
                                                         <md-button aria-label="insertImageBtn">
-                                                            <img style="opacity: 0.54;" src="/bower_components/material-design-icons/editor/svg/design/ic_insert_photo_18px.svg">
+                                                            <img style="opacity: 0.54;"
+                                                                 src="/bower_components/material-design-icons/editor/svg/design/ic_insert_photo_18px.svg">
                                                         </md-button>
                                                     </div>
                                                     <div layout="row" layout-align="end center">
-                                                        <md-button class="md-raised" aria-label="sendSolutionBtn">Отправить</md-button>
+                                                        <md-button class="md-raised" aria-label="sendSolutionBtn">
+                                                            Отправить
+                                                        </md-button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -228,7 +111,7 @@
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
                         <md-list layout="column">
-                            <md-item class="animate"
+                            <md-item class="item-animate"
                                      ng-repeat="(solutionKey, solutionVal) in solutions">
                                 <md-item-content style="align-items: flex-start !important;">
                                     <div class="md-tile-content" layout="column">
@@ -259,21 +142,23 @@
                                             <div class="task-desc-header" style="background-color: #FCE4EC;">
                                                 <h4 style="margin-bottom: 0px;">Решение</h4>
                                             </div>
-                                            <div class="task-description" style="margin-top: 0px;" hljs source="solutionVal.text">
+                                            <div class="task-description" style="margin-top: 0px;" hljs
+                                                 source="solutionVal.text">
                                             </div>
                                         </div>
                                         <div layout="row" layout-align="space-between center">
                                             <div layout="row">
-                                            <div class="my-subheader">Дата решения: {{solutionVal.date}}</div>
-                                            <div class="my-subheader" style="margin-left: 20px;">Решил: <a
-                                                    href="/users/{{users.indexOf(findUser(solutionVal.userID))}}">{{findUser(solutionVal.userID).fullName}}</a>
-                                            </div>
+                                                <div class="my-subheader">Дата решения: {{solutionVal.date}}</div>
+                                                <div class="my-subheader" style="margin-left: 20px;">Решил: <a
+                                                        href="/users/{{users.indexOf(findUser(solutionVal.userID))}}">{{findUser(solutionVal.userID).fullName}}</a>
+                                                </div>
                                             </div>
                                             <div class="show-hide" ng-show="solutionVal.expanded">
-                                                <md-button><img style="opacity: 0.54;"  aria-label="thumbUpBtn"
+                                                <md-button><img style="opacity: 0.54;" aria-label="thumbUpBtn"
                                                                 src="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg">
                                                 </md-button>
-                                                <md-button style="margin-left: 20px;"><img style="opacity: 0.54;"  aria-label="thumbUpBtn"
+                                                <md-button style="margin-left: 20px;"><img style="opacity: 0.54;"
+                                                                                           aria-label="thumbUpBtn"
                                                                                            src="/bower_components/material-design-icons/action/svg/design/ic_thumb_down_24px.svg">
                                                 </md-button>
                                             </div>
@@ -300,7 +185,7 @@
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
                         <md-list layout="column">
-                            <md-item class="animate"
+                            <md-item class="item-animate"
                                      ng-repeat="(taskKey, taskVal) in tasks">
                                 <md-item-content style="align-items: flex-start !important;">
                                     <div class="md-tile-content" layout="column">
@@ -336,7 +221,8 @@
                                                 <md-button><img style="opacity: 0.54;" aria-label="thumbUpBtn"
                                                                 src="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg">
                                                 </md-button>
-                                                <md-button style="margin-left: 20px;"><img style="opacity: 0.54;" aria-label="thumbUpBtn"
+                                                <md-button style="margin-left: 20px;"><img style="opacity: 0.54;"
+                                                                                           aria-label="thumbUpBtn"
                                                                                            src="/bower_components/material-design-icons/action/svg/design/ic_thumb_down_24px.svg">
                                                 </md-button>
                                             </div>

@@ -1,0 +1,171 @@
+/* index.html */
+
+.header-logo {
+    font-size: 30px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+a.header-logo {
+    text-decoration: none !important;
+}
+
+a:hover.header-logo {
+    color: #ffffff !important;
+}
+
+a:hover.header-logo span {
+    color: #F06292 !important;
+}
+
+.md-toolbar-tools a:hover h5 {
+    color: #FFFFFF;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.54);
+}
+
+.md-toolbar-tools a:hover h5.navbar-active {
+    color: #E91E63;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.54);
+}
+
+.md-toolbar-tools a h5 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 30px;
+}
+
+.navbar-active {
+    color: #E91E63;
+}
+
+a:hover .nickname {
+    color: #ffffff !important;
+}
+
+/* main.html */
+
+.face {
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    width: 48px;
+    margin: 16px;
+}
+
+md-toolbar.demo-toolbar {
+    background: rgba(0, 0, 0, 0.12) !important;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.item-animate.ng-enter,
+.item-animate.ng-leave {
+    -webkit-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -moz-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -ms-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -o-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+.item-animate.ng-leave.animate.ng-leave-active,
+.item-animate.ng-enter {
+    opacity: 0;
+    width: auto;
+    height: auto;
+    max-width: 0;
+    max-height: 0;
+}
+
+.item-animate.ng-enter.ng-enter-active,
+.item-animate.ng-leave {
+    opacity: 1;
+    max-width: 2000px;
+    max-height: 150px;
+}
+
+.show-hide.ng-hide-add,
+.show-hide.ng-hide-remove {
+    -webkit-transition: 400ms cubic-bezier(0.25, 0.8, 0.25, 1) all;
+    transition: 400ms cubic-bezier(0.25, 0.8, 0.25, 1) all;
+
+    /* remember to add this */
+    display: block !important;
+    max-height: 40px;
+    overflow: hidden;
+    opacity: 1;
+}
+
+.show-hide.ng-hide {
+    height: auto;
+    max-height: 0;
+    opacity: 0;
+}
+
+.show-hide-list.ng-hide-add,
+.show-hide-list.ng-hide-remove {
+    -webkit-transition: 500ms ease-in-out all;
+    transition: 500ms ease-in-out all;
+    /* remember to add this */
+    display: block !important;
+    max-height: 300px;
+    overflow: hidden;
+    opacity: 1;
+}
+
+.show-hide-list.ng-hide {
+    height: auto;
+    max-height: 0;
+    opacity: 0;
+}
+
+.my-subheader {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.label-button {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-transform: none;
+    font-size: 14px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 3px;
+    padding-top: 1px;
+}
+
+code {
+    white-space: pre-wrap !important;
+    background-color: rgba(0, 0, 0, 0) !important;
+    padding: 0px !important;
+}
+
+pre {
+    margin: 0px !important;
+}
+
+.task-description {
+    padding: 10px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    margin-bottom: 10px;
+    border-radius: 0px 0px 3px 3px;
+    border: 1px solid #BDBDBD;
+}
+
+.task-desc-header {
+    margin-top: 6px;
+    background-color: #E8EAF6;
+    padding: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    border-radius: 3px 3px 0px 0px;
+    border: 1px solid #BDBDBD;
+    border-bottom: none;
+}
+
+md-tabs-ink-bar {
+    background-color: #E91E63 !important;
+}

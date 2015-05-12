@@ -1,72 +1,62 @@
- /* skills.html */
+/* skills.html */
 
-    .label-button {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        text-transform: none;
-        font-size: 14px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        padding: 3px;
-        padding-top: 1px;
-    }
+.my-show-hide-animation.ng-hide-add,
+.my-show-hide-animation.ng-hide-remove {
+    -webkit-transition: 500ms linear all;
+    transition: 500ms linear all;
 
-    .my-show-hide-animation.ng-hide-add,
-    .my-show-hide-animation.ng-hide-remove {
-        -webkit-transition: 500ms linear all;
-        transition: 500ms linear all;
+    /* remember to add this */
+    display: block !important;
+    max-height: 2000px;
+    overflow: hidden;
+    opacity: 1;
+}
 
-        /* remember to add this */
-        display: block !important;
-        max-height: 2000px;
-        overflow: hidden;
-        opacity: 1;
-    }
+.my-show-hide-animation.ng-hide {
+    height: auto;
+    max-height: 0;
+    opacity: 0;
+}
 
-    .my-show-hide-animation.ng-hide {
-        height: auto;
-        max-height: 0;
-        opacity: 0;
-    }
+.exs-root {
+    margin-top: 10px;
+    margin-left: 20px;
+}
 
-    .exs-root {
-        margin-top: 10px; 
-        margin-left: 20px;
-    }
+#button-exs-root {
+    background-color: #FFEB3B
+}
 
-    #button-exs-root {
-        background-color: #FFEB3B
-    }
+#marker-exs-root {
+    margin-top: 0px;
+}
 
-    #marker-exs-root {
-        margin-top: 0px;
-    }
+.search {
+    margin-left: 20px;
+}
 
-    .search {
-        margin-left: 20px;
-    }
+.select {
+    margin-left: 5%
+}
 
-    .select {
-        margin-left: 5%
-    }
+.button-skill {
+    margin-left: 25px;
+}
 
-    .button-skill {
-        margin-left: 25px;
-    }
+h4 {
+    color: rgba(0, 0, 0, 0.54);
+}
 
-    h4 {
-        color: rgba(0,0,0,0.54);
-    }
+#w-frame {
+    min-height: calc(100vh - 64px);
+}
 
-    #w-frame {
-        min-height: calc(100vh - 64px);
-    }
+#w-frame-z2 {
+    padding: 16px;
+    background-color: #FAFAFA;
+    z-index: 1;
+}
 
-    #w-frame-z2 {
-        padding: 16px; 
-        background-color: #FAFAFA; 
-        z-index: 1;
-    }
-
-    #w-frame-z2_1 {
-        background-color: #fff;
-    }
+#w-frame-z2_1 {
+    background-color: #fff;
+}

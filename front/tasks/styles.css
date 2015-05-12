@@ -1,7 +1,8 @@
 /* all.html */
 
 .sortBy {
-    margin-left: 5%; }
+    margin-left: 5%;
+}
 
 .animate.ng-enter,
 .animate.ng-leave {
@@ -13,7 +14,8 @@
     display: block;
     overflow: hidden;
     text-overflow: clip;
-    white-space: nowrap; }
+    white-space: nowrap;
+}
 
 .animate.ng-leave.animate.ng-leave-active,
 .animate.ng-enter {
@@ -21,13 +23,15 @@
     width: auto;
     height: auto;
     max-width: 0;
-    max-height: 0; }
+    max-height: 0;
+}
 
 .animate.ng-enter.ng-enter-active,
 .animate.ng-leave {
     opacity: 1;
     max-width: 2000px;
-    max-height: 150px; }
+    max-height: 150px;
+}
 
 .my-show-hide-animation.ng-hide-add,
 .my-show-hide-animation.ng-hide-remove {
@@ -37,33 +41,28 @@
     display: block !important;
     max-height: 300px;
     overflow: hidden;
-    opacity: 1; }
+    opacity: 1;
+}
 
 .my-show-hide-animation.ng-hide {
     height: auto;
     max-height: 0;
-    opacity: 0; }
+    opacity: 0;
+}
 
 .my-subheader {
     font-size: 14px;
     font-style: italic;
-    color: rgba(0, 0, 0, 0.54); }
-
-.label-button {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-transform: none;
-    font-size: 14px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 3px;
-    padding-top: 1px;
+    color: rgba(0, 0, 0, 0.54);
 }
-/* view.html */
+
+/* one.html */
 
 .taskTabs .tab-content {
     background-color: #3f51b5;
-    width:inherit;
-    height: 30px; }
+    width: inherit;
+    height: 30px;
+}
 
 .taskTabs .tabpanel-container {
     display: block;
@@ -71,7 +70,8 @@
     background: white;
     border: 0 solid black;
     height: 350px;
-    overflow: hidden; }
+    overflow: hidden;
+}
 
 .taskTabs [role="tabpanel"] {
     border-left: solid 2px #3f51b5;
@@ -80,40 +80,51 @@
     height: 100%;
     -webkit-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
     transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
-    position: absolute; }
+    position: absolute;
+}
 
 .taskTabs [role="tabpanel"].ng-leave.ng-leave-active, .taskTabs [role="tabpanel"].ng-enter {
-    top: -350px; }
+    top: -350px;
+}
 
 .taskTabs [role="tabpanel"].ng-leave, .taskTabs [role="tabpanel"].ng-enter.ng-enter-active {
-    top: 0; }
+    top: 0;
+}
 
 .taskTabs [role="tabpanel"].ng-leave {
-    z-index: 100; }
+    z-index: 100;
+}
 
 .taskTabs .md-header {
-    border-radius: 3px;}
+    border-radius: 3px;
+}
 
 .taskTabs md-tab {
-    color: #90caf9 !important; }
+    color: #90caf9 !important;
+}
 
 .taskTabs md-tab.active, .taskTabs md-tab:focus {
-    color: white !important; }
+    color: white !important;
+}
 
 .taskTabs md-tab[disabled] {
-    opacity: 0.5; }
+    opacity: 0.5;
+}
 
 .taskTabs .md-header .md-ripple {
-    border-color: #FFFFFF !important; }
+    border-color: #FFFFFF !important;
+}
 
 .taskTabs md-tabs-ink-bar {
-    background-color: #E91E63 !important; }
+    background-color: #E91E63 !important;
+}
 
 .authorFace {
     border-radius: 30px;
     border: 1px solid #ddd;
     zoom: 200%;
-    margin: 8px; }
+    margin: 8px;
+}
 
 .task-description {
     padding: 10px;

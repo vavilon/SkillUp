@@ -332,10 +332,10 @@
       "fe4f5a6b-c4a7-4219-bda2-c24d5feec95c",
       "ecfccee4-94c8-431c-94bb-126aa7bba241"
     ],
-    "tasksDone": [    ],
+    "tasksDone": [],
     "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
     "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
     "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": [      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"]
+    "tasksCreated": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"]
   }
 ]

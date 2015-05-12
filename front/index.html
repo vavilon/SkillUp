@@ -5,51 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <title>SkillUp</title>
+
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/github.min.css">
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.css">
-    <style>
-        .header-logo {
-            font-size: 30px;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
+    <link rel="stylesheet" href="/front/styles.css">
 
-        a.header-logo {
-            text-decoration: none !important;
-        }
 
-        a:hover.header-logo {
-            color: #ffffff !important;
-        }
-
-        a:hover.header-logo span {
-            color: #F06292 !important;
-        }
-
-        .md-toolbar-tools a:hover h5 {
-            color: #FFFFFF;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.54);
-        }
-
-        .md-toolbar-tools a:hover h5.navbar-active {
-            color: #E91E63;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.54);
-        }
-
-        .md-toolbar-tools a h5 {
-            margin-top: 0px;
-            margin-bottom: 0px;
-            margin-right: 30px;
-        }
-
-        .navbar-active {
-            color: #E91E63;
-        }
-
-        a:hover .nickname {
-            color: #ffffff !important;
-        }
-    </style>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/bower_components/angular-animate/angular-animate.min.js"></script>
@@ -61,14 +22,17 @@
     <script src="/bower_components/lodash/lodash.min.js"></script>
 
     <script src="/front/app.js"></script>
+    <script src="/front/competences/controllers.js"></script>
+    <script src="/front/skills/controllers.js"></script>
+    <script src="/front/tasks/controllers.js"></script>
     <script src="/front/users/controllers.js"></script>
-    <script src="/front/users/filter.js"></script>
+    <script src="/front/filters.js"></script>
 
 </head>
 
 <body layout="row">
 <div layout="column" layout-fill tabindex="-1" role="main">
-    <md-toolbar class="md-hue-2" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);" ng-controller="navbar_controller">
+    <md-toolbar class="md-hue-2" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);" ng-controller="navbarCtrl">
         <div layout="row" layout-align="space-between center">
             <div flex="50" flex-gt-md="15" layout="row">
                 <div class="md-toolbar-tools" flex="30" flex-md="25" hide-gt-md>
@@ -78,15 +42,21 @@
                 </div>
                 <div hide show-gt-lg flex="15"></div>
                 <div class="md-toolbar-tools" flex flex-gt-md="90">
-                    <a href ng-click="goToMain()" class="header-logo">skill<span style="color: #E91E63;">up</span></a>
+                    <a href="/main" class="header-logo">skill<span style="color: #E91E63;">up</span></a>
                 </div>
             </div>
             <div class="md-toolbar-tools" hide show-gt-md flex="65" flex-gt-lg="60">
-                <a href ng-click="goToMain()"><h5 ng-class="{'navbar-active': getNavbarSelectedIndex() == 0}">Главная</h5></a>
-                <a href ng-click="goToSkills()"><h5 ng-class="{'navbar-active': getNavbarSelectedIndex() == 1}">Дерево умений</h5></a>
-                <a href ng-click="goToTasks()"><h5 ng-class="{'navbar-active': getNavbarSelectedIndex() == 2}">Задания</h5></a>
-                <a href ng-click="goToUsers()"><h5 ng-class="{'navbar-active': getNavbarSelectedIndex() == 3}">Пользователи</h5></a>
-                <a href ng-click="goToCompetences()"><h5 style="margin-right: 0px;" ng-class="{'navbar-active': getNavbarSelectedIndex() == 4}">Компетенции</h5></a>
+                <a href="/main"><h5 ng-class="{'navbar-active': getSelectedIndex() == 0}">
+                    Главная</h5></a>
+                <a href="/skills" ng-click="goToSkills()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
+                    умений</h5></a>
+                <a href="/tasks" ng-click="goToTasks()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
+                    Задания</h5></a>
+                <a href="/users" ng-click="goToUsers()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
+                    Пользователи</h5></a>
+                <a href="/competences" ng-click="goToCompetences()"><h5 style="margin-right: 0px;"
+                                                         ng-class="{'navbar-active': getSelectedIndex() == 4}">
+                    Компетенции</h5></a>
             </div>
             <div class="md-toolbar-tools" layout="row" layout-align="end center" flex>
                 <div flex layout="row" layout-align="end center">
