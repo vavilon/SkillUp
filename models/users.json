@@ -1,8 +1,10 @@
 [
   {
     "id": "u00000000001",
-    "nickname": "nickname1",
-    "fullName": "Иванов Иван Иванович",
+    "nick": "nick1",
+    "name": "Иванов Иван Иванович",
+    "email": "",
+    "pswhash": "",
     "exp": 123456,
     "skills": [
       "d2f5af07-8a89-4ec0-ab80-0706f16ae07f",
@@ -17,7 +19,7 @@
       "fe4f5a6b-c4a7-4219-bda2-c24d5feec95c",
       "ecfccee4-94c8-431c-94bb-126aa7bba241"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "05d17728-59b2-4ec8-82c5-a34946e6a2ba",
       "e1bd8023-fd57-4d72-8dc4-87e8c3e1dbf4",
       "0e20cdbc-8022-49f8-9e09-401902c0ae77",
@@ -28,15 +30,25 @@
       "d0c8c962-47ff-4a69-a81e-cf47e58e73ec",
       "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
     ],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": []
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000002",
-    "nickname": "nickname2",
-    "fullName": "Петров Петр Петрович",
+    "nick": "nick2",
+    "name": "Петров Петр Петрович",
+    "email": "",
+    "pswhash": "",
     "exp": 789456,
     "skills": [
       "e9a89f37-6bdc-4c14-87b3-01bbda92bebf",
@@ -56,7 +68,7 @@
       "0c238824-998d-4daf-a6c1-df5c576230a6",
       "d32e1463-e1bd-4d8e-b8d8-f01e22436268"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "05d17728-59b2-4ec8-82c5-a34946e6a2ba",
       "0e20cdbc-8022-49f8-9e09-401902c0ae77",
       "1a637405-5a01-480e-b92d-c02c3c7162d6",
@@ -65,15 +77,25 @@
       "d0c8c962-47ff-4a69-a81e-cf47e58e73ec",
       "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
     ],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": []
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000003",
-    "nickname": "nickname3",
-    "fullName": "Сидоров Сидр Сидорович",
+    "nick": "nick3",
+    "name": "Сидоров Сидр Сидорович",
+    "email": "",
+    "pswhash": "",
     "exp": 456123,
     "skills": [
       "d2f5af07-8a89-4ec0-ab80-0706f16ae07f",
@@ -88,7 +110,7 @@
       "fe4f5a6b-c4a7-4219-bda2-c24d5feec95c",
       "ecfccee4-94c8-431c-94bb-126aa7bba241"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "e1bd8023-fd57-4d72-8dc4-87e8c3e1dbf4",
       "0e20cdbc-8022-49f8-9e09-401902c0ae77",
       "1a637405-5a01-480e-b92d-c02c3c7162d6",
@@ -97,15 +119,25 @@
       "04cad06f-b31d-4ddd-9cfb-5de4de73d366",
       "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
     ],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": []
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000004",
-    "nickname": "nickname4",
-    "fullName": "Васильев Висилий Васильевич",
+    "nick": "nick4",
+    "name": "Васильев Висилий Васильевич",
+    "email": "",
+    "pswhash": "",
     "exp": 321654,
     "skills": [
       "e9a89f37-6bdc-4c14-87b3-01bbda92bebf",
@@ -125,7 +157,7 @@
       "0c238824-998d-4daf-a6c1-df5c576230a6",
       "d32e1463-e1bd-4d8e-b8d8-f01e22436268"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "05d17728-59b2-4ec8-82c5-a34946e6a2ba",
       "e1bd8023-fd57-4d72-8dc4-87e8c3e1dbf4",
       "0e20cdbc-8022-49f8-9e09-401902c0ae77",
@@ -134,15 +166,25 @@
       "9644ea40-06db-4b83-8f18-309d4952d249",
       "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
     ],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": []
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000005",
-    "nickname": "nickname5",
-    "fullName": "Григорьев Григорий Григорьевич",
+    "nick": "nick5",
+    "name": "Григорьев Григорий Григорьевич",
+    "email": "",
+    "pswhash": "",
     "exp": 98745,
     "skills": [
       "d2f5af07-8a89-4ec0-ab80-0706f16ae07f",
@@ -157,7 +199,7 @@
       "fe4f5a6b-c4a7-4219-bda2-c24d5feec95c",
       "ecfccee4-94c8-431c-94bb-126aa7bba241"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "0e20cdbc-8022-49f8-9e09-401902c0ae77",
       "1a637405-5a01-480e-b92d-c02c3c7162d6",
       "4ad3557c-4572-442f-8429-9419a7ae09e0",
@@ -166,15 +208,25 @@
       "d0c8c962-47ff-4a69-a81e-cf47e58e73ec",
       "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
     ],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": []
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000006",
-    "nickname": "nickname6",
-    "fullName": "Борисов Борис Борисович",
+    "nick": "nick6",
+    "name": "Борисов Борис Борисович",
+    "email": "",
+    "pswhash": "",
     "exp": 12345,
     "skills": [
       "e9a89f37-6bdc-4c14-87b3-01bbda92bebf",
@@ -194,7 +246,7 @@
       "0c238824-998d-4daf-a6c1-df5c576230a6",
       "d32e1463-e1bd-4d8e-b8d8-f01e22436268"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "05d17728-59b2-4ec8-82c5-a34946e6a2ba",
       "e1bd8023-fd57-4d72-8dc4-87e8c3e1dbf4",
       "4ad3557c-4572-442f-8429-9419a7ae09e0",
@@ -203,15 +255,25 @@
       "d0c8c962-47ff-4a69-a81e-cf47e58e73ec",
       "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
     ],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": []
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000007",
-    "nickname": "nickname7",
-    "fullName": "Сергеев Сергей Сергеевич",
+    "nick": "nick7",
+    "name": "Сергеев Сергей Сергеевич",
+    "email": "",
+    "pswhash": "",
     "exp": 65498,
     "skills": [
       "d2f5af07-8a89-4ec0-ab80-0706f16ae07f",
@@ -226,7 +288,7 @@
       "fe4f5a6b-c4a7-4219-bda2-c24d5feec95c",
       "ecfccee4-94c8-431c-94bb-126aa7bba241"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "05d17728-59b2-4ec8-82c5-a34946e6a2ba",
       "0e20cdbc-8022-49f8-9e09-401902c0ae77",
       "1a637405-5a01-480e-b92d-c02c3c7162d6",
@@ -235,15 +297,25 @@
       "d0c8c962-47ff-4a69-a81e-cf47e58e73ec",
       "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
     ],
-    "tasksReceived": [],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"]
+    "tasks_received": [],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000008",
-    "nickname": "nickname8",
-    "fullName": "Александров Александр Александрович",
+    "nick": "nick8",
+    "name": "Александров Александр Александрович",
+    "email": "",
+    "pswhash": "",
     "exp": 9874,
     "skills": [
       "e9a89f37-6bdc-4c14-87b3-01bbda92bebf",
@@ -263,7 +335,7 @@
       "0c238824-998d-4daf-a6c1-df5c576230a6",
       "d32e1463-e1bd-4d8e-b8d8-f01e22436268"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "05d17728-59b2-4ec8-82c5-a34946e6a2ba",
       "e1bd8023-fd57-4d72-8dc4-87e8c3e1dbf4",
       "0e20cdbc-8022-49f8-9e09-401902c0ae77",
@@ -272,15 +344,25 @@
       "04cad06f-b31d-4ddd-9cfb-5de4de73d366",
       "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
     ],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": [],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"]
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000009",
-    "nickname": "nickname9",
-    "fullName": "Евгеньев Евгений Евгеньевич",
+    "nick": "nick9",
+    "name": "Евгеньев Евгений Евгеньевич",
+    "email": "",
+    "pswhash": "",
     "exp": 45678,
     "skills": [
       "e9a89f37-6bdc-4c14-87b3-01bbda92bebf",
@@ -300,7 +382,7 @@
       "0c238824-998d-4daf-a6c1-df5c576230a6",
       "d32e1463-e1bd-4d8e-b8d8-f01e22436268"
     ],
-    "tasksDone": [
+    "tasks_done": [
       "05d17728-59b2-4ec8-82c5-a34946e6a2ba",
       "e1bd8023-fd57-4d72-8dc4-87e8c3e1dbf4",
       "0e20cdbc-8022-49f8-9e09-401902c0ae77",
@@ -309,15 +391,25 @@
       "04cad06f-b31d-4ddd-9cfb-5de4de73d366",
       "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
     ],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": [],
-    "tasksCreated": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"]
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [],
+    "tasks_liked": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_approved": [],
+    "avatar": ""
   },
   {
     "id": "u00000000010",
-    "nickname": "nickname10",
-    "fullName": "Кирилов Кирил Кирилович",
+    "nick": "nick10",
+    "name": "Кирилов Кирил Кирилович",
+    "email": "",
+    "pswhash": "",
     "exp": 789654,
     "skills": [
       "d2f5af07-8a89-4ec0-ab80-0706f16ae07f",
@@ -332,10 +424,21 @@
       "fe4f5a6b-c4a7-4219-bda2-c24d5feec95c",
       "ecfccee4-94c8-431c-94bb-126aa7bba241"
     ],
-    "tasksDone": [],
-    "tasksReceived": ["04cad06f-b31d-4ddd-9cfb-5de4de73d366"],
-    "tasksChecked": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"],
-    "tasksApproved": ["d0c8c962-47ff-4a69-a81e-cf47e58e73ec"],
-    "tasksCreated": ["8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"]
+    "tasks_done": [],
+    "tasks_received": [
+      "04cad06f-b31d-4ddd-9cfb-5de4de73d366"
+    ],
+    "tasks_checked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_created": [
+      "d0c8c962-47ff-4a69-a81e-cf47e58e73ec"
+    ],
+    "tasks_liked": [
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e",
+      "8f0d0d1d-5e49-45e8-acde-0f0a3174b55e"
+    ],
+    "tasks_approved": [],
+    "avatar": ""
   }
 ]
