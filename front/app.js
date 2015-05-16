@@ -2,7 +2,8 @@ var app = angular.module('skills', [
     'ngRoute',
     'ngMaterial',
     'ngAnimate',
-    'hljs'
+    'hljs',
+    'textAngular'
 ]);
 
 app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider) {
@@ -22,7 +23,7 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
         .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
         .otherwise({redirectTo: '/main'});
 
-    $mdThemingProvider.theme('default')
+/*    $mdThemingProvider.theme('default')
         .primaryPalette('indigo', {
             'default': '500',
             'hue-1': '300',
@@ -40,7 +41,7 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
             'hue-1': '300',
             'hue-2': '800',
             'hue-3': 'A100'
-        });
+        });*/
 
     hljsServiceProvider.setOptions({
         tabReplace: '    '
