@@ -2,8 +2,7 @@ var app = angular.module('skills', [
     'ngRoute',
     'ngMaterial',
     'ngAnimate',
-    'hljs',
-    'textAngular'
+    'hljs'
 ]);
 
 app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider) {

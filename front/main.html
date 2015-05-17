@@ -1,10 +1,87 @@
+<style>
+    .diff-label {
+        font-size: 14px;
+        font-weight: bold;
+        border: 1px solid;
+        border-radius: 4px;
+        padding: 1px 3px 1px 3px;
+        margin-right: 10px;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .diff-label.easy {
+        border-color: green;
+        color: green;
+    }
+
+    .diff-label.medium {
+        border-color: orange;
+        color: orange;
+    }
+
+    .diff-label.hard {
+        border-color: red;
+        color: red;
+    }
+
+    .task-title, .task-exp {
+        margin: 0;
+    }
+
+    .task-header {
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+
+    .task-skills {
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.54);
+    }
+
+    .task-body {
+        margin-bottom: 5px;
+    }
+
+    .task-footer {
+        margin-bottom: 10px;
+    }
+
+    .task-date, .task-author {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.54);
+    }
+
+    .skill-button {
+        text-transform: none;
+        height: 19px;
+        padding: 1px 3px 2px 3px;
+        margin: 0 0 5px 5px;
+        min-width: 0;
+        min-height: 0;
+        line-height: normal;
+    }
+
+    .expand-button {
+        margin: 0;
+        padding: 0;
+        min-width: 0;
+        min-height: 0;
+        line-height: normal;
+    }
+
+    .menu-tabs {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+</style>
+
 
 <div style="position: relative; min-height: calc(100vh - 64px);">
     <div layout="row">
         <div flex="15" flex-md="5" hide-sm></div>
         <div flex layout="column"
              style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
-            <md-tabs md-selected="selectedTab">
+            <md-tabs class="menu-tabs" md-selected="selectedTab">
                 <md-tab>
                     Решить
                 </md-tab>
@@ -27,79 +104,61 @@
                          md-swipe-right="previous()">
                         <md-list layout="column">
                             <md-list-item class="item-animate"
-                                     ng-repeat="(taskKey, taskVal) in tasks">
-                                <md-item-content style="align-items: flex-start !important;">
-                                    <div class="md-tile-content" layout="column">
-                                        <div>
-                                            <h3 style="float: left; margin-right: 20px"><a
-                                                    href="#">{{taskVal.title}}</a></h3>
-
-                                            <h3 style="float: left; color: #4CAF50">ЛЕГКО</h3>
-
-                                            <p style="float: right;">exp: {{taskVal.exp | thousand}}</p>
+                                          ng-repeat="(taskKey, taskVal) in tasks">
+                                <div layout="column" flex>
+                                    <div layout="row" class="task-header">
+                                        <div flex="10">
+                                            <div>
+                                                <span class="diff-label easy" ng-if="$index < 7">ЛЕГКО</span>
+                                                <span class="diff-label medium" ng-if="$index == 7">СРЕДНЕ</span>
+                                                <span class="diff-label hard" ng-if="$index == 8">СЛОЖНО</span>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                            <md-button aria-label="skillBtn" class="md-raised md-primary label-button"
-                                                       ng-repeat="skill in taskVal.skills">
-                                                {{skills[skill].title}}
+                                        <div flex="75">
+                                            <h3 class="task-title"><a href>{{taskVal.title}}</a></h3>
+                                        </div>
+                                        <div flex>
+                                            <p class="task-exp">exp: {{taskVal.exp | thousand}}</p>
+                                        </div>
+                                    </div>
+                                    <div layout="row" class="task-body">
+                                        <div layout="row" flex="85">
+                                            <div flex="10">
+                                                <span class="task-skills">Умения: </span>
+                                            </div>
+                                            <div layout="row" layout-wrap>
+                                                <md-button class="md-raised md-primary skill-button"
+                                                           aria-label="skillBtn"
+                                                           ng-repeat="skill in taskVal.skills">
+                                                    {{skills[skill].title}}
+                                                </md-button>
+                                            </div>
+                                        </div>
+                                        <div layout="row" layout-align="start start" flex>
+                                            <md-button class="md-mini md-primary expand-button"
+                                                       ng-click="expand(taskVal)" aria-label="expand-toogle">
+                                                <md-icon aria-label="notexpanded" ng-show="!taskVal.expanded"
+                                                         md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
+                                                </md-icon>
+                                                <md-icon ng-show="taskVal.expanded" aria-label="expanded"
+                                                         md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
+                                                </md-icon>
                                             </md-button>
                                         </div>
-                                        <div class="show-hide-list" ng-show="taskVal.expanded">
-                                            <div class="task-desc-header">
-                                                <h4 style="margin-bottom: 0px;">Условие</h4>
-                                            </div>
-                                            <div class="task-description">
-                                                {{taskVal.description}}
-                                            </div>
+                                    </div>
+                                    <div layout="row" ng-if="taskVal.expanded">
+
+                                    </div>
+                                    <div layout="row" class="task-footer">
+                                        <div flex   >
+                                        <span class="task-date">Дата создания: {{taskVal.dateCreated}}</span>
                                         </div>
-                                        <div class="show-hide-list" ng-show="taskVal.expanded">
-                                            <div class="task-desc-header" style="background-color: #FCE4EC;">
-                                                <h4 style="margin-bottom: 0px;">Ваше решение</h4>
-                                            </div>
-                                            <div class="task-description" style="margin-top: 0px;">
-                                                <md-input-container flex>
-                                                    <label>Текст решения</label>
-                                                    <textarea style="min-height: 56px !important;"
-                                                              ng-model="taskSolution" multiple></textarea>
-                                                </md-input-container>
-                                                <div layout="row" layout-align="space-between center">
-                                                    <div layout="row">
-                                                        <md-button aria-label="attachFileBtn">
-                                                            <img style="opacity: 0.54;"
-                                                                 src="/bower_components/material-design-icons/editor/svg/design/ic_attach_file_18px.svg">
-                                                        </md-button>
-                                                        <md-button aria-label="insertImageBtn">
-                                                            <img style="opacity: 0.54;"
-                                                                 src="/bower_components/material-design-icons/editor/svg/design/ic_insert_photo_18px.svg">
-                                                        </md-button>
-                                                    </div>
-                                                    <div layout="row" layout-align="end center">
-                                                        <md-button class="md-raised" aria-label="sendSolutionBtn">
-                                                            Отправить
-                                                        </md-button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div layout="row">
-                                            <div class="my-subheader">Дата создания: {{taskVal.dateCreated}}</div>
-                                            <div class="my-subheader" style="margin-left: 20px;">Автор: <a
-                                                    href="/users/{{users.indexOf(findUser(taskVal.author))}}">{{findUser(taskVal.author).fullName}}</a>
-                                            </div>
+                                        <div flex>
+                                        <span class="task-author">Автор: <a href="/users/{{users.indexOf(findUser(taskVal.author))}}">
+                                            {{findUser(taskVal.author).fullName}}</a></span>
                                         </div>
                                     </div>
-                                    <div>
-                                        <md-button ng-click="expand(taskVal)" style="margin: 20px"
-                                                   aria-label="expand">
-                                            <img ng-show="!taskVal.expanded"
-                                                 src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                                            <img ng-show="taskVal.expanded"
-                                                 src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
-                                        </md-button>
-                                        <br>
-                                    </div>
-                                </md-item-content>
+                                </div>
                                 <md-divider ng-if="!$last"></md-divider>
                             </md-list-item>
                         </md-list>
@@ -124,7 +183,7 @@
                                         </div>
                                         <div>
                                             <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                            <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
+                                            <md-button class="md-raised md-primary skill-button" aria-label="skillBtn"
                                                        ng-repeat="skill in tasks[solutionVal.taskID].skills">
                                                 {{skills[skill].title}}
                                             </md-button>
@@ -196,7 +255,7 @@
                                         </div>
                                         <div>
                                             <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                            <md-button class="md-raised md-primary label-button"
+                                            <md-button class="md-raised md-primary skill-button"
                                                        ng-repeat="skill in taskVal.skills" aria-label="skillBtn">
                                                 {{skills[skill].title}}
                                             </md-button>
