@@ -1,3 +1,12 @@
 {
-  "port": 80
+  "port": 80,
+  "knex": {
+    "client": "pg",
+    "connection": {
+      "host": "localhost",
+      "user": "skillupserv",
+      "password": "1111",
+      "database": "skillup"
+    }
+  }
 }

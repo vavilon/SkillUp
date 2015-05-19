@@ -20,6 +20,8 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
         .when('/skills', {templateUrl: '/front/skills/skills.html', controller: 'skillsCtrl'})
         .when('/users/:user_id', {templateUrl: '/front/users/one.html', controller: 'profileCtrl'})
         .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
+        .when('/registration', {templateUrl: '/front/users/registration.html'})
+        .when('/login', {templateUrl: '/front/users/login.html'})
         .otherwise({redirectTo: '/main'});
 
     $mdThemingProvider.theme('default')
