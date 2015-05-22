@@ -25,21 +25,17 @@ var User = bookshelf.Model.extend({
 var bcrypt = require('bcryptjs');
 
 
-function getDB(req, res) {
-
-}
-
 //Проверка авторизации
 var mustAuthenticated = function (req, res, next){
     req.isAuthenticated()
-        ? getDB(req, res)
-        : res.end('Access denied! User is not authenticated.');
+        ? next()
+        : res.end('/main');
 };
 
 
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/front', express.static(__dirname + '/front'));
-app.get('/getDB', mustAuthenticated);
+app.get('/models', express.static(__dirname + '/models'));
 app.use('/', function (req, res) {
     res.sendFile(__dirname + '/front/index.html');
 });
