@@ -1,3 +1,4 @@
+
 <style>
     .diff-label {
         font-size: 14px;
@@ -33,13 +34,24 @@
         margin-bottom: 5px;
     }
 
-    .task-skills {
+    .task-skills-word {
         font-weight: 600;
         color: rgba(0, 0, 0, 0.54);
     }
 
     .task-body {
-        margin-bottom: 5px;
+    }
+
+    .task-description {
+
+    }
+
+    .task-description-card {
+        margin: 5px 0 10px 0;
+    }
+
+    .task-description-word {
+        margin: 0 0 10px 0;
     }
 
     .task-footer {
@@ -73,8 +85,26 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
 
-</style>
+    .animate-if.ng-enter, .animate-if.ng-leave {
+        -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+        transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    }
 
+    .animate-if.ng-enter,
+    .animate-if.ng-leave.ng-leave-active {
+        height: auto;
+        max-height: 0;
+        opacity:0;
+    }
+
+    .animate-if.ng-leave,
+    .animate-if.ng-enter.ng-enter-active {
+        display: block !important;
+        max-height: 300px;
+        overflow: hidden;
+        opacity:1;
+    }
+</style>
 
 <div style="position: relative; min-height: calc(100vh - 64px);">
     <div layout="row">
@@ -95,6 +125,7 @@
                     Создать
                 </md-tab>
             </md-tabs>
+
             <md-content style="min-height: 350px; max-height: calc(100vh - 175px);">
                 <ng-switch on="selectedTab">
                     <div role="tabpanel"
@@ -102,66 +133,7 @@
                          ng-switch-when="0"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <md-list layout="column">
-                            <md-list-item class="item-animate"
-                                          ng-repeat="(taskKey, taskVal) in tasks">
-                                <div layout="column" flex>
-                                    <div layout="row" class="task-header">
-                                        <div flex="10">
-                                            <div>
-                                                <span class="diff-label easy" ng-if="$index < 7">ЛЕГКО</span>
-                                                <span class="diff-label medium" ng-if="$index == 7">СРЕДНЕ</span>
-                                                <span class="diff-label hard" ng-if="$index == 8">СЛОЖНО</span>
-                                            </div>
-                                        </div>
-                                        <div flex="75">
-                                            <h3 class="task-title"><a href>{{taskVal.title}}</a></h3>
-                                        </div>
-                                        <div flex>
-                                            <p class="task-exp">exp: {{taskVal.exp | thousand}}</p>
-                                        </div>
-                                    </div>
-                                    <div layout="row" class="task-body">
-                                        <div layout="row" flex="85">
-                                            <div flex="10">
-                                                <span class="task-skills">Умения: </span>
-                                            </div>
-                                            <div layout="row" layout-wrap>
-                                                <md-button class="md-raised md-primary skill-button"
-                                                           aria-label="skillBtn"
-                                                           ng-repeat="skill in taskVal.skills">
-                                                    {{skills[skill].title}}
-                                                </md-button>
-                                            </div>
-                                        </div>
-                                        <div layout="row" layout-align="start start" flex>
-                                            <md-button class="md-mini md-primary expand-button"
-                                                       ng-click="expand(taskVal)" aria-label="expand-toogle">
-                                                <md-icon aria-label="notexpanded" ng-show="!taskVal.expanded"
-                                                         md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                                                </md-icon>
-                                                <md-icon ng-show="taskVal.expanded" aria-label="expanded"
-                                                         md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
-                                                </md-icon>
-                                            </md-button>
-                                        </div>
-                                    </div>
-                                    <div layout="row" ng-if="taskVal.expanded">
-
-                                    </div>
-                                    <div layout="row" class="task-footer">
-                                        <div flex   >
-                                        <span class="task-date">Дата создания: {{taskVal.dateCreated}}</span>
-                                        </div>
-                                        <div flex>
-                                        <span class="task-author">Автор: <a href="/users/{{users.indexOf(findUser(taskVal.author))}}">
-                                            {{findUser(taskVal.author).fullName}}</a></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <md-divider ng-if="!$last"></md-divider>
-                            </md-list-item>
-                        </md-list>
+                        <tasks-solve-list tasks-obj="tasks" skills-obj="skills" users-obj="users"></tasks-solve-list>
                     </div>
                     <div role="tabpanel"
                          aria-labelledby="tab2"

@@ -54,6 +54,7 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
         else if ((new RegExp('/users')).test(newVal)) $rootScope.navbarSelectedIndex = 3;
         else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
     });
+
 });
 
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope) {
@@ -75,8 +76,6 @@ app.controller('mainPageCtrl', function ($scope, $http) {
     });
     $http.get('models/tasks_list.json').success(function (data) {
         $scope.tasks = data;
-        $scope.lastExpandedTask = $scope.tasks[Object.keys($scope.tasks)[0]];
-        $scope.lastExpandedTask.expanded = false;
     });
     $http.get('models/solutions.json').success(function (data) {
         $scope.solutions = data;
@@ -84,21 +83,44 @@ app.controller('mainPageCtrl', function ($scope, $http) {
 
     $scope.selectedTab = 0;
 
-    $scope.findUser = function (id) {
-        for (var user in $scope.users)
-            if ($scope.users[user].id === id) return $scope.users[user];
-    };
-
-    $scope.expand = function (task) {
-        if ($scope.lastExpandedTask !== task) $scope.lastExpandedTask.expanded = false;
-        task.expanded = !task.expanded;
-        $scope.lastExpandedTask = task;
-    };
-
     $scope.next = function () {
         $scope.data.selectedIndex = Math.min($scope.data.selectedIndex + 1, $scope.tooltips.length - 1);
     };
     $scope.previous = function () {
         $scope.data.selectedIndex = Math.max($scope.data.selectedIndex - 1, 0);
     };
+});
+
+app.directive('tasksSolveList', function() {
+    return {
+        restrict: 'E',
+        templateUrl: '/front/templates/taskssolvelist.html',
+        replace: true,
+
+        scope: {
+            tasksObj: '=',
+            skillsObj: '=',
+            usersObj: '='
+        },
+
+        controller: function($scope) {
+            $scope.$watch('tasksObj', function(newVal, oldVal) {
+                if (newVal && !oldVal) {
+                    $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
+                    $scope.lastExpandedTask.expanded = false;
+                }
+            });
+
+            $scope.expand = function (task) {
+                if ($scope.lastExpandedTask !== task) $scope.lastExpandedTask.expanded = false;
+                task.expanded = !task.expanded;
+                $scope.lastExpandedTask = task;
+            };
+
+            $scope.findUser = function (id) {
+                for (var user in $scope.usersObj)
+                    if ($scope.usersObj[user].id === id) return $scope.usersObj[user];
+            };
+        }
+    }
 });

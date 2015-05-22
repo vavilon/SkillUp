@@ -136,7 +136,7 @@ pre {
     margin: 0px !important;
 }
 
-.task-description {
+/*.task-description {
     padding: 10px;
     padding-top: 14px;
     padding-bottom: 14px;
@@ -154,7 +154,7 @@ pre {
     border-radius: 3px 3px 0px 0px;
     border: 1px solid #BDBDBD;
     border-bottom: none;
-}
+}*/
 
 md-tabs-ink-bar {
     background-color: #E91E63 !important;
