@@ -68,18 +68,6 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 });
 
 app.controller('mainPageCtrl', function ($scope, $http) {
-    $http.get('models/skills.json').success(function (data) {
-        $scope.skills = data;
-    });
-    $http.get('models/users.json').success(function (data) {
-        $scope.users = data;
-    });
-    $http.get('models/tasks_list.json').success(function (data) {
-        $scope.tasks = data;
-    });
-    $http.get('models/solutions.json').success(function (data) {
-        $scope.solutions = data;
-    });
 
     $scope.selectedTab = 0;
 
@@ -97,18 +85,17 @@ app.directive('tasksSolveList', function() {
         templateUrl: '/front/templates/taskssolvelist.html',
         replace: true,
 
-        scope: {
-            tasksObj: '=',
-            skillsObj: '=',
-            usersObj: '='
-        },
-
-        controller: function($scope) {
-            $scope.$watch('tasksObj', function(newVal, oldVal) {
-                if (newVal && !oldVal) {
-                    $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
-                    $scope.lastExpandedTask.expanded = false;
-                }
+        controller: function($http, $scope) {
+            $http.get('models/skills.json').success(function (data) {
+                $scope.skillsObj = data;
+            });
+            $http.get('models/users.json').success(function (data) {
+                $scope.usersObj = data;
+            });
+            $http.get('models/tasks_list.json').success(function (data) {
+                $scope.tasksObj = data;
+                $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
+                $scope.lastExpandedTask.expanded = false;
             });
 
             $scope.expand = function (task) {
