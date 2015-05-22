@@ -35,10 +35,7 @@ var mustAuthenticated = function (req, res, next){
 
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/front', express.static(__dirname + '/front'));
-app.get('/models', express.static(__dirname + '/models'));
-app.use('/', function (req, res) {
-    res.sendFile(__dirname + '/front/index.html');
-});
+app.use('/models', express.static(__dirname + '/models'));
 //app.all('*', function (req, res) {
 //    res.sendFile(__dirname + '/front/index.html');
 //});
@@ -81,6 +78,9 @@ app.use(passport.session());
 app.post('/login', controllers.users.login);
 app.post('/register', controllers.users.register);
 app.get('/logout', controllers.users.logout);
+app.use('/', function (req, res) {
+    res.sendFile(__dirname + '/front/index.html');
+});
 
 //Для того, чтобы сохранять или доставать пользовательские данные из сессии, паспорт использует функции
 passport.serializeUser(function(user, done) {

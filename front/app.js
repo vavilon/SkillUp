@@ -59,6 +59,13 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
 
 });
 
+app.factory('getObjByID', function() {
+    return function(id, collection) {
+        for (var elem in collection)
+            if (collection[elem].id === id) return collection[elem];
+    }
+});
+
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope) {
     $http.get('models/users.json').success(function (data) {
         $scope.users = data;
@@ -81,11 +88,10 @@ app.controller('mainPageCtrl', function ($scope, $http) {
     };
 });
 
-app.directive('tasksSolveList', function() {
+app.directive('tasksSolveList', function(getObjByID) {
     return {
         restrict: 'E',
         templateUrl: '/front/templates/taskssolvelist.html',
-        replace: true,
 
         controller: function($http, $scope) {
             $http.get('models/skills.json').success(function (data) {
@@ -107,8 +113,13 @@ app.directive('tasksSolveList', function() {
             };
 
             $scope.findUser = function (id) {
-                for (var user in $scope.usersObj)
-                    if ($scope.usersObj[user].id === id) return $scope.usersObj[user];
+                return getObjByID(id, $scope.usersObj);
+            };
+            $scope.findSkill = function (id) {
+                return getObjByID(id, $scope.skillsObj);
+            };
+            $scope.findTask = function (id) {
+                return getObjByID(id, $scope.tasksObj);
             };
         }
     }

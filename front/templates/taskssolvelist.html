@@ -1,6 +1,6 @@
 <md-list layout="column">
     <md-list-item class="item-animate"
-                  ng-repeat="(taskKey, taskVal) in tasksObj">
+                  ng-repeat="taskVal in tasksObj">
         <div layout="column" flex>
             <div layout="row" class="task-header">
                 <div flex="10">
@@ -26,7 +26,7 @@
                         <md-button class="md-raised md-primary skill-button"
                                    aria-label="skillBtn"
                                    ng-repeat="skill in taskVal.skills">
-                            {{skillsObj[skill].title}}
+                            {{findSkill(skill).title}}
                         </md-button>
                     </div>
                 </div>
@@ -61,11 +61,11 @@
             </div>
             <div layout="row" class="task-footer">
                 <div flex>
-                    <span class="task-date">Дата создания: {{taskVal.dateCreated}}</span>
+                    <span class="task-date">Дата создания: {{taskVal.date_created}}</span>
                 </div>
                 <div flex>
             <span class="task-author">Автор: <a href="/users/{{usersObj.indexOf(findUser(taskVal.author))}}">
-                {{findUser(taskVal.author).fullName}}</a></span>
+                {{findUser(taskVal.author).name}}</a></span>
                 </div>
             </div>
         </div>
