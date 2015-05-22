@@ -51,3 +51,24 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http) {
         };
     }
 );
+
+app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location) {
+        $scope.register = function() {
+            $http.post('/register', { email: $scope.email, password: $scope.password })
+                .success(function (data) {
+                    $location.path(data);
+                    alert('You registered and logged in!');
+                });
+        }
+    }
+);
+app.controller('loginCtrl', function ($scope, $routeParams, $http, $location) {
+        $scope.login = function() {
+            $http.post('/login', { email: $scope.email, password: $scope.password })
+                .success(function (data) {
+                    $location.path(data);
+                    alert('You logged in!');
+                });
+        }
+    }
+);

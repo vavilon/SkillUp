@@ -102,7 +102,7 @@ function extendedSkills(skills) {
 app.controller('skillsCtrl', function ($scope, $http, $filter) {
     $http.get('/models/skills.json').success(function (skills) {
 
-        $http.get('models/users.json').success(function (data) {
+        $http.get('/models/users.json').success(function (data) {
             $scope.users = data;
         });
 
