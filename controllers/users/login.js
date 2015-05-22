@@ -13,9 +13,9 @@ module.exports = function(req, res, next) {
                     ? req.logIn(user, function(err) {
                         return err
                             ? next(err)
-                            : res.redirect('/users/1');
+                            : res.end('/users/1');
                     })
-                    : res.redirect('/main');
+                    : res.end('/main');
         }
     )(req, res, next);
 

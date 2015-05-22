@@ -20,8 +20,8 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
         .when('/skills', {templateUrl: '/front/skills/skills.html', controller: 'skillsCtrl'})
         .when('/users/:user_id', {templateUrl: '/front/users/one.html', controller: 'profileCtrl'})
         .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
-        .when('/registration', {templateUrl: '/front/users/registration.html'})
-        .when('/login', {templateUrl: '/front/users/login.html'})
+        .when('/registration', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
+        .when('/login', {templateUrl: '/front/users/login.html', controller: 'loginCtrl'})
         .otherwise({redirectTo: '/main'});
 
     $mdThemingProvider.theme('default')
@@ -102,5 +102,14 @@ app.controller('mainPageCtrl', function ($scope, $http) {
     };
     $scope.previous = function () {
         $scope.data.selectedIndex = Math.max($scope.data.selectedIndex - 1, 0);
+    };
+});
+
+app.controller('logoutCtrl', function ($scope, $http, $routeParams, $location) {
+    $scope.logout = function() {
+        $http.get('/logout').success(function (data) {
+            alert('You logged out!');
+            $location.path(data);
+        });
     };
 });
