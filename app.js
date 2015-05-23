@@ -22,6 +22,16 @@ var User = bookshelf.Model.extend({
         pswhash: ''
     }
 });
+var Skill = bookshelf.Model.extend({
+    tableName: 'skills'
+});
+var Task = bookshelf.Model.extend({
+    tableName: 'tasks'
+});
+var Solution = bookshelf.Model.extend({
+    tableName: 'solutions'
+});
+
 var bcrypt = require('bcryptjs');
 
 //app.all('*', function (req, res) {
@@ -32,6 +42,12 @@ var bcrypt = require('bcryptjs');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({
     extended: false
+}));
+app.use(bodyParser.json());
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true
 }));
 
 //Подключим и настроим стратегию авторизации
@@ -75,13 +91,6 @@ var mustAuthenticated = function (req, res, next){
         : res.end('/main');
 };
 
-app.use(bodyParser.json());
-app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true
-}));
-
 // Passport:
 app.use(passport.initialize());
 app.use(passport.session());
@@ -89,15 +98,36 @@ app.use(passport.session());
 
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/front', express.static(__dirname + '/front'));
-app.use('/models', function (req, res) {
-    req.isAuthenticated()
-        ? res.sendFile(__dirname + '/models' + req.path)
-        : res.end();
+app.use('/db', function (req, res) {
+    if (req.isAuthenticated()) {
+        if (req.path === '/skills') {
+            new Skill().fetchAll().then(function(model){
+                res.end(JSON.stringify(model));
+            });
+        }
+        else if (req.path === '/tasks') {
+            new Task().fetchAll().then(function(model){
+                res.end(JSON.stringify(model));
+            });
+        }
+        else if (req.path === '/users') {
+            new User().fetchAll().then(function(model){
+                res.end(JSON.stringify(model));
+            });
+        }
+        else if (req.path === '/solutions') {
+            new Solution().fetchAll().then(function(model){
+                res.end(JSON.stringify(model));
+            });
+        }
+    }
+    else res.end();
 });
 app.use('/is_logged_in', function (req, res) {
-    req.isAuthenticated()
-        ? res.end('Logged in!')
-        : res.end();
+    if (req.isAuthenticated()) {
+        res.end(JSON.stringify(req.user.attributes));
+    }
+    else res.end();
 });
 
 //Привяжем запросы к соответствующим контроллерам

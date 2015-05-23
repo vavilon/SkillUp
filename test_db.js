@@ -1,11 +1,16 @@
-//var fs = require('fs');
-//var obj = JSON.parse(fs.readFileSync(__dirname + '/models/skills.json', 'utf8'));
+var fs = require('fs');
+var obj = JSON.parse(fs.readFileSync('skills.json', 'utf8'));
 var uuid = require('uuid');
 var bcrypt = require('bcryptjs');
 var config = require(__dirname + '/config');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
 var temp;
+
+console.log(obj);
+knex('skills').insert(obj).then();
+
+/*
 var User = bookshelf.Model.extend({
     tableName: 'users',
     defaults: {
@@ -32,3 +37,4 @@ new User()
                 console.log(model.get('name'));
             });
     });
+*/

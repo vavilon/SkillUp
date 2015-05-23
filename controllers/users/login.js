@@ -10,9 +10,9 @@ module.exports = function(req, res, next) {
                 ? next(err)
                 : user
                     ? req.logIn(user, function(err) {
-                        return err
-                            ? next(err)
-                            : res.end('/users/1');
+                        if (err) return next(err);
+                        res.header('Access-Control-Allow-Credentials', true);
+                        return res.end('/users/1');
                     })
                     : res.end('/main');
         }

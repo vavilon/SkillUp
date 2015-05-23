@@ -2,11 +2,14 @@ var app = angular.module('skills', [
     'ngRoute',
     'ngMaterial',
     'ngAnimate',
-    'hljs'
+    'hljs',
+    'ngCookies'
 ]);
 
-app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider) {
+app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
+
+    $httpProvider.defaults.withCredentials = true;
 
     $routeProvider
         .when('/main', {templateUrl: '/front/main.html', controller: 'mainPageCtrl'})
@@ -56,19 +59,19 @@ app.factory('getObjByID', function() {
     }
 });
 
-//Вызывается при регистрации, входе и выходе
+//Вызывается в run, а также при регистрации, входе и выходе
 app.factory('getIsLoggedIn', function($rootScope, $http) {
     return function() {
         $http.get('/is_logged_in').success(function (data) {
-            $rootScope.isLoggedIn = data;
+            $rootScope.loggedUser = data;
         });
     }
 });
 
-//Вызывается, чтобы определить, что показывать в зависимости от того, вошел юзер или не вошел
+//Вызывается в ng-show или ng-if, чтобы определить, что показывать в зависимости от того, вошел юзер или не вошел
 app.factory('isLoggedIn', function($rootScope){
     return function() {
-        return $rootScope.isLoggedIn ? true : false;
+        return $rootScope.loggedUser ? true : false;
     }
 });
 
@@ -85,15 +88,15 @@ app.run(function($rootScope, $http, getIsLoggedIn) {
 });
 
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, isLoggedIn) {
-    $http.get('models/users.json').success(function (data) {
-        $scope.users = data;
-    });
-
     $scope.getSelectedIndex = function () {
         return $rootScope.navbarSelectedIndex;
     };
 
     $scope.isLoggedIn = isLoggedIn;
+    var n = 0;
+    $scope.loggedUser = function (){
+        return $rootScope.loggedUser;
+    };
 });
 
 app.controller('mainPageCtrl', function ($scope, $http) {
@@ -114,14 +117,15 @@ app.directive('tasksSolveList', function(getObjByID) {
         templateUrl: '/front/templates/taskssolvelist.html',
 
         controller: function($http, $scope) {
-            $http.get('models/skills.json').success(function (data) {
+            $http.get('db/skills').success(function (data) {
                 $scope.skillsObj = data;
             });
-            $http.get('models/users.json').success(function (data) {
+            $http.get('db/users').success(function (data) {
                 $scope.usersObj = data;
             });
-            $http.get('models/tasks_list.json').success(function (data) {
+            $http.get('db/tasks').success(function (data) {
                 $scope.tasksObj = data;
+                console.log(data);
                 $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
                 $scope.lastExpandedTask.expanded = false;
             });
