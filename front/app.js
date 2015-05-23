@@ -47,16 +47,6 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
     hljsServiceProvider.setOptions({
         tabReplace: '    '
     });
-}).run(function($rootScope) {
-    $rootScope.navbarSelectedIndex = 0;
-    $rootScope.$on('$locationChangeSuccess', function(obj, newVal, oldVal) {
-        if ((new RegExp('/main')).test(newVal)) $rootScope.navbarSelectedIndex = 0;
-        else if ((new RegExp('/skills')).test(newVal)) $rootScope.navbarSelectedIndex = 1;
-        else if ((new RegExp('/tasks')).test(newVal)) $rootScope.navbarSelectedIndex = 2;
-        else if ((new RegExp('/users')).test(newVal)) $rootScope.navbarSelectedIndex = 3;
-        else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
-    });
-
 });
 
 app.factory('getObjByID', function() {
@@ -66,7 +56,35 @@ app.factory('getObjByID', function() {
     }
 });
 
-app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope) {
+//Вызывается при регистрации, входе и выходе
+app.factory('getIsLoggedIn', function($rootScope, $http) {
+    return function() {
+        $http.get('/is_logged_in').success(function (data) {
+            $rootScope.isLoggedIn = data;
+        });
+    }
+});
+
+//Вызывается, чтобы определить, что показывать в зависимости от того, вошел юзер или не вошел
+app.factory('isLoggedIn', function($rootScope){
+    return function() {
+        return $rootScope.isLoggedIn ? true : false;
+    }
+});
+
+app.run(function($rootScope, $http, getIsLoggedIn) {
+    getIsLoggedIn();
+    $rootScope.navbarSelectedIndex = 0;
+    $rootScope.$on('$locationChangeSuccess', function(obj, newVal, oldVal) {
+        if ((new RegExp('/main')).test(newVal)) $rootScope.navbarSelectedIndex = 0;
+        else if ((new RegExp('/skills')).test(newVal)) $rootScope.navbarSelectedIndex = 1;
+        else if ((new RegExp('/tasks')).test(newVal)) $rootScope.navbarSelectedIndex = 2;
+        else if ((new RegExp('/users')).test(newVal)) $rootScope.navbarSelectedIndex = 3;
+        else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
+    });
+});
+
+app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, isLoggedIn) {
     $http.get('models/users.json').success(function (data) {
         $scope.users = data;
     });
@@ -74,6 +92,8 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
     $scope.getSelectedIndex = function () {
         return $rootScope.navbarSelectedIndex;
     };
+
+    $scope.isLoggedIn = isLoggedIn;
 });
 
 app.controller('mainPageCtrl', function ($scope, $http) {
@@ -125,11 +145,12 @@ app.directive('tasksSolveList', function(getObjByID) {
     }
 });
 
-app.controller('logoutCtrl', function ($scope, $http, $routeParams, $location) {
+app.controller('logoutCtrl', function ($scope, $http, $routeParams, $location, getIsLoggedIn) {
     $scope.logout = function() {
         $http.get('/logout').success(function (data) {
-            alert('You logged out!');
             $location.path(data);
+            getIsLoggedIn();
+            alert('You logged out!');
         });
     };
 });

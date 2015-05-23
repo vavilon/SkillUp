@@ -6,7 +6,6 @@ module.exports = function(req, res, next) {
 
     passport.authenticate('local',
         function(err, user) {
-            console.log('user:', user);
             return err
                 ? next(err)
                 : user

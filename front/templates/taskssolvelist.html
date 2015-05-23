@@ -64,7 +64,7 @@
                     <span class="task-date">Дата создания: {{taskVal.date_created}}</span>
                 </div>
                 <div flex>
-            <span class="task-author">Автор: <a href="/users/{{usersObj.indexOf(findUser(taskVal.author))}}">
+            <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">
                 {{findUser(taskVal.author).name}}</a></span>
                 </div>
             </div>

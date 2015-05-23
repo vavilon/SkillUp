@@ -49,14 +49,14 @@
             <div class="md-toolbar-tools" hide show-gt-md flex="65" flex-gt-lg="60">
                 <a href="/main"><h5 ng-class="{'navbar-active': getSelectedIndex() == 0}">
                     Главная</h5></a>
-                <a href="/skills"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
-                    умений</h5></a>
-                <a href="/tasks"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
-                    Задания</h5></a>
-                <a href="/users"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
-                    Пользователи</h5></a>
-                <a href="/competences"><h5 style="margin-right: 0px;" ng-class="{'navbar-active': getSelectedIndex() == 4}">
-                    Компетенции</h5></a>
+                    <a ng-show="isLoggedIn()" href="/skills"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
+                        умений</h5></a>
+                    <a ng-show="isLoggedIn()" href="/tasks"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
+                        Задания</h5></a>
+                    <a ng-show="isLoggedIn()" href="/users"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
+                        Пользователи</h5></a>
+                    <a ng-show="isLoggedIn()" href="/competences"><h5 style="margin-right: 0px;" ng-class="{'navbar-active': getSelectedIndex() == 4}">
+                        Компетенции</h5></a>
             </div>
             <div class="md-toolbar-tools" layout="row" layout-align="end center" flex>
                 <div flex layout="row" layout-align="end center">

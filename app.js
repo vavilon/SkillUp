@@ -24,21 +24,15 @@ var User = bookshelf.Model.extend({
 });
 var bcrypt = require('bcryptjs');
 
-
-//Проверка авторизации
-var mustAuthenticated = function (req, res, next){
-    req.isAuthenticated()
-        ? next()
-        : res.end('/main');
-};
-
-
-app.use('/bower_components', express.static(__dirname + '/bower_components'));
-app.use('/front', express.static(__dirname + '/front'));
-app.use('/models', express.static(__dirname + '/models'));
 //app.all('*', function (req, res) {
 //    res.sendFile(__dirname + '/front/index.html');
 //});
+
+// Middlewares, которые должны быть определены до passport:
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 
 //Подключим и настроим стратегию авторизации
 passport.use(new LocalStrategy({
@@ -58,30 +52,6 @@ passport.use(new LocalStrategy({
         });
 }));
 
-// Middlewares, которые должны быть определены до passport:
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-app.use(bodyParser.json());
-app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true
-}));
-
-// Passport:
-app.use(passport.initialize());
-app.use(passport.session());
-
-//Привяжем запросы к соответствующим контроллерам
-app.post('/login', controllers.users.login);
-app.post('/register', controllers.users.register);
-app.get('/logout', controllers.users.logout);
-app.use('/', function (req, res) {
-    res.sendFile(__dirname + '/front/index.html');
-});
-
 //Для того, чтобы сохранять или доставать пользовательские данные из сессии, паспорт использует функции
 passport.serializeUser(function(user, done) {
     done(null, user.id);
@@ -96,6 +66,46 @@ passport.deserializeUser(function(id, done) {
         .catch(function(err) {
             done(err);
         });
+});
+
+//Проверка авторизации
+var mustAuthenticated = function (req, res, next){
+    req.isAuthenticated()
+        ? next()
+        : res.end('/main');
+};
+
+app.use(bodyParser.json());
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true
+}));
+
+// Passport:
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.use('/bower_components', express.static(__dirname + '/bower_components'));
+app.use('/front', express.static(__dirname + '/front'));
+app.use('/models', function (req, res) {
+    req.isAuthenticated()
+        ? res.sendFile(__dirname + '/models' + req.path)
+        : res.end();
+});
+app.use('/is_logged_in', function (req, res) {
+    req.isAuthenticated()
+        ? res.end('Logged in!')
+        : res.end();
+});
+
+//Привяжем запросы к соответствующим контроллерам
+app.post('/login', controllers.users.login);
+app.post('/register', controllers.users.register);
+app.get('/logout', controllers.users.logout);
+app.use('/', function (req, res) {
+    res.sendFile(__dirname + '/front/index.html');
 });
 
 var server = app.listen(config.get('port'), function () {
