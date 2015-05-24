@@ -136,6 +136,21 @@ pre {
     margin: 0px !important;
 }
 
+.logout-button {
+    margin: 0 0 0 15px;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 17px;
+
+}
+
 /*.task-description {
     padding: 10px;
     padding-top: 14px;

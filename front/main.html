@@ -104,12 +104,39 @@
     .menu-tabs {
         border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
+
+    .slogan-header {
+        font-size: 70px;
+        margin: 0;
+        color: white;
+        text-shadow: 0 20px 20px #000;
+    }
+
+    .slogan-subheader {
+        color: white;
+        text-shadow: 0 10px 5px #000;
+    }
+
+    .register-area {
+        padding-left: 20px;
+    }
+
+    .register-button {
+        margin: 10px 0 0 0;
+    }
+
+    .promo-area {
+        background-image: url(/front/background.jpg);
+        background-size: cover;
+        padding-top: 5%;
+        padding-bottom: 5%;
+    }
 </style>
 
-<div style="position: relative; min-height: calc(100vh - 64px);">
-    <div layout="row">
+<div layout="column" style="position: relative; min-height: calc(100vh - 64px);">
+    <div layout="row" ng-class="{'promo-area': !isLoggedIn()}">
         <div flex="15" flex-md="5" hide-sm></div>
-        <div flex layout="column"
+        <div ng-if="isLoggedIn()" flex layout="column"
              style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
             <md-tabs class="menu-tabs" md-selected="selectedTab">
                 <md-tab>
@@ -304,6 +331,38 @@
                     </div>
                 </ng-switch>
             </md-content>
+        </div>
+        <div ng-if="!isLoggedIn()" flex layout="row">
+            <div layout="column" layout-align="center center" flex="60">
+                <h1 class="slogan-header">Прокачай свои навыки.</h1>
+                <h3 class="slogan-subheader">Решай задания, проверяй решения, знакомся с новыми людьми и получай профессиональные знания!</h3>
+            </div>
+            <div layout="column" flex="40" class="register-area">
+                <md-card>
+                    <md-card-content>
+                        <div layout="column">
+                <form>
+                    <md-input-container>
+                        <label>Никнейм</label>
+                        <input ng-model="nick">
+                    </md-input-container>
+                    <md-input-container>
+                        <label>E-mail</label>
+                        <input ng-model="email">
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Пароль</label>
+                        <input ng-model="password">
+                    </md-input-container>
+                </form>
+                <md-button class="md-raised md-primary md-hue-2 register-button"
+                           ng-href="/registration" aria-label="logout-btn">
+                    Зарегистрироваться
+                </md-button>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
         </div>
         <div flex="15" flex-md="5" hide-sm></div>
     </div>

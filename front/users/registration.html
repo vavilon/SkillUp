@@ -1,12 +1,59 @@
-<form>
-    <div class="form-group">
-        <label>Email</label>
-        <input type="text" class="form-control" ng-model="email">
+<div style="position: absolute; background-color: #3F51B5; height: 232px; width: 100%;"></div>
+<div layout="row">
+    <div flex="15" flex-md="5" hide-sm></div>
+    <div flex
+         style="margin-top: 30px; margin-bottom: 30px; z-index: 3;">
+        <md-card>
+            <md-subheader
+                          style="font-size: 20px; color: #3F51B5;
+                          margin: 0; text-align: center; letter-spacing: 2px;
+                          background-color: #EEEEEE">Регистрация</md-subheader>
+            <md-card-content>
+                <form>
+                    <div layout="row">
+                        <div layout="column" flex style="padding: 0 30px 0 20px;">
+                            <md-input-container>
+                                <label>Имя</label>
+                                <input ng-model="name">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Никнейм</label>
+                                <input ng-model="nick">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>E-mail</label>
+                                <input ng-model="email">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Пароль</label>
+                                <input type="password" ng-model="password">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Повторите пароль</label>
+                                <input type="password" ng-model="rePassword">
+                            </md-input-container>
+                            <div layout="row" layout-align="center center">
+                                <md-button class="md-raised md-primary md-hue-2 register-button"
+                                           ng-click="register()" aria-label="logout-btn">
+                                    Зарегистрироваться
+                                </md-button>
+                            </div>
+                        </div>
+                        <div layout="column" layout-align="center center" flex style="padding: 0 20px 0 30px;">
+                            <fieldset layout-fill>
+                                <legend style="text-align: center;">Войти через</legend>
+                                <div  layout="column">
+                                <md-button class="md-raised md-primary" ng-click="showSimpleToast()">Facebook</md-button>
+                                <md-button class="md-raised md-primary">ВКонтакте</md-button>
+                                    <md-button class="md-raised md-primary">Google</md-button>
+                                    <md-button class="md-raised md-primary">Github</md-button>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </form>
+            </md-card-content>
+        </md-card>
     </div>
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" class="form-control" ng-model="password">
-    </div>
-
-    <button ng-click="register()">Register</button>
-</form>
+    <div flex="15" flex-md="5" hide-sm></div>
+</div>

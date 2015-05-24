@@ -51,24 +51,45 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
     }
 );
 
-app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn) {
-        $scope.register = function() {
-            $http.post('/register', { email: $scope.email, password: $scope.password })
+app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn,
+                                             $mdToast, $animate) {
+        $scope.toastPosition = {
+            bottom: false,
+            top: true,
+            left: false,
+            right: true
+        };
+        $scope.getToastPosition = function () {
+            var s = Object.keys($scope.toastPosition)
+                .filter(function (pos) {
+                    return $scope.toastPosition[pos];
+                })
+                .join(' ');
+            console.log(s);
+            return s;
+        };
+
+        $scope.showSimpleToast = function () {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content('Вы успешно зарегистрированы!')
+                    .position($scope.getToastPosition())
+                    .hideDelay(3000)
+            );
+        };
+
+        $scope.register = function () {
+            $http.post('/register', {
+                nick: $scope.nick,
+                name: $scope.name,
+                email: $scope.email,
+                password: $scope.password
+            })
                 .success(function (data) {
-                    $location.path(data);
-                    getIsLoggedIn();
-                    alert('You registered and logged in!');
-                });
-        }
-    }
-);
-app.controller('loginCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn) {
-        $scope.login = function() {
-            $http.post('/login', { email: $scope.email, password: $scope.password })
-                .success(function (data) {
-                    $location.path(data);
-                    getIsLoggedIn();
-                    alert('You logged in!');
+                    getIsLoggedIn(function () {
+                        $location.path(data);
+                        $scope.showSimpleToast();
+                    });
                 });
         }
     }

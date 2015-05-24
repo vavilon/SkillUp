@@ -12,7 +12,7 @@ module.exports = function(req, res, next) {
                     ? req.logIn(user, function(err) {
                         if (err) return next(err);
                         res.header('Access-Control-Allow-Credentials', true);
-                        return res.end('/users/1');
+                        return res.end('/users/' + user.id);
                     })
                     : res.end('/main');
         }

@@ -98,6 +98,7 @@ app.use(passport.session());
 
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/front', express.static(__dirname + '/front'));
+
 app.use('/db', function (req, res) {
     if (req.isAuthenticated()) {
         if (req.path === '/skills') {
@@ -120,6 +121,12 @@ app.use('/db', function (req, res) {
                 res.end(JSON.stringify(model));
             });
         }
+    }
+    else res.end();
+});
+app.use('/avatars', function (req, res) {
+    if (req.isAuthenticated()) {
+        res.sendFile(__dirname + '/avatars' + req.path);
     }
     else res.end();
 });

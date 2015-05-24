@@ -61,7 +61,7 @@
             </div>
             <div layout="row" class="task-footer">
                 <div flex>
-                    <span class="task-date">Дата создания: {{taskVal.date_created}}</span>
+                    <span class="task-date">Дата создания: {{taskVal.date_created | date: 'dd.MM.yyyy'}}</span>
                 </div>
                 <div flex>
             <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">

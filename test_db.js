@@ -1,14 +1,13 @@
-var fs = require('fs');
-var obj = JSON.parse(fs.readFileSync('skills.json', 'utf8'));
-var uuid = require('uuid');
+//var fs = require('fs');
+//var obj = JSON.parse(fs.readFileSync('skills.json', 'utf8'));
+//var uuid = require('uuid');
 var bcrypt = require('bcryptjs');
-var config = require(__dirname + '/config');
-var knex = require('knex')(config.get('knex'));
-var bookshelf = require('bookshelf')(knex);
-var temp;
+//var config = require(__dirname + '/config');
+//var knex = require('knex')(config.get('knex'));
+//var bookshelf = require('bookshelf')(knex);
+//var temp;
 
-console.log(obj);
-knex('skills').insert(obj).then();
+console.log(bcrypt.hashSync('y'));
 
 /*
 var User = bookshelf.Model.extend({

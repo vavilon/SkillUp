@@ -34,7 +34,7 @@
 
 <body layout="row">
 <div layout="column" layout-fill tabindex="-1" role="main">
-    <md-toolbar class="md-hue-2" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);" ng-controller="navbarCtrl">
+    <md-toolbar class="md-hue-2" style="box-shadow: 0 2px 5px rgba(0,0,0,0.54);" ng-controller="navbarCtrl">
         <div layout="row" layout-align="space-between center">
             <div flex="50" flex-gt-md="15" layout="row">
                 <div class="md-toolbar-tools" flex="30" flex-md="25" hide-gt-md>
@@ -48,32 +48,47 @@
                 </div>
             </div>
             <div class="md-toolbar-tools" hide show-gt-md flex="65" flex-gt-lg="60">
-                <a href="/main"><h5 ng-class="{'navbar-active': getSelectedIndex() == 0}">
+                <a ng-if="isLoggedIn()" href="/main"><h5 ng-class="{'navbar-active': getSelectedIndex() == 0}">
                     Главная</h5></a>
-                    <a ng-show="isLoggedIn()" href="/skills"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
+                    <a ng-if="isLoggedIn()" href="/skills"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
                         умений</h5></a>
-                    <a ng-show="isLoggedIn()" href="/tasks"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
+                    <a ng-if="isLoggedIn()" href="/tasks"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
                         Задания</h5></a>
-                    <a ng-show="isLoggedIn()" href="/users"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
+                    <a ng-if="isLoggedIn()" href="/users"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
                         Пользователи</h5></a>
-                    <a ng-show="isLoggedIn()" href="/competences"><h5 style="margin-right: 0px;" ng-class="{'navbar-active': getSelectedIndex() == 4}">
+                    <a ng-if="isLoggedIn()" href="/competences"><h5 style="margin-right: 0px;"
+                                                                    ng-class="{'navbar-active': getSelectedIndex() == 4}">
                         Компетенции</h5></a>
             </div>
             <div class="md-toolbar-tools" layout="row" layout-align="end center" flex>
-                <div ng-show="isLoggedIn()" flex layout="row" layout-align="end center">
-                    <a href="/users/{{loggedUser().id}}">
-                        <h6 class="nickname" style="margin-right: 10px;">{{loggedUser().nick}}</h6>
+                <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
+                    <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
+                        <img alt="{{loggedUser().nick}}" class="avatar" ng-src='/avatars/{{loggedUser().avatar}}'>
+                            <h6 class="nickname" style="margin-left: 5px;">{{loggedUser().nick}}</h6>
                     </a>
-                    <img class="md-raised"
-                         src='/bower_components/material-design-icons/action/svg/design/ic_account_circle_24px.svg'>
+                    <md-button class="md-mini logout-button"
+                               ng-click="logout()" aria-label="logout-btn">
+                        <md-tooltip>Выйти</md-tooltip>
+                        <md-icon aria-label="logout-icon"
+                                 md-svg-src="/bower_components/material-design-icons/action/svg/design/ic_exit_to_app_24px.svg">
+                        </md-icon>
+                    </md-button>
+                </div>
+                <div ng-if="!isLoggedIn()" flex layout="row" layout-align="end center">
+                    <md-button class="md-raised md-primary md-hue-1"
+                               ng-href="/registration" aria-label="logout-btn">
+                        Регистрация
+                    </md-button>
+                    <md-button class="md-raised"
+                               style="color: rgba(0, 0, 0, 0.54); font-weight: 600"
+                               ng-click="showLoginDialog($event)" aria-label="logout-btn">
+                        Войти
+                    </md-button>
                 </div>
                 <div hide show-gt-lg flex="15"></div>
             </div>
         </div>
     </md-toolbar>
-    <a href="/registration">Registration</a>
-    <a href="/login">LogIn</a>
-    <button ng-click="logout()" ng-controller="logoutCtrl">LogOut</button>
     <md-content ng-view md-scroll-y flex style="background-color: #FAFAFA;"></md-content>
 </div>
 

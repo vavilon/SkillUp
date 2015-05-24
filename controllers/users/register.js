@@ -22,8 +22,8 @@ module.exports = function(req, res, next) {
         .then(function() {
             new User({'id': tempID})
                 .set({
-                    nick: req.body.email + " nick",
-                    name: req.body.email + " name",
+                    nick: req.body.nick,
+                    name: req.body.name,
                     email: req.body.email,
                     pswhash: bcrypt.hashSync(req.body.password)
                 })
@@ -32,7 +32,7 @@ module.exports = function(req, res, next) {
                     req.logIn(user, function(err) {
                         return err
                             ? next(err)
-                            : res.end('/users/1');
+                            : res.end('/users/' + user.id);
                     });
                 })
                 .catch(function(err) {

@@ -1,12 +1,24 @@
-<form>
-    <div class="form-group">
-        <label>Email</label>
-        <input type="text" class="form-control" ng-model="email">
-    </div>
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" class="form-control" ng-model="password">
-    </div>
-
-    <button ng-click="login()">Log In</button>
-</form>
+<md-dialog aria-label="Вход на сайт">
+    <form>
+        <md-dialog-content class="sticky-container">
+            <md-subheader class="md-sticky-no-effect"
+                          style="background-color: #E8EAF6; font-weight: 600; color: rgba(0, 0, 0, 0.54);">Вход на сайт</md-subheader>
+            <md-input-container style="margin: 0 20px 0 20px;">
+                <label>E-mail</label>
+                <input ng-model="email">
+            </md-input-container>
+            <md-input-container style="margin: 0 20px 0 20px;">
+                <label>Пароль</label>
+                <input ng-model="password">
+            </md-input-container>
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <md-button ng-click="answer()" class="md-primary">
+                Войти
+            </md-button>
+            <md-button ng-click="cancel()" class="md-primary">
+                Отмена
+            </md-button>
+        </div>
+    </form>
+</md-dialog>

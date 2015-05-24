@@ -24,7 +24,6 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
         .when('/users/:user_id', {templateUrl: '/front/users/one.html', controller: 'profileCtrl'})
         .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
         .when('/registration', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
-        .when('/login', {templateUrl: '/front/users/login.html', controller: 'loginCtrl'})
         .otherwise({redirectTo: '/main'});
 
 /*    $mdThemingProvider.theme('default')
@@ -61,9 +60,10 @@ app.factory('getObjByID', function() {
 
 //Вызывается в run, а также при регистрации, входе и выходе
 app.factory('getIsLoggedIn', function($rootScope, $http) {
-    return function() {
+    return function(callback) {
         $http.get('/is_logged_in').success(function (data) {
             $rootScope.loggedUser = data;
+            callback && callback();
         });
     }
 });
@@ -87,20 +87,65 @@ app.run(function($rootScope, $http, getIsLoggedIn) {
     });
 });
 
-app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, isLoggedIn) {
+app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope,
+                                       isLoggedIn, getIsLoggedIn, $mdDialog) {
     $scope.getSelectedIndex = function () {
         return $rootScope.navbarSelectedIndex;
     };
 
     $scope.isLoggedIn = isLoggedIn;
-    var n = 0;
+
     $scope.loggedUser = function (){
         return $rootScope.loggedUser;
     };
+
+    $scope.login = function(email, password) {
+        $http.post('/login', { email: email, password: password })
+            .success(function (data) {
+                getIsLoggedIn(function(){
+                    $location.path(data);
+                });
+            });
+    };
+
+    $scope.showLoginDialog = function(ev) {
+        $mdDialog.show({
+            controller: LoginDialogController,
+            templateUrl: '/front/users/login.html',
+            targetEvent: ev
+        })
+            .then(function(answer) {
+                if (answer) {
+                    $scope.login(answer.email, answer.password);
+                }
+            }, function() {
+            });
+    };
+
+    $scope.logout = function() {
+        $http.get('/logout').success(function (data) {
+            getIsLoggedIn(function(){
+                $location.path(data);
+            });
+        });
+    };
+
 });
 
-app.controller('mainPageCtrl', function ($scope, $http) {
+function LoginDialogController($scope, $mdDialog) {
+    $scope.hide = function() {
+        $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+        $mdDialog.cancel();
+    };
+    $scope.answer = function() {
+        var obj = {email: $scope.email, password: $scope.password};
+        $mdDialog.hide(obj);
+    };
+}
 
+app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn) {
     $scope.selectedTab = 0;
 
     $scope.next = function () {
@@ -109,6 +154,7 @@ app.controller('mainPageCtrl', function ($scope, $http) {
     $scope.previous = function () {
         $scope.data.selectedIndex = Math.max($scope.data.selectedIndex - 1, 0);
     };
+    $scope.isLoggedIn = isLoggedIn;
 });
 
 app.directive('tasksSolveList', function(getObjByID) {
@@ -125,7 +171,6 @@ app.directive('tasksSolveList', function(getObjByID) {
             });
             $http.get('db/tasks').success(function (data) {
                 $scope.tasksObj = data;
-                console.log(data);
                 $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
                 $scope.lastExpandedTask.expanded = false;
             });
@@ -147,14 +192,4 @@ app.directive('tasksSolveList', function(getObjByID) {
             };
         }
     }
-});
-
-app.controller('logoutCtrl', function ($scope, $http, $routeParams, $location, getIsLoggedIn) {
-    $scope.logout = function() {
-        $http.get('/logout').success(function (data) {
-            $location.path(data);
-            getIsLoggedIn();
-            alert('You logged out!');
-        });
-    };
 });
