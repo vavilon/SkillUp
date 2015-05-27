@@ -53,6 +53,10 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn,
                                              $mdToast, $animate) {
+        $scope.nick = $routeParams.nick;
+        $scope.email = $routeParams.email;
+        $scope.password = $routeParams.password;
+
         $scope.toastPosition = {
             bottom: false,
             top: true,
@@ -76,6 +80,12 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                     .position($scope.getToastPosition())
                     .hideDelay(3000)
             );
+        };
+
+        $scope.checkPasswords = function() {
+            if ($scope.password !== $scope.rePassword) {
+
+            }
         };
 
         $scope.register = function () {

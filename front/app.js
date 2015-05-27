@@ -6,7 +6,7 @@ var app = angular.module('skills', [
     'ngCookies'
 ]);
 
-app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
+    app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
 
     $httpProvider.defaults.withCredentials = true;
@@ -24,6 +24,8 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
         .when('/users/:user_id', {templateUrl: '/front/users/one.html', controller: 'profileCtrl'})
         .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
         .when('/registration', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
+        .when('/registration/:nick/:email/:password',
+        {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
         .otherwise({redirectTo: '/main'});
 
 /*    $mdThemingProvider.theme('default')
