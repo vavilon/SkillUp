@@ -53,9 +53,11 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn,
                                              $mdToast, $animate) {
-        $scope.nick = $routeParams.nick;
-        $scope.email = $routeParams.email;
-        $scope.password = $routeParams.password;
+        $scope.reg = {};
+
+        $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
+        $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
+        $scope.reg.password = $routeParams.password === '0' ? '' : $routeParams.password;
 
         $scope.toastPosition = {
             bottom: false,
@@ -82,18 +84,26 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             );
         };
 
-        $scope.checkPasswords = function() {
-            if ($scope.password !== $scope.rePassword) {
+        $scope.passwordsEqual = function() {
+            var err = {notequal: false};
+            if (!$scope.reg.password) return err;
+            if (!$scope.reg.rePassword) return err;
+            if ($scope.reg.password !== $scope.reg.rePassword) err.notequal = true;
+            return err;
+        };
+
+        $scope.checkRegInput = function() {
+            if ($scope.reg.password !== $scope.reg.rePassword) {
 
             }
         };
 
         $scope.register = function () {
             $http.post('/register', {
-                nick: $scope.nick,
-                name: $scope.name,
-                email: $scope.email,
-                password: $scope.password
+                nick: $scope.reg.nick,
+                name: $scope.reg.name,
+                email: $scope.reg.email,
+                password: $scope.reg.password
             })
                 .success(function (data) {
                     getIsLoggedIn(function () {

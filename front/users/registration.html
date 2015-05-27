@@ -9,28 +9,49 @@
                           margin: 0; text-align: center; letter-spacing: 2px;
                           background-color: #EEEEEE">Регистрация</md-subheader>
             <md-card-content>
-                <form>
+                <form name="regForm">
                     <div layout="row">
                         <div layout="column" flex style="padding: 0 30px 0 20px;">
                             <md-input-container>
                                 <label>Имя</label>
-                                <input ng-model="name" required>
+                                <input required ng-model="reg.name" name="nameN" md-maxlength="64">
+                                <div ng-messages="regForm.nameN.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                </div>
                             </md-input-container>
                             <md-input-container>
                                 <label>Никнейм</label>
-                                <input ng-model="nick" required>
+                                <input required ng-model="reg.nick" name="nickN" md-maxlength="32">
+                                <div ng-messages="regForm.nickN.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                </div>
                             </md-input-container>
                             <md-input-container>
                                 <label>E-mail</label>
-                                <input ng-model="email" required>
+                                <input required ng-model="reg.email" name="emailN" md-maxlength="128">
+                                <div ng-messages="regForm.emailN.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                </div>
                             </md-input-container>
                             <md-input-container>
                                 <label>Пароль</label>
-                                <input type="password" ng-model="password" required>
+                                <input required type="password" ng-model="reg.password" name="passwordN">
+                                <div ng-messages="regForm.passwordN.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                    <div ng-messages="passwordsEqual()">
+                                        <div ng-message="notequal">Пароли не совпадают</div>
+                                    </div>
+                                </div>
                             </md-input-container>
                             <md-input-container>
                                 <label>Повторите пароль</label>
-                                <input type="password" ng-model="rePassword" required>
+                                <input required type="password" ng-model="reg.rePassword" name="rePasswordN">
+                                <div ng-messages="regForm.rePasswordN.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                    <div ng-messages="passwordsEqual()">
+                                        <div ng-message="notequal">Пароли не совпадают</div>
+                                    </div>
+                                </div>
                             </md-input-container>
                             <div layout="row" layout-align="center center">
                                 <md-button class="md-raised md-primary md-hue-2 register-button"
@@ -43,8 +64,8 @@
                             <fieldset layout-fill>
                                 <legend style="text-align: center;">Войти через</legend>
                                 <div  layout="column">
-                                <md-button class="md-raised md-primary" ng-click="showSimpleToast()">Facebook</md-button>
-                                <md-button class="md-raised md-primary">ВКонтакте</md-button>
+                                    <md-button class="md-raised md-primary">Facebook</md-button>
+                                    <md-button class="md-raised md-primary">ВКонтакте</md-button>
                                     <md-button class="md-raised md-primary">Google</md-button>
                                     <md-button class="md-raised md-primary">Github</md-button>
                                 </div>

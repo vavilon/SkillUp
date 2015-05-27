@@ -3,7 +3,8 @@ var app = angular.module('skills', [
     'ngMaterial',
     'ngAnimate',
     'hljs',
-    'ngCookies'
+    'ngCookies',
+    'ngMessages'
 ]);
 
     app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
@@ -24,7 +25,7 @@ var app = angular.module('skills', [
         .when('/users/:user_id', {templateUrl: '/front/users/one.html', controller: 'profileCtrl'})
         .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
         .when('/registration', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
-        .when('/registration/:nick/:email/:password',
+        .when('/registration/nick/:nick/email/:email/password/:password*',
         {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
         .otherwise({redirectTo: '/main'});
 
@@ -135,20 +136,39 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 });
 
 function LoginDialogController($scope, $mdDialog) {
+    $scope.log = {};
+
     $scope.hide = function() {
+        $scope.log.email = 'loh';
+        $scope.log.password = 'loh';
         $mdDialog.hide();
     };
     $scope.cancel = function() {
-        $mdDialog.cancel();
+        $scope.log.email = 'loh';
+        $scope.log.password = 'loh';
+        $mdDialog.hide();
     };
     $scope.answer = function() {
-        var obj = {email: $scope.email, password: $scope.password};
+        console.log('asdasd');
+        if (!$scope.log.email || !$scope.log.password) return;
+        var obj = {email: $scope.log.email, password: $scope.log.password};
         $mdDialog.hide(obj);
     };
 }
 
-app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn) {
+app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location) {
     $scope.selectedTab = 0;
+    $scope.reg = {};
+
+    $http.get('db/skills').success(function (data) {
+        $scope.skillsObj = data;
+    });
+    $http.get('db/users').success(function (data) {
+        $scope.usersObj = data;
+    });
+    $http.get('db/tasks').success(function (data) {
+        $scope.tasksObj = data;
+    });
 
     $scope.next = function () {
         $scope.data.selectedIndex = Math.min($scope.data.selectedIndex + 1, $scope.tooltips.length - 1);
@@ -157,24 +177,34 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn) {
         $scope.data.selectedIndex = Math.max($scope.data.selectedIndex - 1, 0);
     };
     $scope.isLoggedIn = isLoggedIn;
+
+    $scope.registrationPath = "/registration/";
+
+    $scope.register = function() {
+        $scope.registrationPath += 'nick/' + ($scope.reg.nick || '0');
+        $scope.registrationPath += '/email/' + ($scope.reg.email || '0');
+        $scope.registrationPath += '/password/' + ($scope.reg.password || '0');
+        console.log($scope.registrationPath);
+        $location.path($scope.registrationPath);
+    };
 });
 
 app.directive('tasksSolveList', function(getObjByID) {
     return {
         restrict: 'E',
         templateUrl: '/front/templates/taskssolvelist.html',
+        scope: {
+            tasksObj: '=',
+            skillsObj: '=',
+            usersObj: '='
+        },
 
         controller: function($http, $scope) {
-            $http.get('db/skills').success(function (data) {
-                $scope.skillsObj = data;
-            });
-            $http.get('db/users').success(function (data) {
-                $scope.usersObj = data;
-            });
-            $http.get('db/tasks').success(function (data) {
-                $scope.tasksObj = data;
-                $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
-                $scope.lastExpandedTask.expanded = false;
+            $scope.$watch('tasksObj', function(newVal, oldVal) {
+                if (newVal && !oldVal) {
+                    $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
+                    $scope.lastExpandedTask.expanded = false;
+                }
             });
 
             $scope.expand = function (task) {

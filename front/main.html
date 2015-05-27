@@ -159,7 +159,7 @@
                          ng-switch-when="0"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <tasks-solve-list></tasks-solve-list>
+                        <tasks-solve-list tasks-obj="tasksObj" skills-obj="skillsObj" users-obj="usersObj"></tasks-solve-list>
                     </div>
                     <div role="tabpanel"
                          aria-labelledby="tab2"
@@ -343,19 +343,19 @@
                 <form>
                     <md-input-container>
                         <label>Никнейм</label>
-                        <input ng-model="nick">
+                        <input ng-model="reg.nick">
                     </md-input-container>
                     <md-input-container>
                         <label>E-mail</label>
-                        <input ng-model="email">
+                        <input ng-model="reg.email">
                     </md-input-container>
                     <md-input-container>
                         <label>Пароль</label>
-                        <input type="password" ng-model="password">
+                        <input type="password" ng-model="reg.password">
                     </md-input-container>
                 </form>
                 <md-button class="md-raised md-primary md-hue-2 register-button"
-                           ng-href="/registration/{{nick}}/{{email}}/{{password}}" aria-label="logout-btn">
+                           ng-click="register()" aria-label="logout-btn">
                     Зарегистрироваться
                 </md-button>
                         </div>
