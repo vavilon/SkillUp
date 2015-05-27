@@ -1,31 +1,24 @@
 app.controller('allTasksCtrl', function ($scope, $http, $mdSidenav) {
+    $scope.chips.readonlyTasks = false;
+    $scope.chips.tasksNames = [];
+
+    $scope.chips.readonlyTasks = false;
+    $scope.chips.tasksNames = [];
+
+    $scope.chips.readonlyTasks = false;
+    $scope.chips.tasksNames = [];
+
     $http.get('db/skills').success(function (skills) {
         $scope.skills = skills;
         $http.get('db/tasks').success(function (tasks) {
             $scope.tasks = tasks;
-            $scope.lastExpandedTask = $scope.tasks[Object.keys($scope.tasks)[0]];
-            $scope.lastExpandedTask.expanded = false;
-
-            $http.get('db/users').success(function (users) {
-                $scope.users = users;
-            });
         });
     });
 
-    $scope.findUser = function (id) {
-        for (var user in $scope.users)
-            if ($scope.users[user].id === id) return $scope.users[user];
-    };
-
-    $scope.expand = function (task) {
-        if ($scope.lastExpandedTask !== task) $scope.lastExpandedTask.expanded = false;
-        task.expanded = !task.expanded;
-        $scope.lastExpandedTask = task;
-    };
-
-    $scope.$watch('taskName', function (newval, oldval) {
-        if ($scope.lastExpandedTask) $scope.lastExpandedTask.expanded = false;
-    });
+    //TO DO: ЧИПСЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫЫ
+    //$scope.watch('chips.tasksNames', function(newVal) {
+    //
+    //});
 });
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, $rootScope) {
