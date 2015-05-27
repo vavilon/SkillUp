@@ -126,16 +126,6 @@ md-toolbar.demo-toolbar {
     color: rgba(0, 0, 0, 0.54);
 }
 
-.label-button {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-transform: none;
-    font-size: 14px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    padding: 3px;
-    padding-top: 1px;
-}
-
 code {
     white-space: pre-wrap !important;
     background-color: rgba(0, 0, 0, 0) !important;
@@ -146,7 +136,22 @@ pre {
     margin: 0px !important;
 }
 
-.task-description {
+.logout-button {
+    margin: 0 0 0 15px;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 17px;
+
+}
+
+/*.task-description {
     padding: 10px;
     padding-top: 14px;
     padding-bottom: 14px;
@@ -164,7 +169,7 @@ pre {
     border-radius: 3px 3px 0px 0px;
     border: 1px solid #BDBDBD;
     border-bottom: none;
-}
+}*/
 
 md-tabs-ink-bar {
     background-color: #E91E63 !important;

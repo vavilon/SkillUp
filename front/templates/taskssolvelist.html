@@ -1,0 +1,75 @@
+<md-list layout="column">
+    <md-list-item class="item-animate"
+                  ng-repeat="taskVal in tasksObj">
+        <div layout="column" flex>
+            <div layout="row" class="task-header">
+                <div flex="10">
+                    <div>
+                        <span class="diff-label easy" ng-if="$index < 7">ЛЕГКО</span>
+                        <span class="diff-label medium" ng-if="$index == 7">СРЕДНЕ</span>
+                        <span class="diff-label hard" ng-if="$index == 8">СЛОЖНО</span>
+                    </div>
+                </div>
+                <div flex="75">
+                    <h3 class="task-title"><a href>{{taskVal.title}}</a></h3>
+                </div>
+                <div flex>
+                    <p class="task-exp">exp: {{taskVal.exp | thousand}}</p>
+                </div>
+            </div>
+            <div layout="row" class="task-body">
+                <div layout="row" flex="85">
+                    <div flex="10">
+                        <span class="task-skills-word">Умения: </span>
+                    </div>
+                    <div layout="row" layout-wrap>
+                        <md-button class="md-raised md-primary skill-button"
+                                   aria-label="skillBtn"
+                                   ng-repeat="skill in taskVal.skills">
+                            {{findSkill(skill).title}}
+                        </md-button>
+                    </div>
+                </div>
+                <div layout="row" layout-align="start start" flex>
+                    <md-button class="md-mini md-primary expand-button"
+                               ng-click="expand(taskVal)" aria-label="expand-toogle">
+                        <md-icon aria-label="notexpanded" ng-show="!taskVal.expanded"
+                                 md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
+                        </md-icon>
+                        <md-icon ng-show="taskVal.expanded" aria-label="expanded"
+                                 md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
+                        </md-icon>
+                    </md-button>
+                </div>
+            </div>
+            <div class="animate-if" layout="column" ng-if="taskVal.expanded">
+                <md-card class="task-description-card">
+                    <md-card-content>
+                        <h2 class="md-title task-description-word">Условие</h2>
+
+                        <div class="task-description">
+                            {{taskVal.description}}
+                        </div>
+                        <form name="solutionForm">
+                            <md-input-container>
+                                <label>Ваше решение</label>
+                                <textarea></textarea>
+                            </md-input-container>
+                        </form>
+                    </md-card-content>
+                </md-card>
+            </div>
+            <div layout="row" class="task-footer">
+                <div flex>
+                    <span class="task-date">Дата создания: {{taskVal.date_created | date: 'dd.MM.yyyy'}}</span>
+                </div>
+                <div flex>
+            <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">
+                {{findUser(taskVal.author).name}}</a></span>
+                </div>
+            </div>
+        </div>
+
+        <md-divider ng-if="!$last"></md-divider>
+    </md-list-item>
+</md-list>

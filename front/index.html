@@ -10,12 +10,14 @@
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.css">
     <link rel="stylesheet" href="/front/styles.css">
 
+    <link href="/front/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="/bower_components/angular-route/angular-route.min.js"></script>
     <script src="/bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="/bower_components/hammerjs/hammer.js"></script>
     <script src="/bower_components/angular-material/angular-material.min.js"></script>
     <script src="/bower_components/angular-highlightjs/angular-highlightjs.js"></script>
@@ -32,7 +34,7 @@
 
 <body layout="row">
 <div layout="column" layout-fill tabindex="-1" role="main">
-    <md-toolbar class="md-hue-2" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);" ng-controller="navbarCtrl">
+    <md-toolbar class="md-hue-2" style="box-shadow: 0 2px 5px rgba(0,0,0,0.54);" ng-controller="navbarCtrl">
         <div layout="row" layout-align="space-between center">
             <div flex="50" flex-gt-md="15" layout="row">
                 <div class="md-toolbar-tools" flex="30" flex-md="25" hide-gt-md>
@@ -46,25 +48,42 @@
                 </div>
             </div>
             <div class="md-toolbar-tools" hide show-gt-md flex="65" flex-gt-lg="60">
-                <a href="/main"><h5 ng-class="{'navbar-active': getSelectedIndex() == 0}">
+                <a ng-if="isLoggedIn()" href="/main"><h5 ng-class="{'navbar-active': getSelectedIndex() == 0}">
                     Главная</h5></a>
-                <a href="/skills" ng-click="goToSkills()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
-                    умений</h5></a>
-                <a href="/tasks" ng-click="goToTasks()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
-                    Задания</h5></a>
-                <a href="/users" ng-click="goToUsers()"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
-                    Пользователи</h5></a>
-                <a href="/competences" ng-click="goToCompetences()"><h5 style="margin-right: 0px;"
-                                                         ng-class="{'navbar-active': getSelectedIndex() == 4}">
-                    Компетенции</h5></a>
+                    <a ng-if="isLoggedIn()" href="/skills"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
+                        умений</h5></a>
+                    <a ng-if="isLoggedIn()" href="/tasks"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
+                        Задания</h5></a>
+                    <a ng-if="isLoggedIn()" href="/users"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
+                        Пользователи</h5></a>
+                    <a ng-if="isLoggedIn()" href="/competences"><h5 style="margin-right: 0px;"
+                                                                    ng-class="{'navbar-active': getSelectedIndex() == 4}">
+                        Компетенции</h5></a>
             </div>
             <div class="md-toolbar-tools" layout="row" layout-align="end center" flex>
-                <div flex layout="row" layout-align="end center">
-                    <a href="/users/0">
-                        <h6 class="nickname" style="margin-right: 10px;">{{users[0].nickname}}</h6>
+                <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
+                    <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
+                        <img alt="{{loggedUser().nick}}" class="avatar" ng-src='/avatars/{{loggedUser().avatar}}'>
+                            <h6 class="nickname" style="margin-left: 5px;">{{loggedUser().nick}}</h6>
                     </a>
-                    <img class="md-raised"
-                         src='/bower_components/material-design-icons/action/svg/design/ic_account_circle_24px.svg'>
+                    <md-button class="md-mini logout-button"
+                               ng-click="logout()" aria-label="logout-btn">
+                        <md-tooltip>Выйти</md-tooltip>
+                        <md-icon aria-label="logout-icon"
+                                 md-svg-src="/bower_components/material-design-icons/action/svg/design/ic_exit_to_app_24px.svg">
+                        </md-icon>
+                    </md-button>
+                </div>
+                <div ng-if="!isLoggedIn()" flex layout="row" layout-align="end center">
+                    <md-button class="md-raised md-primary md-hue-1"
+                               ng-href="/registration" aria-label="logout-btn">
+                        Регистрация
+                    </md-button>
+                    <md-button class="md-raised"
+                               style="color: rgba(0, 0, 0, 0.54); font-weight: 600"
+                               ng-click="showLoginDialog($event)" aria-label="logout-btn">
+                        Войти
+                    </md-button>
                 </div>
                 <div hide show-gt-lg flex="15"></div>
             </div>

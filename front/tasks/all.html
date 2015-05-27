@@ -69,51 +69,6 @@
             </div>
         </div>
         <md-divider></md-divider>
-        <div>
-            <md-list>
-                <md-item class="animate" ng-repeat="(key, task) in tasks | objectByKeyValFilter: 'title': taskName">
-                    <md-item-content style="align-items: flex-start !important;">
-                        <div class="md-tile-content" layout="column">
-                            <div>
-                                <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{key}}"> {{task.title}}</a>
-                                </h3>
-
-                                <div class="my-subheader" style="float: right;">exp: {{task.exp | thousand}}</div>
-                            </div>
-                            <div>
-                                <h3 style="float: left; margin-right: 7px;  ">Умения:</h3>
-                                <md-button class="md-raised md-primary label-button" ng-repeat="skill in task.skills">
-                                    {{skills[skill].title}}
-                                </md-button>
-                            </div>
-                            <div class="my-show-hide-animation" ng-show="task.expanded">
-                                <div class="task-desc-header">
-                                    <h4 style="margin-bottom: 0px;">Условие</h4>
-                                </div>
-                                <div class="task-description">
-                                    {{task.description}}
-                                </div>
-                            </div>
-                            <div layout="row" layout-align="space-between center">
-                                <div class="my-subheader">Дата создания: {{task.dateCreated}}</div>
-                                <div class="my-subheader">
-                                    Автор: <a href="/users/{{users.indexOf(findUser(task.author))}}">{{findUser(task.author).fullName}}</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <md-button ng-click="expand(task)" style="margin: 20px" aria-label="expand">
-                                <img ng-show="!task.expanded"
-                                     src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                                <img ng-show="task.expanded"
-                                     src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
-                            </md-button>
-                            <br>
-                        </div>
-                    </md-item-content>
-                    <md-divider ng-if="!$last"></md-divider>
-                </md-item>
-            </md-list>
-        </div>
+        <tasks-solve-list></tasks-solve-list>
     </div>
 </div>

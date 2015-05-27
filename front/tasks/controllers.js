@@ -1,12 +1,12 @@
 app.controller('allTasksCtrl', function ($scope, $http, $mdSidenav) {
-    $http.get('models/skills.json').success(function (skills) {
+    $http.get('db/skills').success(function (skills) {
         $scope.skills = skills;
-        $http.get('models/tasks_list.json').success(function (tasks) {
+        $http.get('db/tasks').success(function (tasks) {
             $scope.tasks = tasks;
             $scope.lastExpandedTask = $scope.tasks[Object.keys($scope.tasks)[0]];
             $scope.lastExpandedTask.expanded = false;
 
-            $http.get('models/users.json').success(function (users) {
+            $http.get('db/users').success(function (users) {
                 $scope.users = users;
             });
         });
@@ -29,12 +29,12 @@ app.controller('allTasksCtrl', function ($scope, $http, $mdSidenav) {
 });
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, $rootScope) {
-        $http.get('models/skills.json').success(function (skills) {
+        $http.get('db/skills').success(function (skills) {
             $scope.skills = skills;
-            $http.get('models/tasks_list.json').success(function (tasks) {
+            $http.get('db/tasks').success(function (tasks) {
                 $scope.tasks = tasks;
                 $scope.task = tasks[$routeParams.task_id];
-                $http.get('models/users.json').success(function (users) {
+                $http.get('db/users').success(function (users) {
                     $scope.users = users;
                     for (var user in users)
                         if (users[user].id === $scope.task.author) $scope.author = users[user];

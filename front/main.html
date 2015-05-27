@@ -1,11 +1,144 @@
-<link rel="stylesheet" href="/front/styles.css">
 
-<div style="position: relative; min-height: calc(100vh - 64px);">
-    <div layout="row">
+<style>
+    .diff-label {
+        font-size: 14px;
+        font-weight: bold;
+        border: 1px solid;
+        border-radius: 4px;
+        padding: 1px 3px 1px 3px;
+        margin-right: 10px;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .diff-label.easy {
+        border-color: green;
+        color: green;
+    }
+
+    .diff-label.medium {
+        border-color: orange;
+        color: orange;
+    }
+
+    .diff-label.hard {
+        border-color: red;
+        color: red;
+    }
+
+    .task-title, .task-exp {
+        margin: 0;
+    }
+
+    .task-header {
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+
+    .task-skills-word {
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.54);
+    }
+
+    .task-body {
+    }
+
+    .task-description {
+
+    }
+
+    .task-description-card {
+        margin: 5px 0 10px 0;
+    }
+
+    .task-description-word {
+        margin: 0 0 10px 0;
+    }
+
+    .task-footer {
+        margin-bottom: 10px;
+    }
+
+    .task-date, .task-author {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.54);
+    }
+
+    .skill-button {
+        text-transform: none;
+        height: 19px;
+        padding: 1px 3px 2px 3px;
+        margin: 0 0 5px 5px;
+        min-width: 0;
+        min-height: 0;
+        line-height: normal;
+    }
+
+    .expand-button {
+        margin: 0;
+        padding: 0;
+        min-width: 0;
+        min-height: 0;
+        line-height: normal;
+    }
+
+    .animate-if.ng-enter, .animate-if.ng-leave {
+        -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+        transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    }
+
+    .animate-if.ng-enter,
+    .animate-if.ng-leave.ng-leave-active {
+        height: auto;
+        max-height: 0;
+        opacity:0;
+    }
+
+    .animate-if.ng-leave,
+    .animate-if.ng-enter.ng-enter-active {
+        display: block !important;
+        max-height: 300px;
+        overflow: hidden;
+        opacity:1;
+    }
+
+    .menu-tabs {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .slogan-header {
+        font-size: 70px;
+        margin: 0;
+        color: white;
+        text-shadow: 0 20px 20px #000;
+    }
+
+    .slogan-subheader {
+        color: white;
+        text-shadow: 0 10px 5px #000;
+    }
+
+    .register-area {
+        padding-left: 20px;
+    }
+
+    .register-button {
+        margin: 10px 0 0 0;
+    }
+
+    .promo-area {
+        background-image: url(/front/background.jpg);
+        background-size: cover;
+        padding-top: 5%;
+        padding-bottom: 5%;
+    }
+</style>
+
+<div layout="column" style="position: relative; min-height: calc(100vh - 64px);">
+    <div layout="row" ng-class="{'promo-area': !isLoggedIn()}">
         <div flex="15" flex-md="5" hide-sm></div>
-        <div flex layout="column"
+        <div ng-if="isLoggedIn()" flex layout="column"
              style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
-            <md-tabs md-selected="selectedTab">
+            <md-tabs class="menu-tabs" md-selected="selectedTab">
                 <md-tab>
                     Решить
                 </md-tab>
@@ -19,6 +152,7 @@
                     Создать
                 </md-tab>
             </md-tabs>
+
             <md-content style="min-height: 350px; max-height: calc(100vh - 175px);">
                 <ng-switch on="selectedTab">
                     <div role="tabpanel"
@@ -26,84 +160,7 @@
                          ng-switch-when="0"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <md-list layout="column">
-                            <md-item class="item-animate"
-                                     ng-repeat="(taskKey, taskVal) in tasks">
-                                <md-item-content style="align-items: flex-start !important;">
-                                    <div class="md-tile-content" layout="column">
-                                        <div>
-                                            <h3 style="float: left; margin-right: 20px"><a
-                                                    href="#">{{taskVal.title}}</a></h3>
-
-                                            <h3 style="float: left; color: #4CAF50">ЛЕГКО</h3>
-
-                                            <p style="float: right;">exp: {{taskVal.exp | thousand}}</p>
-                                        </div>
-                                        <div>
-                                            <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                            <md-button aria-label="skillBtn" class="md-raised md-primary label-button"
-                                                       ng-repeat="skill in taskVal.skills">
-                                                {{skills[skill].title}}
-                                            </md-button>
-                                        </div>
-                                        <div class="show-hide-list" ng-show="taskVal.expanded">
-                                            <div class="task-desc-header">
-                                                <h4 style="margin-bottom: 0px;">Условие</h4>
-                                            </div>
-                                            <div class="task-description">
-                                                {{taskVal.description}}
-                                            </div>
-                                        </div>
-                                        <div class="show-hide-list" ng-show="taskVal.expanded">
-                                            <div class="task-desc-header" style="background-color: #FCE4EC;">
-                                                <h4 style="margin-bottom: 0px;">Ваше решение</h4>
-                                            </div>
-                                            <div class="task-description" style="margin-top: 0px;">
-                                                <md-input-container flex>
-                                                    <label>Текст решения</label>
-                                                    <textarea style="min-height: 56px !important;"
-                                                              ng-model="taskSolution" multiple></textarea>
-                                                </md-input-container>
-                                                <div layout="row" layout-align="space-between center">
-                                                    <div layout="row">
-                                                        <md-button aria-label="attachFileBtn">
-                                                            <img style="opacity: 0.54;"
-                                                                 src="/bower_components/material-design-icons/editor/svg/design/ic_attach_file_18px.svg">
-                                                        </md-button>
-                                                        <md-button aria-label="insertImageBtn">
-                                                            <img style="opacity: 0.54;"
-                                                                 src="/bower_components/material-design-icons/editor/svg/design/ic_insert_photo_18px.svg">
-                                                        </md-button>
-                                                    </div>
-                                                    <div layout="row" layout-align="end center">
-                                                        <md-button class="md-raised" aria-label="sendSolutionBtn">
-                                                            Отправить
-                                                        </md-button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div layout="row">
-                                            <div class="my-subheader">Дата создания: {{taskVal.dateCreated}}</div>
-                                            <div class="my-subheader" style="margin-left: 20px;">Автор: <a
-                                                    href="/users/{{users.indexOf(findUser(taskVal.author))}}">{{findUser(taskVal.author).fullName}}</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <md-button ng-click="expand(taskVal)" style="margin: 20px"
-                                                   aria-label="expand">
-                                            <img ng-show="!taskVal.expanded"
-                                                 src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                                            <img ng-show="taskVal.expanded"
-                                                 src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
-                                        </md-button>
-                                        <br>
-                                    </div>
-                                </md-item-content>
-                                <md-divider ng-if="!$last"></md-divider>
-                            </md-item>
-                        </md-list>
+                        <tasks-solve-list></tasks-solve-list>
                     </div>
                     <div role="tabpanel"
                          aria-labelledby="tab2"
@@ -125,7 +182,7 @@
                                         </div>
                                         <div>
                                             <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                            <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
+                                            <md-button class="md-raised md-primary skill-button" aria-label="skillBtn"
                                                        ng-repeat="skill in tasks[solutionVal.taskID].skills">
                                                 {{skills[skill].title}}
                                             </md-button>
@@ -197,7 +254,7 @@
                                         </div>
                                         <div>
                                             <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                            <md-button class="md-raised md-primary label-button"
+                                            <md-button class="md-raised md-primary skill-button"
                                                        ng-repeat="skill in taskVal.skills" aria-label="skillBtn">
                                                 {{skills[skill].title}}
                                             </md-button>
@@ -274,6 +331,38 @@
                     </div>
                 </ng-switch>
             </md-content>
+        </div>
+        <div ng-if="!isLoggedIn()" flex layout="row">
+            <div layout="column" layout-align="center center" flex="60">
+                <h1 class="slogan-header">Прокачай свои навыки.</h1>
+                <h3 class="slogan-subheader">Решай задания, проверяй решения, знакомся с новыми людьми и получай профессиональные знания!</h3>
+            </div>
+            <div layout="column" flex="40" class="register-area">
+                <md-card>
+                    <md-card-content>
+                        <div layout="column">
+                <form>
+                    <md-input-container>
+                        <label>Никнейм</label>
+                        <input ng-model="nick">
+                    </md-input-container>
+                    <md-input-container>
+                        <label>E-mail</label>
+                        <input ng-model="email">
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Пароль</label>
+                        <input ng-model="password">
+                    </md-input-container>
+                </form>
+                <md-button class="md-raised md-primary md-hue-2 register-button"
+                           ng-href="/registration" aria-label="logout-btn">
+                    Зарегистрироваться
+                </md-button>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
         </div>
         <div flex="15" flex-md="5" hide-sm></div>
     </div>

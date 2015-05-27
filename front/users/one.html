@@ -9,7 +9,7 @@
                      style="width: 100%;">
             </div>
             <div style="padding-left: 2px;">
-                <h3 style="margin-bottom: 0px; margin-top: 10px;">{{user.fullName}}</h3>
+                <h3 style="margin-bottom: 0px; margin-top: 10px;">{{user.name}}</h3>
                 <h4 style="margin-top: 5px; margin-bottom: 0px; color: rgba(0,0,0,0.54); font-weight: normal;">exp:
                     {{user.exp | thousand}}</h4>
             </div>
@@ -32,7 +32,7 @@
             </div>
             <div>
                 <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
-                           ng-repeat="skill in user.skills">{{skills[skill].title}}
+                           ng-repeat="skill in user.skills">{{findSkill(skill).title}}
                 </md-button>
             </div>
 
@@ -43,7 +43,7 @@
             </div>
             <div>
                 <md-button class="md-raised md-accent md-hue-2 label-button" aria-label="skillBtn"
-                           ng-repeat="need in user.needs">{{skills[need].title}}
+                           ng-repeat="need in user.needs">{{findSkill(need).title}}
                 </md-button>
             </div>
 
@@ -55,10 +55,10 @@
         <div flex style="padding-left: 20px;">
             <div style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);">
                 <md-tabs md-selected="tabSelected">
-                    <md-tab>Решено: <span style="font-weight: bold;">{{user.tasksDone.length}}</span></md-tab>
-                    <md-tab>Проверено: <span style="font-weight: bold;">{{user.tasksChecked.length}}</span></md-tab>
-                    <md-tab>Подтверждено: <span style="font-weight: bold;">{{user.tasksApproved.length}}</span></md-tab>
-                    <md-tab>Создано: <span style="font-weight: bold;">{{user.tasksCreated.length}}</span></md-tab>
+                    <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length}}</span></md-tab>
+                    <md-tab>Проверено: <span style="font-weight: bold;">{{user.tasks_checked.length}}</span></md-tab>
+                    <md-tab>Подтверждено: <span style="font-weight: bold;">{{user.tasks_approved.length}}</span></md-tab>
+                    <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length}}</span></md-tab>
                 </md-tabs>
                 <md-content style="max-height: calc(100vh - 172px);">
                     <md-list>

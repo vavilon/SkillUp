@@ -2,11 +2,11 @@ app.controller('usersListCtrl', function ($scope, $http, $filter) {
     $scope.username = "";
     $scope.filteredUsers = [];
 
-    $http.get('models/users.json').success(function (data) {
+    $http.get('db/users').success(function (data) {
         $scope.users = data;
         $scope.lastExpandedUser = $scope.users[0];
     });
-    $http.get('/models/skills.json').success(function (data) {
+    $http.get('db/skills').success(function (data) {
         $scope.skills = data;
     });
 
@@ -29,25 +29,68 @@ app.controller('usersListCtrl', function ($scope, $http, $filter) {
     });
 });
 
-app.controller('profileCtrl', function ($scope, $routeParams, $http) {
-        $http.get('models/users.json').success(function (data) {
+app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID) {
+        $http.get('db/users').success(function (data) {
             $scope.users = data;
-            $scope.user = data[$routeParams.user_id];
+            $scope.user = getObjByID($routeParams.user_id, $scope.users);
         });
-        $http.get('models/skills.json').success(function (data) {
+        $http.get('db/skills').success(function (data) {
             $scope.skills = data;
         });
-        $http.get('models/tasks_list.json').success(function (data) {
+        $http.get('db/tasks').success(function (data) {
             $scope.tasks = data;
         });
-        $http.get('models/solutions.json').success(function (data) {
+        $http.get('db/solutions').success(function (data) {
             $scope.solutions = data;
         });
         $scope.tabSelected = 0;
 
-        $scope.findUser = function (id) {
-            for (var user in $scope.users)
-                if ($scope.users[user].id === id) return $scope.users[user];
+        $scope.findSkill = function (id) {
+            return getObjByID(id, $scope.skills);
         };
+    }
+);
+
+app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn,
+                                             $mdToast, $animate) {
+        $scope.toastPosition = {
+            bottom: false,
+            top: true,
+            left: false,
+            right: true
+        };
+        $scope.getToastPosition = function () {
+            var s = Object.keys($scope.toastPosition)
+                .filter(function (pos) {
+                    return $scope.toastPosition[pos];
+                })
+                .join(' ');
+            console.log(s);
+            return s;
+        };
+
+        $scope.showSimpleToast = function () {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content('Вы успешно зарегистрированы!')
+                    .position($scope.getToastPosition())
+                    .hideDelay(3000)
+            );
+        };
+
+        $scope.register = function () {
+            $http.post('/register', {
+                nick: $scope.nick,
+                name: $scope.name,
+                email: $scope.email,
+                password: $scope.password
+            })
+                .success(function (data) {
+                    getIsLoggedIn(function () {
+                        $location.path(data);
+                        $scope.showSimpleToast();
+                    });
+                });
+        }
     }
 );
