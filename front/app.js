@@ -66,7 +66,7 @@ app.factory('getIsLoggedIn', function($rootScope, $http) {
     return function(callback) {
         $http.get('/is_logged_in').success(function (data) {
             $rootScope.loggedUser = data;
-            callback && callback();
+            callback && callback(data);
         });
     }
 });
@@ -90,8 +90,10 @@ app.run(function($rootScope, $http, getIsLoggedIn) {
     });
 });
 
-app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope,
-                                       isLoggedIn, getIsLoggedIn, $mdDialog) {
+app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout,
+                                       isLoggedIn, getIsLoggedIn, $mdDialog, $mdToast) {
+    $scope.loginErr = {loginerr: false};
+
     $scope.getSelectedIndex = function () {
         return $rootScope.navbarSelectedIndex;
     };
@@ -102,10 +104,22 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
         return $rootScope.loggedUser;
     };
 
+    $rootScope.$watch('loginData', function(newVal) {
+        if (newVal) $scope.login(newVal.email, newVal.password);
+    });
+
     $scope.login = function(email, password) {
         $http.post('/login', { email: email, password: password })
             .success(function (data) {
-                getIsLoggedIn(function(){
+                if (!data) {
+                    $rootScope.loginErr = {loginerr: true};
+                    $timeout(function() {
+                        $rootScope.loginErr = {loginerr: false};
+                    }, 3000);
+                    return;
+                }
+                getIsLoggedIn(function(user){
+                    $mdDialog.hide();
                     $location.path(data);
                 });
             });
@@ -116,13 +130,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
             controller: LoginDialogController,
             templateUrl: '/front/users/login.html',
             targetEvent: ev
-        })
-            .then(function(answer) {
-                if (answer) {
-                    $scope.login(answer.email, answer.password);
-                }
-            }, function() {
-            });
+        });
     };
 
     $scope.logout = function() {
@@ -135,7 +143,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 
 });
 
-function LoginDialogController($scope, $mdDialog) {
+function LoginDialogController($scope, $mdDialog, $rootScope) {
     $scope.log = {};
 
     $scope.hide = function() {
@@ -149,11 +157,14 @@ function LoginDialogController($scope, $mdDialog) {
         $mdDialog.hide();
     };
     $scope.answer = function() {
-        console.log('asdasd');
         if (!$scope.log.email || !$scope.log.password) return;
-        var obj = {email: $scope.log.email, password: $scope.log.password};
-        $mdDialog.hide(obj);
+        $rootScope.loginData = {email: $scope.log.email, password: $scope.log.password};
     };
+
+    $scope.getLoginErr = function () {
+        return $rootScope.loginErr;
+    };
+
 }
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location) {

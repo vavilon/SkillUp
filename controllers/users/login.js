@@ -10,11 +10,12 @@ module.exports = function(req, res, next) {
                 ? next(err)
                 : user
                     ? req.logIn(user, function(err) {
+                        console.log('User with nick "' + user.attributes.nick + '" logged in!');
                         if (err) return next(err);
                         res.header('Access-Control-Allow-Credentials', true);
                         return res.end('/users/' + user.id);
                     })
-                    : res.end('/main');
+                    : res.end();
         }
     )(req, res, next);
 

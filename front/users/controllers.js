@@ -52,34 +52,18 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
 );
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn,
-                                             $mdToast, $animate) {
+                                             $mdToast, $animate, $timeout) {
         $scope.reg = {};
 
         $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
         $scope.reg.password = $routeParams.password === '0' ? '' : $routeParams.password;
 
-        $scope.toastPosition = {
-            bottom: false,
-            top: true,
-            left: false,
-            right: true
-        };
-        $scope.getToastPosition = function () {
-            var s = Object.keys($scope.toastPosition)
-                .filter(function (pos) {
-                    return $scope.toastPosition[pos];
-                })
-                .join(' ');
-            console.log(s);
-            return s;
-        };
-
         $scope.showSimpleToast = function () {
             $mdToast.show(
                 $mdToast.simple()
                     .content('Вы успешно зарегистрированы!')
-                    .position($scope.getToastPosition())
+                    .position('top left')
                     .hideDelay(3000)
             );
         };
@@ -106,6 +90,13 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 password: $scope.reg.password
             })
                 .success(function (data) {
+                    if (!data) {
+                        $scope.reg.error = true;
+                        $timeout(function() {
+                            $scope.reg.error = false;
+                        }, 5000);
+                        return;
+                    }
                     getIsLoggedIn(function () {
                         $location.path(data);
                         $scope.showSimpleToast();

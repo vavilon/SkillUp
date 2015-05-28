@@ -61,6 +61,7 @@
                             </div>
                         </div>
                         <div layout="column" layout-align="center center" flex style="padding: 0 20px 0 30px;">
+                            <span ng-if="reg.error" style="color: red;">Пользователь с таким ником уже зарегистрирован!</span>
                             <fieldset layout-fill>
                                 <legend style="text-align: center;">Войти через</legend>
                                 <div  layout="column">
