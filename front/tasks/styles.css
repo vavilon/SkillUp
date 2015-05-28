@@ -1,5 +1,4 @@
 /* all.html */
-
 .sortBy {
     margin-left: 5%;
 }
@@ -50,11 +49,6 @@
     opacity: 0;
 }
 
-.my-subheader {
-    font-size: 14px;
-    font-style: italic;
-    color: rgba(0, 0, 0, 0.54);
-}
 
 /* one.html */
 

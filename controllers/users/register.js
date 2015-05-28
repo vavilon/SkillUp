@@ -1,38 +1,28 @@
 var requireTree = require('require-tree');
 var config = requireTree('../../config');
 var knex = require('knex')(config.get('knex'));
-var bookshelf = require('bookshelf')(knex);
 var uuid = require('uuid');
-var tempID = '';
-var User = bookshelf.Model.extend({
-    tableName: 'users',
-    defaults: {
-        id: tempID = uuid.v4(),
-        nick: '',
-        name: '',
-        email: '',
-        pswhash: ''
-    }
-});
+
 var bcrypt = require('bcryptjs');
 
 module.exports = function(req, res, next) {
-    new User()
-        .save()
+
+    var u = {
+        id: uuid.v4(),
+        nick: req.body.nick,
+        name: req.body.name,
+        email: req.body.email,
+        pswhash: bcrypt.hashSync(req.body.password)
+    };
+
+    knex('users').insert(u)
         .then(function() {
-            new User({'id': tempID})
-                .set({
-                    nick: req.body.nick,
-                    name: req.body.name,
-                    email: req.body.email,
-                    pswhash: bcrypt.hashSync(req.body.password)
-                })
-                .save()
+            knex.select('*').from('users').where({id: u.id})
                 .then(function(user) {
-                    req.logIn(user, function(err) {
+                    req.logIn(user[0], function (err) {
                         return err
                             ? next(err)
-                            : res.end('/users/' + user.id);
+                            : res.end('/users/' + user[0].id);
                     });
                 })
                 .catch(function(err) {
@@ -40,7 +30,8 @@ module.exports = function(req, res, next) {
                 });
         })
         .catch(function(err) {
+            res.end();
             next(err);
-        })
-    ;
+        });
+
 };

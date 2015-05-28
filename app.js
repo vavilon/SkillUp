@@ -11,16 +11,9 @@ var config = require(__dirname + '/config');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
 var uuid = require('uuid');
-var tempID;
+
 var User = bookshelf.Model.extend({
-    tableName: 'users',
-    defaults: {
-        id: tempID = uuid.v4(),
-        nick: '',
-        name: '',
-        email: '',
-        pswhash: ''
-    }
+    tableName: 'users'
 });
 var Skill = bookshelf.Model.extend({
     tableName: 'skills'
@@ -126,7 +119,12 @@ app.use('/db', function (req, res) {
 });
 app.use('/avatars', function (req, res) {
     if (req.isAuthenticated()) {
-        res.sendFile(__dirname + '/avatars' + req.path);
+        try {
+            res.sendFile(__dirname + '/avatars' + req.path);
+        }
+        catch(e) {
+            console.log('Avatar not found!');
+        }
     }
     else res.end();
 });

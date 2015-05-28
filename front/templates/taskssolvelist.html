@@ -1,4 +1,4 @@
-<md-list layout="column">
+<md-list layout="column" ng-if="tasksObj">
     <md-list-item class="item-animate"
                   ng-repeat="taskVal in tasksObj">
         <div layout="column" flex>
@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div flex="75">
-                    <h3 class="task-title"><a href>{{taskVal.title}}</a></h3>
+                    <h3 class="task-title"><a href="tasks/{{taskVal.id}}">{{taskVal.title}}</a></h3>
                 </div>
                 <div flex>
                     <p class="task-exp">exp: {{taskVal.exp | thousand}}</p>

@@ -1,15 +1,18 @@
-<md-dialog aria-label="Вход на сайт">
-    <form>
+<md-dialog aria-label="Вход на сайт" style="width: 20%;">
+    <form name="logForm">
         <md-dialog-content class="sticky-container">
             <md-subheader class="md-sticky-no-effect"
                           style="background-color: #E8EAF6; font-weight: 600; color: rgba(0, 0, 0, 0.54);">Вход на сайт</md-subheader>
             <md-input-container style="margin: 0 20px 0 20px;">
                 <label>E-mail</label>
-                <input ng-model="email">
+                <input ng-model="log.email" name="emailN" required>
+                <div ng-messages="getLoginErr()">
+                    <div ng-message="loginerr">Неправильный email или пароль</div>
+                </div>
             </md-input-container>
             <md-input-container style="margin: 0 20px 0 20px;">
                 <label>Пароль</label>
-                <input ng-model="password">
+                <input ng-model="log.password" name="passwordN" type="password" required>
             </md-input-container>
         </md-dialog-content>
         <div class="md-actions" layout="row">

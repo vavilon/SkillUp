@@ -171,6 +171,133 @@ pre {
     border-bottom: none;
 }*/
 
-md-tabs-ink-bar {
-    background-color: #E91E63 !important;
+.diff-label {
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 1px 3px 1px 3px;
+    margin-right: 10px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.diff-label.easy {
+    border-color: green;
+    color: green;
+}
+
+.diff-label.medium {
+    border-color: orange;
+    color: orange;
+}
+
+.diff-label.hard {
+    border-color: red;
+    color: red;
+}
+
+.task-title, .task-exp {
+    margin: 0;
+}
+
+.task-header {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.task-skills-word {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.task-body {
+}
+
+.task-description {
+
+}
+
+.task-description-card {
+    margin: 5px 0 10px 0;
+}
+
+.task-description-word {
+    margin: 0 0 10px 0;
+}
+
+.task-footer {
+    margin-bottom: 10px;
+}
+
+.task-date, .task-author {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.skill-button {
+    text-transform: none;
+    height: 19px;
+    padding: 1px 3px 2px 3px;
+    margin: 0 0 5px 5px;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+}
+
+.expand-button {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+}
+
+.animate-if.ng-enter, .animate-if.ng-leave {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+}
+
+.animate-if.ng-enter,
+.animate-if.ng-leave.ng-leave-active {
+    height: auto;
+    max-height: 0;
+    opacity:0;
+}
+
+.animate-if.ng-leave,
+.animate-if.ng-enter.ng-enter-active {
+    display: block !important;
+    max-height: 300px;
+    overflow: hidden;
+    opacity:1;
+}
+
+.menu-tabs {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.slogan-header {
+    font-size: 70px;
+    margin: 0;
+    color: white;
+    text-shadow: 0 10px 20px #000;
+}
+
+.slogan-subheader {
+    color: white;
+    text-shadow: 0 5px 10px #000;
+}
+
+.register-area {
+    padding-left: 20px;
+}
+
+.register-button {
+    margin: 10px 0 0 0;
+}
+
+.promo-area {
+    background-color: #3949AB;
+    padding-top: 5%;
+    padding-bottom: 5%;
 }
