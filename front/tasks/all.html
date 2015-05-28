@@ -2,39 +2,15 @@
 
 <div layout="row" flex style="min-height: calc(100vh - 64px);">
     <div class="md-whiteframe-z2" flex="20" style="padding: 16px; z-index: 1; background-color: #FAFAFA;">
-        <form name="filterByName">
-            <md-input-container>
-                <label>Название задания</label>
-                <input type="text" ng-model="taskName"/>
-            </md-input-container>
-            <div layout="row" layout-align="center center">
-                <md-input-container flex="85">
-                    <label>Умения</label>
-                    <input type="text" ng-model="skillName" name="skillsFilter"/>
-                </md-input-container>
-                <div></div>
-                <md-button class="md-primary" style="height: 50%" flex="15" layout-align="center center"
-                           aria-label="filter_add_skill">
-                    <img src="/bower_components/material-design-icons/content/svg/design/ic_add_24px.svg"/>
-                </md-button>
-            </div>
-            <div layout="row" layout-align="center center">
-                <md-input-container flex="85">
-                    <label>Автор</label>
-                    <input type="text" ng-model="skillName" name="skillsFilter"/>
-                </md-input-container>
-                <div></div>
-                <md-button class="md-primary" style="height: 50%" flex="15" layout-align="center center"
-                           aria-label="filter_add_author">
-                    <img src="/bower_components/material-design-icons/content/svg/design/ic_add_24px.svg"/>
-                </md-button>
-            </div>
-            <div style="margin-left: 5%">
-                <md-checkbox class="md-accent" ng-model="hideUnconfirmed" ng-init="hideUnconfirmed=true">Скрывать
-                    неподтвержденные
-                </md-checkbox>
-            </div>
-        </form>
+        <md-chips ng-model="chips.tasksNames" readonly="chips.readonlyTasks"></md-chips>
+        <md-chips ng-model="chips.skillsNames" readonly="chips.readonlySkills"></md-chips>
+        <md-chips ng-model="chips.authorsNames" readonly="chips.readonlyAuthors"></md-chips>
+
+        <div>
+            <md-checkbox class="md-accent" ng-model="hideUnconfirmed" ng-init="hideUnconfirmed=false">
+                Неподтвержденные
+            </md-checkbox>
+        </div>
     </div>
 
     <div layout="column" layout-fill class="md-whiteframe-z2" style="background-color: #fff; ">
