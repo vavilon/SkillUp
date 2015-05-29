@@ -78,6 +78,12 @@ app.factory('isLoggedIn', function($rootScope){
     }
 });
 
+app.factory('loggedUser', function($rootScope) {
+    return function() {
+        return $rootScope.loggedUser;
+    }
+});
+
 app.run(function($rootScope, $http, getIsLoggedIn) {
     getIsLoggedIn();
     $rootScope.navbarSelectedIndex = 0;
@@ -91,7 +97,7 @@ app.run(function($rootScope, $http, getIsLoggedIn) {
 });
 
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout,
-                                       isLoggedIn, getIsLoggedIn, $mdDialog, $mdToast) {
+                                       isLoggedIn, getIsLoggedIn, $mdDialog, $mdToast, loggedUser) {
     $scope.loginErr = {loginerr: false};
 
     $scope.getSelectedIndex = function () {
@@ -100,9 +106,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 
     $scope.isLoggedIn = isLoggedIn;
 
-    $scope.loggedUser = function (){
-        return $rootScope.loggedUser;
-    };
+    $scope.loggedUser = loggedUser;
 
     $rootScope.$watch('loginData', function(newVal) {
         if (newVal) $scope.login(newVal.email, newVal.password);

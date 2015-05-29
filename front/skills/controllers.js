@@ -18,7 +18,17 @@
  *                      id          (string)  id скилла
  *
  */
-function extendedSkills(skills) {
+
+function arrToObj(skillArr) {
+    var res = {};
+    for (var i = 0; i < skillArr.length; i++) {
+        res[skillArr[i].id] = skillArr[i];
+        delete res[skillArr[i].id].id;
+    }
+    return res;
+}
+
+function ExtendedSkills(skills) {
     this.leaves = []; //хранит ССЫЛКИ (не id) на все листья
     this.skills = {}; //объект, в котором свойствами являются скиллы
 
@@ -96,15 +106,13 @@ function extendedSkills(skills) {
         for (var prop in this) console.log(this[prop]);
     };
 
-    this.root = this.skills['root'];
+    this.root = this.skills['da401de4-c1fa-48ca-b217-6641eb3c963e'];
 }
 
-app.controller('skillsCtrl', function ($scope, $http, $filter) {
+app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope) {
     $http.get('db/skills').success(function (skills) {
 
-        $http.get('db/users').success(function (data) {
-            $scope.users = data;
-        });
+        $scope.user = $rootScope.loggedUser;
 
         $scope.skillTitle = "";
         $scope.filteredSkills = [];
@@ -112,7 +120,7 @@ app.controller('skillsCtrl', function ($scope, $http, $filter) {
         $scope.highlightSkills = true;
         $scope.highlightNeeds = true;
 
-        $scope.exs = new extendedSkills(skills);
+        $scope.exs = new ExtendedSkills(arrToObj(skills));
 
         $scope.toogleExpandedForAll = function (expand) {
             for (var skill in $scope.exs.skills) {
@@ -127,11 +135,11 @@ app.controller('skillsCtrl', function ($scope, $http, $filter) {
         };
 
         $scope.isInUserSkills = function (skill) {
-            return angular.isUndefined($scope.users) || (_.includes($scope.users[0].skills, skill.id));
+            return _.includes($scope.user.skills, skill.id);
         };
 
         $scope.isInUserNeeds = function (skill) {
-            return angular.isUndefined($scope.users) || (_.includes($scope.users[0].needs, skill.id));
+            return _.includes($scope.user.needs, skill.id);
         };
 
         $scope.$watch('skillTitle', function (newval, oldval) {

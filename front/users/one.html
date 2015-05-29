@@ -4,8 +4,9 @@
     <div layout="row" flex="30">
         <div flex="35"></div>
         <div layout="column" flex>
-            <div style="border-radius: 4px; border: 2px solid #e0e0e0;">
-                <img src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
+            <div style="box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: white;" layout="row" layout-align="center center">
+                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' style="width: 100%">
+                <img ng-if="!user.avatar" src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
                      style="width: 100%;">
             </div>
             <div style="padding-left: 2px;">
@@ -31,7 +32,7 @@
                 <h4 style="margin: 0px; margin-bottom: 5px;">Умею</h4>
             </div>
             <div>
-                <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
+                <md-button class="md-raised md-primary skill-button" aria-label="skillBtn"
                            ng-repeat="skill in user.skills">{{findSkill(skill).title}}
                 </md-button>
             </div>
@@ -42,7 +43,7 @@
                 <h4 style="margin: 0px; margin-bottom: 5px;">Хочу</h4>
             </div>
             <div>
-                <md-button class="md-raised md-accent md-hue-2 label-button" aria-label="skillBtn"
+                <md-button class="md-raised md-accent skill-button" aria-label="skillBtn"
                            ng-repeat="need in user.needs">{{findSkill(need).title}}
                 </md-button>
             </div>

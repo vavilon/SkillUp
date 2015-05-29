@@ -1,4 +1,4 @@
-app.controller('usersListCtrl', function ($scope, $http, $filter) {
+app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
     $scope.username = "";
     $scope.filteredUsers = [];
 
@@ -9,6 +9,10 @@ app.controller('usersListCtrl', function ($scope, $http, $filter) {
     $http.get('db/skills').success(function (data) {
         $scope.skills = data;
     });
+
+    $scope.findSkill = function (id) {
+        return getObjByID(id, $scope.skills);
+    };
 
     var orderBy = $filter('orderBy');
 
@@ -43,6 +47,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
         $http.get('db/solutions').success(function (data) {
             $scope.solutions = data;
         });
+
         $scope.tabSelected = 0;
 
         $scope.findSkill = function (id) {
@@ -68,7 +73,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             );
         };
 
-        $scope.passwordsEqual = function() {
+        $scope.passwordsEqual = function () {
             var err = {notequal: false};
             if (!$scope.reg.password) return err;
             if (!$scope.reg.rePassword) return err;
@@ -76,7 +81,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             return err;
         };
 
-        $scope.checkRegInput = function() {
+        $scope.checkRegInput = function () {
             if ($scope.reg.password !== $scope.reg.rePassword) {
 
             }
@@ -92,7 +97,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 .success(function (data) {
                     if (!data) {
                         $scope.reg.error = true;
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.reg.error = false;
                         }, 5000);
                         return;

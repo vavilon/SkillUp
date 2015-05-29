@@ -147,7 +147,7 @@ pre {
 .avatar {
     width: 34px;
     height: 34px;
-    border-radius: 17px;
+    border-radius: 50%;
 
 }
 
@@ -300,4 +300,13 @@ pre {
     background-color: #3949AB;
     padding-top: 5%;
     padding-bottom: 5%;
+}
+
+.rotate-base {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+}
+
+.rotate-base.rotate-btn {
+    transform: rotate(180deg);
 }

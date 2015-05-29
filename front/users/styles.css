@@ -1,86 +1,40 @@
-/* all.html */
-
-.face {
-    border-radius: 30px;
-    border: 1px solid #ddd;
-    width: 48px;
-    margin: 16px;
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
 
-md-toolbar.demo-toolbar {
-    background: rgba(0, 0, 0, 0.12) !important;
+.user-name {
+    color: #283593;
+    font-weight: 600;
+    text-decoration: none;
+}
+.user-name:hover {
+    text-decoration: underline;
+}
+.user-name:visited {
+    color: #283593;
+}
+
+.user-nick {
+    color: #1A237E !important;
+}
+
+.ican {
     color: rgba(0, 0, 0, 0.54);
+    font-weight: 600;
 }
 
-.animate.ng-enter,
-.animate.ng-leave {
-    -webkit-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    -moz-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    -ms-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    -o-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    display: block !important;
-    overflow: hidden;
-}
-
-.animate.ng-leave.animate.ng-leave-active,
-.animate.ng-enter {
-    opacity: 0;
-    height: auto;
-    max-height: 0;
-}
-
-.animate.ng-enter.ng-enter-active,
-.animate.ng-leave {
-    opacity: 1;
-    max-height: 200px;
-}
-
-.my-show-hide-animation.ng-hide-add,
-.my-show-hide-animation.ng-hide-remove {
-    -webkit-transition: 500ms linear all;
-    transition: 500ms linear all;
-
-    /* remember to add this */
-    display: block !important;
-    max-height: 250px;
-    overflow: hidden;
-    opacity: 1;
-}
-
-.my-show-hide-animation.ng-hide {
-    height: auto;
-    max-height: 0;
-    opacity: 0;
-}
-
-.md-toolbar-tools md-input-container .md-placeholder {
-    top: -18px;
-}
-
-.md-tile-content p {
-    margin: 0px;
-}
-
-/* one.html */
-
-.info-length-aria {
-    padding-left: 2px;
-    padding-right: 5px;
-}
-
-.info-length-aria h5 {
-    margin-top: 0px;
-    margin-bottom: 10px;
-    font-weight: normal;
-}
-
-md-tabs-ink-bar {
-    background-color: #E91E63 !important;
-}
-
-.my-subheader {
+.count-button {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.54);
-    margin-right: 30px;
+    margin: 0 20px 0 5px;
+    padding: 0 5px 0 5px;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+}
+
+.count-icon {
+    width: 20px;
+    height: 20px;
 }

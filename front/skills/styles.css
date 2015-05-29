@@ -1,21 +1,23 @@
 /* skills.html */
 
-.my-show-hide-animation.ng-hide-add,
-.my-show-hide-animation.ng-hide-remove {
-    -webkit-transition: 500ms linear all;
-    transition: 500ms linear all;
-
-    /* remember to add this */
-    display: block !important;
-    max-height: 2000px;
-    overflow: hidden;
-    opacity: 1;
+.animate-if-skill.ng-enter, .animate-if-skill.ng-leave {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 
-.my-show-hide-animation.ng-hide {
+.animate-if-skill.ng-enter,
+.animate-if-skill.ng-leave.ng-leave-active {
     height: auto;
     max-height: 0;
-    opacity: 0;
+    opacity:0;
+}
+
+.animate-if-skill.ng-leave,
+.animate-if-skill.ng-enter.ng-enter-active {
+    display: block !important;
+    max-height: 1000px;
+    overflow: hidden;
+    opacity:1;
 }
 
 .exs-root {
