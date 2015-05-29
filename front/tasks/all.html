@@ -2,9 +2,38 @@
 
 <div layout="row" flex style="min-height: calc(100vh - 64px);">
     <div class="md-whiteframe-z2" flex="20" style="padding: 16px; z-index: 1; background-color: #FAFAFA;">
-        <md-chips ng-model="chips.tasksNames" readonly="chips.readonlyTasks"></md-chips>
-        <md-chips ng-model="chips.skillsNames" readonly="chips.readonlySkills"></md-chips>
-        <md-chips ng-model="chips.authorsNames" readonly="chips.readonlyAuthors"></md-chips>
+        <md-chips ng-model="chips.selectedTasks" md-autocomplete-snap md-require-match>
+            <md-autocomplete
+                    md-selected-item="chips.selectedTask"
+                    md-search-text="chips.searchTextTasks"
+                    md-items="task in chips.tasksQuerySearch(chips.searchTextTasks)"
+                    md-item-text="task"
+                    placeholder="Поиск по названию">
+                <span md-highlight-text="chips.searchTextTasks">{{task}}</span>
+            </md-autocomplete>
+        </md-chips>
+
+        <md-chips ng-model="chips.selectedSkills" md-autocomplete-snap md-require-match>
+            <md-autocomplete
+                    md-selected-item="chips.selectedSkill"
+                    md-search-text="chips.searchTextSkills"
+                    md-items="skill in chips.skillsQuerySearch(chips.searchTextSkills)"
+                    md-item-text="skill"
+                    placeholder="Поиск по умениям">
+                <span md-highlight-text="chips.searchTextSkills">{{skill}}</span>
+            </md-autocomplete>
+        </md-chips>
+
+        <md-chips ng-model="chips.selectedAuthors" md-autocomplete-snap md-require-match>
+            <md-autocomplete
+                    md-selected-item="chips.selectedAuthor"
+                    md-search-text="chips.searchTextAuthors"
+                    md-items="author in chips.authorsQuerySearch(chips.searchTextAuthors)"
+                    md-item-text="author"
+                    placeholder="Поиск по автору">
+                <span md-highlight-text="chips.searchTextAuthors">{{author}}</span>
+            </md-autocomplete>
+        </md-chips>
 
         <div>
             <md-checkbox class="md-accent" ng-model="hideUnconfirmed" ng-init="hideUnconfirmed=false">
@@ -45,6 +74,6 @@
             </div>
         </div>
         <md-divider></md-divider>
-        <tasks-solve-list></tasks-solve-list>
+        <tasks-solve-list skills-obj="skills" tasks-obj="getfTasks()" users-obj="users"></tasks-solve-list>
     </div>
 </div>
