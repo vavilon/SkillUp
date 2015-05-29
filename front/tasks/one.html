@@ -6,18 +6,18 @@
             <h2>{{task.title}}</h2>
 
             <div style="font-size: 15px; margin-left: 10px; color: rgba(0, 0, 0, 0.57)">
-                <i>Дата создания: {{task.dateCreated}}</i>
+                <i>Дата создания: {{date_created}}</i>
             </div>
         </div>
         <div style="margin-top: 20px; margin-bottom: 10px; font-size: medium">
-            <md-button class="md-accent">
-                <img src="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg">
+            <md-button class="md-accent md-icon-button">
+                <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg"></md-icon>
                 {{task.likes}}
                 <md-tooltip>Мне нравится</md-tooltip>
             </md-button>
-            <md-button class="md-primary">
-                <img src="/bower_components/material-design-icons/action/svg/design/ic_work_24px.svg">
-                {{task.participants}}
+            <md-button class="md-primary md-icon-button">
+                <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_work_24px.svg"></md-icon>
+                {{task.participants.length}}
                 <md-tooltip>Взять задание</md-tooltip>
             </md-button>
         </div>
@@ -59,8 +59,8 @@
                  md-swipe-left="next()"
                  md-swipe-right="previous()">
                 <md-content style="padding: 20px; width: 100%">
-                    <md-button class="md-raised md-primary label-button" ng-repeat="skill in task.skills">
-                        {{skills[skill].title}}
+                    <md-button class="md-raised md-primary skill-button" ng-repeat="skill in task.skills">
+                        {{findSkill(skill).title}}
                     </md-button>
                 </md-content>
                 <div class="tab-content"></div>
@@ -78,42 +78,42 @@
                              class="authorFace">
                         <div>
                             <h4 style="margin-top: 25px; margin-bottom: 10px;"><a class="authorToolLink" href="/users/{{users.indexOf(author)}}">
-                                {{author.fullName}}</a>
+                                {{author.name}}</a>
                             </h4>
                             <h5 style="margin-top: 0px;">exp: {{author.exp | thousand}}</h5>
                         </div>
                     </div>
                     <div>
                         <h5 style="margin-bottom: 10px;">Умею: </h5>
-                        <md-button class="md-raised md-primary md-hue-2 label-button"
+                        <md-button class="md-raised md-primary md-hue-2 skill-button"
                                    ng-repeat="skill in author.skills">
-                            {{skills[skill].title}}
+                            {{findSkill(skill).title}}
                         </md-button>
                     </div>
                     <div layout="row">
-                        <div ng-show="author.tasksReceived.length" flex>
+                        <div ng-show="author.tasks_received.length" flex>
                             <h5 style="margin-bottom: 10px; margin-top: 10px;">Полученные задания: </h5>
                             <ul style="margin-top: 0px;">
-                                <li ng-repeat="taskReceived in author.tasksReceived">{{tasks[taskReceived].title}}</li>
+                                <li ng-repeat="task_received in author.tasks_received">{{findTask(task_received).title}}</li>
                             </ul>
                         </div>
-                        <div ng-show="author.tasksDone.length" flex>
+                        <div ng-show="author.tasks_done.length" flex>
                             <h5 style="margin-bottom: 10px; margin-top: 10px;">Выполненные задания: </h5>
                             <ul style="margin-top: 0px;">
-                                <li ng-repeat="taskDone in author.tasksDone">{{tasks[taskDone].title}}</li>
+                                <li ng-repeat="task_done in author.tasks_done">{{findTask(task_done).title}}</li>
                             </ul>
                         </div>
 
-                        <div ng-show="author.tasksApproved.length" flex>
+                        <div ng-show="author.tasks_approved.length" flex>
                             <h5 style="margin-bottom: 10px; margin-top: 10px;">Созданные задания: </h5>
                             <ul style="margin-top: 0px;">
-                                <li ng-repeat="taskApproved in author.tasksApproved">{{tasks[taskApproved].title}}</li>
+                                <li ng-repeat="task_approved in author.tasks_approved">{{findTask(task_approved).title}}</li>
                             </ul>
                         </div>
-                        <div ng-show="author.tasksCreated.length" flex>
+                        <div ng-show="author.tasks_created.length" flex>
                             <h5 style="margin-bottom: 10px; margin-top: 10px;">Подтвержденные задания: </h5>
                             <ul style="margin-top: 0px;">
-                                <li ng-repeat="taskCreated in author.tasksCreated">{{tasks[taskCreated].title}}</li>
+                                <li ng-repeat="task_created in author.tasks_created">{{findTask(task_created).title}}</li>
                             </ul>
                         </div>
                     </div>
