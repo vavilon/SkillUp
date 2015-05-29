@@ -34,15 +34,47 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID) {
+        $scope.findTask = function (id) {
+            return getObjByID(id, $scope.tasks);
+        };
+
+        $scope.findSkill = function (id) {
+            return getObjByID(id, $scope.skills);
+        };
+
         $http.get('db/users').success(function (data) {
             $scope.users = data;
             $scope.user = getObjByID($routeParams.user_id, $scope.users);
+            $http.get('db/tasks').success(function (data) {
+                $scope.tasks = data;
+                $scope.tasks_done = [];
+                $scope.tasks_checked = [];
+                $scope.tasks_approved = [];
+                $scope.tasks_created = [];
+
+                if ($scope.user.tasks_done)
+                for (var i = 0; i < $scope.user.tasks_done.length; i++) {
+                    $scope.tasks_done.push($scope.findTask($scope.user.tasks_done[i]));
+                }
+
+                if ($scope.user.tasks_checked)
+                for (i = 0; i < $scope.user.tasks_checked.length; i++) {
+                    $scope.tasks_checked.push($scope.findTask($scope.user.tasks_checked[i]));
+                }
+
+                if ($scope.user.tasks_approved)
+                for (i = 0; i < $scope.user.tasks_approved.length; i++) {
+                    $scope.tasks_done.push($scope.findTask($scope.user.tasks_approved[i]));
+                }
+
+                if ($scope.user.tasks_created)
+                for (i = 0; i < $scope.user.tasks_created.length; i++) {
+                    $scope.tasks_created.push($scope.findTask($scope.user.tasks_created[i]));
+                }
+            });
         });
         $http.get('db/skills').success(function (data) {
             $scope.skills = data;
-        });
-        $http.get('db/tasks').success(function (data) {
-            $scope.tasks = data;
         });
         $http.get('db/solutions').success(function (data) {
             $scope.solutions = data;
@@ -50,9 +82,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
 
         $scope.tabSelected = 0;
 
-        $scope.findSkill = function (id) {
-            return getObjByID(id, $scope.skills);
-        };
     }
 );
 

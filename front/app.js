@@ -171,9 +171,19 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 
 }
 
-app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location) {
+app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout) {
     $scope.selectedTab = 0;
-    $scope.reg = {};
+    $scope.reg = {email: '', password: ''};
+
+    //Следующий блок кода нужен для того, чтобы избежать бага с плейсхолдером пароля
+    var count = 0;
+    $scope.$watchCollection('reg', function(newVal, oldVal) {
+        if (count < 2) {
+            $scope.reg.email = '';
+            $scope.reg.password = '';
+            count++;
+        }
+    });
 
     $http.get('db/skills').success(function (data) {
         $scope.skillsObj = data;
@@ -217,7 +227,8 @@ app.directive('tasksSolveList', function(getObjByID) {
         controller: function($http, $scope) {
             $scope.$watch('tasksObj', function(newVal, oldVal) {
                 if (newVal && !oldVal) {
-                    $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
+                    $scope.lastExpandedTask = $scope.tasksObj[0];
+                    if (!$scope.lastExpandedTask) return;
                     $scope.lastExpandedTask.expanded = false;
                 }
             });
