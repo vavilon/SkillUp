@@ -38,3 +38,15 @@
     width: 20px;
     height: 20px;
 }
+
+.register-area {
+    padding-left: 20px;
+}
+
+.register-button {
+    margin: 10px 0 0 0;
+}
+
+.social-btn-text {
+    margin-left: -29px;
+}

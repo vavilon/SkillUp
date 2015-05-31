@@ -11,6 +11,8 @@ var app = angular.module('skills', [
     $locationProvider.html5Mode(true);
 
     $httpProvider.defaults.withCredentials = true;
+        $httpProvider.defaults.useXDomain = true;
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     $routeProvider
         .when('/main', {templateUrl: '/front/main.html', controller: 'mainPageCtrl'})

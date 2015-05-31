@@ -89,6 +89,8 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                                              $mdToast, $animate, $timeout) {
         $scope.reg = {};
 
+        $scope.step = 1;
+
         $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
         $scope.reg.password = $routeParams.password === '0' ? '' : $routeParams.password;
@@ -110,13 +112,56 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             return err;
         };
 
-        $scope.checkRegInput = function () {
-            if ($scope.reg.password !== $scope.reg.rePassword) {
+        $scope.vRegex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        $scope.validateEmail = function() {
+            return $scope.vRegex.test($scope.reg.email);
+        };
+        $scope.validatePasswords = function() {
+            return $scope.reg.password === $scope.reg.rePassword;
+        };
 
+        $scope.exists = {nick: false, email: false, emailnotvalid: false};
+        $scope.checkNick = function() {
+            $http.post('/check_nick', {nick: $scope.reg.nick}).success(function (data) {
+                $scope.exists.nick = data ? false : true;
+            });
+        };
+        $scope.checkEmail = function() {
+            $http.post('/check_email', {email: $scope.reg.email}).success(function (data) {
+                $scope.exists.email = data ? false : true;
+            });
+        };
+
+        $scope.$watch('reg.nick', function(newVal, oldVal) {
+            if (newVal) {
+                $scope.checkNick();
             }
+            else $scope.exists.nick = false;
+        });
+
+        $scope.$watch('reg.email', function(newVal, oldVal) {
+            console.log('Watching email...');
+            if (newVal) {
+                if (!$scope.validateEmail()) {
+                    $scope.exists.emailnotvalid = true;
+                    return;
+                }
+                $scope.exists.emailnotvalid = false;
+                $scope.checkEmail();
+            }
+            else {
+                $scope.exists.emailnotvalid = false;
+                $scope.exists.email = false;
+            }
+        });
+
+        $scope.checkRegInput = function () {
+            return $scope.validateEmail() && $scope.validatePasswords() && !$scope.exists.nick && !$scope.exists.email;
         };
 
         $scope.register = function () {
+            console.log('Check result: ' + $scope.checkRegInput());
+            if (!$scope.checkRegInput()) return;
             $http.post('/register', {
                 nick: $scope.reg.nick,
                 name: $scope.reg.name,
@@ -125,10 +170,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             })
                 .success(function (data) {
                     if (!data) {
-                        $scope.reg.error = true;
-                        $timeout(function () {
-                            $scope.reg.error = false;
-                        }, 5000);
                         return;
                     }
                     getIsLoggedIn(function () {
@@ -136,6 +177,14 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                         $scope.showSimpleToast();
                     });
                 });
-        }
+        };
+
+        $scope.loginWith = function(social) {
+            console.log('loggining...');
+            $http.get('/auth/' + social).success(function(data) {
+
+                console.log('yeah, beach!');
+            });
+        };
     }
 );
