@@ -16,16 +16,16 @@ To run server:
 
 team
 ====
-Zinkevych Alex (alexeyckikk) - alexzinkevych@yandex.ua
-Chernyshenko Sergey (VintorezVS) - vintorezvs@gmail.com
+Zinkevych Alex (alexeyckikk) - alexzinkevych@yandex.ua  
+Chernyshenko Sergey (VintorezVS) - vintorezvs@gmail.com  
 
 useless people
 ====
-Pavlyk Alexandr (AlexandrPavlyk) - stiven917@gmail.com
-Prokopchuk Pavlo (reverse603) - reverse603@yandex.ua
-Salienko Anton (Tohaedko) - tohaedko@gmail.com
-Martyuk Alexander (ma1405) - ma14051985@gmail.com
-Derkachenko Yura (ShootN1ck) - funnyboy201212@gmail.com
+Pavlyk Alexandr (AlexandrPavlyk) - stiven917@gmail.com  
+Prokopchuk Pavlo (reverse603) - reverse603@yandex.ua  
+Salienko Anton (Tohaedko) - tohaedko@gmail.com  
+Martyuk Alexander (ma1405) - ma14051985@gmail.com  
+Derkachenko Yura (ShootN1ck) - funnyboy201212@gmail.com  
 Khvalinskiy Igor (arx1) - 1379@i.ua  
 Preissinger Anton (Preissinger) - tohas@mail.ua  
 Sergiy Tsubko (Zubaskal) - mr.zubar@gmail.com  
