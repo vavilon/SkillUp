@@ -50,3 +50,13 @@
 .social-btn-text {
     margin-left: -29px;
 }
+
+.login-social-btn {
+    margin: 0 10px 0 0;
+    padding: 3px 0 0 0;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+    width: 35px;
+    height: 35px;
+}

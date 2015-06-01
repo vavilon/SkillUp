@@ -179,13 +179,8 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 });
         };
 
-        $scope.loginWith = function(social) {
-            $http.get('/auth/' + social).success(function(data) {
-                console.log(data);
-            });
-        };
 
-        $scope.loginWithFacebook = function() {
+/*        $scope.loginWithFacebook = function() {
 
             FB.getLoginStatus(function(response) {
                 if (response.status === 'connected') {
@@ -210,6 +205,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 }
             });
 
-        };
+        };*/
     }
 );
