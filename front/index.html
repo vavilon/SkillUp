@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/bower_components/angular-material/angular-material.css">
     <link rel="stylesheet" href="/front/styles.css">
 
-    <link href="/front/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="/front/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
@@ -24,6 +24,8 @@
     <script src="/bower_components/angular-highlightjs/angular-highlightjs.min.js"></script>
     <script src="/bower_components/lodash/lodash.min.js"></script>
 
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+
     <script src="/front/app.js"></script>
     <script src="/front/competences/controllers.js"></script>
     <script src="/front/skills/controllers.js"></script>
@@ -34,6 +36,8 @@
 </head>
 
 <body layout="row">
+
+<div id="fb-root"></div>
 <div layout="column" layout-fill tabindex="-1" role="main">
     <md-toolbar class="md-hue-2" style="box-shadow: 0 2px 5px rgba(0,0,0,0.54);" ng-controller="navbarCtrl">
         <div layout="row" layout-align="space-between center">
@@ -57,9 +61,9 @@
                         Задания</h5></a>
                     <a ng-if="isLoggedIn()" href="/users"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
                         Пользователи</h5></a>
-                    <a ng-if="isLoggedIn()" href="/competences"><h5 style="margin-right: 0px;"
+<!--                    <a ng-if="isLoggedIn()" href="/competences"><h5 style="margin-right: 0px;"
                                                                     ng-class="{'navbar-active': getSelectedIndex() == 4}">
-                        Компетенции</h5></a>
+                        Компетенции</h5></a>-->
             </div>
             <div class="md-toolbar-tools" layout="row" layout-align="end center" flex>
                 <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
@@ -93,7 +97,8 @@
             </div>
         </div>
     </md-toolbar>
-    <md-content ng-view md-scroll-y flex style="background-color: #FAFAFA;"></md-content>
+    <md-content ng-view md-scroll-y flex style="background-color: #FAFAFA;">
+    </md-content>
 </div>
 
 </body>

@@ -1,4 +1,4 @@
-<div layout="column" style="position: relative; min-height: calc(100vh - 64px);">
+<div layout="column">
     <div layout="row" ng-class="{'promo-area': !isLoggedIn()}">
         <div flex="15" flex-md="5" hide-sm></div>
         <div ng-if="isLoggedIn()" flex layout="column"
@@ -230,5 +230,12 @@
             </div>
         </div>
         <div flex="15" flex-md="5" hide-sm></div>
+    </div>
+    <div ng-if="!isLoggedIn()" class="site-footer" layout="row" layout-align="space-between center">
+        <span>© 2015 SkillUp, Inc.</span>
+        <div layout="row" layout-align="end center" flex>
+            <a style="margin-right: 15px;" href="https://github.com/alexeychikk">Zinkevych Alexey</a>
+            <a href="https://github.com/VintorezVS">Chernyshenko Sergey</a>
+        </div>
     </div>
 </div>

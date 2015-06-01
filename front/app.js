@@ -10,7 +10,11 @@ var app = angular.module('skills', [
     app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
 
-    $httpProvider.defaults.withCredentials = true;
+        $httpProvider.defaults.useXDomain = true;
+        $httpProvider.defaults.withCredentials = true;
+        delete $httpProvider.defaults.headers.common["X-Requested-With"];
+        $httpProvider.defaults.headers.common["Accept"] = "application/json";
+        $httpProvider.defaults.headers.common["Content-Type"] = "application/json";
 
     $routeProvider
         .when('/main', {templateUrl: '/front/main.html', controller: 'mainPageCtrl'})
@@ -78,6 +82,12 @@ app.factory('isLoggedIn', function($rootScope){
     }
 });
 
+app.factory('loggedUser', function($rootScope) {
+    return function() {
+        return $rootScope.loggedUser;
+    }
+});
+
 app.run(function($rootScope, $http, getIsLoggedIn) {
     getIsLoggedIn();
     $rootScope.navbarSelectedIndex = 0;
@@ -88,10 +98,18 @@ app.run(function($rootScope, $http, getIsLoggedIn) {
         else if ((new RegExp('/users')).test(newVal)) $rootScope.navbarSelectedIndex = 3;
         else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
     });
+
+    FB.init({
+        appId      : '490483854451281',
+        status     : true,
+        xfbml      : true,
+        version    : 'v2.3'
+    });
+
 });
 
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout,
-                                       isLoggedIn, getIsLoggedIn, $mdDialog, $mdToast) {
+                                       isLoggedIn, getIsLoggedIn, $mdDialog, $mdToast, loggedUser) {
     $scope.loginErr = {loginerr: false};
 
     $scope.getSelectedIndex = function () {
@@ -100,9 +118,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 
     $scope.isLoggedIn = isLoggedIn;
 
-    $scope.loggedUser = function (){
-        return $rootScope.loggedUser;
-    };
+    $scope.loggedUser = loggedUser;
 
     $rootScope.$watch('loginData', function(newVal) {
         if (newVal) $scope.login(newVal.email, newVal.password);
@@ -167,9 +183,19 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 
 }
 
-app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location) {
+app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout) {
     $scope.selectedTab = 0;
-    $scope.reg = {};
+    $scope.reg = {email: '', password: ''};
+
+    //Следующий блок кода нужен для того, чтобы избежать бага с плейсхолдером пароля
+    var count = 0;
+    $scope.$watchCollection('reg', function(newVal, oldVal) {
+        if (count < 2) {
+            $scope.reg.email = '';
+            $scope.reg.password = '';
+            count++;
+        }
+    });
 
     $http.get('db/skills').success(function (data) {
         $scope.skillsObj = data;
@@ -213,7 +239,8 @@ app.directive('tasksSolveList', function(getObjByID) {
         controller: function($http, $scope) {
             $scope.$watch('tasksObj', function(newVal, oldVal) {
                 if (newVal && !oldVal) {
-                    $scope.lastExpandedTask = $scope.tasksObj[Object.keys($scope.tasksObj)[0]];
+                    $scope.lastExpandedTask = $scope.tasksObj[0];
+                    if (!$scope.lastExpandedTask) return;
                     $scope.lastExpandedTask.expanded = false;
                 }
             });

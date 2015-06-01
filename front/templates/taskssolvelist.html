@@ -33,11 +33,8 @@
                 <div layout="row" layout-align="start start" flex>
                     <md-button class="md-mini md-primary expand-button"
                                ng-click="expand(taskVal)" aria-label="expand-toogle">
-                        <md-icon aria-label="notexpanded" ng-show="!taskVal.expanded"
+                        <md-icon  class="rotate-base" ng-class="{'rotate-btn': taskVal.expanded}" aria-label="notexpanded"
                                  md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                        </md-icon>
-                        <md-icon ng-show="taskVal.expanded" aria-label="expanded"
-                                 md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
                         </md-icon>
                     </md-button>
                 </div>

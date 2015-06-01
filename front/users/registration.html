@@ -1,79 +1,127 @@
+<link rel="stylesheet" href="/front/users/styles.css">
 <div style="position: absolute; background-color: #3F51B5; height: 232px; width: 100%;"></div>
 <div layout="row">
     <div flex="15" flex-md="5" hide-sm></div>
     <div flex
          style="margin-top: 30px; margin-bottom: 30px; z-index: 3;">
         <md-card>
-            <md-subheader
+            <md-subheader class="md-no-sticky"
                           style="font-size: 20px; color: #3F51B5;
                           margin: 0; text-align: center; letter-spacing: 2px;
-                          background-color: #EEEEEE">Регистрация</md-subheader>
-            <md-card-content>
-                <form name="regForm">
-                    <div layout="row">
-                        <div layout="column" flex style="padding: 0 30px 0 20px;">
-                            <md-input-container>
-                                <label>Имя</label>
-                                <input required ng-model="reg.name" name="nameN" md-maxlength="64">
-                                <div ng-messages="regForm.nameN.$error">
-                                    <div ng-message="required">Обязательное поле</div>
-                                </div>
-                            </md-input-container>
-                            <md-input-container>
-                                <label>Никнейм</label>
-                                <input required ng-model="reg.nick" name="nickN" md-maxlength="32">
-                                <div ng-messages="regForm.nickN.$error">
-                                    <div ng-message="required">Обязательное поле</div>
-                                </div>
-                            </md-input-container>
-                            <md-input-container>
-                                <label>E-mail</label>
-                                <input required ng-model="reg.email" name="emailN" md-maxlength="128">
-                                <div ng-messages="regForm.emailN.$error">
-                                    <div ng-message="required">Обязательное поле</div>
-                                </div>
-                            </md-input-container>
-                            <md-input-container>
-                                <label>Пароль</label>
-                                <input required type="password" ng-model="reg.password" name="passwordN">
-                                <div ng-messages="regForm.passwordN.$error">
-                                    <div ng-message="required">Обязательное поле</div>
-                                    <div ng-messages="passwordsEqual()">
-                                        <div ng-message="notequal">Пароли не совпадают</div>
+                          background-color: #EEEEEE">Регистрация: шаг {{step}} / 3</md-subheader>
+            <md-card-content ng-switch="step">
+                <div ng-switch-when="1">
+                    <form name="regForm">
+                        <div layout="row">
+                            <div layout="column" flex style="padding: 0 30px 0 20px;">
+                                <md-input-container>
+                                    <label>Имя</label>
+                                    <input required ng-model="reg.name" name="nameN" md-maxlength="64">
+                                    <div ng-messages="regForm.nameN.$error">
+                                        <div ng-message="required">Обязательное поле</div>
                                     </div>
-                                </div>
-                            </md-input-container>
-                            <md-input-container>
-                                <label>Повторите пароль</label>
-                                <input required type="password" ng-model="reg.rePassword" name="rePasswordN">
-                                <div ng-messages="regForm.rePasswordN.$error">
-                                    <div ng-message="required">Обязательное поле</div>
-                                    <div ng-messages="passwordsEqual()">
-                                        <div ng-message="notequal">Пароли не совпадают</div>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Никнейм</label>
+                                    <input required ng-model="reg.nick" name="nickN" md-maxlength="32">
+                                    <div ng-messages="regForm.nickN.$error">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-messages="exists">
+                                            <div ng-message="nick">Такой nick уже зарегистрирован</div>
+                                        </div>
                                     </div>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>E-mail</label>
+                                    <input required ng-model="reg.email" name="emailN" md-maxlength="128">
+                                    <div ng-messages="regForm.emailN.$error">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-messages="exists">
+                                            <div ng-message="emailnotvalid">Неверный формат email! Пример: alexzin@mail.ru</div>
+                                            <div ng-message="email">Такой email уже зарегистрирован</div>
+                                        </div>
+                                    </div>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Пароль</label>
+                                    <input required type="password" ng-model="reg.password" name="passwordN">
+                                    <div ng-messages="regForm.passwordN.$error">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-messages="passwordsEqual()">
+                                            <div ng-message="notequal">Пароли не совпадают</div>
+                                        </div>
+                                    </div>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label>Повторите пароль</label>
+                                    <input required type="password" ng-model="reg.rePassword" name="rePasswordN">
+                                    <div ng-messages="regForm.rePasswordN.$error">
+                                        <div ng-message="required">Обязательное поле</div>
+                                        <div ng-messages="passwordsEqual()">
+                                            <div ng-message="notequal">Пароли не совпадают</div>
+                                        </div>
+                                    </div>
+                                </md-input-container>
+                                <div layout="row" layout-align="center center">
+                                    <md-button class="md-raised md-primary register-button"
+                                               ng-click="register()" aria-label="logout-btn">
+                                        Зарегистрироваться
+                                    </md-button>
                                 </div>
-                            </md-input-container>
-                            <div layout="row" layout-align="center center">
-                                <md-button class="md-raised md-primary md-hue-2 register-button"
-                                           ng-click="register()" aria-label="logout-btn">
-                                    Зарегистрироваться
-                                </md-button>
+                            </div>
+                            <div layout="column" layout-align="center center" flex style="padding: 0 20px 0 30px;">
+                                <fieldset layout-fill>
+                                    <legend style="text-align: center;">Войти через</legend>
+                                    <div  layout="column">
+                                        <md-button class="md-raised md-primary" href="/auth/facebook" target="_self">
+                                            <div layout="row" flex>
+                                                <div layout="row" layout-align="center center">
+                                                    <img src="/front/images/ic_facebook.png">
+                                                </div>
+                                                <div layout="row" layout-align="center center" flex>
+                                                    <span class="social-btn-text">Facebook</span>
+                                                </div>
+                                            </div>
+                                        </md-button>
+                                        <md-button class="md-raised md-primary">
+                                            <div layout="row" flex>
+                                                <div layout="row" layout-align="center center">
+                                                    <img src="/front/images/ic_vkontakte.png">
+                                                </div>
+                                                <div layout="row" layout-align="center center" flex>
+                                                    <span class="social-btn-text">ВКонтакте</span>
+                                                </div>
+                                            </div>
+                                        </md-button>
+                                        <md-button class="md-raised md-primary">
+                                            <div layout="row" flex>
+                                                <div layout="row" layout-align="center center">
+                                                    <img src="/front/images/ic_google.png">
+                                                </div>
+                                                <div layout="row" layout-align="center center" flex>
+                                                    <span class="social-btn-text">Google</span>
+                                                </div>
+                                            </div>
+                                        </md-button>
+                                        <md-button class="md-raised md-primary">
+                                            <div layout="row" flex>
+                                                <div layout="row" layout-align="center center">
+                                                    <img src="/front/images/ic_github.png">
+                                                </div>
+                                                <div layout="row" layout-align="center center" flex>
+                                                    <span class="social-btn-text">GitHub</span>
+                                                </div>
+                                            </div>
+                                        </md-button>
+                                    </div>
+                                </fieldset>
                             </div>
                         </div>
-                        <div layout="column" layout-align="center center" flex style="padding: 0 20px 0 30px;">
-                            <span ng-if="reg.error" style="color: red;">Пользователь с таким ником уже зарегистрирован!</span>
-                            <fieldset layout-fill>
-                                <legend style="text-align: center;">Войти через</legend>
-                                <div  layout="column">
-                                    <md-button class="md-raised md-primary">Facebook</md-button>
-                                    <md-button class="md-raised md-primary">ВКонтакте</md-button>
-                                    <md-button class="md-raised md-primary">Google</md-button>
-                                    <md-button class="md-raised md-primary">Github</md-button>
-                                </div>
-                            </fieldset>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
+                <div ng-switch-when="2">
+
+                </div>
             </md-card-content>
         </md-card>
     </div>

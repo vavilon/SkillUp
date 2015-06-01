@@ -147,7 +147,7 @@ pre {
 .avatar {
     width: 34px;
     height: 34px;
-    border-radius: 17px;
+    border-radius: 50%;
 
 }
 
@@ -253,15 +253,15 @@ pre {
 }
 
 .animate-if.ng-enter, .animate-if.ng-leave {
-    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    -webkit-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 
 .animate-if.ng-enter,
 .animate-if.ng-leave.ng-leave-active {
     height: auto;
     max-height: 0;
-    opacity:0;
+    opacity: 0;
 }
 
 .animate-if.ng-leave,
@@ -269,7 +269,7 @@ pre {
     display: block !important;
     max-height: 300px;
     overflow: hidden;
-    opacity:1;
+    opacity: 1;
 }
 
 .menu-tabs {
@@ -288,16 +288,35 @@ pre {
     text-shadow: 0 5px 10px #000;
 }
 
-.register-area {
-    padding-left: 20px;
-}
-
-.register-button {
-    margin: 10px 0 0 0;
-}
-
 .promo-area {
     background-color: #3949AB;
     padding-top: 5%;
     padding-bottom: 5%;
+}
+
+.rotate-base {
+    -webkit-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+}
+
+.rotate-base.rotate-btn {
+    transform: rotate(180deg);
+}
+
+.site-footer {
+    width: 90%;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    margin: 60px 0 0 5%;
+    padding: 30px 0 0 0;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.site-footer a {
+     color: rgba(65, 131, 196, 0.87);
+     text-decoration: none;
+ }
+
+.site-footer a:hover {
+    text-decoration: underline;
 }

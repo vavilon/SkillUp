@@ -4,8 +4,9 @@
     <div layout="row" flex="30">
         <div flex="35"></div>
         <div layout="column" flex>
-            <div style="border-radius: 4px; border: 2px solid #e0e0e0;">
-                <img src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
+            <div style="box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: white;" layout="row" layout-align="center center">
+                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' style="width: 100%">
+                <img ng-if="!user.avatar" src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
                      style="width: 100%;">
             </div>
             <div style="padding-left: 2px;">
@@ -31,7 +32,7 @@
                 <h4 style="margin: 0px; margin-bottom: 5px;">Умею</h4>
             </div>
             <div>
-                <md-button class="md-raised md-primary label-button" aria-label="skillBtn"
+                <md-button class="md-raised md-primary skill-button" aria-label="skillBtn"
                            ng-repeat="skill in user.skills">{{findSkill(skill).title}}
                 </md-button>
             </div>
@@ -42,7 +43,7 @@
                 <h4 style="margin: 0px; margin-bottom: 5px;">Хочу</h4>
             </div>
             <div>
-                <md-button class="md-raised md-accent md-hue-2 label-button" aria-label="skillBtn"
+                <md-button class="md-raised md-accent skill-button" aria-label="skillBtn"
                            ng-repeat="need in user.needs">{{findSkill(need).title}}
                 </md-button>
             </div>
@@ -55,181 +56,53 @@
         <div flex style="padding-left: 20px;">
             <div style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);">
                 <md-tabs md-selected="tabSelected">
-                    <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length}}</span></md-tab>
-                    <md-tab>Проверено: <span style="font-weight: bold;">{{user.tasks_checked.length}}</span></md-tab>
-                    <md-tab>Подтверждено: <span style="font-weight: bold;">{{user.tasks_approved.length}}</span></md-tab>
-                    <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length}}</span></md-tab>
+                    <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length || 0}}</span></md-tab>
+                    <md-tab>Проверено: <span style="font-weight: bold;">{{user.tasks_checked.length || 0}}</span></md-tab>
+                    <md-tab>Подтверждено: <span style="font-weight: bold;">{{user.tasks_approved.length || 0}}</span></md-tab>
+                    <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length || 0}}</span></md-tab>
                 </md-tabs>
                 <md-content style="max-height: calc(100vh - 172px);">
                     <md-list>
                         <ng-switch on="tabSelected">
                             <div ng-switch-when="0">
-                                <md-item ng-repeat="task in user.tasksDone">
-                                    <md-item-content>
-                                        <div class="md-tile-content" layout="column">
-                                            <div>
-                                                <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{task}}">
-                                                    {{tasks[task].title}}
-                                                </a></h3>
-
-                                                <p style="float: right;">exp: +{{tasks[task].exp | thousand}}</p>
-                                            </div>
-                                            <div>
-                                                <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                                <md-button class="md-raised md-primary label-button"
-                                                           aria-label="skillBtn"
-                                                           ng-repeat="skill in tasks[task].skills">
-                                                    {{skills[skill].title}}
-                                                </md-button>
-                                            </div>
-                                            <div layout="row">
-                                                <div class="my-subheader">Дата решения: {{tasks[task].dateCreated}}
-                                                </div>
-                                                <div class="my-subheader">Автор: <a
-                                                        href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
-                                                    {{findUser(tasks[task].author).fullName}}
-                                                </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </md-item-content>
-                                    <md-divider></md-divider>
-                                </md-item>
-                                <md-item ng-show="user.tasksDone.length == 0">
-                                    <md-item-content>
-                                        <div class="md-tile-content" layout="column" layout-align="center center">
-                                            <div>
-                                                <h3 style="color: rgba(0,0,0,0.54);">Пользователь не решил ни одного
-                                                    задания</h3>
-                                            </div>
-                                        </div>
-                                    </md-item-content>
-                                </md-item>
+                                <tasks-solve-list tasks-obj="tasks_done" users-obj="users" skills-obj="skills"></tasks-solve-list>
+                                <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
+                                     layout="column" layout-align="center center" flex>
+                                    <div>
+                                        <h3 style="color: rgba(0,0,0,0.54);">Пользователь не решил ни одного
+                                            задания</h3>
+                                    </div>
+                                </div>
                             </div>
                             <div ng-switch-when="1">
-                                <md-item ng-repeat="task in user.tasksChecked">
-                                    <md-item-content>
-                                        <div class="md-tile-content" layout="column">
-                                            <div>
-                                                <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{task}}">
-                                                    {{tasks[task].title}}
-                                                </a></h3>
-
-                                                <p style="float: right;">exp: +{{tasks[task].exp | thousand}}</p>
-                                            </div>
-                                            <div>
-                                                <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                                <md-button class="md-raised md-primary label-button"
-                                                           aria-label="skillBtn"
-                                                           ng-repeat="skill in tasks[task].skills">
-                                                    {{skills[skill].title}}
-                                                </md-button>
-                                            </div>
-                                            <div layout="row">
-                                                <div class="my-subheader">Дата проверки: {{tasks[task].dateCreated}}
-                                                </div>
-                                                <div class="my-subheader">Решил: <a
-                                                        href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
-                                                    {{findUser(tasks[task].author).fullName}}
-                                                </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </md-item-content>
-                                    <md-divider></md-divider>
-                                </md-item>
-                                <md-item ng-show="user.tasksChecked.length == 0">
-                                    <md-item-content>
-                                        <div class="md-tile-content" layout="column" layout-align="center center">
-                                            <div>
-                                                <h3 style="color: rgba(0,0,0,0.54);">Пользователь не проверил ни одного
-                                                    задания</h3>
-                                            </div>
-                                        </div>
-                                    </md-item-content>
-                                </md-item>
+                                <tasks-solve-list tasks-obj="tasks_checked" users-obj="users" skills-obj="skills"></tasks-solve-list>
+                                <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
+                                     layout="column" layout-align="center center" flex>
+                                    <div>
+                                        <h3 style="color: rgba(0,0,0,0.54);">Пользователь не проверил ни одного
+                                            задания</h3>
+                                    </div>
+                                </div>
                             </div>
                             <div ng-switch-when="2">
-                                <md-item ng-repeat="task in user.tasksApproved">
-                                    <md-item-content>
-                                        <div class="md-tile-content" layout="column">
-                                            <div>
-                                                <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{task}}">
-                                                    {{tasks[task].title}}
-                                                </a></h3>
-
-                                                <p style="float: right;">exp: +{{tasks[task].exp | thousand}}</p>
-                                            </div>
-                                            <div>
-                                                <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                                <md-button class="md-raised md-primary label-button"
-                                                           aria-label="skillBtn"
-                                                           ng-repeat="skill in tasks[task].skills">
-                                                    {{skills[skill].title}}
-                                                </md-button>
-                                            </div>
-                                            <div layout="row">
-                                                <div class="my-subheader">Дата подтверждения:
-                                                    {{tasks[task].dateCreated}}
-                                                </div>
-                                                <div class="my-subheader">Автор: <a
-                                                        href="/users/{{users.indexOf(findUser(tasks[task].author))}}">
-                                                    {{findUser(tasks[task].author).fullName}}
-                                                </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </md-item-content>
-                                    <md-divider></md-divider>
-                                </md-item>
-                                <md-item ng-show="user.tasksApproved.length == 0">
-                                    <md-item-content>
-                                        <div class="md-tile-content" layout="column" layout-align="center center">
-                                            <div>
-                                                <h3 style="color: rgba(0,0,0,0.54);">Пользователь не подтвердил ни
-                                                    одного задания</h3>
-                                            </div>
-                                        </div>
-                                    </md-item-content>
-                                </md-item>
+                                <tasks-solve-list tasks-obj="tasks_approved" users-obj="users" skills-obj="skills"></tasks-solve-list>
+                                <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
+                                     layout="column" layout-align="center center" flex>
+                                    <div>
+                                        <h3 style="color: rgba(0,0,0,0.54);">Пользователь не подтвердил ни одного
+                                            задания</h3>
+                                    </div>
+                                </div>
                             </div>
                             <div ng-switch-when="3">
-                                <md-item ng-repeat="task in user.tasksCreated">
-                                    <md-item-content>
-                                        <div class="md-tile-content" layout="column">
-                                            <div>
-                                                <h3 style="float: left; margin-right: 20px"><a href="/tasks/{{task}}">
-                                                    {{tasks[task].title}}
-                                                </a></h3>
-
-                                                <p style="float: right;">exp: +{{tasks[task].exp | thousand}}</p>
-                                            </div>
-                                            <div>
-                                                <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                                <md-button class="md-raised md-primary label-button"
-                                                           aria-label="skillBtn"
-                                                           ng-repeat="skill in tasks[task].skills">
-                                                    {{skills[skill].title}}
-                                                </md-button>
-                                            </div>
-                                            <div layout="row">
-                                                <div class="my-subheader">Дата создания: {{tasks[task].dateCreated}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </md-item-content>
-                                    <md-divider></md-divider>
-                                </md-item>
-                                <md-item ng-show="user.tasksCreated.length == 0">
-                                    <md-item-content>
-                                        <div class="md-tile-content" layout="column" layout-align="center center">
-                                            <div>
-                                                <h3 style="color: rgba(0,0,0,0.26);">Пользователь не создал ни одного
-                                                    задания</h3>
-                                            </div>
-                                        </div>
-                                    </md-item-content>
-                                </md-item>
+                                <tasks-solve-list tasks-obj="tasks_created" users-obj="users" skills-obj="skills"></tasks-solve-list>
+                                <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
+                                     layout="column" layout-align="center center" flex>
+                                    <div>
+                                        <h3 style="color: rgba(0,0,0,0.54);">Пользователь не создал ни одного
+                                            задания</h3>
+                                    </div>
+                                </div>
                             </div>
                         </ng-switch>
                     </md-list>

@@ -8,71 +8,132 @@
         <div flex
              style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
             <md-toolbar class="demo-toolbar">
-                <div layout="row">
-                    <div flex="40">
-                        <h2 class="md-toolbar-tools">
-                            <span>Пользователи</span>
-                        </h2>
-                    </div>
-                    <div class="md-toolbar-tools" layout="row" flex style="padding-top: 15px;">
-                        <md-input-container flex>
-                            <input placeholder="Имя пользователя" ng-model="username">
-                        </md-input-container>
-                    </div>
+                <div class="md-toolbar-tools">
+                    <h2>
+                        <span>Пользователи</span>
+                    </h2>
+                    <span flex></span>
+                    <md-input-container md-no-float style="margin-top: 23px; font-size: 14px;" flex="50">
+                        <input placeholder="Имя пользователя" ng-model="username">
+                    </md-input-container>
+                    <md-button class="md-icon-button" aria-label="Settings">
+                        <md-icon style="color: rgba(0, 0, 0, 0.54);"
+                                 md-svg-icon="/bower_components/material-design-icons/navigation/svg/design/ic_more_vert_24px.svg"></md-icon>
+                    </md-button>
                 </div>
             </md-toolbar>
             <md-content>
                 <md-list>
-                    <md-item class="animate" ng-model="notFound"
-                             ng-repeat="user in filteredUsers = (users | filter: {fullName:username})">
-                        <md-item-content style="align-items: flex-start !important;">
-                            <div class="md-tile-left">
-                                <img src="/bower_components/material-design-icons/action/svg/design/ic_account_circle_24px.svg"
-                                     class="face" alt="{{user.fullName}}">
-                            </div>
-                            <div class="md-tile-content" layout="row">
-                                <div flex="50">
-                                    <h3><a href="/users/{{users.indexOf(user)}}"> {{user.fullName}}</a></h3>
-                                    <h4>exp: {{user.exp | thousand}}</h4>
-
-                                    <p>
-                                        Выполнено заданий: {{user.tasksDone.length}}
-                                    </p>
-
-                                    <p> Проверено: {{user.tasksChecked.length}}
-                                    </p>
-
-                                    <p> Подтверждено: {{user.tasksApproved.length}}
-                                    </p>
-
-                                    <p> Создано: {{user.tasksCreated.length}}
-                                    </p>
+                    <md-list-item class="md-3-line"
+                                  ng-repeat="user in filteredUsers = (users | filter: {name:username})">
+                        <div layout="column" flex>
+                            <div layout="row">
+                                <div layout="row" layout-align="end start" style="padding: 16px 16px 0 0;">
+                                    <a ng-href="/users/{{user.id}}">
+                                        <img ng-if="user.avatar" class="user-avatar" ng-src="/avatars/{{user.avatar}}"
+                                             alt="{{user.nick}}"/>
+                                        <img ng-if="!user.avatar" class="user-avatar" alt="{{user.nick}}"
+                                             src="/bower_components/material-design-icons/action/svg/design/ic_account_circle_24px.svg"/>
+                                    </a>
                                 </div>
-                                <div flex>
-                                    <h3 style="float: left; margin-right: 7px;">Умею:</h3>
-                                    <md-button class="md-raised md-primary label-button"
-                                               ng-repeat="skill in user.skills">{{skills[skill].title}}
-                                    </md-button>
-                                    <br>
+                                <div class="md-list-item-text" flex>
+                                    <h3><a class="user-name" ng-href="/users/{{user.id}}">{{ user.name }}</a></h3>
+                                    <h4 class="user-nick">{{ user.nick }}</h4>
 
-                                    <h3 style="float: left; margin-right: 7px;">Хочу:</h3>
-                                    <md-button class="md-raised md-accent md-hue-2 label-button"
-                                               ng-repeat="need in user.needs">{{skills[need].title}}
+                                    <p>exp: {{ user.exp | thousand }}</p>
+                                </div>
+
+                                <div layout="row" flex="30">
+                                    <div flex="10"></div>
+                                    <div layout="row" layout-align="end center">
+                                        <md-button class="count-button">
+                                            {{user.tasks_done.length || 0}}
+                                            <md-icon class="md-hue-3 count-icon" style="color: #4CAF50"
+                                                     md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_done_24px.svg"
+                                                     aria-label="Done">
+                                            </md-icon>
+                                            <md-tooltip>
+                                                Сделано заданий
+                                            </md-tooltip>
+                                        </md-button>
+                                        <md-button class="count-button">
+                                            {{user.tasks_checked.length || 0}}
+                                            <md-icon class="md-hue-3 count-icon" style="color: #FFEB3B"
+                                                     md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_assignment_turned_in_24px.svg"
+                                                     aria-label="Done">
+                                            </md-icon>
+                                            <md-tooltip>
+                                                Проверено решений
+                                            </md-tooltip>
+                                        </md-button>
+                                        <md-button class="count-button">
+                                            {{user.tasks_approved.length || 0}}
+                                            <md-icon class="md-hue-3 count-icon" style="color: #03A9F4"
+                                                     md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_check_circle_24px.svg"
+                                                     aria-label="Done">
+                                            </md-icon>
+                                            <md-tooltip>
+                                                Подтверждено заданий
+                                            </md-tooltip>
+                                        </md-button>
+                                        <md-button class="count-button">
+                                            {{user.tasks_created.length || 0}}
+                                            <md-icon class="md-hue-3 count-icon" style="color: #E91E63"
+                                                     md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
+                                                     aria-label="Done">
+                                            </md-icon>
+                                            <md-tooltip>
+                                                Создано заданий
+                                            </md-tooltip>
+                                        </md-button>
+                                    </div>
+                                </div>
+                                <div layout="row" layout-align="start center" flex="10">
+                                    <md-button class="md-mini md-primary expand-button" style="border-radius: 50%"
+                                               ng-click="expand(user)">
+                                        <md-icon class="md-hue-3 rotate-base" ng-class="{'rotate-btn': user.expanded}"
+                                                 md-svg-icon="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg"
+                                                 aria-label="ExpandM"></md-icon>
                                     </md-button>
                                 </div>
                             </div>
-                        </md-item-content>
+
+                            <div layout="row" ng-if="user.expanded">
+                                <div layout="column" flex="80" style="padding-left: 55px;">
+                                    <div layout="row" style="padding-bottom: 10px;">
+                                        <div layout="row" class="ican" flex="10">Умею:</div>
+                                        <div layout="row" layout-wrap flex>
+                                            <md-button class="md-raised md-primary skill-button"
+                                                       aria-label="skillBtn"
+                                                       ng-repeat="skill in user.skills">
+                                                {{findSkill(skill).title}}
+                                            </md-button>
+                                        </div>
+                                    </div>
+
+                                    <div layout="row" style="padding-bottom: 15px;">
+                                        <div layout="row" class="ican" flex="10">Хочу:</div>
+                                        <div layout="row" layout-wrap flex>
+                                            <md-button class="md-raised md-accent skill-button"
+                                                       aria-label="skillBtn"
+                                                       ng-repeat="skill in user.needs">
+                                                {{findSkill(skill).title}}
+                                            </md-button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
                         <md-divider ng-if="!$last"></md-divider>
-                    </md-item>
-                    <md-item ng-show="filteredUsers.length == 0">
-                        <md-item-content>
-                            <div class="md-tile-content" layout="column" layout-align="center center">
-                                <div>
-                                    <h3 style="color: rgba(0,0,0,0.54);">Пользователь с таким именем не найден :(</h3>
-                                </div>
-                            </div>
-                        </md-item-content>
-                    </md-item>
+                    </md-list-item>
+                    <md-list-item ng-show="filteredUsers.length == 0">
+                        <div layout="row" layout-align="center center" flex>
+                            <h3 style="color: rgba(0,0,0,0.54);">Пользователь с таким именем не найден :(</h3>
+                        </div>
+                    </md-list-item>
                 </md-list>
             </md-content>
         </div>
