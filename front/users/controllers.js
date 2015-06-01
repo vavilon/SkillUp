@@ -180,11 +180,36 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         };
 
         $scope.loginWith = function(social) {
-            console.log('loggining...');
             $http.get('/auth/' + social).success(function(data) {
-
-                console.log('yeah, beach!');
+                console.log(data);
             });
+        };
+
+        $scope.loginWithFacebook = function() {
+
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    var uid = response.authResponse.userID;
+                    var accessToken = response.authResponse.accessToken;
+                    FB.api('/me', function(response) {
+                        console.log(response);
+                    });
+                } else if (response.status === 'not_authorized') {
+                    FB.login(function(response) {
+                        if (response.authResponse) {
+                            console.log('Welcome!  Fetching your information.... ');
+                            FB.api('/me', function(response) {
+                                console.log(response);
+                            });
+                        } else {
+                            console.log('User cancelled login or did not fully authorize.');
+                        }
+                    });
+                } else {
+                    // the user isn't logged in to Facebook.
+                }
+            });
+
         };
     }
 );

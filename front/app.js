@@ -10,10 +10,6 @@ var app = angular.module('skills', [
     app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
 
-    $httpProvider.defaults.withCredentials = true;
-        $httpProvider.defaults.useXDomain = true;
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
     $routeProvider
         .when('/main', {templateUrl: '/front/main.html', controller: 'mainPageCtrl'})
         .when('/users', {templateUrl: '/front/users/all.html', controller: 'usersListCtrl'})
@@ -96,6 +92,14 @@ app.run(function($rootScope, $http, getIsLoggedIn) {
         else if ((new RegExp('/users')).test(newVal)) $rootScope.navbarSelectedIndex = 3;
         else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
     });
+
+    FB.init({
+        appId      : '490483854451281',
+        status     : true,
+        xfbml      : true,
+        version    : 'v2.3'
+    });
+
 });
 
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout,

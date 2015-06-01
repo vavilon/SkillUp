@@ -2,7 +2,6 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var app = express();
 var requireTree = require('require-tree');
 var controllers = requireTree('./controllers');
 var passport = require('passport');
@@ -10,6 +9,10 @@ var LocalStrategy = require('passport-local').Strategy;
 var config = require(__dirname + '/config');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
+var cors = require('cors');
+
+var app = express();
+app.use(cors());
 
 var FacebookStrategy = require('passport-facebook').Strategy;
 var FACEBOOK_APP_ID = "490483854451281";
@@ -71,38 +74,40 @@ passport.use(new FacebookStrategy({
         callbackURL: "http://localhost/auth/facebook/callback"
     },
     function (token, refreshToken, profile, done) {
-        new User({'id_facebook': profile.id}).fetch().then(function (user) {
-            if (user) {
-                return done(null, user); // user found, return that user
-            } else {
-                var u = {
-                    id: uuid.v4(),
-                    nick: profile.emails[0].value.split('@')[0],
-                    name: profile.displayName,
-                    email: profile.emails[0].value,
-                    pswhash: bcrypt.hashSync('facebook'),
-                    id_facebook: profile.id
-                };
+        process.nextTick(function() {
+            new User({'id_facebook': profile.id}).fetch().then(function (user) {
+                if (user) {
+                    return done(null, user); // user found, return that user
+                } else {
+                    var u = {
+                        id: uuid.v4(),
+                        nick: profile.emails[0].value.split('@')[0],
+                        name: profile.displayName,
+                        email: profile.emails[0].value,
+                        pswhash: bcrypt.hashSync('facebook'),
+                        id_facebook: profile.id
+                    };
 
-                knex('users').insert(u)
-                    .then(function () {
-                        new User({'id': u.id})
-                            .fetch()
-                            .then(function (user) {
-                                return done(null, user);
-                            })
-                            .catch(function (err) {
-                                done(err);
-                            });
-                    })
-                    .catch(function (err) {
-                        done(err);
-                    });
-            }
-        })
-            .catch(function (err) {
-                done(err);
-            });
+                    knex('users').insert(u)
+                        .then(function () {
+                            new User({'id': u.id})
+                                .fetch()
+                                .then(function (user) {
+                                    return done(null, user);
+                                })
+                                .catch(function (err) {
+                                    done(err);
+                                });
+                        })
+                        .catch(function (err) {
+                            done(err);
+                        });
+                }
+            })
+                .catch(function (err) {
+                    done(err);
+                });
+        });
     }));
 
 //Для того, чтобы сохранять или доставать пользовательские данные из сессии, паспорт использует функции
@@ -224,15 +229,10 @@ app.get('/auth/facebook',
 
     });
 
-// GET /auth/facebook/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {failureRedirect: '/main'}),
     function (req, res) {
-        res.redirect('/');
+        res.redirect('/users/' + req.user.id);
     });
 
 //Привяжем запросы к соответствующим контроллерам
