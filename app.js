@@ -76,7 +76,10 @@ passport.use(new FacebookStrategy({
     function (token, refreshToken, profile, done) {
         process.nextTick(function() {
             new User({'id_facebook': profile.id}).fetch().then(function (user) {
+
+                console.log('Inside fb strategy...');
                 if (user) {
+                    console.log('Facebook user found...');
                     return done(null, user); // user found, return that user
                 } else {
                     var u = {
@@ -223,8 +226,20 @@ app.use('/check_email', function (req, res) {
         });
 });
 
-app.get('/auth/facebook',
-        passport.authenticate('facebook', {scope: ['email', 'user_birthday', 'user_likes']}),
+app.get('/auth/facebook', function (req, res, next) {
+        req.headers['Access-Control-Allow-Origin'] = '*';
+        req.headers['Access-Control-Allow-Methods'] = 'OPTIONS,GET,POST,PUT,DELETE';
+        req.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
+
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,POST,PUT,DELETE');
+        res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+        if (req.method == 'OPTIONS'){
+            return res.send(200);
+        }
+
+        passport.authenticate('facebook', {scope: ['email', 'user_birthday', 'user_likes']})(req, res, next);
+},
     function (req, res) {
 
     });

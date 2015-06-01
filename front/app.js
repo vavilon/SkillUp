@@ -10,6 +10,12 @@ var app = angular.module('skills', [
     app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
 
+        $httpProvider.defaults.useXDomain = true;
+        $httpProvider.defaults.withCredentials = true;
+        delete $httpProvider.defaults.headers.common["X-Requested-With"];
+        $httpProvider.defaults.headers.common["Accept"] = "application/json";
+        $httpProvider.defaults.headers.common["Content-Type"] = "application/json";
+
     $routeProvider
         .when('/main', {templateUrl: '/front/main.html', controller: 'mainPageCtrl'})
         .when('/users', {templateUrl: '/front/users/all.html', controller: 'usersListCtrl'})
