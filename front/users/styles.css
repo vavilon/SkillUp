@@ -59,7 +59,7 @@ ul.profile-categories {
 
 ul.profile-categories li {
     font-size: 18px;
-    color: rgba(0, 0, 0, 0.56);
+    color: rgba(0, 0, 0, 0.54);
     display: inline;
     margin-right: 5px;
     padding: 3px;
@@ -93,5 +93,19 @@ ul.profile-categories a:hover {
 }
 
 .info-header {
-    color: rgba(0, 0, 0, 0.56);
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.info-empty {
+    color: rgba(0, 0, 0, 0.26);
+}
+
+.not-last {
+    margin-bottom: 5px;
+}
+
+.list-empty {
+    color: rgba(0, 0, 0, 0.54);
+    font-weight: normal;
+    margin-top: 0px;
 }

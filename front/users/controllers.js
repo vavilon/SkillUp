@@ -34,6 +34,10 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID) {
+        $scope.lol = function(param) {
+          console.log(param);
+        };
+
         $scope.categoryNum = 0;
 
         $scope.findTask = function (id) {
@@ -47,6 +51,22 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
         $http.get('db/users').success(function (data) {
             $scope.users = data;
             $scope.user = getObjByID($routeParams.user_id, $scope.users);
+            if ($scope.user.education) {
+                var res1 = [];
+                for (var i in $scope.user.education) {
+                    res1.push(JSON.parse($scope.user.education[i]));
+                }
+                res1 = res1.reverse();
+                $scope.user.education = res1;
+            }
+            if ($scope.user.work) {
+                var res2 = [];
+                for (i in $scope.user.work) {
+                    res2.push(JSON.parse($scope.user.work[i]));
+                }
+                res2 = res2.reverse();
+                $scope.user.work = res2;
+            }
             $http.get('db/tasks').success(function (data) {
                 $scope.tasks = data;
                 $scope.tasks_done = [];
