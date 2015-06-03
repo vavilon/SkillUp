@@ -24,6 +24,8 @@
     <script src="/bower_components/angular-highlightjs/angular-highlightjs.min.js"></script>
     <script src="/bower_components/lodash/lodash.min.js"></script>
 
+    <script src="https://code.angularjs.org/1.3.0-rc.2/i18n/angular-locale_ru-ru.js"></script>
+
     <script src="http://connect.facebook.net/en_US/all.js"></script>
 
     <script src="/front/app.js"></script>
@@ -68,7 +70,7 @@
             <div class="md-toolbar-tools" layout="row" layout-align="end center" flex>
                 <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
                     <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
-                        <img ng-if="loggedUser().avatar" alt="{{loggedUser().nick}}" class="avatar" ng-src='/avatars/{{loggedUser().avatar}}'>
+                        <img ng-if="loggedUser().avatar" alt="{{loggedUser().nick}}" class="avatar" ng-src='{{loggedUser().avatar}}'>
                         <md-icon ng-if="!loggedUser().avatar" aria-label="user-icon"
                                  md-svg-src="/bower_components/material-design-icons/action/svg/design/ic_account_circle_24px.svg">
                         </md-icon>

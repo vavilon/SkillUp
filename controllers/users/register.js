@@ -2,7 +2,6 @@ var requireTree = require('require-tree');
 var config = requireTree('../../config');
 var knex = require('knex')(config.get('knex'));
 var uuid = require('uuid');
-
 var bcrypt = require('bcryptjs');
 
 module.exports = function(req, res, next) {
@@ -18,11 +17,11 @@ module.exports = function(req, res, next) {
     knex('users').insert(u)
         .then(function() {
             knex.select('*').from('users').where({id: u.id})
-                .then(function(user) {
-                    req.logIn(user[0], function (err) {
+                .then(function(users) {
+                    req.logIn(users[0], function (err) {
                         return err
                             ? next(err)
-                            : res.end('/users/' + user[0].id);
+                            : res.send(users[0]);
                     });
                 })
                 .catch(function(err) {

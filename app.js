@@ -7,9 +7,11 @@ var controllers = requireTree('./controllers');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var config = require(__dirname + '/config');
+var getJson = require(__dirname + '/get-json');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
+var util = require('util');
 
 var app = express();
 app.use(cors());
@@ -73,42 +75,7 @@ passport.use(new FacebookStrategy({
         clientSecret: FACEBOOK_APP_SECRET,
         callbackURL: "http://localhost/auth/facebook/callback"
     },
-    function (token, refreshToken, profile, done) {
-        process.nextTick(function() {
-            new User({'id_facebook': profile.id}).fetch().then(function (user) {
-                if (user) {
-                    return done(null, user); // user found, return that user
-                } else {
-                    var u = {
-                        id: uuid.v4(),
-                        nick: profile.emails[0].value.split('@')[0],
-                        name: profile.displayName,
-                        email: profile.emails[0].value,
-                        pswhash: bcrypt.hashSync('facebook'),
-                        id_facebook: profile.id
-                    };
-
-                    knex('users').insert(u)
-                        .then(function () {
-                            new User({'id': u.id})
-                                .fetch()
-                                .then(function (user) {
-                                    return done(null, user);
-                                })
-                                .catch(function (err) {
-                                    done(err);
-                                });
-                        })
-                        .catch(function (err) {
-                            done(err);
-                        });
-                }
-            })
-                .catch(function (err) {
-                    done(err);
-                });
-        });
-    }));
+    controllers.social.facebook.strategy));
 
 //Для того, чтобы сохранять или доставать пользовательские данные из сессии, паспорт использует функции
 passport.serializeUser(function (user, done) {
@@ -224,11 +191,16 @@ app.use('/check_email', function (req, res) {
 });
 
 app.get('/auth/facebook', function (req, res, next) {
-        passport.authenticate('facebook', {scope: ['email', 'user_birthday', 'user_likes']})(req, res, next);
-},
-    function (req, res) {
-
-    });
+    passport.authenticate('facebook', {
+        scope: ['email',
+            'user_birthday',
+            'user_education_history',
+            'user_location',
+            'user_photos',
+            'user_work_history',
+            'user_about_me']
+    })(req, res, next);
+}, function (req, res) {/* Never called */});
 
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {failureRedirect: '/main'}),
@@ -243,7 +215,6 @@ app.get('/logout', controllers.users.logout);
 app.use('/', function (req, res) {
     res.sendFile(__dirname + '/front/index.html');
 });
-
 
 var server = app.listen(config.get('port'), function () {
 

@@ -1,16 +1,18 @@
 <link rel="stylesheet" href="/front/users/styles.css">
 
 <div layout="row" style="padding-top: 30px; padding-bottom: 30px;">
-    <div layout="row" flex="30">
-        <div flex="35"></div>
+    <div flex="15"></div>
+    <div layout="row" style="min-width: 225px; max-width: 225px;">
         <div layout="column" flex>
-            <div style="box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: white;" layout="row" layout-align="center center">
-                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' style="width: 100%">
+            <div flex ng-mouseenter="" style="overflow: hidden; max-height: 300px; min-height: 225px;
+             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: #FAFAFA;">
+                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='{{user.avatar}}' style="width: 100%; height: 100%;">
                 <img ng-if="!user.avatar" src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
-                     style="width: 100%;">
+                     style="width: 100%; height: 100%;">
             </div>
             <div style="padding-left: 2px;">
                 <h3 style="margin-bottom: 0px; margin-top: 10px;">{{user.name}}</h3>
+                <h4 style="margin: 0 0 5px 0; color: rgba(0,0,0,0.54);">{{user.nick}}</h4>
                 <h4 style="margin-top: 5px; margin-bottom: 0px; color: rgba(0,0,0,0.54); font-weight: normal;">exp:
                     {{user.exp | thousand}}</h4>
             </div>
@@ -53,62 +55,86 @@
         </div>
     </div>
     <div layout="row" flex>
-        <div flex style="padding-left: 20px;">
-            <div style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);">
-                <md-tabs md-selected="tabSelected">
-                    <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length || 0}}</span></md-tab>
-                    <md-tab>Проверено: <span style="font-weight: bold;">{{user.tasks_checked.length || 0}}</span></md-tab>
-                    <md-tab>Подтверждено: <span style="font-weight: bold;">{{user.tasks_approved.length || 0}}</span></md-tab>
-                    <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length || 0}}</span></md-tab>
-                </md-tabs>
-                <md-content style="max-height: calc(100vh - 172px);">
-                    <md-list>
-                        <ng-switch on="tabSelected">
-                            <div ng-switch-when="0">
-                                <tasks-solve-list tasks-obj="tasks_done" users-obj="users" skills-obj="skills"></tasks-solve-list>
-                                <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
-                                     layout="column" layout-align="center center" flex>
-                                    <div>
-                                        <h3 style="color: rgba(0,0,0,0.54);">Пользователь не решил ни одного
-                                            задания</h3>
+        <div layout="column" flex style="padding-left: 20px;">
+            <div layout="row" style="margin-bottom: 10px;">
+                <ul class="profile-categories">
+                    <li><a href ng-click="categoryNum = 0" ng-class="{'category-selected': categoryNum == 0}">Прогресс</a></li>
+                    <li class="category-divider">|</li>
+                    <li><a href ng-click="categoryNum = 1" ng-class="{'category-selected': categoryNum == 1}">Информация</a></li>
+                </ul>
+            </div>
+            <div ng-switch="categoryNum">
+                <div ng-switch-when="0" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);">
+                    <md-tabs md-selected="tabSelected">
+                        <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length || 0}}</span></md-tab>
+                        <md-tab>Проверено: <span style="font-weight: bold;">{{user.tasks_checked.length || 0}}</span></md-tab>
+                        <md-tab>Подтверждено: <span style="font-weight: bold;">{{user.tasks_approved.length || 0}}</span></md-tab>
+                        <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length || 0}}</span></md-tab>
+                    </md-tabs>
+                    <md-content style="max-height: calc(100vh - 172px);">
+                        <md-list>
+                            <ng-switch on="tabSelected">
+                                <div ng-switch-when="0">
+                                    <tasks-solve-list tasks-obj="tasks_done" users-obj="users" skills-obj="skills"></tasks-solve-list>
+                                    <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
+                                         layout="column" layout-align="center center" flex>
+                                        <div>
+                                            <h3 style="color: rgba(0,0,0,0.54);">Пользователь не решил ни одного
+                                                задания</h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div ng-switch-when="1">
-                                <tasks-solve-list tasks-obj="tasks_checked" users-obj="users" skills-obj="skills"></tasks-solve-list>
-                                <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
-                                     layout="column" layout-align="center center" flex>
-                                    <div>
-                                        <h3 style="color: rgba(0,0,0,0.54);">Пользователь не проверил ни одного
-                                            задания</h3>
+                                <div ng-switch-when="1">
+                                    <tasks-solve-list tasks-obj="tasks_checked" users-obj="users" skills-obj="skills"></tasks-solve-list>
+                                    <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
+                                         layout="column" layout-align="center center" flex>
+                                        <div>
+                                            <h3 style="color: rgba(0,0,0,0.54);">Пользователь не проверил ни одного
+                                                задания</h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div ng-switch-when="2">
-                                <tasks-solve-list tasks-obj="tasks_approved" users-obj="users" skills-obj="skills"></tasks-solve-list>
-                                <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
-                                     layout="column" layout-align="center center" flex>
-                                    <div>
-                                        <h3 style="color: rgba(0,0,0,0.54);">Пользователь не подтвердил ни одного
-                                            задания</h3>
+                                <div ng-switch-when="2">
+                                    <tasks-solve-list tasks-obj="tasks_approved" users-obj="users" skills-obj="skills"></tasks-solve-list>
+                                    <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
+                                         layout="column" layout-align="center center" flex>
+                                        <div>
+                                            <h3 style="color: rgba(0,0,0,0.54);">Пользователь не подтвердил ни одного
+                                                задания</h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div ng-switch-when="3">
-                                <tasks-solve-list tasks-obj="tasks_created" users-obj="users" skills-obj="skills"></tasks-solve-list>
-                                <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
-                                     layout="column" layout-align="center center" flex>
-                                    <div>
-                                        <h3 style="color: rgba(0,0,0,0.54);">Пользователь не создал ни одного
-                                            задания</h3>
+                                <div ng-switch-when="3">
+                                    <tasks-solve-list tasks-obj="tasks_created" users-obj="users" skills-obj="skills"></tasks-solve-list>
+                                    <div ng-show="user.tasks_done.length == 0" class="md-tile-content"
+                                         layout="column" layout-align="center center" flex>
+                                        <div>
+                                            <h3 style="color: rgba(0,0,0,0.54);">Пользователь не создал ни одного
+                                                задания</h3>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </ng-switch>
-                    </md-list>
-                </md-content>
+                            </ng-switch>
+                        </md-list>
+                    </md-content>
+                </div>
+                <md-card ng-switch-when="1" style="margin: 0;">
+                    <md-card-content>
+                        <div layout="row" class="info-item">
+                            <div flex="30" class="info-header">День рождения:</div>
+                            <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
+                            <div ng-if="!user.birthday">не указан</div>
+                        </div>
+                        <md-divider class="info-divider"></md-divider>
+                        <div layout="row" class="info-item">
+                            <div flex="30" class="info-header">Место проживания:</div>
+                            <div ng-if="user.city || user.country">{{user.city}}<span ng-if="user.city && user.country">, </span>{{user.country}}</div>
+                            <div ng-if="!(user.city || user.country)">не указано</div>
+                        </div>
+                    </md-card-content>
+                </md-card>
             </div>
         </div>
-        <div flex="20"></div>
     </div>
+    <div flex="15"></div>
 </div>

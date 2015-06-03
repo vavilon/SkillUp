@@ -51,12 +51,47 @@
     margin-left: -29px;
 }
 
-.login-social-btn {
-    margin: 0 10px 0 0;
-    padding: 3px 0 0 0;
-    min-width: 0;
-    min-height: 0;
-    line-height: normal;
-    width: 35px;
-    height: 35px;
+ul.profile-categories {
+    margin: 0;
+    padding: 4px;
+    cursor: default;
+}
+
+ul.profile-categories li {
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.56);
+    display: inline;
+    margin-right: 5px;
+    padding: 3px;
+}
+
+ul.profile-categories a {
+    outline: none;
+    text-decoration: none;
+    color: rgba(65, 131, 196, 0.87);
+}
+
+ul.profile-categories a:hover {
+    color: rgba(65, 131, 196, 0.56);
+}
+
+.category-selected {
+    color: #000 !important;
+}
+
+.category-divider {
+    color: rgba(0, 0, 0, 0.26) !important;
+    font-weight: 600;
+}
+
+.info-item {
+
+}
+
+.info-divider {
+    margin: 10px 0 10px 0;
+}
+
+.info-header {
+    color: rgba(0, 0, 0, 0.56);
 }

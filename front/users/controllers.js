@@ -34,6 +34,8 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID) {
+        $scope.categoryNum = 0;
+
         $scope.findTask = function (id) {
             return getObjByID(id, $scope.tasks);
         };
@@ -95,10 +97,19 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
         $scope.reg.password = $routeParams.password === '0' ? '' : $routeParams.password;
 
-        $scope.showSimpleToast = function () {
+        $scope.showSuccessToast = function () {
             $mdToast.show(
                 $mdToast.simple()
                     .content('Вы успешно зарегистрированы!')
+                    .position('top left')
+                    .hideDelay(3000)
+            );
+        };
+
+        $scope.showErrorToast = function () {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content('Не удалось зарегистрироваться.\nПопробуйте позже...')
                     .position('top left')
                     .hideDelay(3000)
             );
@@ -170,12 +181,10 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             })
                 .success(function (data) {
                     if (!data) {
+                        $scope.showErrorToast();
                         return;
                     }
-                    getIsLoggedIn(function () {
-                        $location.path(data);
-                        $scope.showSimpleToast();
-                    });
+                    $scope.step = 2;
                 });
         };
 
