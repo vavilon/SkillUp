@@ -38,7 +38,8 @@
                 </div>
                 <div>
                     <md-button class="md-raised md-primary skill-button" aria-label="skillBtn" style="max-width: 225px;"
-                               ng-repeat="skill in user.skills">{{findSkill(skill).title}}
+                               ng-repeat="skill in user.skills">
+                            {{findSkill(skill).title}}
                     </md-button>
                 </div>
             </div>
@@ -85,7 +86,7 @@
                                 <div ng-switch-when="0">
                                     <tasks-solve-list tasks-obj="tasks_done" users-obj="users"
                                                       skills-obj="skills"></tasks-solve-list>
-                                    <div ng-show="!user.tasks_done" class="md-tile-content"
+                                    <div ng-if="!user.tasks_done" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не решил ни одного задания</h3>
                                     </div>
@@ -93,15 +94,15 @@
                                 <div ng-switch-when="1">
                                     <tasks-solve-list tasks-obj="tasks_checked" users-obj="users"
                                                       skills-obj="skills"></tasks-solve-list>
-                                    <div ng-show="!user.tasks_done" class="md-tile-content"
+                                    <div ng-if="!user.tasks_checked" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
-                                        <h3 class="list-empty">Пользователь не проверил ни одного задания</h3>
+                                        <h3 class="list-empty">Пользователь не проверил ни одного решения</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="2">
                                     <tasks-solve-list tasks-obj="tasks_approved" users-obj="users"
                                                       skills-obj="skills"></tasks-solve-list>
-                                    <div ng-show="!user.tasks_done" class="md-tile-content"
+                                    <div ng-if="!user.tasks_approved" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не подтвердил ни одного задания</h3>
                                     </div>
@@ -109,7 +110,7 @@
                                 <div ng-switch-when="3">
                                     <tasks-solve-list tasks-obj="tasks_created" users-obj="users"
                                                       skills-obj="skills"></tasks-solve-list>
-                                    <div ng-show="!user.tasks_done" class="md-tile-content"
+                                    <div ng-if="!user.tasks_created" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не создал ни одного задания</h3>
                                     </div>

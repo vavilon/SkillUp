@@ -25,7 +25,7 @@
             <md-content>
                 <md-list>
                     <md-list-item class="md-3-line"
-                                  ng-repeat="user in filteredUsers = (users | filter: {name:username})">
+                                  ng-repeat="user in filteredUsers = (users | filter: {name:username} | orderBy: 'name')">
                         <div layout="column" flex>
                             <div layout="row">
                                 <div layout="row" layout-align="end start" style="padding: 16px 16px 0 0;">

@@ -184,16 +184,27 @@ pre {
 .diff-label.easy {
     border-color: green;
     color: green;
+    margin-right: 27px;
 }
 
 .diff-label.medium {
     border-color: orange;
     color: orange;
+    margin-right: 15px;
 }
 
 .diff-label.hard {
     border-color: red;
     color: red;
+}
+
+.task-title a{
+    color: #304FFE !important;
+    font-weight: 600;
+    text-decoration: none;
+}
+.task-title a:hover {
+    text-decoration: underline;
 }
 
 .task-title, .task-exp {
@@ -234,9 +245,18 @@ pre {
     color: rgba(0, 0, 0, 0.54);
 }
 
+.task-author a{
+    color: rgba(65, 131, 196, 0.87);
+    text-decoration: none;
+}
+
+.task-author a:hover {
+    text-decoration: underline;
+}
+
 .skill-button {
     text-transform: none;
-    height: 19px;
+    white-space: normal !important;
     padding: 1px 3px 2px 3px;
     margin: 0 0 5px 5px;
     min-width: 0;
@@ -319,4 +339,16 @@ pre {
 
 .site-footer a:hover {
     text-decoration: underline;
+}
+
+.user-name {
+    color: #304FFE;
+    font-weight: 600;
+    text-decoration: none;
+}
+.user-name:hover {
+    text-decoration: underline;
+}
+.user-nick {
+    color: #1A237E !important;
 }

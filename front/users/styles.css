@@ -4,22 +4,6 @@
     border-radius: 50%;
 }
 
-.user-name {
-    color: #283593;
-    font-weight: 600;
-    text-decoration: none;
-}
-.user-name:hover {
-    text-decoration: underline;
-}
-.user-name:visited {
-    color: #283593;
-}
-
-.user-nick {
-    color: #1A237E !important;
-}
-
 .ican {
     color: rgba(0, 0, 0, 0.54);
     font-weight: 600;
