@@ -70,7 +70,7 @@ md-toolbar.demo-toolbar {
     white-space: nowrap;
 }
 
-.item-animate.ng-leave.animate.ng-leave-active,
+.item-animate.ng-leave.item-animate.ng-leave-active,
 .item-animate.ng-enter {
     opacity: 0;
     width: auto;

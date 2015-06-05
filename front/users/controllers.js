@@ -107,11 +107,11 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
     }
 );
 
-app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn,
+app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn, isImage,
                                              $mdToast, $animate, $timeout) {
         $scope.reg = {};
 
-        $scope.step = 1;
+        $scope.step = 2;
 
         $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
@@ -208,6 +208,48 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 });
         };
 
+        $scope.isImageRes = false;
+        $scope.isImage = function() {
+            console.log('im here');
+            console.log($scope.reg.imgSrc);
+            isImage($scope.reg.imgSrc).then(function(result) {
+                $scope.isImageRes = result;
+                $scope.reg.imgSrcRes = $scope.reg.imgSrc;
+            });
+        };
+
+        $scope.reg.gender = 'мужской';
+        $scope.reg.education = [];
+        $scope.reg.work = [];
+        var maxYear = (new Date()).getFullYear();
+        $scope.range = [];
+        for (var i = maxYear; i > 1929; i--) {
+            $scope.range.push(i);
+        }
+        $scope.addEducation = function () {
+            if (!$scope.reg.edName) return;
+            var e = {school: {name: $scope.reg.edName}};
+            if ($scope.reg.edConc) e.concentration = [{name: $scope.reg.edConc}];
+            if ($scope.reg.edYear) e.year = {name: $scope.reg.edYear};
+
+            $scope.reg.education.push(e);
+            $scope.reg.edName = null;
+            $scope.reg.edConc = null;
+            $scope.reg.edYear = null;
+        };
+        $scope.addWork = function () {
+            if (!$scope.reg.woName) return;
+            var w = {employer: {name: $scope.reg.woName}};
+            if ($scope.reg.woPosition) w.position = {name: $scope.reg.woPosition};
+            if ($scope.reg.woStartDate) w.start_date = $scope.reg.woStartDate;
+            if ($scope.reg.woEndDate) w.end_date = $scope.reg.woEndDate;
+
+            $scope.reg.work.push(w);
+            $scope.reg.woName = null;
+            $scope.reg.woPosition = null;
+            $scope.reg.woStartDate = null;
+            $scope.reg.woEndDate = null;
+        };
 
 /*        $scope.loginWithFacebook = function() {
 

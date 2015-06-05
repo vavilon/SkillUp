@@ -88,6 +88,21 @@ app.factory('loggedUser', function($rootScope) {
     }
 });
 
+app.factory('isImage', function($q) {
+    return  function(src) {
+        var deferred = $q.defer();
+        var image = new Image();
+        image.onerror = function() {
+            deferred.resolve(false);
+        };
+        image.onload = function() {
+            deferred.resolve(true);
+        };
+        image.src = src;
+        return deferred.promise;
+    };
+});
+
 app.run(function($rootScope, $http, getIsLoggedIn) {
     getIsLoggedIn();
     $rootScope.navbarSelectedIndex = 0;

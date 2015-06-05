@@ -1,9 +1,9 @@
 <link rel="stylesheet" href="/front/users/styles.css">
 <div style="position: absolute; background-color: #3F51B5; height: 232px; width: 100%;"></div>
-<div layout="row">
+<div layout="row" style="position: relative">
     <div flex="15" flex-md="5" hide-sm></div>
     <div flex
-         style="margin-top: 30px; margin-bottom: 30px; z-index: 3;">
+         style="margin-top: 30px; margin-bottom: 30px;">
         <md-card>
             <md-subheader class="md-no-sticky"
                           style="font-size: 20px; color: #3F51B5;
@@ -120,7 +120,131 @@
                     </form>
                 </div>
                 <div ng-switch-when="2" layout="column">
+                    <form name="regForm2" layout="row">
+                        <div layout="column" flex="25">
 
+                            <div ng-if="isImageRes" flex style="overflow: hidden; max-height: 300px; min-height: 225px;
+                                 box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: #FAFAFA;">
+                            <img ng-src='{{reg.imgSrcRes}}'
+                                 style="width: 100%; height: 100%;">
+                            </div>
+                            <img ng-if="!isImageRes"
+                                 src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
+                                 style="opacity: 0.26; width: 100%; height: 100%; border: 2px dashed rgba(0, 0, 0, 0.26);">
+                        </div>
+                        <div layout="column" flex style="padding-left: 15px;">
+                            <div layout="row">
+                                <md-input-container flex>
+                                    <label>Ссылка на изображение профиля</label>
+                                    <input type="text" ng-model="reg.imgSrc">
+                                </md-input-container>
+                                <div style="margin-top: 8px;"><md-button class="md-raised">Загрузить</md-button></div>
+                            </div>
+                            <div layout="row" layout-align="start center">
+                                <md-input-container flex>
+                                    <label>Ваш день рождения</label>
+                                    <input type="date" ng-model="reg.birthday">
+                                </md-input-container>
+                                <md-radio-group ng-model="reg.gender">
+                                    <div layout="row">
+                                        <md-radio-button value="мужской" class="md-primary">Мужчина</md-radio-button>
+                                        <md-radio-button value="женский" class="md-accent">Женщина</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                            </div>
+                            <div layout="row" layout-align="start center">
+                                <md-input-container flex>
+                                    <label>Город</label>
+                                    <input type="text" ng-model="reg.city">
+                                </md-input-container>
+                                <md-input-container flex>
+                                    <label>Страна</label>
+                                    <input type="text" ng-model="reg.country">
+                                </md-input-container>
+                            </div>
+                            <div layout="row" layout-align="start start">
+                                <div flex="25" style="margin: 15px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Образование:</div>
+                                <div layout="column" flex style="margin-top: 15px;">
+                                    <div layout="row" layout-align="center center" flex ng-repeat="ed in reg.education" ng-class="{'not-last': !$last}">
+                                        <div flex><span ng-if="reg.education.length > 1" class="info-header">•</span>
+                                            {{ed.school.name}}
+                                            <span class="info-header" ng-if="ed.year">({{ed.year.name}})</span>
+                                            <span ng-if="ed.concentration"> — {{ed.concentration[0].name}}</span>
+                                        </div>
+                                        <md-button class="expand-button" style="margin-left: 10px;"
+                                                   ng-click="reg.education.splice($index, 1)" title="Удалить">
+                                            <md-icon md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_clear_24px.svg"
+                                                     aria-label="LaLat" style="outline: none;"
+                                            </md-icon>
+                                        </md-button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div layout="row">
+                                <md-input-container flex style="padding-bottom: 5px;">
+                                    <label>Название учебного заведения</label>
+                                    <input type="text" ng-model="reg.edName">
+                                </md-input-container>
+                            </div>
+                            <div layout="row">
+                                <md-input-container flex>
+                                    <label>Что изучали</label>
+                                    <input type="text" ng-model="reg.edConc">
+                                </md-input-container>
+                                <md-select style="margin-top: 7px;" placeholder="Год окончания" ng-model="reg.edYear">
+                                    <md-option ng-repeat="i in range" value="{{i}}">{{i}}</md-option>
+                                </md-select>
+                                <div style="margin-top: 8px;">
+                                    <md-button class="md-raised" ng-click="addEducation()">Добавить</md-button>
+                                </div>
+                            </div>
+
+                            <div layout="row" layout-align="start start">
+                                <div flex="25" style="margin: 15px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Работа:</div>
+                                <div layout="column" flex style="margin-top: 15px;">
+                                    <div layout="row" layout-align="center center" flex ng-repeat="wo in reg.work" ng-class="{'not-last': !$last}">
+                                        <div flex><span ng-if="reg.work.length > 1" class="info-header">•</span>
+                                            {{wo.employer.name}}
+                                            <span class="info-header" ng-if="wo.start_date || wo.end_date">
+                                            (<span ng-if="wo.start_date">с {{wo.start_date | date: 'MMMM yyyy'}}</span>
+                                            <span ng-if="wo.end_date">по {{wo.end_date | date: 'MMMM yyyy'}}</span>)</span>
+                                            <span ng-if="wo.position">, {{wo.position.name}}</span>
+                                        </div>
+                                        <md-button class="expand-button" style="margin-left: 10px;"
+                                                   ng-click="reg.work.splice($index, 1)" title="Удалить">
+                                            <md-icon md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_clear_24px.svg"
+                                                     aria-label="LaLat" style="outline: none;"
+                                            </md-icon>
+                                        </md-button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div layout="row">
+                                <md-input-container flex style="padding-bottom: 5px;">
+                                    <label>Место работы</label>
+                                    <input type="text" ng-model="reg.woName">
+                                </md-input-container>
+                                <md-input-container flex style="padding-bottom: 5px;">
+                                    <label>Должность</label>
+                                    <input type="text" ng-model="reg.woPosition">
+                                </md-input-container>
+                            </div>
+                            <div layout="row">
+                                <md-input-container flex>
+                                    <label>С</label>
+                                    <input type="date" ng-model="reg.woStartDate">
+                                </md-input-container>
+                                <md-input-container flex>
+                                    <label>По</label>
+                                    <input type="date" ng-model="reg.woEndDate">
+                                </md-input-container>
+                                <div style="margin-top: 8px;">
+                                    <md-button class="md-raised" ng-click="addWork()">Добавить</md-button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
                 </div>
             </md-card-content>
         </md-card>

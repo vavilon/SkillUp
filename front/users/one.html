@@ -4,7 +4,7 @@
     <div flex="15"></div>
     <div layout="row" style="min-width: 225px; max-width: 225px;">
         <div layout="column" flex>
-            <div flex ng-mouseenter="" style="overflow: hidden; max-height: 300px; min-height: 225px;
+            <div flex style="overflow: hidden; max-height: 300px; min-height: 225px;
              box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: #FAFAFA;">
                 <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='{{user.avatar}}'
                      style="width: 100%; height: 100%;">
@@ -39,7 +39,7 @@
                 <div>
                     <md-button class="md-raised md-primary skill-button" aria-label="skillBtn" style="max-width: 225px;"
                                ng-repeat="skill in user.skills">
-                            {{findSkill(skill).title}}
+                        {{findSkill(skill).title}}
                     </md-button>
                 </div>
             </div>
@@ -120,49 +120,86 @@
                     </md-content>
                 </div>
                 <md-card ng-switch-when="1" style="margin: 0;">
-                    <md-card-content>
-                        <div layout="row" class="info-item">
-                            <div flex="30" class="info-header">День рождения:</div>
-                            <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
-                            <div class="info-empty" ng-if="!user.birthday">не указано</div>
-                        </div>
-                        <md-divider class="info-divider"></md-divider>
-                        <div layout="row" class="info-item">
-                            <div flex="30" class="info-header">Место проживания:</div>
-                            <div ng-if="user.city || user.country">{{user.city}}<span ng-if="user.city && user.country">, </span>{{user.country}}
-                            </div>
-                            <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
-                        </div>
-                        <md-divider class="info-divider"></md-divider>
-                        <div layout="row" class="info-item">
-                            <div flex="30" class="info-header">Образование:</div>
-                            <div layout="column">
-                                <div ng-repeat="ed in user.education" ng-class="{'not-last': !$last}">
-                                    <div><span ng-if="user.education.length > 1" class="info-header">•</span>
-                                        {{ed.school.name}}
-                                        <span class="info-header" ng-if="ed.year">({{ed.year.name}})</span>
-                                        <span ng-if="ed.concentration"> — {{ed.concentration[0].name}}</span>
-                                    </div>
+                    <md-card-content style="padding-top: 0; padding-bottom: 0;">
+                        <md-list class="info-list">
+                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r1 = true"
+                                          ng-mouseleave="r1 = false">
+                                <div flex="30" class="info-header">День рождения:</div>
+                                <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
+                                <div class="info-empty" ng-if="!user.birthday">не указано</div>
+                                <md-button class="md-secondary md-icon-button" style="border-radius: 50%;" ng-if="r1">
+                                    <md-icon
+                                            md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
+                                            aria-label="LaLat" style="outline: none;"
+                                    </md-icon>
+                                </md-button>
+                            </md-list-item>
+
+                            <md-divider></md-divider>
+
+                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r2 = true"
+                                          ng-mouseleave="r2 = false">
+                                <div flex="30" class="info-header">Место проживания:</div>
+                                <div ng-if="user.city || user.country">{{user.city}}<span
+                                        ng-if="user.city && user.country">, </span>{{user.country}}
                                 </div>
-                                <div class="info-empty" ng-if="!user.education">не указано</div>
-                            </div>
-                        </div>
-                        <md-divider class="info-divider"></md-divider>
-                        <div layout="row" class="info-item">
-                            <div flex="30" class="info-header">Работа:</div>
-                            <div layout="column">
-                                <div ng-repeat="wo in user.work" ng-class="{'not-last': !$last}">
-                                    <div><span ng-if="user.work.length > 1" class="info-header">•</span>
-                                        {{wo.employer.name}}
-                                        <span class="info-header" ng-if="wo.start_date || wo.end_date">
-                                            (<span ng-if="wo.start_date">{{wo.start_date | date: 'MMMM yyyy'}}</span>
-                                            <span ng-if="wo.end_date">— {{wo.end_date | date: 'MMMM yyyy'}}</span>)</span><span
-                                                ng-if="wo.position">, {{wo.position.name}}</span>
+                                <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
+                                <md-button class="md-secondary md-icon-button" style="border-radius: 50%;" ng-if="r2">
+                                    <md-icon
+                                            md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
+                                            aria-label="LaLat" style="outline: none;"
+                                    </md-icon>
+                                </md-button>
+                            </md-list-item>
+
+                            <md-divider></md-divider>
+
+                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r3 = true"
+                                          ng-mouseleave="r3 = false">
+                                <div flex="30" class="info-header">Образование:</div>
+                                <div layout="column">
+                                    <div ng-repeat="ed in user.education" ng-class="{'not-last': !$last}">
+                                        <div><span ng-if="user.education.length > 1" class="info-header">•</span>
+                                            {{ed.school.name}}
+                                            <span class="info-header" ng-if="ed.year">({{ed.year.name}})</span>
+                                            <span ng-if="ed.concentration"> — {{ed.concentration[0].name}}</span>
+                                        </div>
                                     </div>
+                                    <div class="info-empty" ng-if="!user.education">не указано</div>
                                 </div>
-                                <div class="info-empty" ng-if="!user.work">не указано</div>
-                            </div>
-                        </div>
+                                <md-button class="md-secondary md-icon-button" style="border-radius: 50%;" ng-if="r3">
+                                    <md-icon
+                                            md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
+                                            aria-label="LaLat" style="outline: none;"
+                                    </md-icon>
+                                </md-button>
+                            </md-list-item>
+
+                            <md-divider></md-divider>
+
+                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r4 = true"
+                                          ng-mouseleave="r4 = false">
+                                <div flex="30" class="info-header">Работа:</div>
+                                <div layout="column">
+                                    <div ng-repeat="wo in user.work" ng-class="{'not-last': !$last}">
+                                        <div><span ng-if="user.work.length > 1" class="info-header">•</span>
+                                            {{wo.employer.name}}<span class="info-header"
+                                                                      ng-if="wo.start_date || wo.end_date">(<span
+                                                    ng-if="wo.start_date">с {{wo.start_date | date: 'MMMM yyyy'}}</span><span
+                                                    ng-if="wo.end_date">по {{wo.end_date | date: 'MMMM yyyy'}}</span>)</span><span
+                                                    ng-if="wo.position">, {{wo.position.name}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-empty" ng-if="!user.work">не указано</div>
+                                </div>
+                                <md-button class="md-secondary md-icon-button" style="border-radius: 50%;" ng-if="r4">
+                                    <md-icon
+                                            md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
+                                            aria-label="LaLat" style="outline: none;"
+                                    </md-icon>
+                                </md-button>
+                            </md-list-item>
+                        </md-list>
                     </md-card-content>
                 </md-card>
             </div>

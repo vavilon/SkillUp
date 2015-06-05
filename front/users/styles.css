@@ -68,8 +68,13 @@ ul.profile-categories a:hover {
     font-weight: 600;
 }
 
-.info-item {
+.info-list {
+    padding: 0;
+}
 
+.info-list md-list-item {
+    min-height: 0;
+    padding: 15px 0 15px 0;
 }
 
 .info-divider {

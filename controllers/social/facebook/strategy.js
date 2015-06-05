@@ -55,13 +55,13 @@ module.exports = function (token, refreshToken, profile, done) {
                     try {
                         u.education = [];
                         for (var i in result.education) {
-                            u.education.push(JSON.stringify(result.education[i]))
+                            u.education.push(JSON.stringify(result.education[i]));
                         }
                     } catch (e) { }
                     try {
                         u.work = [];
                         for (i in result.work) {
-                            u.work.push(JSON.stringify(result.work[i]))
+                            u.work.push(JSON.stringify(result.work[i]));
                         }
                     } catch (e) { }
 
