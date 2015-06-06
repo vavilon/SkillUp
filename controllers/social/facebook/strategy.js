@@ -63,18 +63,12 @@ module.exports = function (token, refreshToken, profile, done) {
                     }
                     if (result.education) {
                         try {
-                            u.education = [];
-                            for (var i in result.education) {
-                                u.education.push(JSON.stringify(result.education[i]));
-                            }
+                            u.education = JSON.stringify(result.education);
                         } catch (e) { }
                     }
                     if (result.work) {
                         try {
-                            u.work = [];
-                            for (i in result.work) {
-                                u.work.push(JSON.stringify(result.work[i]));
-                            }
+                            u.work = JSON.stringify(result.work);
                         } catch (e) { }
                     }
 
