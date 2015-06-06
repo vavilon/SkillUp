@@ -103,6 +103,42 @@ app.factory('isImage', function($q) {
     };
 });
 
+app.factory('educationStr', function() {
+    return function(education) {
+        var educationStr = [], s = '', buff = {};
+        for (var i in education) {
+            buff = education[i];
+            s = buff.school.name;
+            if (buff.year && buff.year.name) s += ' (' + buff.year.name + ')';
+            if (buff.concentration && buff.concentration[0] && buff.concentration[0].name) {
+                s += ', ' + buff.concentration[0].name;
+            }
+            educationStr.push(s);
+        }
+        return educationStr.reverse();
+    };
+});
+
+app.factory('workStr', function($filter) {
+    return function(work) {
+        var workStr = [], s = '', buff = {};
+        for (var i in work) {
+            buff = work[i];
+            s = buff.employer.name;
+            if (buff.start_date || buff.end_date) {
+                s += ' (';
+                if (buff.start_date) s += 'с ' + $filter('date')(buff.start_date, 'MMMM yyyy');
+                if (buff.start_date && buff.end_date) s += ' ';
+                if (buff.end_date) s += 'по ' + $filter('date')(buff.end_date, 'MMMM yyyy');
+                s += ')'
+            }
+            if (buff.position && buff.position.name) s += ', ' + buff.position.name;
+            workStr.push(s);
+        }
+        return workStr.reverse();
+    };
+});
+
 app.run(function($rootScope, $http, getIsLoggedIn) {
     getIsLoggedIn();
     $rootScope.navbarSelectedIndex = 0;

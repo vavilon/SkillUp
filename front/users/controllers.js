@@ -33,11 +33,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
     });
 });
 
-app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID) {
-        $scope.lol = function(param) {
-          console.log(param);
-        };
-
+app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr) {
         $scope.categoryNum = 0;
 
         $scope.findTask = function (id) {
@@ -52,20 +48,10 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
             $scope.users = data;
             $scope.user = getObjByID($routeParams.user_id, $scope.users);
             if ($scope.user.education) {
-                var res1 = [];
-                for (var i in $scope.user.education) {
-                    res1.push(JSON.parse($scope.user.education[i]));
-                }
-                res1 = res1.reverse();
-                $scope.user.education = res1;
+                $scope.user.educationStr = educationStr(JSON.parse($scope.user.education));
             }
             if ($scope.user.work) {
-                var res2 = [];
-                for (i in $scope.user.work) {
-                    res2.push(JSON.parse($scope.user.work[i]));
-                }
-                res2 = res2.reverse();
-                $scope.user.work = res2;
+                $scope.user.workStr = workStr(JSON.parse($scope.user.work));
             }
             $http.get('db/tasks').success(function (data) {
                 $scope.tasks = data;
@@ -94,12 +80,12 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
                     $scope.tasks_created.push($scope.findTask($scope.user.tasks_created[i]));
                 }
             });
-        });
-        $http.get('db/skills').success(function (data) {
-            $scope.skills = data;
-        });
-        $http.get('db/solutions').success(function (data) {
-            $scope.solutions = data;
+            $http.get('db/skills').success(function (data) {
+                $scope.skills = data;
+            });
+            $http.get('db/solutions').success(function (data) {
+                $scope.solutions = data;
+            });
         });
 
         $scope.tabSelected = 0;
@@ -107,8 +93,8 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID)
     }
 );
 
-app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn, isImage,
-                                             $mdToast, $animate, $timeout) {
+app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn, isImage, $mdToast,
+                                             $animate, $timeout, educationStr, workStr) {
         $scope.reg = {};
 
         $scope.step = 2;
@@ -226,6 +212,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         for (var i = maxYear; i > 1929; i--) {
             $scope.range.push(i);
         }
+
         $scope.addEducation = function () {
             if (!$scope.reg.edName) return;
             var e = {school: {name: $scope.reg.edName}};
@@ -233,6 +220,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             if ($scope.reg.edYear) e.year = {name: $scope.reg.edYear};
 
             $scope.reg.education.push(e);
+            $scope.reg.educationStr = educationStr($scope.reg.education);
             $scope.reg.edName = null;
             $scope.reg.edConc = null;
             $scope.reg.edYear = null;
@@ -245,10 +233,20 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             if ($scope.reg.woEndDate) w.end_date = $scope.reg.woEndDate;
 
             $scope.reg.work.push(w);
+            $scope.reg.workStr = workStr($scope.reg.work);
             $scope.reg.woName = null;
             $scope.reg.woPosition = null;
             $scope.reg.woStartDate = null;
             $scope.reg.woEndDate = null;
+        };
+
+        $scope.removeEducation = function (index) {
+            $scope.reg.education.splice(index, 1);
+            $scope.reg.educationStr.splice(index, 1);
+        };
+        $scope.removeWork = function (index) {
+            $scope.reg.work.splice(index, 1);
+            $scope.reg.workStr.splice(index, 1);
         };
 
 /*        $scope.loginWithFacebook = function() {

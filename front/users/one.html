@@ -127,7 +127,8 @@
                                 <div flex="30" class="info-header">День рождения:</div>
                                 <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
                                 <div class="info-empty" ng-if="!user.birthday">не указано</div>
-                                <md-button class="md-secondary md-icon-button" style="border-radius: 50%;" ng-if="r1">
+                                <div flex></div>
+                                <md-button class="edit-button" ng-if="r1">
                                     <md-icon
                                             md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                             aria-label="LaLat" style="outline: none;"
@@ -144,7 +145,8 @@
                                         ng-if="user.city && user.country">, </span>{{user.country}}
                                 </div>
                                 <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
-                                <md-button class="md-secondary md-icon-button" style="border-radius: 50%;" ng-if="r2">
+                                <div flex></div>
+                                <md-button class="edit-button" ng-if="r2">
                                     <md-icon
                                             md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                             aria-label="LaLat" style="outline: none;"
@@ -157,17 +159,15 @@
                             <md-list-item layout="row" layout-align="start start" ng-mouseenter="r3 = true"
                                           ng-mouseleave="r3 = false">
                                 <div flex="30" class="info-header">Образование:</div>
-                                <div layout="column">
-                                    <div ng-repeat="ed in user.education" ng-class="{'not-last': !$last}">
-                                        <div><span ng-if="user.education.length > 1" class="info-header">•</span>
-                                            {{ed.school.name}}
-                                            <span class="info-header" ng-if="ed.year">({{ed.year.name}})</span>
-                                            <span ng-if="ed.concentration"> — {{ed.concentration[0].name}}</span>
+                                <div flex layout="column">
+                                    <div ng-repeat="ed in user.educationStr" ng-class="{'not-last': !$last}">
+                                        <div><span ng-if="user.educationStr.length > 1" class="info-header">•</span>
+                                            {{ed}}
                                         </div>
                                     </div>
-                                    <div class="info-empty" ng-if="!user.education">не указано</div>
+                                    <div class="info-empty" ng-if="!user.educationStr">не указано</div>
                                 </div>
-                                <md-button class="md-secondary md-icon-button" style="border-radius: 50%;" ng-if="r3">
+                                <md-button class="edit-button" ng-if="r3">
                                     <md-icon
                                             md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                             aria-label="LaLat" style="outline: none;"
@@ -180,19 +180,15 @@
                             <md-list-item layout="row" layout-align="start start" ng-mouseenter="r4 = true"
                                           ng-mouseleave="r4 = false">
                                 <div flex="30" class="info-header">Работа:</div>
-                                <div layout="column">
-                                    <div ng-repeat="wo in user.work" ng-class="{'not-last': !$last}">
-                                        <div><span ng-if="user.work.length > 1" class="info-header">•</span>
-                                            {{wo.employer.name}}<span class="info-header"
-                                                                      ng-if="wo.start_date || wo.end_date">(<span
-                                                    ng-if="wo.start_date">с {{wo.start_date | date: 'MMMM yyyy'}}</span><span
-                                                    ng-if="wo.end_date">по {{wo.end_date | date: 'MMMM yyyy'}}</span>)</span><span
-                                                    ng-if="wo.position">, {{wo.position.name}}</span>
+                                <div flex layout="column">
+                                    <div ng-repeat="wo in user.workStr" ng-class="{'not-last': !$last}">
+                                        <div><span ng-if="user.workStr.length > 1" class="info-header">•</span>
+                                            {{wo}}
                                         </div>
                                     </div>
-                                    <div class="info-empty" ng-if="!user.work">не указано</div>
+                                    <div class="info-empty" ng-if="!user.workStr">не указано</div>
                                 </div>
-                                <md-button class="md-secondary md-icon-button" style="border-radius: 50%;" ng-if="r4">
+                                <md-button class="edit-button" ng-if="r4">
                                     <md-icon
                                             md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                             aria-label="LaLat" style="outline: none;"

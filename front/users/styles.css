@@ -98,3 +98,12 @@ ul.profile-categories a:hover {
     font-weight: normal;
     margin-top: 0px;
 }
+
+.edit-button {
+    position: absolute;
+    margin: -5px 0 0 -27px;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+}

@@ -15,7 +15,14 @@ module.exports = function (token, refreshToken, profile, done) {
     process.nextTick(function () {
         new User({'id_facebook': profile.id}).fetch().then(function (user) {
             if (user) {
-                return done(null, user); // user found, return that user
+                var avatar = "https://graph.facebook.com/" + profile.id + "/picture" + "?width=9999" + "&access_token=" + token;
+                knex('users').where('id_facebook', '=', profile.id).update({avatar: avatar})
+                    .then(function() {
+                        return done(null, user);
+                    })
+                    .catch(function (error) {
+                        done(error);
+                    });
             } else {
                 var options = {
                     host: 'graph.facebook.com',

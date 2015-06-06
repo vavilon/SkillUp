@@ -165,14 +165,12 @@
                             <div layout="row" layout-align="start start">
                                 <div flex="25" style="margin: 15px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Образование:</div>
                                 <div layout="column" flex style="margin-top: 15px;">
-                                    <div layout="row" layout-align="center center" flex ng-repeat="ed in reg.education" ng-class="{'not-last': !$last}">
-                                        <div flex><span ng-if="reg.education.length > 1" class="info-header">•</span>
-                                            {{ed.school.name}}
-                                            <span class="info-header" ng-if="ed.year">({{ed.year.name}})</span>
-                                            <span ng-if="ed.concentration"> — {{ed.concentration[0].name}}</span>
+                                    <div layout="row" layout-align="center center" flex ng-repeat="ed in reg.educationStr" ng-class="{'not-last': !$last}">
+                                        <div flex><span ng-if="reg.educationStr.length > 1" class="info-header">•</span>
+                                            {{ed}}
                                         </div>
                                         <md-button class="expand-button" style="margin-left: 10px;"
-                                                   ng-click="reg.education.splice($index, 1)" title="Удалить">
+                                                   ng-click="removeEducation($index)" title="Удалить">
                                             <md-icon md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_clear_24px.svg"
                                                      aria-label="LaLat" style="outline: none;"
                                             </md-icon>
@@ -202,16 +200,12 @@
                             <div layout="row" layout-align="start start">
                                 <div flex="25" style="margin: 15px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Работа:</div>
                                 <div layout="column" flex style="margin-top: 15px;">
-                                    <div layout="row" layout-align="center center" flex ng-repeat="wo in reg.work" ng-class="{'not-last': !$last}">
-                                        <div flex><span ng-if="reg.work.length > 1" class="info-header">•</span>
-                                            {{wo.employer.name}}
-                                            <span class="info-header" ng-if="wo.start_date || wo.end_date">
-                                            (<span ng-if="wo.start_date">с {{wo.start_date | date: 'MMMM yyyy'}}</span>
-                                            <span ng-if="wo.end_date">по {{wo.end_date | date: 'MMMM yyyy'}}</span>)</span>
-                                            <span ng-if="wo.position">, {{wo.position.name}}</span>
+                                    <div layout="row" layout-align="center center" flex ng-repeat="wo in reg.workStr" ng-class="{'not-last': !$last}">
+                                        <div flex><span ng-if="reg.workStr.length > 1" class="info-header">•</span>
+                                            {{wo}}
                                         </div>
                                         <md-button class="expand-button" style="margin-left: 10px;"
-                                                   ng-click="reg.work.splice($index, 1)" title="Удалить">
+                                                   ng-click="removeWork($index)" title="Удалить">
                                             <md-icon md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_clear_24px.svg"
                                                      aria-label="LaLat" style="outline: none;"
                                             </md-icon>
