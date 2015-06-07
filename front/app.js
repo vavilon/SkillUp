@@ -4,7 +4,8 @@ var app = angular.module('skills', [
     'ngAnimate',
     'hljs',
     'ngCookies',
-    'ngMessages'
+    'ngMessages',
+    'ngImgCrop'
 ]);
 
     app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {

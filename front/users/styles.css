@@ -107,3 +107,10 @@ ul.profile-categories a:hover {
     min-height: 0;
     line-height: normal;
 }
+
+.avatar-div {
+    width: 225px;
+    height: 225px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54);
+    background-color: #FAFAFA;
+}

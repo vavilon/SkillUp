@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="/front/users/styles.css">
 <div style="position: absolute; background-color: #3F51B5; height: 232px; width: 100%;"></div>
+<div style="position: absolute; height: 100%; width: 100%;" id="toastElem"></div>
 <div layout="row" style="position: relative">
     <div flex="15" flex-md="5" hide-sm></div>
     <div flex
@@ -121,25 +122,33 @@
                 </div>
                 <div ng-switch-when="2" layout="column">
                     <form name="regForm2" layout="row">
-                        <div layout="column" flex="25">
-
-                            <div ng-if="isImageRes" flex style="overflow: hidden; max-height: 300px; min-height: 225px;
-                                 box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: #FAFAFA;">
-                            <img ng-src='{{reg.imgSrcRes}}'
-                                 style="width: 100%; height: 100%;">
+                        <div flex="25" layout="column">
+                            <div ng-if="reg.isImageRes" class="avatar-div">
+                                <img-crop image="reg.imgSrcRes" result-image="reg.imgCropRes" area-type="square"
+                                        result-image-size="225">
                             </div>
-                            <img ng-if="!isImageRes"
+                            <img ng-if="!reg.isImageRes"
                                  src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
-                                 style="opacity: 0.26; width: 100%; height: 100%; border: 2px dashed rgba(0, 0, 0, 0.26);">
-                        </div>
-                        <div layout="column" flex style="padding-left: 15px;">
+                                 style="opacity: 0.26; width: 225px; height: 225px; border: 2px dashed rgba(0, 0, 0, 0.26);">
                             <div layout="row">
-                                <md-input-container flex>
-                                    <label>Ссылка на изображение профиля</label>
+                                <md-input-container flex style="padding-bottom: 10px; margin-top: 5px;">
+                                    <label>Ссылка</label>
                                     <input type="text" ng-model="reg.imgSrc">
                                 </md-input-container>
-                                <div style="margin-top: 8px;"><md-button class="md-raised">Загрузить</md-button></div>
+                                <div>
+                                <md-button class="expand-button" ng-click="loadImage()" style="margin-top: 30px;">
+                                    <md-icon md-svg-icon="/bower_components/material-design-icons/file/svg/design/ic_file_upload_24px.svg"
+                                             aria-label="ExpandM"></md-icon>
+                                </md-button></div>
                             </div>
+                            <div layout="column" layout-align="center center">
+                                <span style="padding-bottom: 5px; color: rgba(0,0,0,0.54);">или</span>
+                            </div>
+                            <input type="file" id="fileInput" style="display: none;"
+                                   onchange="angular.element(this).scope().handleFileSelect(this)">
+                            <md-button class="md-raised" ng-click="selectImage()">Выберите изображение</md-button>
+                        </div>
+                        <div layout="column" flex style="padding-left: 15px;">
                             <div layout="row" layout-align="start center">
                                 <md-input-container flex>
                                     <label>Ваш день рождения</label>
@@ -236,7 +245,9 @@
                                     <md-button class="md-raised" ng-click="addWork()">Добавить</md-button>
                                 </div>
                             </div>
-
+                            <div layout="row" layout-align="center center">
+                                <md-button class="md-raised md-primary" ng-click="goToStep3()">Далее >></md-button>
+                            </div>
                         </div>
                     </form>
                 </div>

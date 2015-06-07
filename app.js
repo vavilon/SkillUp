@@ -42,10 +42,11 @@ var bcrypt = require('bcryptjs');
 //});
 
 app.use(cookieParser());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({
-    extended: false
+    limit: '50mb',
+    extended: true
 }));
-app.use(bodyParser.json());
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
@@ -188,6 +189,29 @@ app.use('/check_email', function (req, res) {
             console.log("Email '" + email + "' is free!");
             res.end('ok');
         });
+});
+
+app.post('/register/step2', function (req, res, next) {
+    if (req.isAuthenticated()) {
+        knex('users').where('id', '=', req.user.id).update(
+            {
+                avatar: req.body.avatar,
+                birthday: req.body.birthday,
+                gender: req.body.gender,
+                city: req.body.city,
+                country: req.body.country,
+                education: req.body.education,
+                work: req.body.work
+            }
+        )
+            .then(function() {
+                res.end('ok');
+            })
+            .catch(function (error) {
+                res.end();
+            });
+    }
+    else res.end();
 });
 
 app.get('/auth/facebook', function (req, res, next) {

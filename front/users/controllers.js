@@ -61,24 +61,24 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 $scope.tasks_created = [];
 
                 if ($scope.user.tasks_done)
-                for (var i = 0; i < $scope.user.tasks_done.length; i++) {
-                    $scope.tasks_done.push($scope.findTask($scope.user.tasks_done[i]));
-                }
+                    for (var i = 0; i < $scope.user.tasks_done.length; i++) {
+                        $scope.tasks_done.push($scope.findTask($scope.user.tasks_done[i]));
+                    }
 
                 if ($scope.user.tasks_checked)
-                for (i = 0; i < $scope.user.tasks_checked.length; i++) {
-                    $scope.tasks_checked.push($scope.findTask($scope.user.tasks_checked[i]));
-                }
+                    for (i = 0; i < $scope.user.tasks_checked.length; i++) {
+                        $scope.tasks_checked.push($scope.findTask($scope.user.tasks_checked[i]));
+                    }
 
                 if ($scope.user.tasks_approved)
-                for (i = 0; i < $scope.user.tasks_approved.length; i++) {
-                    $scope.tasks_done.push($scope.findTask($scope.user.tasks_approved[i]));
-                }
+                    for (i = 0; i < $scope.user.tasks_approved.length; i++) {
+                        $scope.tasks_done.push($scope.findTask($scope.user.tasks_approved[i]));
+                    }
 
                 if ($scope.user.tasks_created)
-                for (i = 0; i < $scope.user.tasks_created.length; i++) {
-                    $scope.tasks_created.push($scope.findTask($scope.user.tasks_created[i]));
-                }
+                    for (i = 0; i < $scope.user.tasks_created.length; i++) {
+                        $scope.tasks_created.push($scope.findTask($scope.user.tasks_created[i]));
+                    }
             });
             $http.get('db/skills').success(function (data) {
                 $scope.skills = data;
@@ -130,34 +130,33 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         };
 
         $scope.vRegex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-        $scope.validateEmail = function() {
+        $scope.validateEmail = function () {
             return $scope.vRegex.test($scope.reg.email);
         };
-        $scope.validatePasswords = function() {
+        $scope.validatePasswords = function () {
             return $scope.reg.password === $scope.reg.rePassword;
         };
 
         $scope.exists = {nick: false, email: false, emailnotvalid: false};
-        $scope.checkNick = function() {
+        $scope.checkNick = function () {
             $http.post('/check_nick', {nick: $scope.reg.nick}).success(function (data) {
                 $scope.exists.nick = data ? false : true;
             });
         };
-        $scope.checkEmail = function() {
+        $scope.checkEmail = function () {
             $http.post('/check_email', {email: $scope.reg.email}).success(function (data) {
                 $scope.exists.email = data ? false : true;
             });
         };
 
-        $scope.$watch('reg.nick', function(newVal, oldVal) {
+        $scope.$watch('reg.nick', function (newVal, oldVal) {
             if (newVal) {
                 $scope.checkNick();
             }
             else $scope.exists.nick = false;
         });
 
-        $scope.$watch('reg.email', function(newVal, oldVal) {
-            console.log('Watching email...');
+        $scope.$watch('reg.email', function (newVal, oldVal) {
             if (newVal) {
                 if (!$scope.validateEmail()) {
                     $scope.exists.emailnotvalid = true;
@@ -194,14 +193,45 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 });
         };
 
-        $scope.isImageRes = false;
-        $scope.isImage = function() {
-            console.log('im here');
-            console.log($scope.reg.imgSrc);
-            isImage($scope.reg.imgSrc).then(function(result) {
-                $scope.isImageRes = result;
+        $scope.showErrorImgToast = function () {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content('Не удалось загрузить фотографию...')
+                    .position('bottom left')
+                    .hideDelay(3000)
+                    .parent(angular.element(document.querySelector('#toastElem')))
+            );
+        };
+
+        $scope.reg.imgSrc = '';
+        $scope.reg.imgCropRes = '';
+        $scope.reg.isImageRes = false;
+        $scope.loadImage = function () {
+            isImage($scope.reg.imgSrc).then(function (result) {
+                if (!result) {
+                    $scope.showErrorImgToast();
+                    return;
+                }
+                $scope.reg.isImageRes = result;
                 $scope.reg.imgSrcRes = $scope.reg.imgSrc;
             });
+        };
+
+        $scope.handleFileSelect = function (element) {
+            var file = element.files[0];
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                $scope.$apply(function ($scope) {
+                    $scope.reg.isImageRes = true;
+                    console.log(evt.target.result);
+                    $scope.reg.imgSrcRes = evt.target.result;
+                });
+            };
+            reader.readAsDataURL(file);
+        };
+
+        $scope.selectImage = function () {
+            angular.element(document.querySelector('#fileInput'))[0].click();
         };
 
         $scope.reg.gender = 'мужской';
@@ -249,31 +279,47 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             $scope.reg.workStr.splice(index, 1);
         };
 
-/*        $scope.loginWithFacebook = function() {
-
-            FB.getLoginStatus(function(response) {
-                if (response.status === 'connected') {
-                    var uid = response.authResponse.userID;
-                    var accessToken = response.authResponse.accessToken;
-                    FB.api('/me', function(response) {
-                        console.log(response);
-                    });
-                } else if (response.status === 'not_authorized') {
-                    FB.login(function(response) {
-                        if (response.authResponse) {
-                            console.log('Welcome!  Fetching your information.... ');
-                            FB.api('/me', function(response) {
-                                console.log(response);
-                            });
-                        } else {
-                            console.log('User cancelled login or did not fully authorize.');
-                        }
-                    });
-                } else {
-                    // the user isn't logged in to Facebook.
+        $scope.goToStep3 = function () {
+            $http.post('/register/step2', {
+                avatar: $scope.reg.imgCropRes,
+                birthday: $scope.reg.birthday,
+                gender: $scope.reg.gender,
+                city: $scope.reg.city,
+                country: $scope.reg.country,
+                education: JSON.stringify($scope.reg.education),
+                work: JSON.stringify($scope.reg.work)
+            }).success(function(data) {
+                if (data) {
+                    $scope.step = 3;
                 }
             });
+        };
 
-        };*/
+        /*        $scope.loginWithFacebook = function() {
+
+         FB.getLoginStatus(function(response) {
+         if (response.status === 'connected') {
+         var uid = response.authResponse.userID;
+         var accessToken = response.authResponse.accessToken;
+         FB.api('/me', function(response) {
+         console.log(response);
+         });
+         } else if (response.status === 'not_authorized') {
+         FB.login(function(response) {
+         if (response.authResponse) {
+         console.log('Welcome!  Fetching your information.... ');
+         FB.api('/me', function(response) {
+         console.log(response);
+         });
+         } else {
+         console.log('User cancelled login or did not fully authorize.');
+         }
+         });
+         } else {
+         // the user isn't logged in to Facebook.
+         }
+         });
+
+         };*/
     }
 );
