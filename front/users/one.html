@@ -128,7 +128,7 @@
                                 <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
                                 <div class="info-empty" ng-if="!user.birthday">не указано</div>
                                 <div flex></div>
-                                <md-button class="edit-button" ng-if="r1">
+                                <md-button class="edit-button" ng-if="r1 && canEdit">
                                     <md-icon
                                             md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                             aria-label="LaLat" style="outline: none;"
@@ -146,7 +146,7 @@
                                 </div>
                                 <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
                                 <div flex></div>
-                                <md-button class="edit-button" ng-if="r2">
+                                <md-button class="edit-button" ng-if="r2 && canEdit">
                                     <md-icon
                                             md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                             aria-label="LaLat" style="outline: none;"
@@ -165,9 +165,9 @@
                                             {{ed}}
                                         </div>
                                     </div>
-                                    <div class="info-empty" ng-if="!user.educationStr">не указано</div>
+                                    <div class="info-empty" ng-if="!user.educationStr || user.educationStr.length == 0">не указано</div>
                                 </div>
-                                <md-button class="edit-button" ng-if="r3">
+                                <md-button class="edit-button" ng-if="r3 && canEdit">
                                     <md-icon
                                             md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                             aria-label="LaLat" style="outline: none;"
@@ -186,9 +186,9 @@
                                             {{wo}}
                                         </div>
                                     </div>
-                                    <div class="info-empty" ng-if="!user.workStr">не указано</div>
+                                    <div class="info-empty" ng-if="!user.workStr || user.workStr.length == 0">не указано</div>
                                 </div>
-                                <md-button class="edit-button" ng-if="r4">
+                                <md-button class="edit-button" ng-if="r4 && canEdit">
                                     <md-icon
                                             md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                             aria-label="LaLat" style="outline: none;"

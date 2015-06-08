@@ -28,6 +28,7 @@
     "express": "^4.10.6",
     "express-session": "~1.11.2",
     "knex": "~0.8.5",
+    "lodash": "^3.9.3",
     "nconf": "~0.7.1",
     "passport": "~0.2.1",
     "passport-facebook": "^2.0.0",

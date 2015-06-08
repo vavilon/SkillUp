@@ -12,7 +12,7 @@
  *                      allParents  (array)   список ссылок на всех родителей вплоть до root
  *                      children    (array)   список ссылок на детей
  *                      allChildren (array)   список ссылок на всех детей вплоть до листьев
- *                      isLeaf      (bool)    является ли листком (может отсутствовать)
+ *                      is_leaf      (bool)    является ли листком (может отсутствовать)
  *                      leaves      (array)   список ссылок на листья скилла (только собственные)
  *                      allLeaves   (array)   список ссылок на все листья скилла (рекурсивно по детям)
  *                      id          (string)  id скилла
@@ -51,12 +51,12 @@ function ExtendedSkills(skills) {
 
         for (i = 0; i < this.skills[id].parents.length; i++) {
             this.skills[id].parents[i].leaves = this.skills[id].parents[i].leaves || [];
-            if (skills[id].isLeaf)
+            if (skills[id].is_leaf)
                 if (!_.includes(this.skills[id].parents[i].leaves, this.skills[id]))
                     this.skills[id].parents[i].leaves.push(this.skills[id]);
         }
-        if (skills[id].isLeaf) {
-            this.skills[id].isLeaf = skills[id].isLeaf;
+        if (skills[id].is_leaf) {
+            this.skills[id].is_leaf = skills[id].is_leaf;
             this.leaves.push(this.skills[id]);
         }
 
@@ -107,6 +107,44 @@ function ExtendedSkills(skills) {
     };
 
     this.root = this.skills['da401de4-c1fa-48ca-b217-6641eb3c963e'];
+    this.root.level = 0;
+    this.maxLevel = 0;
+
+    function calculateLevels(skill) {
+        for (var i in skill.children) {
+            if (!skill.children[i].level || skill.children[i].level > skill.level + 1)
+                skill.children[i].level = skill.level + 1;
+            calculateLevels(skill.children[i]);
+        }
+    }
+    calculateLevels(this.root);
+
+    for (var i in this.skills) {
+        if (this.skills[i].level > this.maxLevel) this.maxLevel = this.skills[i].level;
+    }
+
+    /*for (var i in this.skills) {
+        this.skills[i].exp = Math.round(Math.exp(this.maxLevel - this.skills[i].level) * 100);
+    }*/
+
+    function calculateReverseLevels(skill) {
+        for (var i in skill.parents) {
+            if (!skill.parents[i].reverseLevel || skill.parents[i].reverseLevel < skill.reverseLevel + 1)
+                skill.parents[i].reverseLevel = skill.reverseLevel + 1;
+            calculateReverseLevels(skill.parents[i]);
+        }
+    }
+
+    for (var i in this.skills) {
+        if (this.skills[i].children.length == 0) {
+            this.skills[i].reverseLevel = 0;
+            calculateReverseLevels(this.skills[i]);
+        }
+    }
+
+    for (var i in this.skills) {
+        this.skills[i].exp = Math.round(Math.exp(this.skills[i].reverseLevel) * 100);
+    }
 }
 
 app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope) {

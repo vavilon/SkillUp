@@ -114,3 +114,30 @@ ul.profile-categories a:hover {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54);
     background-color: #FAFAFA;
 }
+
+.users-list.ng-enter,
+.users-list.ng-leave {
+    -webkit-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -moz-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -ms-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -o-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+.users-list.ng-leave.users-list.ng-leave-active,
+.users-list.ng-enter {
+    opacity: 0;
+    height: auto;
+    max-height: 0;
+}
+
+.users-list.ng-enter.ng-enter-active,
+.users-list.ng-leave {
+    opacity: 1;
+    max-height: 100px;
+}

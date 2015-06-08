@@ -73,16 +73,13 @@ md-toolbar.demo-toolbar {
 .item-animate.ng-leave.item-animate.ng-leave-active,
 .item-animate.ng-enter {
     opacity: 0;
-    width: auto;
     height: auto;
-    max-width: 0;
     max-height: 0;
 }
 
 .item-animate.ng-enter.ng-enter-active,
 .item-animate.ng-leave {
     opacity: 1;
-    max-width: 2000px;
     max-height: 150px;
 }
 

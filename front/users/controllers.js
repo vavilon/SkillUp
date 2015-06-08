@@ -33,7 +33,8 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
     });
 });
 
-app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr) {
+app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, getIsLoggedIn,
+                                        loggedUser) {
         $scope.categoryNum = 0;
 
         $scope.findTask = function (id) {
@@ -47,6 +48,11 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
         $http.get('db/users').success(function (data) {
             $scope.users = data;
             $scope.user = getObjByID($routeParams.user_id, $scope.users);
+
+            getIsLoggedIn(function () {
+                $scope.canEdit = (loggedUser().id === $scope.user.id);
+            });
+
             if ($scope.user.education) {
                 $scope.user.educationStr = educationStr(JSON.parse($scope.user.education));
             }
@@ -97,7 +103,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                                              $animate, $timeout, educationStr, workStr) {
         $scope.reg = {};
 
-        $scope.step = 2;
+        $scope.step = 1;
 
         $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
