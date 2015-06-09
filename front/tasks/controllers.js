@@ -118,7 +118,6 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID)
         $http.get('db/tasks').success(function (tasks) {
             $scope.tasks = tasks;
             $scope.task = getObjByID($routeParams.task_id, tasks);
-            $scope.date_created = new Date($scope.task.date_created).toDateString();
             $http.get('db/users').success(function (users) {
                 $scope.users = users;
                 for (var user in users)

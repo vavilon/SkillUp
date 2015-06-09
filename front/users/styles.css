@@ -4,22 +4,6 @@
     border-radius: 50%;
 }
 
-.user-name {
-    color: #283593;
-    font-weight: 600;
-    text-decoration: none;
-}
-.user-name:hover {
-    text-decoration: underline;
-}
-.user-name:visited {
-    color: #283593;
-}
-
-.user-nick {
-    color: #1A237E !important;
-}
-
 .ican {
     color: rgba(0, 0, 0, 0.54);
     font-weight: 600;
@@ -59,7 +43,7 @@ ul.profile-categories {
 
 ul.profile-categories li {
     font-size: 18px;
-    color: rgba(0, 0, 0, 0.56);
+    color: rgba(0, 0, 0, 0.54);
     display: inline;
     margin-right: 5px;
     padding: 3px;
@@ -84,8 +68,13 @@ ul.profile-categories a:hover {
     font-weight: 600;
 }
 
-.info-item {
+.info-list {
+    padding: 0;
+}
 
+.info-list md-list-item {
+    min-height: 0;
+    padding: 15px 0 15px 0;
 }
 
 .info-divider {
@@ -93,5 +82,62 @@ ul.profile-categories a:hover {
 }
 
 .info-header {
-    color: rgba(0, 0, 0, 0.56);
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.info-empty {
+    color: rgba(0, 0, 0, 0.26);
+}
+
+.not-last {
+    margin-bottom: 5px;
+}
+
+.list-empty {
+    color: rgba(0, 0, 0, 0.54);
+    font-weight: normal;
+    margin-top: 0px;
+}
+
+.edit-button {
+    position: absolute;
+    margin: -5px 0 0 -27px;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+}
+
+.avatar-div {
+    width: 225px;
+    height: 225px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54);
+    background-color: #FAFAFA;
+}
+
+.users-list.ng-enter,
+.users-list.ng-leave {
+    -webkit-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -moz-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -ms-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -o-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+.users-list.ng-leave.users-list.ng-leave-active,
+.users-list.ng-enter {
+    opacity: 0;
+    height: auto;
+    max-height: 0;
+}
+
+.users-list.ng-enter.ng-enter-active,
+.users-list.ng-leave {
+    opacity: 1;
+    max-height: 100px;
 }

@@ -6,7 +6,7 @@
             <h2>{{task.title}}</h2>
 
             <div style="font-size: 15px; margin-left: 10px; color: rgba(0, 0, 0, 0.57)">
-                <i>Дата создания: {{date_created}}</i>
+                <i>Дата создания: {{task.date_created | date: 'dd.MM.yyyy'}}</i>
             </div>
         </div>
         <div style="margin-top: 20px; margin-bottom: 10px; font-size: medium">
@@ -77,7 +77,7 @@
                         <img src="/bower_components/material-design-icons/action/svg/design/ic_account_circle_24px.svg"
                              class="authorFace">
                         <div>
-                            <h4 style="margin-top: 25px; margin-bottom: 10px;"><a class="authorToolLink" href="/users/{{users.indexOf(author)}}">
+                            <h4 style="margin-top: 25px; margin-bottom: 10px;"><a class="user-name" href="/users/{{author.id}}">
                                 {{author.name}}</a>
                             </h4>
                             <h5 style="margin-top: 0px;">exp: {{author.exp | thousand}}</h5>

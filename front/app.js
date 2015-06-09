@@ -4,7 +4,8 @@ var app = angular.module('skills', [
     'ngAnimate',
     'hljs',
     'ngCookies',
-    'ngMessages'
+    'ngMessages',
+    'ngImgCrop'
 ]);
 
     app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
@@ -86,6 +87,57 @@ app.factory('loggedUser', function($rootScope) {
     return function() {
         return $rootScope.loggedUser;
     }
+});
+
+app.factory('isImage', function($q) {
+    return  function(src) {
+        var deferred = $q.defer();
+        var image = new Image();
+        image.onerror = function() {
+            deferred.resolve(false);
+        };
+        image.onload = function() {
+            deferred.resolve(true);
+        };
+        image.src = src;
+        return deferred.promise;
+    };
+});
+
+app.factory('educationStr', function() {
+    return function(education) {
+        var educationStr = [], s = '', buff = {};
+        for (var i in education) {
+            buff = education[i];
+            s = buff.school.name;
+            if (buff.year && buff.year.name) s += ' (' + buff.year.name + ')';
+            if (buff.concentration && buff.concentration[0] && buff.concentration[0].name) {
+                s += ', ' + buff.concentration[0].name;
+            }
+            educationStr.push(s);
+        }
+        return educationStr.reverse();
+    };
+});
+
+app.factory('workStr', function($filter) {
+    return function(work) {
+        var workStr = [], s = '', buff = {};
+        for (var i in work) {
+            buff = work[i];
+            s = buff.employer.name;
+            if (buff.start_date || buff.end_date) {
+                s += ' (';
+                if (buff.start_date) s += 'с ' + $filter('date')(buff.start_date, 'MMMM yyyy');
+                if (buff.start_date && buff.end_date) s += ' ';
+                if (buff.end_date) s += 'по ' + $filter('date')(buff.end_date, 'MMMM yyyy');
+                s += ')'
+            }
+            if (buff.position && buff.position.name) s += ', ' + buff.position.name;
+            workStr.push(s);
+        }
+        return workStr.reverse();
+    };
 });
 
 app.run(function($rootScope, $http, getIsLoggedIn) {
@@ -224,42 +276,4 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         console.log($scope.registrationPath);
         $location.path($scope.registrationPath);
     };
-});
-
-app.directive('tasksSolveList', function(getObjByID) {
-    return {
-        restrict: 'E',
-        templateUrl: '/front/templates/taskssolvelist.html',
-        scope: {
-            tasksObj: '=',
-            skillsObj: '=',
-            usersObj: '='
-        },
-
-        controller: function($http, $scope) {
-            $scope.$watch('tasksObj', function(newVal, oldVal) {
-                if (newVal && !oldVal) {
-                    $scope.lastExpandedTask = $scope.tasksObj[0];
-                    if (!$scope.lastExpandedTask) return;
-                    $scope.lastExpandedTask.expanded = false;
-                }
-            });
-
-            $scope.expand = function (task) {
-                if ($scope.lastExpandedTask !== task) $scope.lastExpandedTask.expanded = false;
-                task.expanded = !task.expanded;
-                $scope.lastExpandedTask = task;
-            };
-
-            $scope.findUser = function (id) {
-                return getObjByID(id, $scope.usersObj);
-            };
-            $scope.findSkill = function (id) {
-                return getObjByID(id, $scope.skillsObj);
-            };
-            $scope.findTask = function (id) {
-                return getObjByID(id, $scope.tasksObj);
-            };
-        }
-    }
 });

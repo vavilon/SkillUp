@@ -8,6 +8,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var config = require(__dirname + '/config');
 var getJson = require(__dirname + '/get-json');
+var exSkills = require(__dirname + '/ex-skills');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
@@ -35,6 +36,16 @@ var Solution = bookshelf.Model.extend({
     tableName: 'solutions'
 });
 
+var exs = {};
+
+knex.select().from('skills').then(function (rows) {
+    exs = new exSkills(rows);
+    for (var i in exs.skills) {
+        knex('skills').where('id', '=', exs.skills[i].id).update({exp: exs.skills[i].exp}).then(function(){});
+    }
+    console.log('Exp for all skills updated!');
+});
+
 var bcrypt = require('bcryptjs');
 
 //app.all('*', function (req, res) {
@@ -42,10 +53,11 @@ var bcrypt = require('bcryptjs');
 //});
 
 app.use(cookieParser());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({
-    extended: false
+    limit: '50mb',
+    extended: true
 }));
-app.use(bodyParser.json());
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
@@ -151,7 +163,6 @@ app.use('/is_logged_in', function (req, res) {
 });
 app.use('/check_nick', function (req, res) {
     var nick = req.body.nick;
-    console.log("Checking nick '" + nick + "'...");
     new User({'nick': nick})
         .fetch()
         .then(function (user) {
@@ -160,18 +171,16 @@ app.use('/check_nick', function (req, res) {
                 res.end();
             }
             else {
-                console.log("Nick '" + nick + "' is free!");
                 res.end('ok');
             }
         })
         .catch(function (err) {
-            console.log("Nick '" + nick + "' is free!");
-            res.end('ok');
+            console.log(err);
+            res.end();
         });
 });
 app.use('/check_email', function (req, res) {
     var email = req.body.email;
-    console.log("Checking email '" + email + "'...");
     new User({'email': email})
         .fetch()
         .then(function (user) {
@@ -180,14 +189,36 @@ app.use('/check_email', function (req, res) {
                 res.end();
             }
             else {
-                console.log("Email '" + email + "' is free!");
                 res.end('ok');
             }
         })
         .catch(function (err) {
-            console.log("Email '" + email + "' is free!");
-            res.end('ok');
+            console.log(err);
+            res.end();
         });
+});
+
+app.post('/register/step2', function (req, res, next) {
+    if (req.isAuthenticated()) {
+        knex('users').where('id', '=', req.user.id).update(
+            {
+                avatar: req.body.avatar,
+                birthday: req.body.birthday,
+                gender: req.body.gender,
+                city: req.body.city,
+                country: req.body.country,
+                education: req.body.education,
+                work: req.body.work
+            }
+        )
+            .then(function() {
+                res.end('ok');
+            })
+            .catch(function (error) {
+                res.end();
+            });
+    }
+    else res.end();
 });
 
 app.get('/auth/facebook', function (req, res, next) {

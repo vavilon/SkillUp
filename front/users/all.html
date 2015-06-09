@@ -6,7 +6,7 @@
     <div layout="row">
         <div flex="15" flex-md="5" hide-sm></div>
         <div flex
-             style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
+             style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF;">
             <md-toolbar class="demo-toolbar">
                 <div class="md-toolbar-tools">
                     <h2>
@@ -24,8 +24,8 @@
             </md-toolbar>
             <md-content>
                 <md-list>
-                    <md-list-item class="md-3-line"
-                                  ng-repeat="user in filteredUsers = (users | filter: {name:username})">
+                    <md-list-item class="md-3-line users-list"
+                                  ng-repeat="user in filteredUsers = (users | filter: {name:username} | orderBy: 'name')">
                         <div layout="column" flex>
                             <div layout="row">
                                 <div layout="row" layout-align="end start" style="padding: 16px 16px 0 0;">
@@ -41,24 +41,34 @@
                                     <h4 class="user-nick">{{ user.nick }}</h4>
 
                                     <p>exp: {{ user.exp | thousand }}</p>
+                                    <p>
+                                        <span style="margin-right: 20px;">Умею:
+                                            <span style="color: #3F51B5; font-weight: 600;">{{user.skills.length || 0}}</span>
+                                        </span>
+                                        <span>Хочу:
+                                            <span style="color: #E91E63; font-weight: 600;">{{user.needs.length || 0}}</span>
+                                        </span>
+                                    </p>
                                 </div>
 
                                 <div layout="row" flex="30">
                                     <div flex="10"></div>
                                     <div layout="row" layout-align="end center">
-                                        <md-button class="count-button">
+                                        <md-button class="count-button" ng-style="s1" ng-mouseenter="s1 = {color: '#4CAF50'}"
+                                                   ng-mouseleave="s1 = {}">
                                             {{user.tasks_done.length || 0}}
-                                            <md-icon class="md-hue-3 count-icon" style="color: #4CAF50"
+                                            <md-icon class="md-hue-3 count-icon" ng-style="s1"
                                                      md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_done_24px.svg"
                                                      aria-label="Done">
                                             </md-icon>
                                             <md-tooltip>
-                                                Сделано заданий
+                                                Решено заданий
                                             </md-tooltip>
                                         </md-button>
-                                        <md-button class="count-button">
+                                        <md-button class="count-button" ng-style="s2" ng-mouseenter="s2 = {color: '#FFEB3B'}"
+                                                   ng-mouseleave="s2 = {}">
                                             {{user.tasks_checked.length || 0}}
-                                            <md-icon class="md-hue-3 count-icon" style="color: #FFEB3B"
+                                            <md-icon class="md-hue-3 count-icon" ng-style="s2"
                                                      md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_assignment_turned_in_24px.svg"
                                                      aria-label="Done">
                                             </md-icon>
@@ -66,9 +76,10 @@
                                                 Проверено решений
                                             </md-tooltip>
                                         </md-button>
-                                        <md-button class="count-button">
+                                        <md-button class="count-button" ng-style="s3" ng-mouseenter="s3 = {color: '#03A9F4'}"
+                                                   ng-mouseleave="s3 = {}">
                                             {{user.tasks_approved.length || 0}}
-                                            <md-icon class="md-hue-3 count-icon" style="color: #03A9F4"
+                                            <md-icon class="md-hue-3 count-icon" ng-style="s3"
                                                      md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_check_circle_24px.svg"
                                                      aria-label="Done">
                                             </md-icon>
@@ -76,9 +87,10 @@
                                                 Подтверждено заданий
                                             </md-tooltip>
                                         </md-button>
-                                        <md-button class="count-button">
+                                        <md-button class="count-button" ng-style="s4" ng-mouseenter="s4 = {color: '#E91E63'}"
+                                                   ng-mouseleave="s4 = {}">
                                             {{user.tasks_created.length || 0}}
-                                            <md-icon class="md-hue-3 count-icon" style="color: #E91E63"
+                                            <md-icon class="md-hue-3 count-icon" ng-style="s4"
                                                      md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
                                                      aria-label="Done">
                                             </md-icon>
@@ -89,7 +101,8 @@
                                     </div>
                                 </div>
                                 <div layout="row" layout-align="start center" flex="10">
-                                    <md-button class="md-mini md-primary expand-button" style="border-radius: 50%"
+                                    <md-button class="md-mini md-primary expand-button"
+                                               ng-if="user.skills.length > 0 || user.needs.length > 0"
                                                ng-click="expand(user)">
                                         <md-icon class="md-hue-3 rotate-base" ng-class="{'rotate-btn': user.expanded}"
                                                  md-svg-icon="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg"
@@ -97,10 +110,9 @@
                                     </md-button>
                                 </div>
                             </div>
-
                             <div layout="row" ng-if="user.expanded" class="animate-if">
                                 <div layout="column" flex="80" style="padding-left: 55px;">
-                                    <div layout="row" style="padding-bottom: 10px;">
+                                    <div layout="row" style="padding-bottom: 10px;" ng-if="user.skills.length > 0">
                                         <div layout="row" class="ican" flex="10">Умею:</div>
                                         <div layout="row" layout-wrap flex>
                                             <md-button class="md-raised md-primary skill-button"
@@ -111,7 +123,7 @@
                                         </div>
                                     </div>
 
-                                    <div layout="row" style="padding-bottom: 15px;">
+                                    <div layout="row" style="padding-bottom: 15px;" ng-if="user.needs.length > 0">
                                         <div layout="row" class="ican" flex="10">Хочу:</div>
                                         <div layout="row" layout-wrap flex>
                                             <md-button class="md-raised md-accent skill-button"

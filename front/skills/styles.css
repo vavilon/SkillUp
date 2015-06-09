@@ -29,10 +29,6 @@
     background-color: #FFEB3B
 }
 
-#marker-exs-root {
-    margin-top: 0px;
-}
-
 .search {
     margin-left: 20px;
 }
@@ -61,4 +57,25 @@ h4 {
 
 #w-frame-z2_1 {
     background-color: #fff;
+}
+
+ul {
+    margin-top: 0;
+    list-style-type: none;
+    padding-left: 25px;
+}
+
+.expand-skill {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+    width: 19px;
+    height: 19px;
+}
+
+.expand-skill md-icon {
+    width: 19px;
+    height: 19px;
 }

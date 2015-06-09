@@ -15,7 +15,14 @@ module.exports = function (token, refreshToken, profile, done) {
     process.nextTick(function () {
         new User({'id_facebook': profile.id}).fetch().then(function (user) {
             if (user) {
-                return done(null, user); // user found, return that user
+                var avatar = "https://graph.facebook.com/" + profile.id + "/picture" + "?width=9999" + "&access_token=" + token;
+                knex('users').where('id_facebook', '=', profile.id).update({avatar: avatar})
+                    .then(function() {
+                        return done(null, user);
+                    })
+                    .catch(function (error) {
+                        done(error);
+                    });
             } else {
                 var options = {
                     host: 'graph.facebook.com',
@@ -41,29 +48,29 @@ module.exports = function (token, refreshToken, profile, done) {
                         u.avatar = "https://graph.facebook.com/" + profile.id + "/picture" + "?width=9999" + "&access_token=" + token;
                     } catch (e) { }
                     try {
-                        u.birthday = new Date(result.birthday);
+                        if (result.birthday) u.birthday = new Date(result.birthday);
                     } catch (e) { }
                     try {
-                        u.gender = result.gender;
+                        if (result.gender) u.gender = result.gender;
                     } catch (e) { }
-                    try {
-                        u.country = result.location.name.split(', ')[1];
-                    } catch (e) { }
-                    try {
-                        u.city = result.location.name.split(', ')[0];
-                    } catch (e) { }
-                    try {
-                        u.education = [];
-                        for (var i in result.education) {
-                            u.education.push(JSON.stringify(result.education[i]))
-                        }
-                    } catch (e) { }
-                    try {
-                        u.work = [];
-                        for (i in result.work) {
-                            u.work.push(JSON.stringify(result.work[i]))
-                        }
-                    } catch (e) { }
+                    if (result.location) {
+                        try {
+                            u.country = result.location.name.split(', ')[1];
+                        } catch (e) { }
+                        try {
+                            u.city = result.location.name.split(', ')[0];
+                        } catch (e) { }
+                    }
+                    if (result.education) {
+                        try {
+                            u.education = JSON.stringify(result.education);
+                        } catch (e) { }
+                    }
+                    if (result.work) {
+                        try {
+                            u.work = JSON.stringify(result.work);
+                        } catch (e) { }
+                    }
 
                     knex('users').insert(u)
                         .then(function () {
