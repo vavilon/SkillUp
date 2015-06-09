@@ -140,7 +140,19 @@ app.factory('workStr', function($filter) {
     };
 });
 
-app.run(function($rootScope, $http, getIsLoggedIn) {
+app.factory('parseSkills', function() {
+    return function(skills) {
+        skills = skills.replace(/{/g, '[');
+        skills = skills.replace(/}/g, ']');
+        skills = skills.replace(/"\(/g, '{"id": "');
+        skills = skills.replace(/\)"/g, '}');
+        skills = skills.replace(/},{/g, '} , {');
+        skills = skills.replace(/(\S),/g, '$1", "count": ');
+        return JSON.parse(skills);
+    }
+});
+
+app.run(function($rootScope, $http, getIsLoggedIn, extendedSkills) {
     getIsLoggedIn();
     $rootScope.navbarSelectedIndex = 0;
     $rootScope.$on('$locationChangeSuccess', function(obj, newVal, oldVal) {
@@ -149,6 +161,12 @@ app.run(function($rootScope, $http, getIsLoggedIn) {
         else if ((new RegExp('/tasks')).test(newVal)) $rootScope.navbarSelectedIndex = 2;
         else if ((new RegExp('/users')).test(newVal)) $rootScope.navbarSelectedIndex = 3;
         else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
+    });
+
+    $http.get('db/skills').success(function(data){
+        if (data) {
+            $rootScope.exs = new extendedSkills(data);
+        }
     });
 
     FB.init({
@@ -235,7 +253,8 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 
 }
 
-app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout) {
+app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
+                                         $mdToast, $rootScope, extendedSkills) {
     $scope.selectedTab = 0;
     $scope.reg = {email: '', password: ''};
 
@@ -249,8 +268,45 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     });
 
+    $scope.chips = {};
+    $scope.chips.skillsTitles = [];
+    $scope.chips.skillsTitlesFiltered = [];
+    $scope.chips.selectedSkills = [];
+    $scope.chips.filteredSkills = function() {
+        var str = angular.lowercase($scope.chips.searchTextSkills);
+        var arr = [];
+        for (var i in $scope.chips.skillsTitlesFiltered) {
+            if (angular.lowercase($scope.chips.skillsTitlesFiltered[i]).indexOf(str) !== -1)
+                arr.push($scope.chips.skillsTitlesFiltered[i]);
+        }
+        return arr;
+    };
+
+    $scope.$watchCollection('chips.selectedSkills', function (newVal) {
+        if (newVal.length === 0) {
+            $scope.chips.skillsTitlesFiltered = $scope.chips.skillsTitles;
+            return;
+        }
+        $scope.chips.skillsTitlesFiltered = [];
+        var finded = false;
+        for (var i in $scope.chips.skillsTitles) {
+            finded = false;
+            for (var j in newVal) {
+                if (newVal[j] === $scope.chips.skillsTitles[i]) {
+                    finded = true;
+                    break;
+                }
+            }
+            if (!finded) $scope.chips.skillsTitlesFiltered.push($scope.chips.skillsTitles[i]);
+        }
+    });
+
     $http.get('db/skills').success(function (data) {
         $scope.skillsObj = data;
+        $scope.skillsTitles = [];
+        for (var i in $scope.skillsObj) {
+            $scope.chips.skillsTitles.push($scope.skillsObj[i].title);
+        }
     });
     $http.get('db/users').success(function (data) {
         $scope.usersObj = data;
@@ -273,7 +329,43 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         $scope.registrationPath += 'nick/' + ($scope.reg.nick || '0');
         $scope.registrationPath += '/email/' + ($scope.reg.email || '0');
         $scope.registrationPath += '/password/' + ($scope.reg.password || '0');
-        console.log($scope.registrationPath);
         $location.path($scope.registrationPath);
     };
+
+    $scope.showToast = function (msg, parent) {
+        parent = parent || '#toastError';
+        $mdToast.show(
+            $mdToast.simple()
+                .content(msg)
+                .position('bottom left')
+                .hideDelay(3000)
+                .parent(angular.element(document.querySelector(parent)))
+        );
+    };
+
+    $scope.sendTask = {name: '', description: ''};
+    $scope.createTask = function() {
+        if ($scope.sendTask.name.length < 10) return;
+        if ($scope.sendTask.description.length < 30) return;
+        if ($scope.chips.selectedSkills.length === 0) {
+            $scope.showToast('Прикрепите умения к заданию!');
+            return;
+        }
+        var obj = {title: $scope.sendTask.name, description: $scope.sendTask.description, skills: []};
+        for (var i in $scope.chips.selectedSkills) {
+            for (var j in $scope.skillsObj) {
+                if ($scope.chips.selectedSkills[i] === $scope.skillsObj[j].title) {
+                    obj.skills.push($scope.skillsObj[j].id);
+                    break;
+                }
+            }
+        }
+        $http.post('/create_task', obj).success(function(data) {
+            if (!data) {
+                $scope.showToast('Ваших умений недостаточно, чтобы создать такое задание!');
+                return;
+            }
+            $scope.showToast('Задание успешно создано!', '#toastSuccess');
+        });
+    }
 });

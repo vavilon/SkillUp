@@ -10,8 +10,8 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
         $scope.skills = data;
     });
 
-    $scope.findSkill = function (id) {
-        return getObjByID(id, $scope.skills);
+    $scope.findSkill = function (skillProgress) {
+        return getObjByID(skillProgress.id, $scope.skills);
     };
 
     var orderBy = $filter('orderBy');
@@ -34,21 +34,22 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, getIsLoggedIn,
-                                        loggedUser) {
+                                        loggedUser, parseSkills) {
         $scope.categoryNum = 0;
 
         $scope.findTask = function (id) {
             return getObjByID(id, $scope.tasks);
         };
 
-        $scope.findSkill = function (id) {
-            return getObjByID(id, $scope.skills);
+        $scope.findSkill = function (skillProgress) {
+            return getObjByID(skillProgress.id, $scope.skills);
         };
 
         $http.get('db/users').success(function (data) {
             $scope.users = data;
             $scope.user = getObjByID($routeParams.user_id, $scope.users);
-
+            $scope.user.skills = parseSkills($scope.user.skills);
+            console.log($scope.user.skills);
             getIsLoggedIn(function () {
                 $scope.canEdit = (loggedUser().id === $scope.user.id);
             });

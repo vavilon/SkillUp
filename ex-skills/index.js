@@ -11,14 +11,14 @@ function arrToObj(skillArr) {
 
 module.exports = function (skills) {
     skills = arrToObj(skills);
-    this.leaves = []; //хранит ССЫЛКИ (не id) на все листья
-    this.skills = {}; //объект, в котором свойствами являются скиллы
+    this.leaves = []; //С…СЂР°РЅРёС‚ РЎРЎР«Р›РљР (РЅРµ id) РЅР° РІСЃРµ Р»РёСЃС‚СЊСЏ
+    this.skills = {}; //РѕР±СЉРµРєС‚, РІ РєРѕС‚РѕСЂРѕРј СЃРІРѕР№СЃС‚РІР°РјРё СЏРІР»СЏСЋС‚СЃСЏ СЃРєРёР»Р»С‹
 
     for (var id in skills) {
-        //копируем имеющиеся свойства
-        this.skills[id] = this.skills[id] || {}; //проверка нужна, потому что дальше объекты могут создаваться
+        //РєРѕРїРёСЂСѓРµРј РёРјРµСЋС‰РёРµСЃСЏ СЃРІРѕР№СЃС‚РІР°
+        this.skills[id] = this.skills[id] || {}; //РїСЂРѕРІРµСЂРєР° РЅСѓР¶РЅР°, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РґР°Р»СЊС€Рµ РѕР±СЉРµРєС‚С‹ РјРѕРіСѓС‚ СЃРѕР·РґР°РІР°С‚СЊСЃСЏ
         this.skills[id].title = skills[id].title;
-        this.skills[id].parents = []; //хранит ССЫЛКИ (не id) на родителей
+        this.skills[id].parents = []; //С…СЂР°РЅРёС‚ РЎРЎР«Р›РљР (РЅРµ id) РЅР° СЂРѕРґРёС‚РµР»РµР№
         this.skills[id].leaves = this.skills[id].leaves || [];
         this.skills[id].allChildren = [];
         this.skills[id].allParents = [];
@@ -42,8 +42,8 @@ module.exports = function (skills) {
             this.leaves.push(this.skills[id]);
         }
 
-        //создаем массив ССЫЛОК (не id) на детей
-        this.skills[id].children = this.skills[id].children || []; //проверка нужна, чтобы children сохранялись
+        //СЃРѕР·РґР°РµРј РјР°СЃСЃРёРІ РЎРЎР«Р›РћРљ (РЅРµ id) РЅР° РґРµС‚РµР№
+        this.skills[id].children = this.skills[id].children || []; //РїСЂРѕРІРµСЂРєР° РЅСѓР¶РЅР°, С‡С‚РѕР±С‹ children СЃРѕС…СЂР°РЅСЏР»РёСЃСЊ
         for (i = 0; i < this.skills[id].parents.length; i++) {
             this.skills[id].parents[i].children = this.skills[id].parents[i].children || [];
             if (!_.includes(this.skills[id].parents[i].children, this.skills[id]))
@@ -51,7 +51,7 @@ module.exports = function (skills) {
         }
     }
 
-    //рекурсия для добавления всех детей вплоть до листьев и всех листьев
+    //СЂРµРєСѓСЂСЃРёСЏ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РІСЃРµС… РґРµС‚РµР№ РІРїР»РѕС‚СЊ РґРѕ Р»РёСЃС‚СЊРµРІ Рё РІСЃРµС… Р»РёСЃС‚СЊРµРІ
     function addAllChildrenRec(to, from) {
         for (var i = 0; i < from.children.length; i++)
             if (!_.includes(to.allChildren, from.children[i]))
@@ -66,7 +66,7 @@ module.exports = function (skills) {
         }
     }
 
-    //рекурсия для добавления всех родителей вплоть до корня
+    //СЂРµРєСѓСЂСЃРёСЏ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РІСЃРµС… СЂРѕРґРёС‚РµР»РµР№ РІРїР»РѕС‚СЊ РґРѕ РєРѕСЂРЅСЏ
     function addAllParentsRec(to, from) {
         for (var i = 0; i < from.parents.length; i++)
             if (!_.includes(to.allParents, from.parents[i]))
@@ -77,13 +77,13 @@ module.exports = function (skills) {
         }
     }
 
-    //добавление ссылок на всех детей и всех родителей
+    //РґРѕР±Р°РІР»РµРЅРёРµ СЃСЃС‹Р»РѕРє РЅР° РІСЃРµС… РґРµС‚РµР№ Рё РІСЃРµС… СЂРѕРґРёС‚РµР»РµР№
     for (id in this.skills) {
         addAllChildrenRec(this.skills[id], this.skills[id]);
         addAllParentsRec(this.skills[id], this.skills[id]);
     }
 
-    //для дебага
+    //РґР»СЏ РґРµР±Р°РіР°
     this.log = function () {
         for (var prop in this) console.log(this[prop]);
     };

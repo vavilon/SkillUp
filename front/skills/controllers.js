@@ -28,126 +28,130 @@ function arrToObj(skillArr) {
     return res;
 }
 
-function ExtendedSkills(skills) {
-    this.leaves = []; //хранит ССЫЛКИ (не id) на все листья
-    this.skills = {}; //объект, в котором свойствами являются скиллы
+app.factory('extendedSkills', function() {
+    return function (skills) {
+        skills = arrToObj(skills);
+        this.leaves = []; //хранит ССЫЛКИ (не id) на все листья
+        this.skills = {}; //объект, в котором свойствами являются скиллы
 
-    for (var id in skills) {
-        //копируем имеющиеся свойства
-        this.skills[id] = this.skills[id] || {}; //проверка нужна, потому что дальше объекты могут создаваться
-        this.skills[id].title = skills[id].title;
-        this.skills[id].parents = []; //хранит ССЫЛКИ (не id) на родителей
-        this.skills[id].leaves = this.skills[id].leaves || [];
-        this.skills[id].allChildren = [];
-        this.skills[id].allParents = [];
-        this.skills[id].allLeaves = [];
-        this.skills[id].id = id;
+        for (var id in skills) {
+            //копируем имеющиеся свойства
+            this.skills[id] = this.skills[id] || {}; //проверка нужна, потому что дальше объекты могут создаваться
+            this.skills[id].title = skills[id].title;
+            this.skills[id].parents = []; //хранит ССЫЛКИ (не id) на родителей
+            this.skills[id].leaves = this.skills[id].leaves || [];
+            this.skills[id].allChildren = [];
+            this.skills[id].allParents = [];
+            this.skills[id].allLeaves = [];
+            this.skills[id].id = id;
 
-        for (var i = 0; i < skills[id].parents.length; i++) {
-            this.skills[skills[id].parents[i]] = this.skills[skills[id].parents[i]] || {};
-            if (!_.includes(this.skills[id].parents, this.skills[skills[id].parents[i]]))
-                this.skills[id].parents.push(this.skills[skills[id].parents[i]]);
+            for (var i = 0; i < skills[id].parents.length; i++) {
+                this.skills[skills[id].parents[i]] = this.skills[skills[id].parents[i]] || {};
+                if (!_.includes(this.skills[id].parents, this.skills[skills[id].parents[i]]))
+                    this.skills[id].parents.push(this.skills[skills[id].parents[i]]);
+            }
+
+            for (i = 0; i < this.skills[id].parents.length; i++) {
+                this.skills[id].parents[i].leaves = this.skills[id].parents[i].leaves || [];
+                if (skills[id].is_leaf)
+                    if (!_.includes(this.skills[id].parents[i].leaves, this.skills[id]))
+                        this.skills[id].parents[i].leaves.push(this.skills[id]);
+            }
+            if (skills[id].is_leaf) {
+                this.skills[id].is_leaf = skills[id].is_leaf;
+                this.leaves.push(this.skills[id]);
+            }
+
+            //создаем массив ССЫЛОК (не id) на детей
+            this.skills[id].children = this.skills[id].children || []; //проверка нужна, чтобы children сохранялись
+            for (i = 0; i < this.skills[id].parents.length; i++) {
+                this.skills[id].parents[i].children = this.skills[id].parents[i].children || [];
+                if (!_.includes(this.skills[id].parents[i].children, this.skills[id]))
+                    this.skills[id].parents[i].children.push(this.skills[id]);
+            }
         }
 
-        for (i = 0; i < this.skills[id].parents.length; i++) {
-            this.skills[id].parents[i].leaves = this.skills[id].parents[i].leaves || [];
-            if (skills[id].is_leaf)
-                if (!_.includes(this.skills[id].parents[i].leaves, this.skills[id]))
-                    this.skills[id].parents[i].leaves.push(this.skills[id]);
+        //рекурсия для добавления всех детей вплоть до листьев и всех листьев
+        function addAllChildrenRec(to, from) {
+            for (var i = 0; i < from.children.length; i++)
+                if (!_.includes(to.allChildren, from.children[i]))
+                    to.allChildren.push(from.children[i]);
+
+            for (i = 0; i < from.leaves.length; i++)
+                if (!_.includes(to.allLeaves, from.leaves[i]))
+                    to.allLeaves.push(from.leaves[i]);
+
+            for (var chid in from.children) {
+                addAllChildrenRec(to, from.children[chid]);
+            }
         }
-        if (skills[id].is_leaf) {
-            this.skills[id].is_leaf = skills[id].is_leaf;
-            this.leaves.push(this.skills[id]);
+
+        //рекурсия для добавления всех родителей вплоть до корня
+        function addAllParentsRec(to, from) {
+            for (var i = 0; i < from.parents.length; i++)
+                if (!_.includes(to.allParents, from.parents[i]))
+                    to.allParents.push(from.parents[i]);
+
+            for (var pid in from.parents) {
+                addAllParentsRec(to, from.parents[pid]);
+            }
         }
 
-        //создаем массив ССЫЛОК (не id) на детей
-        this.skills[id].children = this.skills[id].children || []; //проверка нужна, чтобы children сохранялись
-        for (i = 0; i < this.skills[id].parents.length; i++) {
-            this.skills[id].parents[i].children = this.skills[id].parents[i].children || [];
-            if (!_.includes(this.skills[id].parents[i].children, this.skills[id]))
-                this.skills[id].parents[i].children.push(this.skills[id]);
+        //добавление ссылок на всех детей и всех родителей
+        for (id in this.skills) {
+            addAllChildrenRec(this.skills[id], this.skills[id]);
+            addAllParentsRec(this.skills[id], this.skills[id]);
         }
-    }
 
-    //рекурсия для добавления всех детей вплоть до листьев и всех листьев
-    function addAllChildrenRec(to, from) {
-        for (var i = 0; i < from.children.length; i++)
-            if (!_.includes(to.allChildren, from.children[i]))
-                to.allChildren.push(from.children[i]);
+        //для дебага
+        this.log = function () {
+            for (var prop in this) console.log(this[prop]);
+        };
 
-        for (i = 0; i < from.leaves.length; i++)
-            if (!_.includes(to.allLeaves, from.leaves[i]))
-                to.allLeaves.push(from.leaves[i]);
+        this.root = this.skills['da401de4-c1fa-48ca-b217-6641eb3c963e'];
+        this.root.level = 0;
+        this.maxLevel = 0;
 
-        for (var chid in from.children) {
-            addAllChildrenRec(to, from.children[chid]);
+        function calculateLevels(skill) {
+            for (var i in skill.children) {
+                if (!skill.children[i].level || skill.children[i].level > skill.level + 1)
+                    skill.children[i].level = skill.level + 1;
+                calculateLevels(skill.children[i]);
+            }
         }
-    }
+        calculateLevels(this.root);
 
-    //рекурсия для добавления всех родителей вплоть до корня
-    function addAllParentsRec(to, from) {
-        for (var i = 0; i < from.parents.length; i++)
-            if (!_.includes(to.allParents, from.parents[i]))
-                to.allParents.push(from.parents[i]);
-
-        for (var pid in from.parents) {
-            addAllParentsRec(to, from.parents[pid]);
+        for (var i in this.skills) {
+            if (this.skills[i].level > this.maxLevel) this.maxLevel = this.skills[i].level;
         }
-    }
 
-    //добавление ссылок на всех детей и всех родителей
-    for (id in this.skills) {
-        addAllChildrenRec(this.skills[id], this.skills[id]);
-        addAllParentsRec(this.skills[id], this.skills[id]);
-    }
+        /*for (var i in this.skills) {
+         this.skills[i].exp = Math.round(Math.exp(this.maxLevel - this.skills[i].level) * 100);
+         }*/
 
-    //для дебага
-    this.log = function () {
-        for (var prop in this) console.log(this[prop]);
+        function calculateReverseLevels(skill) {
+            for (var i in skill.parents) {
+                if (!skill.parents[i].reverseLevel || skill.parents[i].reverseLevel < skill.reverseLevel + 1)
+                    skill.parents[i].reverseLevel = skill.reverseLevel + 1;
+                calculateReverseLevels(skill.parents[i]);
+            }
+        }
+
+        for (var i in this.skills) {
+            if (this.skills[i].children.length == 0) {
+                this.skills[i].reverseLevel = 0;
+                calculateReverseLevels(this.skills[i]);
+            }
+        }
+
+        for (var i in this.skills) {
+            this.skills[i].exp = Math.round(Math.exp(this.skills[i].reverseLevel) * 100);
+        }
     };
+});
 
-    this.root = this.skills['da401de4-c1fa-48ca-b217-6641eb3c963e'];
-    this.root.level = 0;
-    this.maxLevel = 0;
 
-    function calculateLevels(skill) {
-        for (var i in skill.children) {
-            if (!skill.children[i].level || skill.children[i].level > skill.level + 1)
-                skill.children[i].level = skill.level + 1;
-            calculateLevels(skill.children[i]);
-        }
-    }
-    calculateLevels(this.root);
-
-    for (var i in this.skills) {
-        if (this.skills[i].level > this.maxLevel) this.maxLevel = this.skills[i].level;
-    }
-
-    /*for (var i in this.skills) {
-        this.skills[i].exp = Math.round(Math.exp(this.maxLevel - this.skills[i].level) * 100);
-    }*/
-
-    function calculateReverseLevels(skill) {
-        for (var i in skill.parents) {
-            if (!skill.parents[i].reverseLevel || skill.parents[i].reverseLevel < skill.reverseLevel + 1)
-                skill.parents[i].reverseLevel = skill.reverseLevel + 1;
-            calculateReverseLevels(skill.parents[i]);
-        }
-    }
-
-    for (var i in this.skills) {
-        if (this.skills[i].children.length == 0) {
-            this.skills[i].reverseLevel = 0;
-            calculateReverseLevels(this.skills[i]);
-        }
-    }
-
-    for (var i in this.skills) {
-        this.skills[i].exp = Math.round(Math.exp(this.skills[i].reverseLevel) * 100);
-    }
-}
-
-app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope) {
+app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, extendedSkills) {
     $http.get('db/skills').success(function (skills) {
 
         $scope.user = $rootScope.loggedUser;
@@ -158,7 +162,7 @@ app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope) {
         $scope.highlightSkills = true;
         $scope.highlightNeeds = true;
 
-        $scope.exs = new ExtendedSkills(arrToObj(skills));
+        $scope.exs = $rootScope.exs || (new extendedSkills(skills));
 
         $scope.toogleExpandedForAll = function (expand) {
             for (var skill in $scope.exs.skills) {
