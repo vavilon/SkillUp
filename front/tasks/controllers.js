@@ -2,7 +2,7 @@ function createFilterFor(query) {
     var lowercaseQuery = angular.lowercase(query);
 
     return function filterFn(item) {
-        return (angular.lowercase(item).indexOf(lowercaseQuery) === 0);
+        return (angular.lowercase(item).indexOf(lowercaseQuery) !== -1);
     };
 
 }
