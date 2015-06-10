@@ -4,10 +4,10 @@
         <div layout="column" flex>
             <div layout="row" class="task-header">
                 <div>
-                    <div>
-                        <span class="diff-label easy" ng-if="$index < 7">ЛЕГКО</span>
-                        <span class="diff-label medium" ng-if="$index == 7">СРЕДНЕ</span>
-                        <span class="diff-label hard" ng-if="$index == 8">СЛОЖНО</span>
+                    <div ng-if="showDifficulty">
+                        <span class="diff-label easy" ng-if="taskVal.difficulty >= 0.9">ЛЕГКО</span>
+                        <span class="diff-label medium" ng-if="taskVal.difficulty < 0.9 && taskVal.difficulty > 0.5">СРЕДНЕ</span>
+                        <span class="diff-label hard" ng-if="taskVal.difficulty < 0.5">СЛОЖНО</span>
                     </div>
                 </div>
                 <div flex>
@@ -30,7 +30,7 @@
                         </md-button>
                     </div>
                 </div>
-                <div layout="row" layout-align="start start" flex>
+                <div layout="row" layout-align="start start" flex ng-if="showExpand">
                     <md-button class="md-mini md-primary expand-button"
                                ng-click="expand(taskVal)" aria-label="expand-toogle">
                         <md-icon  class="rotate-base" ng-class="{'rotate-btn': taskVal.expanded}" aria-label="notexpanded"
@@ -43,15 +43,20 @@
                 <md-card class="task-description-card">
                     <md-card-content>
                         <h2 class="md-title task-description-word">Условие</h2>
-
                         <div class="task-description">
                             {{taskVal.description}}
                         </div>
-                        <form name="solutionForm">
+                        <form name="solutionForm" ng-if="solvable">
                             <md-input-container>
                                 <label>Ваше решение</label>
-                                <textarea></textarea>
+                                <textarea ng-model="$parent.$parent.$parent.$parent.solution" name="solutionT"
+                                          required minlength="30"></textarea>
+                                <div ng-messages="solutionForm.solutionT.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                    <div ng-message="minlength">Решение должно содержать как минимум 30 символов</div>
+                                </div>
                             </md-input-container>
+                            <md-button class="md-raised md-primary" style="float: right; " ng-click="send(callback, taskVal.id)">Отправить</md-button>
                         </form>
                     </md-card-content>
                 </md-card>
@@ -59,10 +64,8 @@
             <div layout="row" class="task-footer">
                 <div flex>
                     <span class="task-date">Дата создания: {{taskVal.date_created | date: 'dd.MM.yyyy'}}</span>
-                </div>
-                <div flex>
-            <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">
-                {{findUser(taskVal.author).name}}</a></span>
+                    <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">
+                        {{findUser(taskVal.author).name}}</a></span>
                 </div>
             </div>
         </div>

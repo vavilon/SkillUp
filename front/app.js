@@ -67,10 +67,11 @@ app.factory('getObjByID', function() {
 });
 
 //Вызывается в run, а также при регистрации, входе и выходе
-app.factory('getIsLoggedIn', function($rootScope, $http) {
+app.factory('getIsLoggedIn', function($rootScope, $http, parseSkills) {
     return function(callback) {
         $http.get('/is_logged_in').success(function (data) {
             $rootScope.loggedUser = data;
+            if (data) $rootScope.loggedUser.skills = parseSkills($rootScope.loggedUser.skills);
             callback && callback(data);
         });
     }
@@ -169,12 +170,12 @@ app.run(function($rootScope, $http, getIsLoggedIn, extendedSkills) {
         }
     });
 
-    FB.init({
+/*    FB.init({
         appId      : '490483854451281',
         status     : true,
         xfbml      : true,
         version    : 'v2.3'
-    });
+    });*/
 
 });
 
@@ -205,8 +206,10 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
                     return;
                 }
                 getIsLoggedIn(function(user){
-                    $mdDialog.hide();
-                    $location.path(data);
+                    if (user) {
+                        $mdDialog.hide();
+                        $location.path(data);
+                    }
                 });
             });
     };
@@ -254,7 +257,7 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 }
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
-                                         $mdToast, $rootScope, extendedSkills) {
+                                         $mdToast, $rootScope, extendedSkills, getIsLoggedIn, getObjByID) {
     $scope.selectedTab = 0;
     $scope.reg = {email: '', password: ''};
 
@@ -307,13 +310,57 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         for (var i in $scope.skillsObj) {
             $scope.chips.skillsTitles.push($scope.skillsObj[i].title);
         }
+        $scope.exs = $rootScope.exs || (new extendedSkills($scope.skillsObj));
     });
     $http.get('db/users').success(function (data) {
         $scope.usersObj = data;
     });
-    $http.get('db/tasks').success(function (data) {
-        $scope.tasksObj = data;
+
+    $scope.calculateDifficulty = function (tasks, user) {
+        var count = 0;
+        for (var i in tasks) {
+            count = 0;
+            for (var j in tasks[i].skills) {
+                for (var k in user.skills) {
+                    if (tasks[i].skills[j] === user.skills[k].id) {
+                        count += user.skills[k].count / $scope.exs.skills[user.skills[k].id].count_to_get;
+                        break;
+                    }
+                }
+            }
+            tasks[i].difficulty = count / tasks[i].skills.length;
+        }
+    };
+
+    $http.get('db/tasks').success(function (tasks) {
+        $http.get('db/solutions').success(function (sols) {
+            $scope.tasksObj = [];
+            var user = loggedUser();
+            var found = false;
+            for (var i in tasks) {
+                found = false;
+                for (var j in user.tasks_done) {
+                    if (tasks[i].id === getObjByID(user.tasks_done[j], sols).task_id) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    for (var k in user.tasks_created) {
+                        if (tasks[i].id === user.tasks_created[k]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) $scope.tasksObj.push(tasks[i]);
+            }
+
+            $scope.calculateDifficulty($scope.tasksObj, loggedUser());
+        });
     });
+
+    $scope.temp = {}; //для обхода вложенности scope
 
     $scope.next = function () {
         $scope.data.selectedIndex = Math.min($scope.data.selectedIndex + 1, $scope.tooltips.length - 1);
@@ -350,6 +397,12 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         if ($scope.chips.selectedSkills.length === 0) {
             $scope.showToast('Прикрепите умения к заданию!');
             return;
+        }
+        for (var i in $scope.tasksObj) {
+            if ($scope.sendTask.name === $scope.tasksObj[i].title) {
+                $scope.showToast('Задание с таким названием уже существует!');
+                return;
+            }
         }
         var obj = {title: $scope.sendTask.name, description: $scope.sendTask.description, skills: []};
         for (var i in $scope.chips.selectedSkills) {

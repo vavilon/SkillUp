@@ -1,27 +1,22 @@
-app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID) {
+app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills) {
     $scope.username = "";
     $scope.filteredUsers = [];
 
     $http.get('db/users').success(function (data) {
         $scope.users = data;
         $scope.lastExpandedUser = $scope.users[0];
+
+        for (var i in $scope.users) {
+            $scope.users[i].skills = parseSkills($scope.users[i].skills);
+        }
     });
     $http.get('db/skills').success(function (data) {
         $scope.skills = data;
     });
 
-    $scope.findSkill = function (skillProgress) {
-        return getObjByID(skillProgress.id, $scope.skills);
+    $scope.findSkill = function (id) {
+        return getObjByID(id, $scope.skills);
     };
-
-    var orderBy = $filter('orderBy');
-
-    $scope.order = function (predicate, reverse) {
-        $scope.users = orderBy($scope.users, predicate, reverse);
-    };
-
-    $scope.order('-exp', false);
-
     $scope.expand = function (user) {
         if ($scope.lastExpandedUser !== user) $scope.lastExpandedUser.expanded = false;
         user.expanded = !user.expanded;
@@ -41,15 +36,15 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             return getObjByID(id, $scope.tasks);
         };
 
-        $scope.findSkill = function (skillProgress) {
-            return getObjByID(skillProgress.id, $scope.skills);
+        $scope.findSkill = function (id) {
+            return getObjByID(id, $scope.skills);
         };
 
-        $http.get('db/users').success(function (data) {
-            $scope.users = data;
+        $http.get('db/users').success(function (users) {
+            $scope.users = users;
             $scope.user = getObjByID($routeParams.user_id, $scope.users);
             $scope.user.skills = parseSkills($scope.user.skills);
-            console.log($scope.user.skills);
+
             getIsLoggedIn(function () {
                 $scope.canEdit = (loggedUser().id === $scope.user.id);
             });
@@ -60,38 +55,39 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             if ($scope.user.work) {
                 $scope.user.workStr = workStr(JSON.parse($scope.user.work));
             }
-            $http.get('db/tasks').success(function (data) {
-                $scope.tasks = data;
-                $scope.tasks_done = [];
-                $scope.tasks_checked = [];
-                $scope.tasks_approved = [];
-                $scope.tasks_created = [];
+            $http.get('db/tasks').success(function (tasks) {
+                $http.get('db/solutions').success(function (sols) {
+                    $scope.solutions = sols;
 
-                if ($scope.user.tasks_done)
-                    for (var i = 0; i < $scope.user.tasks_done.length; i++) {
-                        $scope.tasks_done.push($scope.findTask($scope.user.tasks_done[i]));
-                    }
+                    $scope.tasks = tasks;
+                    $scope.tasks_done = [];
+                    $scope.tasks_checked = [];
+                    $scope.tasks_approved = [];
+                    $scope.tasks_created = [];
 
-                if ($scope.user.tasks_checked)
-                    for (i = 0; i < $scope.user.tasks_checked.length; i++) {
-                        $scope.tasks_checked.push($scope.findTask($scope.user.tasks_checked[i]));
-                    }
+                    if ($scope.user.tasks_done)
+                        for (var i = 0; i < $scope.user.tasks_done.length; i++) {
+                            $scope.tasks_done.push($scope.findTask(getObjByID($scope.user.tasks_done[i],$scope.solutions).task_id));
+                        }
 
-                if ($scope.user.tasks_approved)
-                    for (i = 0; i < $scope.user.tasks_approved.length; i++) {
-                        $scope.tasks_done.push($scope.findTask($scope.user.tasks_approved[i]));
-                    }
+                    if ($scope.user.tasks_checked)
+                        for (i = 0; i < $scope.user.tasks_checked.length; i++) {
+                            $scope.tasks_checked.push($scope.findTask($scope.user.tasks_checked[i]));
+                        }
 
-                if ($scope.user.tasks_created)
-                    for (i = 0; i < $scope.user.tasks_created.length; i++) {
-                        $scope.tasks_created.push($scope.findTask($scope.user.tasks_created[i]));
-                    }
+                    if ($scope.user.tasks_approved)
+                        for (i = 0; i < $scope.user.tasks_approved.length; i++) {
+                            $scope.tasks_approved.push($scope.findTask($scope.user.tasks_approved[i]));
+                        }
+
+                    if ($scope.user.tasks_created)
+                        for (i = 0; i < $scope.user.tasks_created.length; i++) {
+                            $scope.tasks_created.push($scope.findTask($scope.user.tasks_created[i]));
+                        }
+                });
             });
-            $http.get('db/skills').success(function (data) {
-                $scope.skills = data;
-            });
-            $http.get('db/solutions').success(function (data) {
-                $scope.solutions = data;
+            $http.get('db/skills').success(function (skills) {
+                $scope.skills = skills;
             });
         });
 
