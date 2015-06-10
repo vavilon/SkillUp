@@ -30,6 +30,7 @@ function arrToObj(skillArr) {
 
 app.factory('extendedSkills', function() {
     return function (skills) {
+        if (!skills) return;
         skills = arrToObj(skills);
         this.leaves = []; //хранит ССЫЛКИ (не id) на все листья
         this.skills = {}; //объект, в котором свойствами являются скиллы
@@ -44,6 +45,9 @@ app.factory('extendedSkills', function() {
             this.skills[id].allParents = [];
             this.skills[id].allLeaves = [];
             this.skills[id].id = id;
+            this.skills[id].exp = skills[id].exp;
+            this.skills[id].count_to_get = skills[id].count_to_get;
+            this.skills[id].is_leaf = skills[id].is_leaf;
 
             for (var i = 0; i < skills[id].parents.length; i++) {
                 this.skills[skills[id].parents[i]] = this.skills[skills[id].parents[i]] || {};
@@ -125,10 +129,6 @@ app.factory('extendedSkills', function() {
             if (this.skills[i].level > this.maxLevel) this.maxLevel = this.skills[i].level;
         }
 
-        /*for (var i in this.skills) {
-         this.skills[i].exp = Math.round(Math.exp(this.maxLevel - this.skills[i].level) * 100);
-         }*/
-
         function calculateReverseLevels(skill) {
             for (var i in skill.parents) {
                 if (!skill.parents[i].reverseLevel || skill.parents[i].reverseLevel < skill.reverseLevel + 1)
@@ -142,10 +142,6 @@ app.factory('extendedSkills', function() {
                 this.skills[i].reverseLevel = 0;
                 calculateReverseLevels(this.skills[i]);
             }
-        }
-
-        for (var i in this.skills) {
-            this.skills[i].exp = Math.round(Math.exp(this.skills[i].reverseLevel) * 100);
         }
     };
 });

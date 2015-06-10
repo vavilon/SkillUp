@@ -15,6 +15,10 @@ var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
 var util = require('util');
 
+var pg = require('pg');
+var conObj = config.get('knex').connection;
+var conString = "postgres://" + conObj.user + ":" + conObj.password + "@" + conObj.host + "/" + conObj.database;
+
 var app = express();
 app.use(cors());
 
@@ -42,7 +46,8 @@ var exs = {};
 knex.select().from('skills').then(function (rows) {
     exs = new exSkills(rows);
     for (var i in exs.skills) {
-        knex('skills').where('id', '=', exs.skills[i].id).update({exp: exs.skills[i].exp}).then(function(){});
+        knex('skills').where('id', '=', exs.skills[i].id).update({exp: exs.skills[i].exp}).then(function () {
+        });
     }
     console.log('Exp for all skills updated!');
 });
@@ -201,30 +206,33 @@ app.use('/check_email', function (req, res) {
 
 app.post('/create_task', function (req, res, next) {
     if (req.isAuthenticated()) {
-        var skills = parseSP(req.user.attributes.skills);
-        var found = false;
-        var i = null, j = null;
-        var temp = null;
-        for (i in req.body.skills) {
-            found = false;
-            for (j in skills) {
-                if (req.body.skills[i] == skills[j].id) {
-                    temp = skills[j];
-                    found = true;
-                    break;
+
+        if (!req.user.attributes.admin) {
+            var skills = parseSP(req.user.attributes.skills);
+            var found = false;
+            var i = null, j = null;
+            var temp = null;
+            for (i in req.body.skills) {
+                found = false;
+                for (j in skills) {
+                    if (req.body.skills[i] == skills[j].id) {
+                        temp = skills[j];
+                        found = true;
+                        break;
+                    }
                 }
-            }
-            if (found) {
-                if (temp.count < exs.skills[req.body.skills[i]].count_to_get) {
-                    console.log('Not enough level of skill!');
+                if (found) {
+                    if (temp.count < exs.skills[req.body.skills[i]].count_to_get) {
+                        console.log('Not enough level of skill!');
+                        res.end();
+                        return;
+                    }
+                }
+                else {
+                    console.log('User doesnt have those skill!');
                     res.end();
                     return;
                 }
-            }
-            else {
-                console.log('User doesnt have those skill!');
-                res.end();
-                return;
             }
         }
 
@@ -234,15 +242,49 @@ app.post('/create_task', function (req, res, next) {
         }
 
         knex('tasks').insert({
-                title: req.body.title,
-                description: req.body.description,
-                skills: req.body.skills,
-                exp: exp,
-                author: req.user.attributes.id
-            }).then(function() {
-                res.end('ok');
+            title: req.body.title,
+            description: req.body.description,
+            skills: req.body.skills,
+            exp: exp,
+            author: req.user.attributes.id
+        }).then(function () {
+            res.end('ok')
+                .catch(function (error) {
+                    res.end();
+                });
         });
     } else res.end();
+});
+
+app.post('/create_solution', function (req, res, next) {
+    if (req.isAuthenticated()) {
+        //Добавить проверку, решал ли пользователь такое задание!!!
+        var id = uuid.v4();
+        knex('solutions').insert({
+            id: id,
+            task_id: req.body.task_id,
+            user_id: req.user.id,
+            content: req.body.content
+        }).then(function () {
+            pg.connect(conString, function (err, client, done) {
+                if (err) {
+                    return console.error('error fetching client from pool', err);
+                }
+                client.query("UPDATE users SET tasks_done = tasks_done || '{" + id + "}' WHERE id = '" + req.user.id + "';",
+                    function (err, result) {
+                        done(client);
+                        if (err) {
+                            return console.error('error running query', err);
+                        }
+                        res.end('ok');
+                        console.log(result);
+                    });
+            });
+        }).catch(function (error) {
+            res.end();
+        });
+    }
+    else res.end();
 });
 
 app.post('/register/step2', function (req, res, next) {
@@ -258,7 +300,7 @@ app.post('/register/step2', function (req, res, next) {
                 work: req.body.work
             }
         )
-            .then(function() {
+            .then(function () {
                 res.end('ok');
             })
             .catch(function (error) {
@@ -278,7 +320,8 @@ app.get('/auth/facebook', function (req, res, next) {
             'user_work_history',
             'user_about_me']
     })(req, res, next);
-}, function (req, res) {/* Never called */});
+}, function (req, res) {/* Never called */
+});
 
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {failureRedirect: '/main'}),

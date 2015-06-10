@@ -4,7 +4,7 @@
     <div flex="15"></div>
     <div layout="row" style="min-width: 225px; max-width: 225px;">
         <div layout="column" flex>
-            <div flex style="overflow: hidden; width: 225px; height: 225px;
+            <div style="overflow: hidden; width: 225px; height: 225px;
              box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: #FAFAFA;">
                 <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='{{user.avatar}}'
                      style="width: 100%; height: 100%;">
@@ -39,7 +39,7 @@
                 <div>
                     <md-button class="md-raised md-primary skill-button" aria-label="skillBtn" style="max-width: 225px;"
                                ng-repeat="skillProgress in user.skills">
-                        {{findSkill(skillProgress).title}}
+                        {{findSkill(skillProgress.id).title}}
                     </md-button>
                 </div>
             </div>
@@ -80,36 +80,36 @@
                         <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length || 0}}</span>
                         </md-tab>
                     </md-tabs>
-                    <md-content style="max-height: calc(100vh - 172px);">
+                    <md-content flex style="max-height: calc(100vh - 200px);">
                         <md-list>
                             <ng-switch on="tabSelected">
                                 <div ng-switch-when="0">
-                                    <tasks-solve-list tasks-obj="tasks_done" users-obj="users"
-                                                      skills-obj="skills"></tasks-solve-list>
+                                    <tasks-list tasks-obj="tasks_done" users-obj="users" skills-obj="skills"
+                                                      show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_done" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не решил ни одного задания</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="1">
-                                    <tasks-solve-list tasks-obj="tasks_checked" users-obj="users"
-                                                      skills-obj="skills"></tasks-solve-list>
+                                    <tasks-list tasks-obj="tasks_checked" users-obj="users" skills-obj="skills"
+                                                      show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_checked" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не проверил ни одного решения</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="2">
-                                    <tasks-solve-list tasks-obj="tasks_approved" users-obj="users"
-                                                      skills-obj="skills"></tasks-solve-list>
+                                    <tasks-list tasks-obj="tasks_approved" users-obj="users" skills-obj="skills"
+                                                      show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_approved" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не подтвердил ни одного задания</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="3">
-                                    <tasks-solve-list tasks-obj="tasks_created" users-obj="users"
-                                                      skills-obj="skills"></tasks-solve-list>
+                                    <tasks-list tasks-obj="tasks_created" users-obj="users" skills-obj="skills"
+                                                      show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_created" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не создал ни одного задания</h3>

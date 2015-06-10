@@ -114,7 +114,7 @@
 }
 
 .authorFace {
-    border-radius: 30px;
+    border-radius: 50%;
     border: 1px solid #ddd;
     zoom: 200%;
     margin: 8px;
