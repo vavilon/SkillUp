@@ -1,5 +1,5 @@
 
-var getJson = require('../../../get-json');
+var getJson = require('../../../lib/get-json');
 var requireTree = require('require-tree');
 var config = requireTree('../../../config');
 var knex = require('knex')(config.get('knex'));

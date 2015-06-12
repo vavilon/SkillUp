@@ -7,9 +7,7 @@ var controllers = requireTree('./controllers');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var config = require(__dirname + '/config');
-var getJson = require(__dirname + '/get-json');
-var exSkills = require(__dirname + '/ex-skills');
-var parseSP = require(__dirname + '/parse-skills-progress');
+var exSkills = require(__dirname + '/lib/ex-skills');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
@@ -41,10 +39,8 @@ var Solution = bookshelf.Model.extend({
     tableName: 'solutions'
 });
 
-var exs = {};
-
 knex.select().from('skills').then(function (rows) {
-    exs = new exSkills(rows);
+    GLOBAL.exs = new exSkills(rows);
     for (var i in exs.skills) {
         knex('skills').where('id', '=', exs.skills[i].id).update({exp: exs.skills[i].exp}).then(function () {
         });
@@ -204,88 +200,9 @@ app.use('/check_email', function (req, res) {
         });
 });
 
-app.post('/create_task', function (req, res, next) {
-    if (req.isAuthenticated()) {
+app.post('/create_task', controllers.tasks.create(knex));
 
-        if (!req.user.attributes.admin) {
-            var skills = parseSP(req.user.attributes.skills);
-            var found = false;
-            var i = null, j = null;
-            var temp = null;
-            for (i in req.body.skills) {
-                found = false;
-                for (j in skills) {
-                    if (req.body.skills[i] == skills[j].id) {
-                        temp = skills[j];
-                        found = true;
-                        break;
-                    }
-                }
-                if (found) {
-                    if (temp.count < exs.skills[req.body.skills[i]].count_to_get) {
-                        console.log('Not enough level of skill!');
-                        res.end();
-                        return;
-                    }
-                }
-                else {
-                    console.log('User doesnt have those skill!');
-                    res.end();
-                    return;
-                }
-            }
-        }
-
-        var exp = 0;
-        for (i in req.body.skills) {
-            exp += exs.skills[req.body.skills[i]].exp;
-        }
-
-        knex('tasks').insert({
-            title: req.body.title,
-            description: req.body.description,
-            skills: req.body.skills,
-            exp: exp,
-            author: req.user.attributes.id
-        }).then(function () {
-            res.end('ok')
-                .catch(function (error) {
-                    res.end();
-                });
-        });
-    } else res.end();
-});
-
-app.post('/create_solution', function (req, res, next) {
-    if (req.isAuthenticated()) {
-        //Добавить проверку, решал ли пользователь такое задание!!!
-        var id = uuid.v4();
-        knex('solutions').insert({
-            id: id,
-            task_id: req.body.task_id,
-            user_id: req.user.id,
-            content: req.body.content
-        }).then(function () {
-            pg.connect(conString, function (err, client, done) {
-                if (err) {
-                    return console.error('error fetching client from pool', err);
-                }
-                client.query("UPDATE users SET tasks_done = tasks_done || '{" + id + "}' WHERE id = '" + req.user.id + "';",
-                    function (err, result) {
-                        done(client);
-                        if (err) {
-                            return console.error('error running query', err);
-                        }
-                        res.end('ok');
-                        console.log(result);
-                    });
-            });
-        }).catch(function (error) {
-            res.end();
-        });
-    }
-    else res.end();
-});
+app.post('/solve_task', controllers.tasks.solve(knex, pg, conString));
 
 app.post('/register/step2', function (req, res, next) {
     if (req.isAuthenticated()) {

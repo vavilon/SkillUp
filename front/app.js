@@ -271,10 +271,8 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     });
 
-    $scope.chips = {};
-    $scope.chips.skillsTitles = [];
-    $scope.chips.skillsTitlesFiltered = [];
-    $scope.chips.selectedSkills = [];
+    $scope.chips = {skillsTitles: [], skillsTitlesFiltered: [], selectedSkills: []};
+
     $scope.chips.filteredSkills = function() {
         var str = angular.lowercase($scope.chips.searchTextSkills);
         var arr = [];
@@ -390,12 +388,34 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         );
     };
 
-    $scope.sendTask = {name: '', description: ''};
+    $scope.sendTask = {name: '', description: '', links: [], link: ''};
+
+    $scope.addLink = function() {
+        if (!$scope.sendTask.link) {
+            $scope.showToast('Введите ссылку!');
+            return;
+        }
+        if (_.includes($scope.sendTask.links, $scope.sendTask.link)) {
+            $scope.showToast('Такая ссылка уже добавлена!');
+            return;
+        }
+        $scope.sendTask.links.push($scope.sendTask.link);
+        $scope.sendTask.link = '';
+    };
+
+    $scope.removeLink = function(index) {
+        $scope.sendTask.links.splice(index, 1);
+    };
+
     $scope.createTask = function() {
         if ($scope.sendTask.name.length < 10) return;
         if ($scope.sendTask.description.length < 30) return;
         if ($scope.chips.selectedSkills.length === 0) {
             $scope.showToast('Прикрепите умения к заданию!');
+            return;
+        }
+        if ($scope.sendTask.links.length === 0) {
+            $scope.showToast('Добавьте ссылки на учебные материалы!');
             return;
         }
         for (var i in $scope.tasksObj) {
@@ -404,7 +424,8 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                 return;
             }
         }
-        var obj = {title: $scope.sendTask.name, description: $scope.sendTask.description, skills: []};
+        var obj = {title: $scope.sendTask.name, description: $scope.sendTask.description, links: $scope.sendTask.links,
+            skills: []};
         for (var i in $scope.chips.selectedSkills) {
             for (var j in $scope.skillsObj) {
                 if ($scope.chips.selectedSkills[i] === $scope.skillsObj[j].title) {
@@ -418,7 +439,13 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                 $scope.showToast('Ваших умений недостаточно, чтобы создать такое задание!');
                 return;
             }
+
             $scope.showToast('Задание успешно создано!', '#toastSuccess');
+            $scope.sendTask = {name: '', description: '', links: [], link: ''};
+            $scope.chips.skillsTitlesFiltered = [];
+            $scope.chips.selectedSkills = [];
+
+            getIsLoggedIn();
         });
     }
 });

@@ -100,7 +100,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                                              $animate, $timeout, educationStr, workStr) {
         $scope.reg = {};
 
-        $scope.step = 1;
+        $scope.step = 2;
 
         $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
