@@ -11,11 +11,8 @@ var exSkills = require(__dirname + '/lib/ex-skills');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
+var updateArray = require(__dirname + '/lib/pg-update-array');
 var util = require('util');
-
-var pg = require('pg');
-var conObj = config.get('knex').connection;
-var conString = "postgres://" + conObj.user + ":" + conObj.password + "@" + conObj.host + "/" + conObj.database;
 
 var app = express();
 app.use(cors());
@@ -200,9 +197,9 @@ app.use('/check_email', function (req, res) {
         });
 });
 
-app.post('/create_task', controllers.tasks.create(knex));
+app.post('/create_task', controllers.tasks.create(knex, updateArray));
 
-app.post('/solve_task', controllers.tasks.solve(knex, pg, conString));
+app.post('/solve_task', controllers.tasks.solve(knex, updateArray));
 
 app.post('/register/step2', function (req, res, next) {
     if (req.isAuthenticated()) {
