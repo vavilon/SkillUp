@@ -2,12 +2,16 @@
 //var obj = JSON.parse(fs.readFileSync('skills.json', 'utf8'));
 //var uuid = require('uuid');
 var bcrypt = require('bcryptjs');
-//var config = require(__dirname + '/config');
-//var knex = require('knex')(config.get('knex'));
+var config = require(__dirname + '/config');
+var knex = require('knex')(config.get('knex'));
 //var bookshelf = require('bookshelf')(knex);
 //var temp;
 
-console.log(bcrypt.hashSync('y'));
+knex('approvements').returning('id').insert({task_id: 'cf133be1-3e14-4678-acce-821684098d79'})
+    .then(function(id) {
+        console.log(id);
+        return;
+    });
 
 /*
 var User = bookshelf.Model.extend({

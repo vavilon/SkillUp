@@ -54,7 +54,7 @@ app.directive('tasksList', function(getObjByID) {
                 if ($scope.solution.length < 30) {
                     return;
                 }
-                $http.post('/create_solution', {task_id: $scope.lastExpandedTask.id, content: $scope.solution})
+                $http.post('/solve_task', {task_id: $scope.lastExpandedTask.id, content: $scope.solution})
                     .success(function(data) { callback(data, index); });
             };
 
