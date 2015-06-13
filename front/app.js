@@ -372,6 +372,18 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             }
 
             $scope.calculateDifficulty($scope.tasksObj, loggedUser());
+
+            $scope.solutionsObj = [];
+            for (i in sols) {
+                if (sols[i].user_id === user.id) continue;
+                for (var j in user.solutions_liked) {
+                    if (sols[i].id === user.solutions_liked[j]) {
+                        sols[i].liked = true;
+                        break;
+                    }
+                }
+                $scope.solutionsObj.push(sols[i]);
+            }
         });
     });
 

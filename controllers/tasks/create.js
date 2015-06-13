@@ -6,6 +6,11 @@ module.exports = function(knex, updateArray){
         if (req.isAuthenticated()) {
             if (!req.user.attributes.admin) {
                 var skills = parseSP(req.user.attributes.skills);
+                if (!skills || skills.length === 0) {
+                    console.log('User doesnt have those skill!');
+                    res.end();
+                    return;
+                }
                 var found = false;
                 var i = null, j = null;
                 var temp = null;

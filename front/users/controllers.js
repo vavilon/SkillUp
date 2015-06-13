@@ -57,6 +57,14 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             }
             $http.get('db/tasks').success(function (tasks) {
                 $http.get('db/solutions').success(function (sols) {
+                    for (i in sols) {
+                        for (var j in loggedUser().solutions_liked) {
+                            if (sols[i].id === loggedUser().solutions_liked[j]) {
+                                sols[i].liked = true;
+                                break;
+                            }
+                        }
+                    }
                     $scope.solutions = sols;
 
                     $scope.tasks = tasks;

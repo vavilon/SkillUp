@@ -2,34 +2,26 @@
 module.exports = function(knex, updateArray) {
     return function(req, res, next) {
         if (req.isAuthenticated()) {
-            knex('users').where('id', '=', req.user.id).andWhere('tasks_received', '@>', [req.body.task_id])
+            knex('users').where('id', '=', req.user.id).andWhere('solutions_liked', '@>', [req.body.solution_id])
                 .then(function (rows) {
                     if (rows.length === 0) {
-                        updateArray('users', 'tasks_received', req.user.id, 'append', req.body.task_id, function (err, result) {
+                        updateArray('users', 'solutions_liked', req.user.id, 'append', req.body.solution_id, function (err, result) {
                             if (err) {
                                 res.end();
                                 return console.error('error running query', err);
                             }
-                            updateArray('tasks', 'participants', req.body.task_id, 'append', req.user.id, function (err, result) {
-                                if (err) {
-                                    res.end();
-                                    return console.error('error running query', err);
-                                }
+                            knex('solutions').where('id', '=', req.body.solution_id).increment('likes', 1).then(function () {
                                 res.end('ok');
                             });
                         });
                     }
                     else {
-                        updateArray('users', 'tasks_received', req.user.id, 'remove', req.body.task_id, function (err, result) {
+                        updateArray('users', 'solutions_liked', req.user.id, 'remove', req.body.solution_id, function (err, result) {
                             if (err) {
                                 res.end();
                                 return console.error('error running query', err);
                             }
-                            updateArray('tasks', 'participants', req.body.task_id, 'remove', req.user.id, function (err, result) {
-                                if (err) {
-                                    res.end();
-                                    return console.error('error running query', err);
-                                }
+                            knex('solutions').where('id', '=', req.body.solution_id).decrement('likes', 1).then(function () {
                                 res.end('ok');
                             });
                         });

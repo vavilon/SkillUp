@@ -347,7 +347,7 @@ pre {
 }
 
 .promo-area {
-    background-color: #3949AB;
+    background: #3949AB url('https://assets-cdn.github.com/images/modules/home/octicons-bg.png') center repeat;
     padding-top: 5%;
     padding-bottom: 5%;
 }
@@ -389,4 +389,16 @@ pre {
 }
 .user-nick {
     color: #1A237E !important;
+}
+
+.user-exp {
+    font-size: 12px;
+}
+
+.checked-correct {
+    color: #4CAF50 !important;
+}
+
+.checked-incorrect {
+    color: #F44336 !important;
 }

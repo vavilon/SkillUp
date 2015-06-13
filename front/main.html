@@ -22,7 +22,7 @@
                 </md-tab>
             </md-tabs>
 
-            <md-content style="min-height: 200px; max-height: calc(100vh - 175px);">
+            <md-content style="min-height: 100px; max-height: calc(100vh - 175px);">
                 <ng-switch on="selectedTab">
                     <div role="tabpanel"
                          aria-labelledby="tab1"
@@ -36,138 +36,14 @@
                          ng-switch-when="1"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <md-list layout="column">
-                            <md-item class="item-animate"
-                                     ng-repeat="(solutionKey, solutionVal) in solutions">
-                                <md-item-content style="align-items: flex-start !important;">
-                                    <div class="md-tile-content" layout="column">
-                                        <div>
-                                            <h3 style="float: left; margin-right: 20px"><a
-                                                    href="#">{{tasks[solutionVal.taskID].title}}</a>
-                                            </h3>
-
-                                            <p style="float: right;">exp: {{tasks[solutionVal.taskID].exp |
-                                                thousand}}</p>
-                                        </div>
-                                        <div>
-                                            <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                            <md-button class="md-raised md-primary skill-button" aria-label="skillBtn"
-                                                       ng-repeat="skill in tasks[solutionVal.taskID].skills">
-                                                {{skills[skill].title}}
-                                            </md-button>
-                                        </div>
-                                        <div class="show-hide-list" ng-show="solutionVal.expanded">
-                                            <div class="task-desc-header">
-                                                <h4 style="margin-bottom: 0px;">Условие</h4>
-                                            </div>
-                                            <div class="task-description">
-                                                {{tasks[solutionVal.taskID].description}}
-                                            </div>
-                                        </div>
-                                        <div class="show-hide-list" ng-show="solutionVal.expanded">
-                                            <div class="task-desc-header" style="background-color: #FCE4EC;">
-                                                <h4 style="margin-bottom: 0px;">Решение</h4>
-                                            </div>
-                                            <div class="task-description" style="margin-top: 0px;" hljs
-                                                 source="solutionVal.text">
-                                            </div>
-                                        </div>
-                                        <div layout="row" layout-align="space-between center">
-                                            <div layout="row">
-                                                <div class="my-subheader">Дата решения: {{solutionVal.date}}</div>
-                                                <div class="my-subheader" style="margin-left: 20px;">Решил: <a
-                                                        href="/users/{{users.indexOf(findUser(solutionVal.userID))}}">{{findUser(solutionVal.userID).fullName}}</a>
-                                                </div>
-                                            </div>
-                                            <div class="show-hide" ng-show="solutionVal.expanded">
-                                                <md-button><img style="opacity: 0.54;" aria-label="thumbUpBtn"
-                                                                src="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg">
-                                                </md-button>
-                                                <md-button style="margin-left: 20px;"><img style="opacity: 0.54;"
-                                                                                           aria-label="thumbUpBtn"
-                                                                                           src="/bower_components/material-design-icons/action/svg/design/ic_thumb_down_24px.svg">
-                                                </md-button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <md-button ng-click="expand(solutionVal)"
-                                                   style="margin: 20px" aria-label="expand">
-                                            <img ng-show="!solutionVal.expanded"
-                                                 src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                                            <img ng-show="solutionVal.expanded"
-                                                 src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
-                                        </md-button>
-                                        <br>
-                                    </div>
-                                </md-item-content>
-                                <md-divider ng-if="!$last"></md-divider>
-                            </md-item>
-                        </md-list>
+                        <solutions-list tasks-obj="tasksObj" skills-obj="skillsObj" users-obj="usersObj" solutions-obj="solutionsObj"></solutions-list>
                     </div>
                     <div role="tabpanel"
                          aria-labelledby="tab3"
                          ng-switch-when="2"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <md-list layout="column">
-                            <md-item class="item-animate"
-                                     ng-repeat="(taskKey, taskVal) in tasks">
-                                <md-item-content style="align-items: flex-start !important;">
-                                    <div class="md-tile-content" layout="column">
-                                        <div>
-                                            <h3 style="float: left; margin-right: 20px"><a
-                                                    href="#">{{taskVal.title}}</a></h3>
-
-                                            <p style="float: right;">exp: {{taskVal.exp | thousand}}</p>
-                                        </div>
-                                        <div>
-                                            <h3 style="float: left; margin-right: 7px;">Умения:</h3>
-                                            <md-button class="md-raised md-primary skill-button"
-                                                       ng-repeat="skill in taskVal.skills" aria-label="skillBtn">
-                                                {{skills[skill].title}}
-                                            </md-button>
-                                        </div>
-                                        <div class="show-hide-list" ng-show="taskVal.expanded">
-                                            <div class="task-desc-header">
-                                                <h4 style="margin-bottom: 0px;">Условие</h4>
-                                            </div>
-                                            <div class="task-description">
-                                                {{taskVal.description}}
-                                            </div>
-                                        </div>
-                                        <div layout="row" layout-align="space-between center">
-                                            <div layout="row">
-                                                <div class="my-subheader">Дата создания: {{taskVal.dateCreated}}</div>
-                                                <div class="my-subheader" style="margin-left: 20px;">Автор: <a
-                                                        href="/users/{{users.indexOf(findUser(taskVal.author))}}">{{findUser(taskVal.author).fullName}}</a>
-                                                </div>
-                                            </div>
-                                            <div class="show-hide" ng-show="taskVal.expanded">
-                                                <md-button><img style="opacity: 0.54;" aria-label="thumbUpBtn"
-                                                                src="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg">
-                                                </md-button>
-                                                <md-button style="margin-left: 20px;"><img style="opacity: 0.54;"
-                                                                                           aria-label="thumbUpBtn"
-                                                                                           src="/bower_components/material-design-icons/action/svg/design/ic_thumb_down_24px.svg">
-                                                </md-button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <md-button ng-click="expand(taskVal)" style="margin: 20px"
-                                                   aria-label="expand">
-                                            <img ng-show="!taskVal.expanded"
-                                                 src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                                            <img ng-show="taskVal.expanded"
-                                                 src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_less_24px.svg">
-                                        </md-button>
-                                        <br>
-                                    </div>
-                                </md-item-content>
-                                <md-divider ng-if="!$last"></md-divider>
-                            </md-item>
-                        </md-list>
+                        <tasks-list tasks-obj="tasksObj" skills-obj="skillsObj" users-obj="usersObj" solution="temp.solution"></tasks-list>
                     </div>
                     <div role="tabpanel"
                          aria-labelledby="tab4"

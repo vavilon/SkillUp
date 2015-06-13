@@ -42,7 +42,6 @@
 </head>
 
 <body layout="row">
-
 <div id="fb-root"></div>
 <div layout="column" layout-fill tabindex="-1" role="main">
     <md-toolbar class="md-hue-2" style="box-shadow: 0 2px 5px rgba(0,0,0,0.54);" ng-controller="navbarCtrl">
@@ -81,6 +80,8 @@
                         </md-icon>
                         <div layout="column" layout-align="center center">
                             <h6 class="nickname" ng-class="{admin: loggedUser().admin}">{{loggedUser().nick}}</h6>
+                            <span ng-if="!loggedUser().admin" class="user-exp">exp:
+                                <span style="color: #E91E63;">{{loggedUser().exp}}</span></span>
                             <span ng-if="loggedUser().admin" class="admin">АДМИН</span>
                         </div>
                     </a>
