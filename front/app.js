@@ -32,6 +32,7 @@ var app = angular.module('skills', [
         .when('/registration', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
         .when('/registration/nick/:nick/email/:email/password/:password*',
         {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
+        .when('/restore', {templateUrl: '/front/users/restore.html', controller: 'restoreCtrl'})
         .otherwise({redirectTo: '/main'});
 
 /*    $mdThemingProvider.theme('default')

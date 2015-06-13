@@ -13,6 +13,8 @@ var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
 var updateArray = require(__dirname + '/lib/pg-update-array');
 var util = require('util');
+var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport(config.get('nodemailer'));
 
 var app = express();
 app.use(cors());
@@ -194,6 +196,35 @@ app.use('/check_email', function (req, res) {
         .catch(function (err) {
             console.log(err);
             res.end();
+        });
+});
+
+app.post('/restore', function(req, res) {
+    var email = req.body.email;
+    var secretCode = Math.round(Math.random() * 10000);
+    transporter.sendMail({
+        from: 'SkillUP <vintorezvs@gmail.com>',
+        to: email,
+        subject: 'Восстановление пароля',
+        text: 'Код для смены пароля: ' + secretCode
+    }, function(err) {
+        if (err) {
+            console.log(err);
+            res.end('error');
+        }
+        else res.end('' + secretCode);
+    });
+});
+
+app.post('/change_password', function(req, res) {
+    var email = req.body.email;
+    var password = req.body.password;
+
+    knex('users')
+        .where('email', '=', email)
+        .update('pswhash', bcrypt.hashSync(password))
+        .then(function(count) {
+            controllers.users.login(req, res);
         });
 });
 
