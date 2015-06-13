@@ -2,7 +2,7 @@ function createFilterFor(query) {
     var lowercaseQuery = angular.lowercase(query);
 
     return function filterFn(item) {
-        return (angular.lowercase(item).indexOf(lowercaseQuery) === 0);
+        return (angular.lowercase(item).indexOf(lowercaseQuery) !== -1);
     };
 
 }
@@ -15,7 +15,58 @@ function FiltersFactory(array) {
     }
 }
 
+function applyAllFilters(scope) {
+    var target = [].concat(scope.tasks);
+    var temp;
+
+    if(scope.chips.selectedTasks.length) {
+        temp = [];
+        for(var titleID in scope.chips.selectedTasks) {
+            var title = scope.chips.selectedTasks[titleID];
+            for(var taskID in target) {
+                var task = target[taskID];
+                if(task.title === title) temp.push(task);
+            }
+        }
+        target = [].concat(temp);
+    }
+
+    if(scope.chips.selectedSkills.length) {
+        temp = [];
+        for (var titleID in scope.chips.selectedSkills) {
+            var title = scope.chips.selectedSkills[titleID];
+            for (var taskID in target) {
+                var task = target[taskID];
+                for (var idS in task.skills) {
+                    var skillID = task.skills[idS];
+                    if (scope.getObjByID(skillID, scope.skills).title === title) {
+                        temp.push(task);
+                        break;
+                    }
+                }
+            }
+        }
+        console.log(target);
+        target = [].concat(temp);
+    }
+
+    if(scope.chips.selectedAuthors.length) {
+        temp = [];
+        for(var nameID in scope.chips.selectedAuthors) {
+            var name = scope.chips.selectedAuthors[nameID];
+            for(var taskID in target) {
+                var task = target[taskID];
+                if(scope.getObjByID(task.author, scope.users).name === name) temp.push(task);
+            }
+        }
+        target = [].concat(temp);
+    }
+    console.log(target);
+    return target;
+}
+
 app.controller('allTasksCtrl', function ($scope, $http, getObjByID) {
+    $scope.getObjByID = getObjByID;
     $scope.chips = {};
     $scope.chips.tasksNames = [];
     $scope.chips.skillsNames = [];
@@ -32,6 +83,8 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID) {
     $scope.chips.searchTextTasks = null;
     $scope.chips.searchTextSkills = null;
     $scope.chips.searchTextAuthors = null;
+
+    $scope.fTasks = [];
 
     $scope.getfTasks = function() { return $scope.fTasks;};
 
@@ -56,56 +109,20 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID) {
                 $scope.chips.tasksNames.push(tasks[item].title);
             }
             $scope.chips.tasksQuerySearch = FiltersFactory($scope.chips.tasksNames);
-            $scope.fTasks = $scope.tasks;
+            $scope.fTasks = tasks;
         });
     });
 
     $scope.$watchCollection('chips.selectedTasks', function(newVal) {
-        if(newVal.length === 0) $scope.fTasks = [].concat($scope.tasks);
-        else {
-            $scope.fTasks = [];
-            for(var idN in newVal) {
-                var title = newVal[idN];
-                for(var idT in $scope.tasks) {
-                    var task = $scope.tasks[idT];
-                    if(task.title === title) $scope.fTasks.push(task);
-                }
-            }
-        }
+        $scope.fTasks = applyAllFilters($scope);
     });
 
     $scope.$watchCollection('chips.selectedSkills', function(newVal) {
-        if(newVal.length === 0) $scope.fTasks = [].concat($scope.tasks);
-        else {
-            $scope.fTasks = [];
-            for (var idN in newVal) {
-                var title = newVal[idN];
-                for (var idT in $scope.tasks) {
-                    var task = $scope.tasks[idT];
-                    for (var idS in task.skills) {
-                        var skillID = task.skills[idS];
-                        if (getObjByID(skillID, $scope.skills).title === title) {
-                            $scope.fTasks.push(task);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        $scope.fTasks = applyAllFilters($scope);
     });
 
     $scope.$watchCollection('chips.selectedAuthors', function(newVal) {
-        if(newVal.length === 0) $scope.fTasks = [].concat($scope.tasks);
-        else {
-            $scope.fTasks = [];
-            for(var idN in newVal) {
-                var name = newVal[idN];
-                for(var idT in $scope.tasks) {
-                    var task = $scope.tasks[idT];
-                    if(getObjByID(task.author, $scope.users).name === name) $scope.fTasks.push(task);
-                }
-            }
-        }
+        $scope.fTasks = applyAllFilters($scope);
     });
 });
 
