@@ -8,5 +8,12 @@
       "password": "1111",
       "database": "skillup"
     }
+  },
+  "nodemailer": {
+    "service": "Gmail",
+    "auth": {
+      "user": "vintorezvs@gmail.com",
+      "pass": "11111994sergey"
+    }
   }
 }

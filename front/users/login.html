@@ -51,10 +51,13 @@
                     <div ng-message="loginerr">Неправильный email или пароль</div>
                 </div>
             </md-input-container>
-            <md-input-container style="margin: 0 20px 0 20px;">
+            <md-input-container style="margin: 0 20px 0 20px; padding-bottom: 0;">
                 <label>Пароль</label>
                 <input ng-model="log.password" name="passwordN" type="password" required>
             </md-input-container>
+            <a href="/restore" style="font-size: small; margin-left: 22px;">
+                Забыли пароль?
+            </a>
         </md-dialog-content>
         <div class="md-actions" layout="row">
             <md-button ng-click="answer()" class="md-primary">
