@@ -30,6 +30,7 @@ var app = angular.module('skills', [
         .when('/users/:user_id', {templateUrl: '/front/users/one.html', controller: 'profileCtrl'})
         .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
         .when('/registration', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
+        .when('/registration/step2', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
         .when('/registration/nick/:nick/email/:email/password/:password*',
         {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
         .when('/restore', {templateUrl: '/front/users/restore.html', controller: 'restoreCtrl'})
@@ -144,6 +145,7 @@ app.factory('workStr', function($filter) {
 
 app.factory('parseSkills', function() {
     return function(skills) {
+        if (!skills) return;
         skills = skills.replace(/{/g, '[');
         skills = skills.replace(/}/g, ']');
         skills = skills.replace(/"\(/g, '{"id": "');

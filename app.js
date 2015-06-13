@@ -265,14 +265,21 @@ app.get('/auth/facebook', function (req, res, next) {
             'user_work_history',
             'user_about_me']
     })(req, res, next);
-}, function (req, res) {/* Never called */
-});
+}, function (req, res) { /* Never called */ });
 
-app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {failureRedirect: '/main'}),
-    function (req, res) {
-        res.redirect('/users/' + req.user.id);
-    });
+app.get('/auth/facebook/callback', function (req, res, next) {
+    passport.authenticate('facebook', function (err, user, info) {
+        if (err) return next(err);
+        if (!user) return res.redirect('/main');
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            if (info) {
+                return res.redirect('/registration/step2');
+            }
+            return res.redirect('/users/' + user.id);
+        });
+    })(req, res, next);
+});
 
 //Привяжем запросы к соответствующим контроллерам
 app.post('/login', controllers.users.login);

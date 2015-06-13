@@ -100,7 +100,25 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                                              $animate, $timeout, educationStr, workStr) {
         $scope.reg = {};
 
-        $scope.step = 2;
+        $scope.step = 1;
+
+        if ($location.path() === '/registration/step2') {
+            $http.get('/is_logged_in').success(function(user) {
+                if (!user) return;
+                console.log(user);
+                $scope.step = 2;
+                $scope.reg.birthday = new Date(user.birthday);
+                $scope.reg.isImageRes = true;
+                $scope.reg.imgSrcRes = user.avatar;
+                $scope.reg.gender = user.gender;
+                $scope.reg.city = user.city;
+                $scope.reg.country = user.country;
+                $scope.reg.education = JSON.parse(user.education);
+                $scope.reg.educationStr = educationStr($scope.reg.education);
+                $scope.reg.work = JSON.parse(user.work);
+                $scope.reg.workStr = workStr($scope.reg.work);
+            });
+        }
 
         $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
@@ -293,6 +311,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 work: JSON.stringify($scope.reg.work)
             }).success(function(data) {
                 if (data) {
+                    getIsLoggedIn();
                     $scope.step = 3;
                 }
             });

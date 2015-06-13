@@ -4,7 +4,7 @@ var uuid = require('uuid');
 module.exports = function(knex, updateArray) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
-            //Добавить проверку, решал ли пользователь такое задание!!!
+            //Р”РѕР±Р°РІРёС‚СЊ РїСЂРѕРІРµСЂРєСѓ, СЂРµС€Р°Р» Р»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ С‚Р°РєРѕРµ Р·Р°РґР°РЅРёРµ!!!
             knex('solutions').returning('id').insert({
                 task_id: req.body.task_id,
                 user_id: req.user.id,
