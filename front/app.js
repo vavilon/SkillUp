@@ -375,14 +375,23 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
             $scope.solutionsObj = [];
             for (i in sols) {
+                found = false;
                 if (sols[i].user_id === user.id) continue;
-                for (var j in user.solutions_liked) {
-                    if (sols[i].id === user.solutions_liked[j]) {
-                        sols[i].liked = true;
+                for (var j in user.tasks_checked) {
+                    if (sols[i].task_id === user.tasks_checked[j]) {
+                        found = true;
                         break;
                     }
                 }
-                $scope.solutionsObj.push(sols[i]);
+                if (!found) {
+                    for (var j in user.solutions_liked) {
+                        if (sols[i].id === user.solutions_liked[j]) {
+                            sols[i].liked = true;
+                            break;
+                        }
+                    }
+                    $scope.solutionsObj.push(sols[i]);
+                }
             }
         });
     });

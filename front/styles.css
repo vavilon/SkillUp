@@ -347,7 +347,7 @@ pre {
 }
 
 .promo-area {
-    background: #3949AB url('https://assets-cdn.github.com/images/modules/home/octicons-bg.png') center repeat;
+    background: #3949AB url('/front/images/octicons-bg.png') center repeat;
     padding-top: 5%;
     padding-bottom: 5%;
 }
@@ -401,4 +401,8 @@ pre {
 
 .checked-incorrect {
     color: #F44336 !important;
+}
+
+.star {
+    color: #FFEB3B !important;
 }

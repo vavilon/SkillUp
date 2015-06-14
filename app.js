@@ -238,6 +238,8 @@ app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
 
 app.post('/like_solution', controllers.solutions.like(knex, updateArray));
 
+app.post('/check_solution', controllers.solutions.check(knex, updateArray));
+
 app.post('/register/step2', function (req, res, next) {
     if (req.isAuthenticated()) {
         knex('users').where('id', '=', req.user.id).update(

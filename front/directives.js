@@ -57,12 +57,12 @@ app.directive('tasksList', function(getObjByID) {
                     });
                 }
             };
-            if ($scope.send === undefined) $scope.send = function (callback, id) {
+            if ($scope.send === undefined) $scope.send = function (id) {
                 if ($scope.solution.length < 30) {
                     return;
                 }
                 $http.post('/solve_task', {task_id: $scope.lastExpandedTask.id, content: $scope.solution})
-                    .success(function(data) { callback(data, id); });
+                    .success(function(data) { $scope.callback(data, id); });
             };
             if ($scope.like === undefined) $scope.like = function (task) {
                 task.liked = !task.liked;
@@ -138,13 +138,15 @@ app.directive('solutionsList', function(getObjByID) {
         },
         controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser) {
 
-            $scope.showToast = function (msg, parent) {
+            $scope.showToast = function (msg, parent, position, delay) {
                 parent = parent || '#toastError';
+                position = position || 'bottom left';
+                delay = delay || 3000;
                 $mdToast.show(
                     $mdToast.simple()
                         .content(msg)
-                        .position('bottom left')
-                        .hideDelay(3000)
+                        .position(position)
+                        .hideDelay(delay)
                         .parent(angular.element(document.querySelector(parent)))
                 );
             };
@@ -154,42 +156,67 @@ app.directive('solutionsList', function(getObjByID) {
             if ($scope.showSkills === undefined) $scope.showSkills = true;
             if ($scope.showLike === undefined) $scope.showLike = true;
             if ($scope.showCheck === undefined) $scope.showCheck = true;
+
+            if ($scope.send === undefined) $scope.send = function (solution) {
+                if (solution.isCorrect === undefined) {
+                    $scope.showToast('Вы не проверили решение!', null, 'bottom right');
+                    return;
+                }
+                $http.post('/check_solution', {
+                    solution_id: solution.id,
+                    task_id: solution.task_id,
+                    is_correct: solution.isCorrect,
+                    rating: $scope.stars.count
+                }).success(function(data) { $scope.callback(data, solution.id); });
+            };
+
             if ($scope.callback === undefined) $scope.callback = function (data, id) {
-                if (!data) $scope.showToast('Не удалось отправить решение...');
+                if (!data) $scope.showToast('Не удалось отправить результат...');
                 else {
                     getIsLoggedIn(function() {
-                        $scope.showToast('Решение отправлено!', '#toastSuccess');
-                        $scope.solution = '';
+                        $scope.showToast('Решение проверено!', '#toastSuccess');
                         var index = 0;
-                        for (var i in $scope.tasksObj) {
-                            if ($scope.tasksObj[i].id === id) {
+                        for (var i in $scope.solutionsObj) {
+                            if ($scope.solutionsObj[i].id === id) {
                                 index = i;
                                 break;
                             }
                         }
-                        $scope.tasksObj.splice(index, 1);
+                        $scope.solutionsObj.splice(index, 1);
                     });
                 }
             };
 
             if ($scope.check === undefined) $scope.check = function (solution, isCorrect) {
-                if (isCorrect) {
-                    solution.checkedCorrect = true;
-                    solution.checkedIncorrect = false;
-                }
-                else {
-                    solution.checkedCorrect = false;
-                    solution.checkedIncorrect = true;
+                solution.isCorrect = isCorrect;
+                $scope.starsFixed = false;
+                $scope.stars = {s1: true, s2: true, s3: true, s4: true, s5: true, count: 5};
+            };
+
+            $scope.mouseEnterStar = function (num) {
+                if ($scope.starsFixed) return;
+                for (var i = 1; i <= 5; i++) {
+                    $scope.stars['s' + i] = i <= num;
                 }
             };
 
-            if ($scope.send === undefined) $scope.send = function (callback, id) {
-                if ($scope.solution.length < 30) {
+            $scope.mouseLeaveStar = function (num) {
+                if ($scope.starsFixed) return;
+                if (!num) {
+                    $scope.stars = {s1: false, s2: false, s3: false, s4: false, s5: false};
                     return;
                 }
-                $http.post('/solve_task', {task_id: $scope.lastExpandedTask.id, content: $scope.solution})
-                    .success(function(data) { callback(data, id); });
+                $scope.stars['s' + num] = false;
             };
+
+            $scope.star = function (num) {
+                $scope.starsFixed = !($scope.stars.count === num);
+                $scope.stars.count = num;
+                for (var i = 1; i <= 5; i++) {
+                    $scope.stars['s' + i] = i <= num;
+                }
+            };
+
             if ($scope.like === undefined) $scope.like = function (solution) {
                 solution.liked = !solution.liked;
                 solution.liked ? solution.likes++ : solution.likes--;

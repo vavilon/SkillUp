@@ -1,6 +1,4 @@
 
-var uuid = require('uuid');
-
 module.exports = function(knex, updateArray) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
