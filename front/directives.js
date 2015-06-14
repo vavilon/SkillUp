@@ -72,12 +72,7 @@ app.directive('tasksList', function(getObjByID) {
                     .success(function(data) { $scope.callback(data, id); });
             };
 
-            if ($scope.approve === undefined) $scope.approve = function (id) {
-                $http.post('/approve_task', {task_id: id, data: $scope.apprData})
-                    .success(function(data) { $scope.approveCallback(data, id); });
-            };
-
-            if ($scope.callback === undefined) $scope.approveCallback = function (data, id) {
+            if ($scope.approveCallback === undefined) $scope.approveCallback = function (data, id) {
                 if (!data) $scope.showToast('Не удалось отправить подтверждение...');
                 else {
                     getIsLoggedIn(function() {
@@ -92,6 +87,11 @@ app.directive('tasksList', function(getObjByID) {
                         $scope.tasksObj.splice(index, 1);
                     });
                 }
+            };
+
+            if ($scope.approve === undefined) $scope.approve = function (id) {
+                $http.post('/approve_task', {task_id: id, data: $scope.apprData})
+                    .success(function(data) { $scope.approveCallback(data, id); });
             };
 
             if ($scope.like === undefined) $scope.like = function (task) {

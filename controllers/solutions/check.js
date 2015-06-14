@@ -13,22 +13,13 @@ var callback = function(knex, updateArray, req, res, next) {
                 if (rows[0].checked_incorrect) incorrect += rows[0].checked_incorrect.length;
                 count = correct + incorrect;
                 if (count === countToCheck) {
-                    if (correct / count >= correctConstant) {
-                        knex('solutions').where('id', '=', req.body.solution_id).update({'is_correct': true}).then(function() {
+                    knex('solutions').where('id', '=', req.body.solution_id).update({'is_correct': (correct / count >= correctConstant)})
+                        .then(function() {
                             res.end('ok');
                         }).catch(function (error) {
                             console.log(error);
                             res.end();
                         });
-                    }
-                    else {
-                        knex('solutions').where('id', '=', req.body.solution_id).update({'is_correct': false}).then(function() {
-                            res.end('ok');
-                        }).catch(function (error) {
-                            console.log(error);
-                            res.end();
-                        });
-                    }
                 }
                 else {
                     res.end('ok');

@@ -13,11 +13,13 @@ var knex = require('knex')(config.get('knex'));
         return;
     });*/
 
-knex('solutions').where('id', '=', req.body.solution_id).select('checked_correct', 'checked_incorrect')
-    .then(function(rows) {
-        console.log(rows);
-        return;
-    });
+knex('approvements').where('task_id', '=', 'cf426df8-6ca4-41d2-bf91-37984d1a5844').then(function(rows) {
+    console.log(rows);
+
+}).catch(function (error) {
+    console.log(error);
+    res.end();
+});
 
 /*
 var User = bookshelf.Model.extend({
