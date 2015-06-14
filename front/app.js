@@ -371,6 +371,8 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
                     $scope.calculateDifficulty($scope.tasksObj, loggedUser());
 
+                    $scope.tasksObjSolve = angular.copy(tasks);
+
                     $scope.solutionsObj = [];
                     for (i in sols) {
                         found = false;
