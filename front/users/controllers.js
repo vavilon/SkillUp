@@ -108,7 +108,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                                              $animate, $timeout, educationStr, workStr, loggedUser) {
         $scope.reg = {};
 
-        $scope.step = 2;
+        $scope.step = 1;
 
         if ($location.path() === '/registration/step2') {
             $http.get('/is_logged_in').success(function(user) {

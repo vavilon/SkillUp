@@ -55,11 +55,9 @@
                         <form name="solutionForm" ng-if="solvable">
                             <md-input-container>
                                 <label>Ваше решение</label>
-                                <textarea ng-model="$parent.$parent.$parent.$parent.solution" name="solutionT"
-                                          required minlength="30"></textarea>
+                                <textarea ng-model="$parent.$parent.$parent.$parent.solution" name="solutionT" required></textarea>
                                 <div ng-messages="solutionForm.solutionT.$error">
                                     <div ng-message="required">Обязательное поле</div>
-                                    <div ng-message="minlength">Решение должно содержать как минимум 30 символов</div>
                                 </div>
                             </md-input-container>
                             <md-button class="md-raised md-primary" style="float: right; " ng-click="send(taskVal.id)">Отправить</md-button>
@@ -110,8 +108,8 @@
                             Мне нравится
                         </md-tooltip>
                     </md-button>
-                    <md-button ng-if="showReceive" class="task-button" ng-click="receive(taskVal)"
-                               ng-mouseenter="!taskVal.received && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {}; s2 = {};">
+                    <md-button ng-if="showReceive" class="task-button" ng-click="receive(taskVal); s2 = {};"
+                               ng-mouseenter="!taskVal.received && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {};">
                         <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_work_24px.svg"
                                  ng-style="s2" ng-class="{'md-primary': taskVal.received}">
                         </md-icon>

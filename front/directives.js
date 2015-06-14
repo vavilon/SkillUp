@@ -65,7 +65,7 @@ app.directive('tasksList', function(getObjByID) {
             };
 
             if ($scope.send === undefined) $scope.send = function (id) {
-                if ($scope.solution.length < 30) {
+                if ($scope.solution.length < 1) {
                     return;
                 }
                 $http.post('/solve_task', {task_id: $scope.lastExpandedTask.id, content: $scope.solution})
@@ -107,6 +107,7 @@ app.directive('tasksList', function(getObjByID) {
                 });
             };
             if ($scope.receive === undefined) $scope.receive = function (task) {
+                task.participants = task.participants || [];
                 task.received = !task.received;
                 task.received ? task.participants.push(loggedUser().id) :
                     task.participants.splice(task.participants.indexOf(loggedUser().id), 1);
