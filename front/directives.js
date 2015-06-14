@@ -198,6 +198,7 @@ app.directive('solutionsList', function(getObjByID) {
                 for (var i = 1; i <= 5; i++) {
                     $scope.stars['s' + i] = i <= num;
                 }
+                $scope.stars.count = num;
             };
 
             $scope.mouseLeaveStar = function (num) {
@@ -207,10 +208,11 @@ app.directive('solutionsList', function(getObjByID) {
                     return;
                 }
                 $scope.stars['s' + num] = false;
+                $scope.stars.count = 1;
             };
 
             $scope.star = function (num) {
-                $scope.starsFixed = !($scope.stars.count === num);
+                $scope.starsFixed = !($scope.stars.count === num) || !$scope.starsFixed;
                 $scope.stars.count = num;
                 for (var i = 1; i <= 5; i++) {
                     $scope.stars['s' + i] = i <= num;

@@ -55,7 +55,7 @@ module.exports = function(knex, updateArray) {
                                 res.end();
                                 return console.error('error running query', err);
                             }
-                            knex('solutions').where('id', '=', req.body.solution_id).increment('rating', req.body.rating)
+                            knex('solutions').where('id', '=', req.body.solution_id).increment('rating', req.body.rating || 1)
                                 .then(function(){
                                     callback(knex, updateArray, req, res, next);
                                 })

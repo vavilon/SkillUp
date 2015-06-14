@@ -46,7 +46,7 @@
                     <md-card class="task-description-card">
                         <md-card-content>
                             <h2 class="md-title task-description-word"
-                                ng-class="{'checked-correct': solution.isCorrect, 'checked-incorrect': !solution.isCorrect}">Решение</h2>
+                                ng-class="{'checked-correct': solution.isCorrect, 'checked-incorrect': solution.isCorrect === false}">Решение</h2>
                             <div class="task-description">
                                 {{solution.content}}
                             </div>

@@ -66,7 +66,7 @@ function applyAllFilters(scope) {
 }
 
 app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser) {
-    
+
     $scope.getObjByID = getObjByID;
     $scope.chips = {};
     $scope.chips.tasksNames = [];
