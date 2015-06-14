@@ -11,7 +11,7 @@
         <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
         <md-button class="md-raised skill-button"
                    ng-class="{'md-primary': highlightSkills && isInUserSkills(skill),
-                          'md-accent': highlightNeeds && isInUserNeeds(skill)}">{{skill.title}}: {{skill.reverseLevel}}
+                          'md-accent': highlightNeeds && isInUserNeeds(skill)}">{{skill.title}}
         </md-button>
     </div>
     <ul class="animate-if-skill" ng-if="skill.children && skill.expanded">
@@ -53,7 +53,7 @@
                     </md-icon>
                 </md-button>
                 <md-button class="md-raised skill-button" id="button-exs-root">
-                    {{exs.root.title}}: {{exs.root.reverseLevel}}
+                    {{exs.root.title}}
                 </md-button>
             </div>
 
