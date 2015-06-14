@@ -20,6 +20,7 @@
  */
 
 function arrToObj(skillArr) {
+    skillArr = angular.copy(skillArr);
     var res = {};
     for (var i = 0; i < skillArr.length; i++) {
         res[skillArr[i].id] = skillArr[i];

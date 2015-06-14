@@ -406,3 +406,10 @@ pre {
 .star {
     color: #FFEB3B !important;
 }
+
+
+.list-empty {
+    color: rgba(0, 0, 0, 0.54);
+    font-weight: normal;
+    margin-top: 0px;
+}

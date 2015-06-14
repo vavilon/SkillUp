@@ -93,12 +93,6 @@ ul.profile-categories a:hover {
     margin-bottom: 5px;
 }
 
-.list-empty {
-    color: rgba(0, 0, 0, 0.54);
-    font-weight: normal;
-    margin-top: 0px;
-}
-
 .edit-button {
     position: absolute;
     margin: -5px 0 0 -27px;
