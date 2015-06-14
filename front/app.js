@@ -354,7 +354,21 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                         }
                     }
                 }
-                if (!found) $scope.tasksObj.push(tasks[i]);
+                if (!found) {
+                    for (var l in user.tasks_liked) {
+                        if (tasks[i].id === user.tasks_liked[l]) {
+                            tasks[i].liked = true;
+                            break;
+                        }
+                    }
+                    for (l in user.tasks_received) {
+                        if (tasks[i].id === user.tasks_received[l]) {
+                            tasks[i].received = true;
+                            break;
+                        }
+                    }
+                    $scope.tasksObj.push(tasks[i]);
+                }
             }
 
             $scope.calculateDifficulty($scope.tasksObj, loggedUser());

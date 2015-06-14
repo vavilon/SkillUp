@@ -65,7 +65,8 @@ function applyAllFilters(scope) {
     return target;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID) {
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser) {
+    
     $scope.getObjByID = getObjByID;
     $scope.chips = {};
     $scope.chips.tasksNames = [];
@@ -104,6 +105,22 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID) {
         $scope.chips.authorsQuerySearch = FiltersFactory($scope.chips.authorsNames);
 
         $http.get('db/tasks').success(function (tasks) {
+            var user = loggedUser();
+            for (var i in tasks) {
+                for (var l in user.tasks_liked) {
+                    if (tasks[i].id === user.tasks_liked[l]) {
+                        tasks[i].liked = true;
+                        break;
+                    }
+                }
+                for (l in user.tasks_received) {
+                    if (tasks[i].id === user.tasks_received[l]) {
+                        tasks[i].received = true;
+                        break;
+                    }
+                }
+            }
+
             $scope.tasks = tasks;
             for(var item in tasks) {
                 $scope.chips.tasksNames.push(tasks[item].title);

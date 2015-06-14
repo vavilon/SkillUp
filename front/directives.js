@@ -14,9 +14,14 @@ app.directive('tasksList', function(getObjByID) {
             showSkills: '=?',
             send: '=?',
             callback: '=?',
-            solution: '='
+            solution: '=',
+            like: '=?',
+            receive: '=?',
+            showLike: '=?',
+            showReceive: '=?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn) {
+        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser) {
+
             $scope.showToast = function (msg, parent) {
                 parent = parent || '#toastError';
                 $mdToast.show(
@@ -33,6 +38,7 @@ app.directive('tasksList', function(getObjByID) {
             if ($scope.solvable === undefined) $scope.solvable = true;
             if ($scope.showExp === undefined) $scope.showExp = true;
             if ($scope.showSkills === undefined) $scope.showSkills = true;
+            if ($scope.showLike === undefined) $scope.showLike = true;
             if ($scope.callback === undefined) $scope.callback = function (data, id) {
                 if (!data) $scope.showToast('Не удалось отправить решение...');
                 else {
@@ -50,14 +56,38 @@ app.directive('tasksList', function(getObjByID) {
                     });
                 }
             };
-            if ($scope.send === undefined) $scope.send = function (callback, index) {
+            if ($scope.send === undefined) $scope.send = function (callback, id) {
                 if ($scope.solution.length < 30) {
                     return;
                 }
                 $http.post('/solve_task', {task_id: $scope.lastExpandedTask.id, content: $scope.solution})
-                    .success(function(data) { callback(data, index); });
+                    .success(function(data) { callback(data, id); });
             };
-
+            if ($scope.like === undefined) $scope.like = function (task) {
+                task.liked = !task.liked;
+                task.liked ? task.likes++ : task.likes--;
+                $http.post('/like_task', {task_id: task.id}).success(function(data) {
+                    if (!data) {
+                        task.liked = !task.liked;
+                        task.liked ? task.likes++ : task.likes--;
+                        return;
+                    }
+                    getIsLoggedIn();
+                });
+            };
+            if ($scope.receive === undefined) $scope.receive = function (task) {
+                task.received = !task.received;
+                task.received ? task.participants.push(loggedUser().id) :
+                    task.participants.splice(task.participants.indexOf(loggedUser().id), 1);
+                $http.post('/receive_task', {task_id: task.id}).success(function(data) {
+                    if (!data) {
+                        task.received = !task.received;
+                        task.received ? task.participants.push(loggedUser().id) :
+                            task.participants.splice(task.participants.indexOf(loggedUser().id), 1);
+                    }
+                    getIsLoggedIn();
+                });
+            };
             $scope.$watch('tasksObj', function(newVal, oldVal) {
                 try {
                     $scope.lastExpandedTask = $scope.tasksObj[0];

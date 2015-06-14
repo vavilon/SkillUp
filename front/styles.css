@@ -59,13 +59,6 @@ a:hover .nickname.admin {
 
 /* main.html */
 
-.face {
-    border-radius: 30px;
-    border: 1px solid #ddd;
-    width: 48px;
-    margin: 16px;
-}
-
 md-toolbar.demo-toolbar {
     background: rgba(0, 0, 0, 0.12) !important;
     color: rgba(0, 0, 0, 0.54);
@@ -160,7 +153,6 @@ pre {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-
 }
 
 .avatar.admin {
@@ -255,6 +247,7 @@ pre {
 }
 
 .task-footer {
+    margin-top: 5px;
     margin-bottom: 10px;
 }
 
@@ -274,6 +267,24 @@ pre {
 
 .task-author a:hover {
     text-decoration: underline;
+}
+
+.task-button {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+}
+
+.task-button md-icon {
+    color: rgba(0,0,0,0.26);
+    width: 19px;
+    height: 19px;
+}
+
+.task-padding {
+    padding-bottom: 20px;
 }
 
 .skill-button {

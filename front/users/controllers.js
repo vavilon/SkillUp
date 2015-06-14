@@ -105,7 +105,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         if ($location.path() === '/registration/step2') {
             $http.get('/is_logged_in').success(function(user) {
                 if (!user) return;
-                console.log(user);
                 $scope.step = 2;
                 $scope.reg.birthday = new Date(user.birthday);
                 $scope.reg.isImageRes = true;

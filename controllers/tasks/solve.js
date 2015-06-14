@@ -10,8 +10,9 @@ module.exports = function(knex, updateArray) {
                 user_id: req.user.id,
                 content: req.body.content
             }).then(function (id) {
-                updateArray('users', 'tasks_done', req.user.id, id[0], function(err, result) {
+                updateArray('users', 'tasks_done', req.user.id, 'append', id[0], function(err, result) {
                     if (err) {
+                        res.end();
                         return console.error('error running query', err);
                     }
                     res.end('ok');

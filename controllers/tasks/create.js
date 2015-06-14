@@ -51,8 +51,9 @@ module.exports = function(knex, updateArray){
                     .then(function(apprID) {
                         knex('tasks').where('id', '=', taskID[0]).update({approvement_id: apprID[0]})
                             .then(function() {
-                                updateArray('users', 'tasks_created', req.user.id, taskID[0], function (err, result) {
+                                updateArray('users', 'tasks_created', req.user.id, 'append', taskID[0], function (err, result) {
                                     if (err) {
+                                        res.end();
                                         return console.error('error running query', err);
                                     }
                                     res.end('ok');
