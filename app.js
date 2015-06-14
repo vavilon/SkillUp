@@ -123,23 +123,23 @@ app.use('/front', express.static(__dirname + '/front'));
 app.use('/db', function (req, res) {
     if (req.isAuthenticated()) {
         if (req.path === '/skills') {
-            new Skill().fetchAll().then(function (model) {
-                res.end(JSON.stringify(model));
+            knex('skills').then(function (rows) {
+                res.end(JSON.stringify(rows));
             });
         }
         else if (req.path === '/tasks') {
-            new Task().fetchAll().then(function (model) {
-                res.end(JSON.stringify(model));
+            knex('tasks').then(function (rows) {
+                res.end(JSON.stringify(rows));
             });
         }
         else if (req.path === '/users') {
-            new User().fetchAll().then(function (model) {
-                res.end(JSON.stringify(model));
+            knex('users').then(function (rows) {
+                res.end(JSON.stringify(rows));
             });
         }
         else if (req.path === '/solutions') {
-            new Solution().fetchAll().then(function (model) {
-                res.end(JSON.stringify(model));
+            knex('solutions').then(function (rows) {
+                res.end(JSON.stringify(rows));
             });
         }
     }

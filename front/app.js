@@ -305,18 +305,6 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     });
 
-    $http.get('db/skills').success(function (data) {
-        $scope.skillsObj = data;
-        $scope.skillsTitles = [];
-        for (var i in $scope.skillsObj) {
-            $scope.chips.skillsTitles.push($scope.skillsObj[i].title);
-        }
-        $scope.exs = $rootScope.exs || (new extendedSkills($scope.skillsObj));
-    });
-    $http.get('db/users').success(function (data) {
-        $scope.usersObj = data;
-    });
-
     $scope.calculateDifficulty = function (tasks, user) {
         var count = 0;
         for (var i in tasks) {
@@ -335,64 +323,78 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
     $http.get('db/tasks').success(function (tasks) {
         $http.get('db/solutions').success(function (sols) {
-            $scope.tasksObj = [];
-            var user = loggedUser();
-            var found = false;
-            for (var i in tasks) {
-                found = false;
-                for (var j in user.tasks_done) {
-                    if (tasks[i].id === getObjByID(user.tasks_done[j], sols).task_id) {
-                        found = true;
-                        break;
+            $http.get('db/skills').success(function (skills) {
+                $http.get('db/users').success(function (users) {
+                    $scope.skillsObj = skills;
+                    $scope.skillsTitles = [];
+                    for (var i in $scope.skillsObj) {
+                        $scope.chips.skillsTitles.push($scope.skillsObj[i].title);
                     }
-                }
-                if (!found) {
-                    for (var k in user.tasks_created) {
-                        if (tasks[i].id === user.tasks_created[k]) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if (!found) {
-                    for (var l in user.tasks_liked) {
-                        if (tasks[i].id === user.tasks_liked[l]) {
-                            tasks[i].liked = true;
-                            break;
-                        }
-                    }
-                    for (l in user.tasks_received) {
-                        if (tasks[i].id === user.tasks_received[l]) {
-                            tasks[i].received = true;
-                            break;
-                        }
-                    }
-                    $scope.tasksObj.push(tasks[i]);
-                }
-            }
+                    $scope.exs = $rootScope.exs || (new extendedSkills($scope.skillsObj));
 
-            $scope.calculateDifficulty($scope.tasksObj, loggedUser());
+                    $scope.tasksObj = [];
+                    var user = loggedUser();
+                    var found = false;
 
-            $scope.solutionsObj = [];
-            for (i in sols) {
-                found = false;
-                if (sols[i].user_id === user.id) continue;
-                for (var j in user.tasks_checked) {
-                    if (sols[i].task_id === user.tasks_checked[j]) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    for (var j in user.solutions_liked) {
-                        if (sols[i].id === user.solutions_liked[j]) {
-                            sols[i].liked = true;
-                            break;
+                    $scope.tasksObjAppr = [];
+                    for (var i in tasks) {
+                        if (tasks[i].is_approved) continue;
+                        found = false;
+                        if (user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1) found = true;
+
+                        if (!found) {
+                            if (user.tasks_liked && user.tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
+                            $scope.tasksObjAppr.push(tasks[i]);
                         }
                     }
-                    $scope.solutionsObj.push(sols[i]);
-                }
-            }
+
+                    for (var i in tasks) {
+                        if (!tasks[i].is_approved) continue;
+                        found = false;
+                        for (var j in user.tasks_done) {
+                            if (tasks[i].id === getObjByID(user.tasks_done[j], sols).task_id) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            if (user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1) found = true;
+                        }
+                        if (!found) {
+                            if (user.tasks_liked && user.tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
+                            if (user.tasks_received && user.tasks_received.indexOf(tasks[i].id) !== -1)tasks[i].received = true;
+
+                            $scope.tasksObj.push(tasks[i]);
+                        }
+                    }
+
+                    $scope.calculateDifficulty($scope.tasksObj, loggedUser());
+
+                    $scope.solutionsObj = [];
+                    for (i in sols) {
+                        found = false;
+                        if (sols[i].user_id === user.id) continue;
+                        if (sols[i].is_correct === false || sols[i].is_correct === true) continue;
+                        for (var j in user.tasks_checked) {
+                            if (sols[i].task_id === user.tasks_checked[j]) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            for (var j in user.solutions_liked) {
+                                if (sols[i].id === user.solutions_liked[j]) {
+                                    sols[i].liked = true;
+                                    break;
+                                }
+                            }
+                            $scope.solutionsObj.push(sols[i]);
+                        }
+                    }
+
+                    $scope.usersObj = users;
+                });
+            });
         });
     });
 

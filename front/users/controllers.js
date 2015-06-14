@@ -126,6 +126,17 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 $scope.reg.workStr = workStr($scope.reg.work);
             });
         }
+        else {
+            $scope.reg.gender = 'мужской';
+            $scope.reg.education = [];
+            $scope.reg.work = [];
+        }
+
+        var maxYear = (new Date()).getFullYear();
+        $scope.range = [];
+        for (var i = maxYear; i > 1929; i--) {
+            $scope.range.push(i);
+        }
 
         $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
@@ -261,15 +272,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         $scope.selectImage = function () {
             angular.element(document.querySelector('#fileInput'))[0].click();
         };
-
-        $scope.reg.gender = 'мужской';
-        $scope.reg.education = [];
-        $scope.reg.work = [];
-        var maxYear = (new Date()).getFullYear();
-        $scope.range = [];
-        for (var i = maxYear; i > 1929; i--) {
-            $scope.range.push(i);
-        }
 
         $scope.addEducation = function () {
             if (!$scope.reg.edName) return;

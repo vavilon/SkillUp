@@ -10,6 +10,7 @@ app.directive('tasksList', function(getObjByID) {
             showDifficulty: '=?',
             showExpand: '=?',
             solvable: '=?',
+            approvable: '=?',
             showExp: '=?',
             showSkills: '=?',
             send: '=?',
@@ -18,7 +19,9 @@ app.directive('tasksList', function(getObjByID) {
             like: '=?',
             receive: '=?',
             showLike: '=?',
-            showReceive: '=?'
+            showReceive: '=?',
+            approve: '=?',
+            approveCallback: '=?'
         },
         controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser) {
 
@@ -33,6 +36,8 @@ app.directive('tasksList', function(getObjByID) {
                 );
             };
 
+            $scope.apprData = {title: true, skills: true, desc: true, links: true};
+
             if ($scope.showDifficulty === undefined) $scope.showDifficulty = true;
             if ($scope.showExpand === undefined) $scope.showExpand = true;
             if ($scope.solvable === undefined) $scope.solvable = true;
@@ -40,6 +45,7 @@ app.directive('tasksList', function(getObjByID) {
             if ($scope.showSkills === undefined) $scope.showSkills = true;
             if ($scope.showLike === undefined) $scope.showLike = true;
             if ($scope.showReceive === undefined) $scope.showReceive = true;
+
             if ($scope.callback === undefined) $scope.callback = function (data, id) {
                 if (!data) $scope.showToast('Не удалось отправить решение...');
                 else {
@@ -57,6 +63,7 @@ app.directive('tasksList', function(getObjByID) {
                     });
                 }
             };
+
             if ($scope.send === undefined) $scope.send = function (id) {
                 if ($scope.solution.length < 30) {
                     return;
@@ -64,6 +71,29 @@ app.directive('tasksList', function(getObjByID) {
                 $http.post('/solve_task', {task_id: $scope.lastExpandedTask.id, content: $scope.solution})
                     .success(function(data) { $scope.callback(data, id); });
             };
+
+            if ($scope.approve === undefined) $scope.approve = function (id) {
+                $http.post('/approve_task', {task_id: id, data: $scope.apprData})
+                    .success(function(data) { $scope.approveCallback(data, id); });
+            };
+
+            if ($scope.callback === undefined) $scope.approveCallback = function (data, id) {
+                if (!data) $scope.showToast('Не удалось отправить подтверждение...');
+                else {
+                    getIsLoggedIn(function() {
+                        $scope.showToast('Подтверждение отправлено!', '#toastSuccess');
+                        var index = 0;
+                        for (var i in $scope.tasksObj) {
+                            if ($scope.tasksObj[i].id === id) {
+                                index = i;
+                                break;
+                            }
+                        }
+                        $scope.tasksObj.splice(index, 1);
+                    });
+                }
+            };
+
             if ($scope.like === undefined) $scope.like = function (task) {
                 task.liked = !task.liked;
                 task.liked ? task.likes++ : task.likes--;
