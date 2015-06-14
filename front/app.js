@@ -335,7 +335,21 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                     $scope.tasksObj = [];
                     var user = loggedUser();
                     var found = false;
+
+                    $scope.tasksObjAppr = [];
                     for (var i in tasks) {
+                        if (tasks[i].is_approved) continue;
+                        found = false;
+                        if (user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1) found = true;
+
+                        if (!found) {
+                            if (user.tasks_liked && user.tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
+                            $scope.tasksObjAppr.push(tasks[i]);
+                        }
+                    }
+
+                    for (var i in tasks) {
+                        if (!tasks[i].is_approved) continue;
                         found = false;
                         for (var j in user.tasks_done) {
                             if (tasks[i].id === getObjByID(user.tasks_done[j], sols).task_id) {
@@ -344,26 +358,12 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                             }
                         }
                         if (!found) {
-                            for (var k in user.tasks_created) {
-                                if (tasks[i].id === user.tasks_created[k]) {
-                                    found = true;
-                                    break;
-                                }
-                            }
+                            if (user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1) found = true;
                         }
                         if (!found) {
-                            for (var l in user.tasks_liked) {
-                                if (tasks[i].id === user.tasks_liked[l]) {
-                                    tasks[i].liked = true;
-                                    break;
-                                }
-                            }
-                            for (l in user.tasks_received) {
-                                if (tasks[i].id === user.tasks_received[l]) {
-                                    tasks[i].received = true;
-                                    break;
-                                }
-                            }
+                            if (user.tasks_liked && user.tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
+                            if (user.tasks_received && user.tasks_received.indexOf(tasks[i].id) !== -1)tasks[i].received = true;
+
                             $scope.tasksObj.push(tasks[i]);
                         }
                     }
