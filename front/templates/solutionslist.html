@@ -1,0 +1,150 @@
+
+<md-content>
+    <md-list layout="column" ng-if="solutionsObj">
+        <md-list-item class="item-animate"
+                       ng-repeat="solution in solutionsObj | orderBy: '-exp'">
+            <div layout="column" flex>
+                <div layout="row" class="task-header">
+                    <div flex>
+                        <h3 class="task-title"><a href="tasks/{{solution.task_id}}">{{findTask(solution.task_id).title}}</a></h3>
+                    </div>
+                    <div flex="15">
+                        <p class="task-exp">exp: {{findTask(solution.task_id).exp | thousand}}</p>
+                    </div>
+                </div>
+                <div layout="row" class="task-body">
+                    <div layout="row" flex="85">
+                        <div style="margin-right: 5px;">
+                            <span class="task-skills-word">Умения: </span>
+                        </div>
+                        <div layout="row" layout-wrap flex>
+                            <md-button class="md-raised md-primary skill-button"
+                                       aria-label="skillBtn"
+                                       ng-repeat="skill in findTask(solution.task_id).skills">
+                                {{findSkill(skill).title}}
+                            </md-button>
+                        </div>
+                    </div>
+                    <div layout="row" layout-align="start start" flex ng-if="showExpand">
+                        <md-button class="md-mini md-primary expand-button"
+                                   ng-click="expand(solution)" aria-label="expand-toogle">
+                            <md-icon  class="rotate-base" ng-class="{'rotate-btn': solution.expanded}" aria-label="notexpanded"
+                                      md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
+                            </md-icon>
+                        </md-button>
+                    </div>
+                </div>
+                <div class="animate-if" layout="column" ng-if="solution.expanded">
+                    <md-card class="task-description-card">
+                        <md-card-content>
+                            <h2 class="md-title task-description-word">Условие</h2>
+                            <div class="task-description">
+                                {{findTask(solution.task_id).description}}
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                    <md-card class="task-description-card">
+                        <md-card-content>
+                            <h2 class="md-title task-description-word"
+                                ng-class="{'checked-correct': solution.isCorrect, 'checked-incorrect': solution.isCorrect === false}">Решение</h2>
+                            <div class="task-description">
+                                {{solution.content}}
+                            </div>
+                            <div layout="row" layout-align="end center" flex style="margin-top: 10px;">
+                                <div ng-if="solution.isCorrect" layout="row" layout-align="start center" flex>
+                                    <span style="margin-right: 3%; font-size: 14px; color: rgba(0,0,0,0.54);">Оцените качество решения: </span>
+                                    <div layout="row" ng-mouseleave="mouseLeaveStar()">
+                                    <md-button class="task-button" ng-mouseenter="mouseEnterStar(1)" aria-label="star"
+                                               ng-mouseleave="mouseLeaveStar(1)" ng-click="star(1)">
+                                        <md-icon ng-if="!stars.s1" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_outline_24px.svg">
+                                        </md-icon>
+                                        <md-icon ng-if="stars.s1" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_24px.svg"
+                                                ng-class="{star: starsFixed && stars.s1}">
+                                        </md-icon>
+                                    </md-button>
+                                    <md-button class="task-button" ng-mouseenter="mouseEnterStar(2)" aria-label="star"
+                                               ng-mouseleave="mouseLeaveStar(2)" ng-click="star(2)">
+                                        <md-icon ng-if="!stars.s2" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_outline_24px.svg">
+                                        </md-icon>
+                                        <md-icon ng-if="stars.s2" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_24px.svg"
+                                                 ng-class="{star: starsFixed && stars.s2}">
+                                        </md-icon>
+                                    </md-button>
+                                    <md-button class="task-button" ng-mouseenter="mouseEnterStar(3)" aria-label="star"
+                                               ng-mouseleave="mouseLeaveStar(3)" ng-click="star(3)">
+                                        <md-icon ng-if="!stars.s3" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_outline_24px.svg">
+                                        </md-icon>
+                                        <md-icon ng-if="stars.s3" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_24px.svg"
+                                                 ng-class="{star: starsFixed && stars.s3}">
+                                        </md-icon>
+                                    </md-button>
+                                    <md-button class="task-button" ng-mouseenter="mouseEnterStar(4)" aria-label="star"
+                                               ng-mouseleave="mouseLeaveStar(4)" ng-click="star(4)">
+                                        <md-icon ng-if="!stars.s4" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_outline_24px.svg">
+                                        </md-icon>
+                                        <md-icon ng-if="stars.s4" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_24px.svg"
+                                                 ng-class="{star: starsFixed && stars.s4}">
+                                        </md-icon>
+                                    </md-button>
+                                    <md-button class="task-button" ng-mouseenter="mouseEnterStar(5)" aria-label="star"
+                                               ng-mouseleave="mouseLeaveStar(5)" ng-click="star(5)">
+                                        <md-icon ng-if="!stars.s5" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_outline_24px.svg">
+                                        </md-icon>
+                                        <md-icon ng-if="stars.s5" md-svg-icon="/bower_components/material-design-icons/toggle/svg/design/ic_star_24px.svg"
+                                                 ng-class="{star: starsFixed && stars.s5}">
+                                        </md-icon>
+                                    </md-button>
+                                    </div>
+                                </div>
+
+                                <md-button ng-if="showLike" class="task-button" style="margin-right: 25px;" ng-click="like(solution); s1 = {};"
+                                           ng-mouseenter="!solution.liked && (s1 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s1 = {}" aria-label="ilike">
+                                    <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg"
+                                             ng-style="s1" ng-class="{'md-accent': solution.liked}">
+                                    </md-icon>
+                                    <span>{{solution.likes || 0}}</span>
+                                    <md-tooltip>
+                                        Мне нравится
+                                    </md-tooltip>
+                                </md-button>
+                                <div layout="row" ng-if="showCheck">
+                                    <md-button class="task-button" style="margin-right: 25px;" ng-click="check(solution, true); s2 = {};" aria-label="correct"
+                                               ng-mouseenter="!solution.isCorrect && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {}">
+                                        <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_done_24px.svg"
+                                                 ng-class="{'checked-correct': solution.isCorrect}" ng-style="s2">
+                                        </md-icon>
+                                        <md-tooltip>
+                                            Правильно
+                                        </md-tooltip>
+                                    </md-button>
+                                    <md-button class="task-button" ng-click="check(solution, false); s3 = {};" aria-label="incorrect"
+                                               ng-mouseenter="solution.isCorrect && (s3 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s3 = {}">
+                                        <md-icon md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_clear_24px.svg"
+                                                 ng-class="{'checked-incorrect': solution.isCorrect === false}" ng-style="s3">
+                                        </md-icon>
+                                        <md-tooltip>
+                                            Неправильно
+                                        </md-tooltip>
+                                    </md-button>
+                                </div>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+                <div layout="row" layout-align="start center" class="task-footer" ng-class="{'task-padding': $last}">
+                    <div flex="70">
+                        <span class="task-date">Дата решения: {{solution.date_created | date: 'dd.MM.yyyy'}}</span>
+                    <span class="task-author">Решил: <a href="/users/{{solution.user_id}}">
+                        {{findUser(solution.user_id).name}}</a></span>
+                    </div>
+                    <span flex></span>
+                    <div ng-if="solution.expanded">
+                        <md-button class="md-raised md-primary" style="float: right;" ng-click="send(solution)">Отправить</md-button>
+                    </div>
+                </div>
+            </div>
+            <md-divider ng-if="!$last"></md-divider>
+        </md-list-item>
+        <!--<md-progress-linear ng-if="!tasksObj" md-mode="indeterminate"></md-progress-linear>-->
+    </md-list>
+</md-content>

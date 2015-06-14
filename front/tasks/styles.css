@@ -119,23 +119,3 @@
     zoom: 200%;
     margin: 8px;
 }
-
-.task-description {
-    padding: 10px;
-    padding-top: 14px;
-    padding-bottom: 14px;
-    margin-bottom: 10px;
-    border-radius: 0px 0px 3px 3px;
-    border: 1px solid #BDBDBD;
-}
-
-.task-desc-header {
-    margin-top: 6px;
-    background-color: #E8EAF6;
-    padding: 10px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    border-radius: 3px 3px 0px 0px;
-    border: 1px solid #BDBDBD;
-    border-bottom: none;
-}

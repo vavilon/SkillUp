@@ -30,6 +30,7 @@ var app = angular.module('skills', [
         .when('/users/:user_id', {templateUrl: '/front/users/one.html', controller: 'profileCtrl'})
         .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
         .when('/registration', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
+        .when('/registration/step2', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
         .when('/registration/nick/:nick/email/:email/password/:password*',
         {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
         .when('/restore', {templateUrl: '/front/users/restore.html', controller: 'restoreCtrl'})
@@ -144,6 +145,7 @@ app.factory('workStr', function($filter) {
 
 app.factory('parseSkills', function() {
     return function(skills) {
+        if (!skills) return;
         skills = skills.replace(/{/g, '[');
         skills = skills.replace(/}/g, ']');
         skills = skills.replace(/"\(/g, '{"id": "');
@@ -352,10 +354,45 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                         }
                     }
                 }
-                if (!found) $scope.tasksObj.push(tasks[i]);
+                if (!found) {
+                    for (var l in user.tasks_liked) {
+                        if (tasks[i].id === user.tasks_liked[l]) {
+                            tasks[i].liked = true;
+                            break;
+                        }
+                    }
+                    for (l in user.tasks_received) {
+                        if (tasks[i].id === user.tasks_received[l]) {
+                            tasks[i].received = true;
+                            break;
+                        }
+                    }
+                    $scope.tasksObj.push(tasks[i]);
+                }
             }
 
             $scope.calculateDifficulty($scope.tasksObj, loggedUser());
+
+            $scope.solutionsObj = [];
+            for (i in sols) {
+                found = false;
+                if (sols[i].user_id === user.id) continue;
+                for (var j in user.tasks_checked) {
+                    if (sols[i].task_id === user.tasks_checked[j]) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    for (var j in user.solutions_liked) {
+                        if (sols[i].id === user.solutions_liked[j]) {
+                            sols[i].liked = true;
+                            break;
+                        }
+                    }
+                    $scope.solutionsObj.push(sols[i]);
+                }
+            }
         });
     });
 

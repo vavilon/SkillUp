@@ -1,5 +1,7 @@
-<md-list layout="column">
-    <md-list-item  ng-if="tasksObj" class="item-animate"
+
+<md-content>
+<md-list layout="column" ng-if="tasksObj">
+    <md-list-item class="item-animate"
                   ng-repeat="taskVal in tasksObj | orderBy: '-exp'">
         <div layout="column" flex>
             <div layout="row" class="task-header">
@@ -56,16 +58,38 @@
                                     <div ng-message="minlength">Решение должно содержать как минимум 30 символов</div>
                                 </div>
                             </md-input-container>
-                            <md-button class="md-raised md-primary" style="float: right; " ng-click="send(callback, taskVal.id)">Отправить</md-button>
+                            <md-button class="md-raised md-primary" style="float: right; " ng-click="send(taskVal.id)">Отправить</md-button>
                         </form>
                     </md-card-content>
                 </md-card>
             </div>
-            <div layout="row" class="task-footer">
-                <div flex>
+            <div layout="row" class="task-footer" ng-class="{'task-padding': $last}">
+                <div flex="85">
                     <span class="task-date">Дата создания: {{taskVal.date_created | date: 'dd.MM.yyyy'}}</span>
                     <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">
                         {{findUser(taskVal.author).name}}</a></span>
+                </div>
+                <div layout="row" flex>
+                    <md-button ng-if="showLike" class="task-button" style="margin-right: 25px;" ng-click="like(taskVal); s1 = {};"
+                               ng-mouseenter="!taskVal.liked && (s1 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s1 = {}">
+                        <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg"
+                                 ng-style="s1" ng-class="{'md-accent': taskVal.liked}">
+                        </md-icon>
+                        <span>{{taskVal.likes || 0}}</span>
+                        <md-tooltip>
+                            Мне нравится
+                        </md-tooltip>
+                    </md-button>
+                    <md-button ng-if="showReceive" class="task-button" ng-click="receive(taskVal)"
+                               ng-mouseenter="!taskVal.received && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {}; s2 = {};">
+                        <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_work_24px.svg"
+                                 ng-style="s2" ng-class="{'md-primary': taskVal.received}">
+                        </md-icon>
+                        <span>{{taskVal.participants.length || 0}}</span>
+                        <md-tooltip>
+                            Взять задание
+                        </md-tooltip>
+                    </md-button>
                 </div>
             </div>
         </div>
@@ -73,3 +97,4 @@
     </md-list-item>
     <!--<md-progress-linear ng-if="!tasksObj" md-mode="indeterminate"></md-progress-linear>-->
 </md-list>
+</md-content>

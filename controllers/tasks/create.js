@@ -6,6 +6,11 @@ module.exports = function(knex, updateArray){
         if (req.isAuthenticated()) {
             if (!req.user.attributes.admin) {
                 var skills = parseSP(req.user.attributes.skills);
+                if (!skills || skills.length === 0) {
+                    console.log('User doesnt have those skill!');
+                    res.end();
+                    return;
+                }
                 var found = false;
                 var i = null, j = null;
                 var temp = null;
@@ -51,8 +56,9 @@ module.exports = function(knex, updateArray){
                     .then(function(apprID) {
                         knex('tasks').where('id', '=', taskID[0]).update({approvement_id: apprID[0]})
                             .then(function() {
-                                updateArray('users', 'tasks_created', req.user.id, taskID[0], function (err, result) {
+                                updateArray('users', 'tasks_created', req.user.id, 'append', taskID[0], function (err, result) {
                                     if (err) {
+                                        res.end();
                                         return console.error('error running query', err);
                                     }
                                     res.end('ok');

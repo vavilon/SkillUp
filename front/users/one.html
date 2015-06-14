@@ -84,8 +84,9 @@
                         <md-list>
                             <ng-switch on="tabSelected">
                                 <div ng-switch-when="0">
-                                    <tasks-list tasks-obj="tasks_done" users-obj="users" skills-obj="skills"
-                                                      show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
+                                    <tasks-list tasks-obj="tasks_done" users-obj="users" skills-obj="skills" show-like="!canEdit"
+                                                      show-expand="false" show-difficulty="false" solvable="false" show-receive="!canEdit">
+                                    </tasks-list>
                                     <div ng-if="!user.tasks_done" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не решил ни одного задания</h3>

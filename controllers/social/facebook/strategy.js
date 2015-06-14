@@ -15,14 +15,7 @@ module.exports = function (token, refreshToken, profile, done) {
     process.nextTick(function () {
         new User({'id_facebook': profile.id}).fetch().then(function (user) {
             if (user) {
-                var avatar = "https://graph.facebook.com/" + profile.id + "/picture" + "?width=9999" + "&access_token=" + token;
-                knex('users').where('id_facebook', '=', profile.id).update({avatar: avatar})
-                    .then(function() {
-                        return done(null, user);
-                    })
-                    .catch(function (error) {
-                        done(error);
-                    });
+                return done(null, user);
             } else {
                 var options = {
                     host: 'graph.facebook.com',
@@ -77,7 +70,7 @@ module.exports = function (token, refreshToken, profile, done) {
                             new User({'id': u.id})
                                 .fetch()
                                 .then(function (user) {
-                                    return done(null, user);
+                                    return done(null, user, {message: 'first'});
                                 })
                                 .catch(function (err) {
                                     done(err);
@@ -89,8 +82,8 @@ module.exports = function (token, refreshToken, profile, done) {
                 });
             }
         })
-            .catch(function (err) {
-                done(err);
-            });
+        .catch(function (err) {
+            done(err);
+        });
     });
 };

@@ -232,6 +232,14 @@ app.post('/create_task', controllers.tasks.create(knex, updateArray));
 
 app.post('/solve_task', controllers.tasks.solve(knex, updateArray));
 
+app.post('/like_task', controllers.tasks.like(knex, updateArray));
+
+app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
+
+app.post('/like_solution', controllers.solutions.like(knex, updateArray));
+
+app.post('/check_solution', controllers.solutions.check(knex, updateArray));
+
 app.post('/register/step2', function (req, res, next) {
     if (req.isAuthenticated()) {
         knex('users').where('id', '=', req.user.id).update(
@@ -265,14 +273,21 @@ app.get('/auth/facebook', function (req, res, next) {
             'user_work_history',
             'user_about_me']
     })(req, res, next);
-}, function (req, res) {/* Never called */
-});
+}, function (req, res) { /* Never called */ });
 
-app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {failureRedirect: '/main'}),
-    function (req, res) {
-        res.redirect('/users/' + req.user.id);
-    });
+app.get('/auth/facebook/callback', function (req, res, next) {
+    passport.authenticate('facebook', function (err, user, info) {
+        if (err) return next(err);
+        if (!user) return res.redirect('/main');
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            if (info) {
+                return res.redirect('/registration/step2');
+            }
+            return res.redirect('/users/' + user.id);
+        });
+    })(req, res, next);
+});
 
 //Привяжем запросы к соответствующим контроллерам
 app.post('/login', controllers.users.login);
