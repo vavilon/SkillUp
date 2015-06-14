@@ -251,6 +251,25 @@
                         </div>
                     </form>
                 </div>
+                <div ng-switch-when="3">
+                    <form>
+                        <h3>Выбирете навыки, которые вы хотите получить:</h3>
+                        <md-chips ng-model="chips.selectedSkills" name="taskSkills" md-autocomplete-snap md-require-match>
+                            <md-autocomplete
+                                    md-no-cache="true"
+                                    md-selected-item="chips.selectedSkill"
+                                    md-search-text="chips.searchTextSkills"
+                                    md-items="skill in chips.filteredSkills()"
+                                    md-item-text="skill"
+                                    placeholder="Добавьте умения">
+                                <span md-highlight-text="chips.searchTextSkills">{{skill}}</span>
+                            </md-autocomplete>
+                        </md-chips>
+                        <div layout="row" layout-align="center center" style="margin-top: 30px;">
+                            <md-button class="md-raised md-primary" ng-click="done()">Готово</md-button>
+                        </div>
+                    </form>
+                </div>
             </md-card-content>
         </md-card>
     </div>

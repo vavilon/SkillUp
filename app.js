@@ -243,6 +243,19 @@ app.post('/like_solution', controllers.solutions.like(knex, updateArray));
 
 app.post('/check_solution', controllers.solutions.check(knex, updateArray));
 
+app.post('/append_needs', function (req, res, next) {
+    if (req.isAuthenticated()) {
+        //Переделать!!!
+        knex('users').where('id', '=', req.user.id).update({needs: req.body.needs}).then(function () {
+            res.end('ok');
+        })
+        .catch(function (error) {
+            console.log(error);
+            res.end();
+        });
+    } else res.end();
+});
+
 app.post('/register/step2', function (req, res, next) {
     if (req.isAuthenticated()) {
         knex('users').where('id', '=', req.user.id).update(
@@ -256,12 +269,13 @@ app.post('/register/step2', function (req, res, next) {
                 work: req.body.work
             }
         )
-            .then(function () {
-                res.end('ok');
-            })
-            .catch(function (error) {
-                res.end();
-            });
+        .then(function () {
+            res.end('ok');
+        })
+        .catch(function (error) {
+            console.log(error);
+            res.end();
+        });
     }
     else res.end();
 });

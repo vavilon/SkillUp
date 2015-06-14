@@ -46,7 +46,6 @@ function applyAllFilters(scope) {
                 }
             }
         }
-        console.log(target);
         target = [].concat(temp);
     }
 

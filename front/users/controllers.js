@@ -105,10 +105,10 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 );
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn, isImage, $mdToast,
-                                             $animate, $timeout, educationStr, workStr) {
+                                             $animate, $timeout, educationStr, workStr, loggedUser) {
         $scope.reg = {};
 
-        $scope.step = 1;
+        $scope.step = 2;
 
         if ($location.path() === '/registration/step2') {
             $http.get('/is_logged_in').success(function(user) {
@@ -320,11 +320,72 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 work: JSON.stringify($scope.reg.work)
             }).success(function(data) {
                 if (data) {
-                    getIsLoggedIn();
-                    $scope.step = 3;
+                    getIsLoggedIn(function(user) {
+                        $http.get('db/skills').success(function(skills) {
+                            $scope.skills = skills;
+
+                            $scope.chips = {skillsTitles: [], skillsTitlesFiltered: [], selectedSkills: []};
+
+                            $scope.skillsTitles = [];
+                            for (var i in $scope.skills) {
+                                $scope.chips.skillsTitles.push($scope.skills[i].title);
+                            }
+
+                            $scope.chips.filteredSkills = function() {
+                                var str = angular.lowercase($scope.chips.searchTextSkills);
+                                var arr = [];
+                                for (var i in $scope.chips.skillsTitlesFiltered) {
+                                    if (angular.lowercase($scope.chips.skillsTitlesFiltered[i]).indexOf(str) !== -1)
+                                        arr.push($scope.chips.skillsTitlesFiltered[i]);
+                                }
+                                return arr;
+                            };
+
+                            $scope.$watchCollection('chips.selectedSkills', function (newVal) {
+                                if (newVal.length === 0) {
+                                    $scope.chips.skillsTitlesFiltered = $scope.chips.skillsTitles;
+                                    return;
+                                }
+                                $scope.chips.skillsTitlesFiltered = [];
+                                var found = false;
+                                for (var i in $scope.chips.skillsTitles) {
+                                    found = false;
+                                    for (var j in newVal) {
+                                        if (newVal[j] === $scope.chips.skillsTitles[i]) {
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!found) $scope.chips.skillsTitlesFiltered.push($scope.chips.skillsTitles[i]);
+                                }
+                            });
+
+                            $scope.done = function () {
+                                if ($scope.chips.selectedSkills.length === 0) {
+                                    $location.path('/users/' + user.id);
+                                    return;
+                                }
+                                var dataNeeds = {needs: []};
+                                for (var i in $scope.chips.selectedSkills) {
+                                    for (var j in $scope.skills) {
+                                        if ($scope.chips.selectedSkills[i] === $scope.skills[j].title) {
+                                            dataNeeds.needs.push($scope.skills[j].id);
+                                            break;
+                                        }
+                                    }
+                                }
+                                $http.post('/append_needs', dataNeeds).success(function () {
+                                    $location.path('/users/' + user.id);
+                                });
+                            };
+
+                            $scope.step = 3;
+                        });
+                    });
                 }
             });
         };
+
 
         /*        $scope.loginWithFacebook = function() {
 
