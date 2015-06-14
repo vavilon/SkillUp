@@ -16,6 +16,7 @@ module.exports = function(knex, updateArray) {
                     res.end('ok');
                 });
             }).catch(function (error) {
+                console.log(error);
                 res.end();
             });
         }

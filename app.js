@@ -12,6 +12,7 @@ var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
 var updateArray = require(__dirname + '/lib/pg-update-array');
+var pgApprove = require(__dirname + '/lib/pg-approve');
 var util = require('util');
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport(config.get('nodemailer'));
@@ -235,6 +236,8 @@ app.post('/solve_task', controllers.tasks.solve(knex, updateArray));
 app.post('/like_task', controllers.tasks.like(knex, updateArray));
 
 app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
+
+app.post('/approve_task', controllers.tasks.approve(knex, updateArray, pgApprove));
 
 app.post('/like_solution', controllers.solutions.like(knex, updateArray));
 
