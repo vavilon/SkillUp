@@ -127,18 +127,18 @@
                                 <img-crop image="reg.imgSrcRes" result-image="reg.imgCropRes" area-type="square"
                                         result-image-size="225">
                             </div>
-                            <img ng-if="!reg.isImageRes"
-                                 src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
+                            <div ng-if="!reg.isImageRes" layout="row" layout-align="center center"
                                  style="opacity: 0.26; width: 225px; height: 225px; border: 2px dashed rgba(0, 0, 0, 0.26);">
+                                <i class="mdi mdi-account mdi-200"></i>
+                            </div>
                             <div layout="row">
                                 <md-input-container flex style="padding-bottom: 10px; margin-top: 5px;">
                                     <label>Ссылка</label>
                                     <input type="text" ng-model="reg.imgSrc">
                                 </md-input-container>
                                 <div>
-                                <md-button class="expand-button" ng-click="loadImage()" style="margin-top: 30px;">
-                                    <md-icon md-svg-icon="/bower_components/material-design-icons/file/svg/design/ic_file_upload_24px.svg"
-                                             aria-label="ExpandM"></md-icon>
+                                <md-button class="expand-button" ng-click="loadImage()" style="margin-top: 35px;">
+                                    <i class="mdi mdi-upload mdi-24 mdi-secondary"></i>
                                 </md-button></div>
                             </div>
                             <div layout="column" layout-align="center center">
@@ -180,9 +180,7 @@
                                         </div>
                                         <md-button class="expand-button" style="margin-left: 10px;"
                                                    ng-click="removeEducation($index)" title="Удалить">
-                                            <md-icon md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_clear_24px.svg"
-                                                     aria-label="LaLat" style="outline: none;"
-                                            </md-icon>
+                                            <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
                                         </md-button>
                                     </div>
                                 </div>
@@ -215,9 +213,7 @@
                                         </div>
                                         <md-button class="expand-button" style="margin-left: 10px;"
                                                    ng-click="removeWork($index)" title="Удалить">
-                                            <md-icon md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_clear_24px.svg"
-                                                     aria-label="LaLat" style="outline: none;"
-                                            </md-icon>
+                                            <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
                                         </md-button>
                                     </div>
                                 </div>

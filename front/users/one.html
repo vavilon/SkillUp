@@ -4,13 +4,11 @@
     <div flex="15"></div>
     <div layout="row" style="min-width: 225px; max-width: 225px;">
         <div layout="column" flex>
-            <div style="overflow: hidden; width: 225px; height: 225px;
+            <div layout="row" layout-align="center center" style="overflow: hidden; width: 225px; height: 225px;
              box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: #FAFAFA;">
                 <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='{{user.avatar}}'
                      style="width: 100%; height: 100%;">
-                <img ng-if="!user.avatar"
-                     src="/bower_components/material-design-icons/social/svg/design/ic_person_48px.svg"
-                     style="width: 100%; height: 100%;">
+                <i ng-if="!user.avatar" class="mdi mdi-account mdi-200 mdi-secondary"></i>
             </div>
             <div style="padding-left: 2px;">
                 <h3 style="margin-bottom: 0px; margin-top: 10px;">{{user.name}}</h3>
@@ -129,11 +127,8 @@
                                 <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
                                 <div class="info-empty" ng-if="!user.birthday">не указано</div>
                                 <div flex></div>
-                                <md-button class="edit-button" ng-if="r1 && canEdit">
-                                    <md-icon
-                                            md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
-                                            aria-label="LaLat" style="outline: none;"
-                                    </md-icon>
+                                <md-button class="edit-button" ng-if="r1 && canEdit" aria-label="LaLat">
+                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>
 
@@ -148,10 +143,7 @@
                                 <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
                                 <div flex></div>
                                 <md-button class="edit-button" ng-if="r2 && canEdit">
-                                    <md-icon
-                                            md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
-                                            aria-label="LaLat" style="outline: none;"
-                                    </md-icon>
+                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>
 
@@ -169,10 +161,7 @@
                                     <div class="info-empty" ng-if="!user.educationStr || user.educationStr.length == 0">не указано</div>
                                 </div>
                                 <md-button class="edit-button" ng-if="r3 && canEdit">
-                                    <md-icon
-                                            md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
-                                            aria-label="LaLat" style="outline: none;"
-                                    </md-icon>
+                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>
 
@@ -190,10 +179,7 @@
                                     <div class="info-empty" ng-if="!user.workStr || user.workStr.length == 0">не указано</div>
                                 </div>
                                 <md-button class="edit-button" ng-if="r4 && canEdit">
-                                    <md-icon
-                                            md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
-                                            aria-label="LaLat" style="outline: none;"
-                                    </md-icon>
+                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>
                         </md-list>

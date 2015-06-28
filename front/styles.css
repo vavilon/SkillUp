@@ -423,3 +423,39 @@ pre {
 .learning-links:hover {
     text-decoration: underline;
 }
+
+.toolbar-button {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    line-height: normal !important;
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.mdi-24 {
+    font-size: 24px !important;
+}
+
+.mdi-36 {
+    font-size: 36px !important;;
+}
+
+.mdi-48 {
+    font-size: 48px !important;;
+}
+
+.mdi-200 {
+    font-size: 200px !important;
+}
+
+.mdi-black {
+    color: black;
+}
+
+.mdi-hint {
+    color: rgba(0, 0, 0, 0.26);
+}
+
+.mdi-secondary {
+    color: rgba(0, 0, 0, 0.54);
+}

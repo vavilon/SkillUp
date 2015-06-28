@@ -4,9 +4,7 @@
     <div layout="row">
         <md-button class="md-mini md-primary expand-skill" ng-if="skill.children.length > 0"
                    ng-click="expand(skill)" aria-label="expand-toogle">
-            <md-icon  class="rotate-base" ng-class="{'rotate-btn': skill.expanded}" aria-label="notexpanded"
-                      md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-            </md-icon>
+            <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
         </md-button>
         <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
         <md-button class="md-raised skill-button"
@@ -48,9 +46,7 @@
             <div class="exs-root" layout="row">
                 <md-button class="md-mini md-primary expand-skill"
                            ng-click="expand(exs.root)" aria-label="expand-toogle">
-                    <md-icon  class="rotate-base" ng-class="{'rotate-btn': exs.root.expanded}" aria-label="notexpanded"
-                              md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                    </md-icon>
+                    <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': exs.root.expanded}"></i>
                 </md-button>
                 <md-button class="md-raised skill-button" id="button-exs-root">
                     {{exs.root.title}}
@@ -72,9 +68,7 @@
                     <div layout="row">
                         <md-button class="md-mini md-primary expand-skill" ng-if="skill.children.length > 0"
                                    ng-click="expand(skill)" aria-label="expand-toogle">
-                            <md-icon  class="rotate-base" ng-class="{'rotate-btn': skill.expanded}" aria-label="notexpanded"
-                                      md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                            </md-icon>
+                            <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
                         </md-button>
                         <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
                         <md-button class="md-raised skill-button">

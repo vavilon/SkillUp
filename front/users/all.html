@@ -16,9 +16,8 @@
                     <md-input-container md-no-float style="margin-top: 23px; font-size: 14px;" flex="50">
                         <input placeholder="Имя пользователя" ng-model="username">
                     </md-input-container>
-                    <md-button class="md-icon-button" aria-label="Settings">
-                        <md-icon style="color: rgba(0, 0, 0, 0.54);"
-                                 md-svg-icon="/bower_components/material-design-icons/navigation/svg/design/ic_more_vert_24px.svg"></md-icon>
+                    <md-button class="md-icon-button toolbar-button" aria-label="Settings">
+                        <i class="mdi mdi-dots-vertical mdi-36 mdi-secondary"></i>
                     </md-button>
                 </div>
             </md-toolbar>
@@ -32,8 +31,7 @@
                                     <a ng-href="/users/{{user.id}}">
                                         <img ng-if="user.avatar" class="user-avatar" ng-src="{{user.avatar}}"
                                              alt="{{user.nick}}"/>
-                                        <img ng-if="!user.avatar" class="user-avatar" alt="{{user.nick}}"
-                                             src="/bower_components/material-design-icons/action/svg/design/ic_account_circle_24px.svg"/>
+                                        <i ng-if="!user.avatar" class="mdi mdi-account-circle mdi-36 mdi-secondary user-avatar"></i>
                                     </a>
                                 </div>
                                 <div class="md-list-item-text" flex>
@@ -55,45 +53,41 @@
                                     <div flex="10"></div>
                                     <div layout="row" layout-align="end center">
                                         <md-button class="count-button" ng-style="s1" ng-mouseenter="s1 = {color: '#4CAF50'}"
-                                                   ng-mouseleave="s1 = {}">
-                                            {{user.tasks_done.length || 0}}
-                                            <md-icon class="md-hue-3 count-icon" ng-style="s1"
-                                                     md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_done_24px.svg"
-                                                     aria-label="Done">
-                                            </md-icon>
+                                                   ng-mouseleave="s1 = {}" aria-label="TasksDone">
+                                            <div layout="row" layout-align="center center">
+                                                {{user.tasks_done.length || 0}}
+                                                <i class="mdi mdi-check mdi-24" ng-class="{'mdi-secondary': !s1.color}"></i>
+                                            </div>
                                             <md-tooltip>
                                                 Решено заданий
                                             </md-tooltip>
                                         </md-button>
                                         <md-button class="count-button" ng-style="s2" ng-mouseenter="s2 = {color: '#FFEB3B'}"
-                                                   ng-mouseleave="s2 = {}">
-                                            {{user.tasks_checked.length || 0}}
-                                            <md-icon class="md-hue-3 count-icon" ng-style="s2"
-                                                     md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_assignment_turned_in_24px.svg"
-                                                     aria-label="Done">
-                                            </md-icon>
+                                                   ng-mouseleave="s2 = {}" aria-label="CheckedSolutions">
+                                            <div layout="row" layout-align="center center">
+                                                {{user.tasks_checked.length || 0}}
+                                                <i class="mdi mdi-clipboard-check mdi-24" ng-class="{'mdi-secondary': !s2.color}"></i>
+                                            </div>
                                             <md-tooltip>
                                                 Проверено решений
                                             </md-tooltip>
                                         </md-button>
                                         <md-button class="count-button" ng-style="s3" ng-mouseenter="s3 = {color: '#03A9F4'}"
-                                                   ng-mouseleave="s3 = {}">
-                                            {{user.tasks_approved.length || 0}}
-                                            <md-icon class="md-hue-3 count-icon" ng-style="s3"
-                                                     md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_check_circle_24px.svg"
-                                                     aria-label="Done">
-                                            </md-icon>
+                                                   ng-mouseleave="s3 = {}" aria-label="ApprovedTasks">
+                                            <div layout="row" layout-align="center center">
+                                                {{user.tasks_approved.length || 0}}
+                                                <i class="mdi mdi-checkbox-marked-circle mdi-24" ng-class="{'mdi-secondary': !s3.color}"></i>
+                                            </div>
                                             <md-tooltip>
                                                 Подтверждено заданий
                                             </md-tooltip>
                                         </md-button>
                                         <md-button class="count-button" ng-style="s4" ng-mouseenter="s4 = {color: '#E91E63'}"
-                                                   ng-mouseleave="s4 = {}">
-                                            {{user.tasks_created.length || 0}}
-                                            <md-icon class="md-hue-3 count-icon" ng-style="s4"
-                                                     md-svg-icon="/bower_components/material-design-icons/content/svg/design/ic_create_24px.svg"
-                                                     aria-label="Done">
-                                            </md-icon>
+                                                   ng-mouseleave="s4 = {}" aria-label="CreatedTasks">
+                                            <div layout="row" layout-align="center center">
+                                                {{user.tasks_created.length || 0}}
+                                                <i class="mdi mdi-pencil mdi-24" ng-class="{'mdi-secondary': !s4.color}"></i>
+                                            </div>
                                             <md-tooltip>
                                                 Создано заданий
                                             </md-tooltip>
@@ -103,10 +97,8 @@
                                 <div layout="row" layout-align="start center" flex="10">
                                     <md-button class="md-mini md-primary expand-button"
                                                ng-if="user.skills.length > 0 || user.needs.length > 0"
-                                               ng-click="expand(user)">
-                                        <md-icon class="md-hue-3 rotate-base" ng-class="{'rotate-btn': user.expanded}"
-                                                 md-svg-icon="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg"
-                                                 aria-label="ExpandM"></md-icon>
+                                               ng-click="expand(user)" aria-label="ExpandButton">
+                                        <i class="mdi mdi-chevron-down mdi-24 rotate-base" ng-class="{'rotate-btn': user.expanded}"></i>
                                     </md-button>
                                 </div>
                             </div>

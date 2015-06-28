@@ -60,7 +60,6 @@ function applyAllFilters(scope) {
         }
         target = [].concat(temp);
     }
-    console.log(target);
     return target;
 }
 

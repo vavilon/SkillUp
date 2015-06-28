@@ -35,9 +35,7 @@
                 <div layout="row" layout-align="start start" flex ng-if="showExpand">
                     <md-button class="md-mini md-primary expand-button"
                                ng-click="expand(taskVal)" aria-label="expand-toogle">
-                        <md-icon  class="rotate-base" ng-class="{'rotate-btn': taskVal.expanded}" aria-label="notexpanded"
-                                 md-svg-src="/bower_components/material-design-icons/navigation/svg/design/ic_expand_more_24px.svg">
-                        </md-icon>
+                        <i class="mdi mdi-chevron-down mdi-24"  class="rotate-base" ng-class="{'rotate-btn': taskVal.expanded}"></i>
                     </md-button>
                 </div>
             </div>
@@ -99,20 +97,18 @@
                 </div>
                 <div layout="row" flex>
                     <md-button ng-if="showLike" class="task-button" style="margin-right: 25px;" ng-click="like(taskVal); s1 = {};"
-                               ng-mouseenter="!taskVal.liked && (s1 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s1 = {}">
-                        <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_thumb_up_24px.svg"
-                                 ng-style="s1" ng-class="{'md-accent': taskVal.liked}">
-                        </md-icon>
+                               ng-mouseenter="!taskVal.liked && (s1 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s1 = {}"
+                               ng-class="{'md-accent': taskVal.liked}">
+                        <i class="mdi mdi-thumb-up mdi-24" ng-style="s1" ng-class="{'mdi-hint': !taskVal.liked}"></i>
                         <span>{{taskVal.likes || 0}}</span>
                         <md-tooltip>
                             Мне нравится
                         </md-tooltip>
                     </md-button>
                     <md-button ng-if="showReceive" class="task-button" ng-click="receive(taskVal); s2 = {};"
-                               ng-mouseenter="!taskVal.received && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {};">
-                        <md-icon md-svg-icon="/bower_components/material-design-icons/action/svg/design/ic_work_24px.svg"
-                                 ng-style="s2" ng-class="{'md-primary': taskVal.received}">
-                        </md-icon>
+                               ng-mouseenter="!taskVal.received && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {};"
+                               ng-class="{'md-primary': taskVal.received}">
+                        <i class="mdi mdi-briefcase mdi-24" ng-style="s2" ng-class="{'mdi-hint': !taskVal.received}"></i>
                         <span>{{taskVal.participants.length || 0}}</span>
                         <md-tooltip>
                             Взять задание
