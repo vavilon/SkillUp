@@ -8,8 +8,8 @@
         </md-button>
         <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
         <md-button class="md-raised skill-button"
-                   ng-class="{'md-primary': highlightSkills && isInUserSkills(skill),
-                          'md-accent': highlightNeeds && isInUserNeeds(skill)}">{{skill.title}}
+                   ng-class="{'md-primary': highlightSkills && skill.isInUserSkills,
+                          'md-accent': highlightNeeds && skill.isInUserNeeds}">{{skill.title}}
         </md-button>
     </div>
     <ul class="animate-if-skill" ng-if="skill.children && skill.expanded">

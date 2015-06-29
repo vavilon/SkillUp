@@ -174,12 +174,20 @@ app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, exten
         };
 
         $scope.isInUserSkills = function (skill) {
-            return _.includes($scope.user.skills, skill.id);
+            for (var i in $scope.user.skills) {
+                if (skill.id === $scope.user.skills[i].id) return true;
+            }
+            return false;
         };
 
         $scope.isInUserNeeds = function (skill) {
             return _.includes($scope.user.needs, skill.id);
         };
+
+        for (var i in $scope.exs.skills) {
+            $scope.exs.skills[i].isInUserSkills = $scope.isInUserSkills($scope.exs.skills[i]);
+            $scope.exs.skills[i].isInUserNeeds = $scope.isInUserNeeds($scope.exs.skills[i]);
+        }
 
         $scope.$watch('skillTitle', function (newval, oldval) {
             if ($scope.skillTitle && $scope.filteredSkills)
