@@ -78,7 +78,7 @@
                         <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length || 0}}</span>
                         </md-tab>
                     </md-tabs>
-                    <md-content flex style="max-height: calc(100vh - 200px);">
+                    <md-content flex style="max-height: calc(100vh - 200px); overflow-y: scroll;">
                         <md-list>
                             <ng-switch on="tabSelected">
                                 <div ng-switch-when="0">

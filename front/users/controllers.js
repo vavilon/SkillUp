@@ -67,7 +67,13 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                     }
                     $scope.solutions = sols;
 
+                    for (var i in tasks) {
+                        if (loggedUser().tasks_liked && loggedUser().tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
+                        if (loggedUser().tasks_received && loggedUser().tasks_received.indexOf(tasks[i].id) !== -1)tasks[i].received = true;
+                    }
+
                     $scope.tasks = tasks;
+
                     $scope.tasks_done = [];
                     $scope.tasks_checked = [];
                     $scope.tasks_approved = [];

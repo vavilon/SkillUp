@@ -339,9 +339,9 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                     $scope.tasksObjAppr = [];
                     for (var i in tasks) {
                         if (tasks[i].is_approved) continue;
-                        found = false;
-                        if (user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1) found = true;
-                        if (user.tasks_approved && user.tasks_approved.indexOf(tasks[i].id) !== -1) found = true;
+
+                        found = user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1;
+                        if (!found && user.tasks_approved && user.tasks_approved.indexOf(tasks[i].id) !== -1) found = true;
 
                         if (!found) {
                             if (user.tasks_liked && user.tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
