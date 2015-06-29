@@ -1,14 +1,26 @@
 
+var parseSP = require('../../lib/parse-skills-progress');
+var userHasSkills = require('../../lib/user-has-skills');
+
 var countToApprove = 3, correctConstant = 2 / 3;
 
 module.exports = function(knex, updateArray, pgApprove) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
-            knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'approvement_id').then(function(rows) {
+            knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'approvement_id', 'skills').then(function(rows) {
                 if (rows[0].is_approved) {
                     res.end();
                     return;
                 }
+
+                if (!req.user.attributes.admin) {
+                    var userSkills = parseSP(req.user.attributes.skills);
+                    if (!userHasSkills(userSkills, rows[0].skills)) {
+                        res.end();
+                        return;
+                    }
+                }
+
                 pgApprove(req.body.task_id, req.body.data, req.user.id, function(err, result) {
                     if (err) {
                         res.end();

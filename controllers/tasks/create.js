@@ -1,48 +1,22 @@
 
 var parseSP = require('../../lib/parse-skills-progress');
+var userHasSkills = require('../../lib/user-has-skills');
 
 module.exports = function(knex, updateArray){
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (!req.user.attributes.admin) {
                 var skills = parseSP(req.user.attributes.skills);
-                if (!skills || skills.length === 0) {
-                    console.log('User doesnt have those skill!');
+                if (!userHasSkills(skills, req.body.skills)) {
                     res.end();
                     return;
-                }
-                var found = false;
-                var i = null, j = null;
-                var temp = null;
-                for (i in req.body.skills) {
-                    found = false;
-                    for (j in skills) {
-                        if (req.body.skills[i] == skills[j].id) {
-                            temp = skills[j];
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found) {
-                        if (temp.count < GLOBAL.exs.skills[req.body.skills[i]].count_to_get) {
-                            console.log('Not enough level of skill!');
-                            res.end();
-                            return;
-                        }
-                    }
-                    else {
-                        console.log('User doesnt have those skill!');
-                        res.end();
-                        return;
-                    }
                 }
             }
 
             var exp = 0;
-            for (i in req.body.skills) {
+            for (var i in req.body.skills) {
                 exp += GLOBAL.exs.skills[req.body.skills[i]].exp;
             }
-
 
             knex('tasks').returning('id').insert({
                 title: req.body.title,

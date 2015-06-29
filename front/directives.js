@@ -195,7 +195,6 @@ app.directive('solutionsList', function(getObjByID) {
                 }
                 $http.post('/check_solution', {
                     solution_id: solution.id,
-                    task_id: solution.task_id,
                     is_correct: solution.isCorrect,
                     rating: $scope.stars.count
                 }).success(function(data) { $scope.callback(data, solution.id); });
