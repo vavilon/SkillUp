@@ -63,7 +63,7 @@ function applyAllFilters(scope) {
     return target;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser) {
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived) {
 
     $scope.getObjByID = getObjByID;
     $scope.chips = {};
@@ -104,20 +104,9 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser) 
 
         $http.get('db/tasks').success(function (tasks) {
             var user = loggedUser();
-            for (var i in tasks) {
-                for (var l in user.tasks_liked) {
-                    if (tasks[i].id === user.tasks_liked[l]) {
-                        tasks[i].liked = true;
-                        break;
-                    }
-                }
-                for (l in user.tasks_received) {
-                    if (tasks[i].id === user.tasks_received[l]) {
-                        tasks[i].received = true;
-                        break;
-                    }
-                }
-            }
+
+            setLiked(tasks, user.tasks_liked, true);
+            setReceived(tasks, user.tasks_received, true);
 
             $scope.tasks = tasks;
             for(var item in tasks) {
@@ -141,7 +130,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser) 
     });
 });
 
-app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID) {
+app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived) {
         $http.get('db/skills').success(function (skills) {
             $scope.skills = skills;
 
@@ -150,6 +139,11 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID)
         $http.get('db/tasks').success(function (tasks) {
             $scope.tasks = tasks;
             $scope.task = getObjByID($routeParams.task_id, tasks);
+
+            var user = loggedUser();
+            setLiked($scope.task, user.tasks_liked);
+            setReceived($scope.task, user.tasks_received);
+
             $http.get('db/users').success(function (users) {
                 $scope.users = users;
                 for (var user in users)

@@ -10,16 +10,8 @@
             </div>
         </div>
         <div style="margin-top: 20px; margin-bottom: 10px; font-size: medium">
-            <md-button class="md-accent md-icon-button">
-                <i class="mdi mdi-thumb-up mdi-24"></i>
-                {{task.likes || 0}}
-                <md-tooltip>Мне нравится</md-tooltip>
-            </md-button>
-            <md-button class="md-primary md-icon-button">
-                <i class="mdi mdi-briefcase mdi-24"></i>
-                {{task.participants.length || 0}}
-                <md-tooltip>Взять задание</md-tooltip>
-            </md-button>
+            <like-button type="task" id="task.id" likes="task.likes" liked="task.liked" style="margin-right: 25px;"></like-button>
+            <receive-button id="task.id" count="task.participants.length" received="task.received"></receive-button>
         </div>
     </div>
     <md-divider></md-divider>

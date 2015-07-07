@@ -65,7 +65,7 @@ app.factory('getObjByID', function() {
     return function(id, collection) {
         for (var elem in collection)
             if (collection[elem].id === id) return collection[elem];
-    }
+    };
 });
 
 //Вызывается в run, а также при регистрации, входе и выходе
@@ -76,20 +76,20 @@ app.factory('getIsLoggedIn', function($rootScope, $http, parseSkills) {
             if (data) $rootScope.loggedUser.skills = parseSkills($rootScope.loggedUser.skills);
             callback && callback(data);
         });
-    }
+    };
 });
 
 //Вызывается в ng-show или ng-if, чтобы определить, что показывать в зависимости от того, вошел юзер или не вошел
 app.factory('isLoggedIn', function($rootScope){
     return function() {
         return $rootScope.loggedUser ? true : false;
-    }
+    };
 });
 
 app.factory('loggedUser', function($rootScope) {
     return function() {
         return $rootScope.loggedUser;
-    }
+    };
 });
 
 app.factory('isImage', function($q) {
@@ -153,7 +153,47 @@ app.factory('parseSkills', function() {
         skills = skills.replace(/},{/g, '} , {');
         skills = skills.replace(/(\S),/g, '$1", "count": ');
         return JSON.parse(skills);
-    }
+    };
+});
+
+app.factory('setPropertyComparingArrays', function() {
+    return function(compPropName, setPropName, setValue, setArray, compArray) {
+        if (!angular.isObject(setArray) || !angular.isObject(compArray)) return;
+        for (var i in setArray) {
+            for (var j in compArray) {
+                if (setArray[i][compPropName] === compArray[j]) {
+                    setArray[i][setPropName] = setValue;
+                    break;
+                }
+            }
+        }
+    };
+});
+
+app.factory('setPropertyComparingObjArr', function() {
+    return function(compPropName, setPropName, setValue, setObj, compArray) {
+        if (!angular.isObject(setObj) || !angular.isObject(compArray)) return;
+        for (var j in compArray) {
+            if (setObj[compPropName] === compArray[j]) {
+                setObj[setPropName] = setValue;
+                break;
+            }
+        }
+    };
+});
+
+app.factory('setLiked', function(setPropertyComparingArrays, setPropertyComparingObjArr) {
+    return function(setArray, compArray, multiple) {
+        if (multiple) setPropertyComparingArrays('id', 'liked', true, setArray, compArray);
+        else setPropertyComparingObjArr('id', 'liked', true, setArray, compArray);
+    };
+});
+
+app.factory('setReceived', function(setPropertyComparingArrays, setPropertyComparingObjArr) {
+    return function(setArray, compArray, multiple) {
+        if (multiple) setPropertyComparingArrays('id', 'received', true, setArray, compArray);
+        else setPropertyComparingObjArr('id', 'received', true, setArray, compArray);
+    };
 });
 
 app.run(function($rootScope, $http, getIsLoggedIn, extendedSkills) {
@@ -260,7 +300,7 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 }
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
-                                         $mdToast, $rootScope, extendedSkills, getIsLoggedIn, getObjByID) {
+                                         $mdToast, $rootScope, extendedSkills, getIsLoggedIn, getObjByID, setLiked, setReceived) {
     $scope.selectedTab = 0;
     $scope.reg = {email: '', password: ''};
 
@@ -336,6 +376,8 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                     var user = loggedUser();
                     var found = false;
 
+                    setLiked(tasks, user.tasks_liked, true);
+
                     $scope.tasksObjAppr = [];
                     for (var i in tasks) {
                         if (tasks[i].is_approved) continue;
@@ -344,7 +386,6 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                         if (!found && user.tasks_approved && user.tasks_approved.indexOf(tasks[i].id) !== -1) found = true;
 
                         if (!found) {
-                            if (user.tasks_liked && user.tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
                             $scope.tasksObjAppr.push(tasks[i]);
                         }
                     }
@@ -362,8 +403,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                             if (user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1) found = true;
                         }
                         if (!found) {
-                            if (user.tasks_liked && user.tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
-                            if (user.tasks_received && user.tasks_received.indexOf(tasks[i].id) !== -1)tasks[i].received = true;
+                            setReceived(tasks[i], user.tasks_received);
 
                             $scope.tasksObj.push(tasks[i]);
                         }
@@ -385,12 +425,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                             }
                         }
                         if (!found) {
-                            for (var j in user.solutions_liked) {
-                                if (sols[i].id === user.solutions_liked[j]) {
-                                    sols[i].liked = true;
-                                    break;
-                                }
-                            }
+                            setLiked(sols[i], user.solutions_liked);
                             $scope.solutionsObj.push(sols[i]);
                         }
                     }
