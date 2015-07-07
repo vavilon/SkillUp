@@ -1,0 +1,9 @@
+<md-button class="task-button" ng-click="receive(); s2 = {};"
+           ng-mouseenter="!received && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {};"
+           ng-class="{'md-primary': received}">
+    <i class="mdi mdi-briefcase mdi-24" ng-style="s2" ng-class="{'mdi-hint': !received}"></i>
+    <span>{{count || 0}}</span>
+    <md-tooltip>
+        Взять задание
+    </md-tooltip>
+</md-button>

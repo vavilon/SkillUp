@@ -2,7 +2,7 @@
 app.directive('tasksList', function(getObjByID) {
     return {
         restrict: 'E',
-        templateUrl: '/front/templates/taskslist.html',
+        templateUrl: '/front/templates/tasks-list.html',
         scope: {
             tasksObj: '=',
             skillsObj: '=',
@@ -16,8 +16,6 @@ app.directive('tasksList', function(getObjByID) {
             send: '=?',
             callback: '=?',
             solution: '=',
-            like: '=?',
-            receive: '=?',
             showLike: '=?',
             showReceive: '=?',
             approve: '=?',
@@ -94,32 +92,6 @@ app.directive('tasksList', function(getObjByID) {
                     .success(function(data) { $scope.approveCallback(data, id); });
             };
 
-            if ($scope.like === undefined) $scope.like = function (task) {
-                task.liked = !task.liked;
-                task.liked ? task.likes++ : task.likes--;
-                $http.post('/like_task', {task_id: task.id}).success(function(data) {
-                    if (!data) {
-                        task.liked = !task.liked;
-                        task.liked ? task.likes++ : task.likes--;
-                        return;
-                    }
-                    getIsLoggedIn();
-                });
-            };
-            if ($scope.receive === undefined) $scope.receive = function (task) {
-                task.participants = task.participants || [];
-                task.received = !task.received;
-                task.received ? task.participants.push(loggedUser().id) :
-                    task.participants.splice(task.participants.indexOf(loggedUser().id), 1);
-                $http.post('/receive_task', {task_id: task.id}).success(function(data) {
-                    if (!data) {
-                        task.received = !task.received;
-                        task.received ? task.participants.push(loggedUser().id) :
-                            task.participants.splice(task.participants.indexOf(loggedUser().id), 1);
-                    }
-                    getIsLoggedIn();
-                });
-            };
             $scope.$watch('tasksObj', function(newVal, oldVal) {
                 try {
                     $scope.lastExpandedTask = $scope.tasksObj[0];
@@ -151,7 +123,7 @@ app.directive('tasksList', function(getObjByID) {
 app.directive('solutionsList', function(getObjByID) {
     return {
         restrict: 'E',
-        templateUrl: '/front/templates/solutionslist.html',
+        templateUrl: '/front/templates/solutions-list.html',
         scope: {
             tasksObj: '=',
             skillsObj: '=',
@@ -162,7 +134,6 @@ app.directive('solutionsList', function(getObjByID) {
             showSkills: '=?',
             send: '=?',
             callback: '=?',
-            like: '=?',
             showLike: '=?',
             showCheck: '=?',
             check: '=?'
@@ -249,18 +220,6 @@ app.directive('solutionsList', function(getObjByID) {
                 }
             };
 
-            if ($scope.like === undefined) $scope.like = function (solution) {
-                solution.liked = !solution.liked;
-                solution.liked ? solution.likes++ : solution.likes--;
-                $http.post('/like_solution', {solution_id: solution.id}).success(function(data) {
-                    if (!data) {
-                        solution.liked = !solution.liked;
-                        solution.liked ? solution.likes++ : solution.likes--;
-                        return;
-                    }
-                    getIsLoggedIn();
-                });
-            };
             $scope.$watch('solutionsObj', function(newVal, oldVal) {
                 try {
                     $scope.lastExpandedSolution = $scope.solutionsObj[0];
@@ -292,3 +251,66 @@ app.directive('solutionsList', function(getObjByID) {
     }
 });
 
+app.directive('likeButton', function() {
+    return {
+        restrict: 'E',
+        templateUrl: '/front/templates/like-button.html',
+        scope: {
+            type: '@',
+            id: '=',
+            likes: '=',
+            liked: '=',
+            like: '=?'
+        },
+        controller: function($scope, $http, getIsLoggedIn) {
+            if ($scope.like === undefined) $scope.like = function () {
+                $scope.liked = !$scope.liked;
+                $scope.liked ? $scope.likes++ : $scope.likes--;
+                var obj = {};
+                obj[$scope.type + '_id'] = $scope.id;
+                $http.post('/like_' + $scope.type, obj).success(function(data) {
+                    if (!data) {
+                        $scope.liked = !$scope.liked;
+                        $scope.liked ? $scope.likes++ : $scope.likes--;
+                        return;
+                    }
+                    getIsLoggedIn();
+                });
+            };
+        }
+    };
+});
+
+app.directive('receiveButton', function() {
+    return {
+        restrict: 'E',
+        templateUrl: '/front/templates/receive-button.html',
+        scope: {
+            type: '@?',
+            id: '=',
+            count: '=',
+            received: '=',
+            receive: '=?'
+        },
+        controller: function($scope, $http, getIsLoggedIn) {
+            if (!angular.isNumber($scope.count) || $scope.count < 0) $scope.count = 0;
+
+            if ($scope.type === undefined) $scope.type = 'task';
+
+            if ($scope.receive === undefined) $scope.receive = function () {
+                $scope.received = !$scope.received;
+                $scope.received ? $scope.count++ : $scope.count--;
+                var obj = {};
+                obj[$scope.type + '_id'] = $scope.id;
+                $http.post('/receive_' + $scope.type, obj).success(function(data) {
+                    if (!data) {
+                        $scope.received = !$scope.received;
+                        $scope.received ? $scope.count++ : $scope.count--;
+                        return;
+                    }
+                    getIsLoggedIn();
+                });
+            };
+        }
+    };
+});

@@ -2,7 +2,7 @@
 <md-content>
 <md-list layout="column" ng-if="usersObj">
     <md-list-item class="item-animate"
-                  ng-repeat="taskVal in tasksObj | orderBy: '-exp'">
+                  ng-repeat="taskVal in tasksObj | orderBy: ['-difficulty', 'title']">
         <div layout="column" flex>
             <div layout="row" class="task-header">
                 <div>
@@ -96,24 +96,10 @@
                         {{findUser(taskVal.author).name}}</a></span>
                 </div>
                 <div layout="row" flex>
-                    <md-button ng-if="showLike" class="task-button" style="margin-right: 25px;" ng-click="like(taskVal); s1 = {};"
-                               ng-mouseenter="!taskVal.liked && (s1 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s1 = {}"
-                               ng-class="{'md-accent': taskVal.liked}">
-                        <i class="mdi mdi-thumb-up mdi-24" ng-style="s1" ng-class="{'mdi-hint': !taskVal.liked}"></i>
-                        <span>{{taskVal.likes || 0}}</span>
-                        <md-tooltip>
-                            Мне нравится
-                        </md-tooltip>
-                    </md-button>
-                    <md-button ng-if="showReceive" class="task-button" ng-click="receive(taskVal); s2 = {};"
-                               ng-mouseenter="!taskVal.received && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {};"
-                               ng-class="{'md-primary': taskVal.received}">
-                        <i class="mdi mdi-briefcase mdi-24" ng-style="s2" ng-class="{'mdi-hint': !taskVal.received}"></i>
-                        <span>{{taskVal.participants.length || 0}}</span>
-                        <md-tooltip>
-                            Взять задание
-                        </md-tooltip>
-                    </md-button>
+                    <like-button ng-if="showLike" type="task" id="taskVal.id" likes="taskVal.likes" liked="taskVal.liked"
+                                 style="margin-right: 25px;"></like-button>
+                    <receive-button ng-if="showReceive" id="taskVal.id" count="taskVal.participants.length"
+                                    received="taskVal.received"></receive-button>
                 </div>
             </div>
         </div>
