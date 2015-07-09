@@ -5,7 +5,8 @@ var app = angular.module('skills', [
     'hljs',
     'ngCookies',
     'ngMessages',
-    'ngImgCrop'
+    'ngImgCrop',
+    'pc035860.scrollWatch'
 ]);
 
     app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
@@ -525,5 +526,11 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
             getIsLoggedIn();
         });
-    }
+    };
+
+    $scope.$on('lalala', function ($evt, active, locals) {
+        console.log($evt);
+        console.log(active);
+        console.log(locals);
+    });
 });

@@ -121,7 +121,7 @@ app.use(passport.session());
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/front', express.static(__dirname + '/front'));
 
-app.use('/db', function (req, res) {
+app.use('/db', function (req, res, next) {
     if (req.isAuthenticated()) {
         if (req.path === '/skills') {
             knex('skills').then(function (rows) {
@@ -129,20 +129,24 @@ app.use('/db', function (req, res) {
             });
         }
         else if (req.path === '/tasks') {
-            knex('tasks').then(function (rows) {
+            controllers.db.portion(knex, 'tasks', req.body.ids, req.body.select, 20, req.body.offset, function(rows) {
+                if (!rows) return res.end();
                 res.end(JSON.stringify(rows));
             });
         }
         else if (req.path === '/users') {
-            knex('users').then(function (rows) {
+            controllers.db.portion(knex, 'users', req.body.ids, req.body.select, 20, req.body.offset, function(rows) {
+                if (!rows) return res.end();
                 res.end(JSON.stringify(rows));
             });
         }
         else if (req.path === '/solutions') {
-            knex('solutions').then(function (rows) {
+            controllers.db.portion(knex, 'solutions', req.body.ids, req.body.select, 20, req.body.offset, function(rows) {
+                if (!rows) return res.end();
                 res.end(JSON.stringify(rows));
             });
         }
+        else res.end();
     }
     else res.end();
 });
