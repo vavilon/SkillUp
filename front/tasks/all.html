@@ -2,9 +2,8 @@
 
 <div layout="row" flex style="min-height: calc(100vh - 64px);">
 
-    <div scroll-watch="{from: 0, to: -1, stage: 'loader'}"
-         sw-broadcast="{$rootScope: true, 'onScrollToBottom': '$percentage  >= 100'}">
-    </div>
+    <scroll-loader stage="indexPageStage" load-func="scrollWrap.loadFunc" offset="scrollWrap.array.length"
+                   set-liked="true" set-received="true" array="scrollWrap.array" callback="scrollWrap.callback"></scroll-loader>
 
     <div class="md-whiteframe-z2" flex="20" style="padding: 16px; z-index: 1; background-color: #FAFAFA;">
         <md-chips ng-model="chips.selectedTasks" md-autocomplete-snap md-require-match>

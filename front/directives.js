@@ -1,5 +1,5 @@
 
-app.directive('tasksList', function(getObjByID) {
+app.directive('tasksList', function() {
     return {
         restrict: 'E',
         templateUrl: '/front/templates/tasks-list.html',
@@ -21,7 +21,7 @@ app.directive('tasksList', function(getObjByID) {
             approve: '=?',
             approveCallback: '=?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser) {
+        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID) {
 
             $scope.showToast = function (msg, parent) {
                 parent = parent || '#toastError';
@@ -120,7 +120,7 @@ app.directive('tasksList', function(getObjByID) {
 });
 
 
-app.directive('solutionsList', function(getObjByID) {
+app.directive('solutionsList', function() {
     return {
         restrict: 'E',
         templateUrl: '/front/templates/solutions-list.html',
@@ -138,7 +138,7 @@ app.directive('solutionsList', function(getObjByID) {
             showCheck: '=?',
             check: '=?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser) {
+        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID) {
 
             $scope.showToast = function (msg, parent, position, delay) {
                 parent = parent || '#toastError';
@@ -310,6 +310,47 @@ app.directive('receiveButton', function() {
                     }
                     getIsLoggedIn();
                 });
+            };
+        }
+    };
+});
+
+app.directive('scrollLoader', function() {
+    return {
+        restrict: 'E',
+        templateUrl: '/front/templates/scroll-loader.html',
+        scope: {
+            stage: '@',
+            loadFunc: '=',
+            offset: '=',
+            setLiked: '=?',
+            setReceived: '=?',
+            callback: '=?'
+        },
+        controller: function($scope, loggedUser, setLiked, setReceived) {
+            var firedFirst = true;
+            $scope.$on('onScrollToBottom', function ($evt, active, locals) {
+                if (firedFirst) {
+                    firedFirst = false;
+                    return;
+                }
+                if (!active) return;
+                $scope.loadMoreData();
+            });
+
+            var endOfData = false;
+            $scope.loadMoreData = function() {
+                if (!endOfData) {
+                    $scope.loadFunc(null, $scope.offset, null, function(data) {
+                        if (data.length) {
+                            $scope.offset += data.length;
+                            if ($scope.setLiked) setLiked(data, loggedUser().tasks_liked, true);
+                            if ($scope.setReceived) setReceived(data, loggedUser().tasks_received, true);
+                            if ($scope.callback) $scope.callback(data);
+                        }
+                        else endOfData = true;
+                    });
+                }
             };
         }
     };

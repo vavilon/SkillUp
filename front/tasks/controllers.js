@@ -109,6 +109,9 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
             setReceived(tasks, user.tasks_received, true);
 
             $scope.tasks = tasks;
+
+            $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback, array: $scope.tasks};
+
             for(var item in tasks) {
                 $scope.chips.tasksNames.push(tasks[item].title);
             }
@@ -129,32 +132,10 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
         $scope.fTasks = applyAllFilters($scope);
     });
 
-    var firedFirst = true;
-    $scope.$on('onScrollToBottom', function ($evt, active, locals) {
-        if (firedFirst) {
-            firedFirst = false;
-            return;
-        }
-        if (!active) return;
-        $scope.loadMoreData();
-    });
-
-    var endOfData = false;
-    var offset = 6;
-    $scope.loadMoreData = function() {
-        if (!endOfData) {
-            loadTasks(null, offset, null, function(data) {
-                if (data.length) {
-                    offset += data.length;
-                    setLiked(data, loggedUser().tasks_liked, true);
-                    setReceived(data, loggedUser().tasks_received, true);
-                    $scope.tasks = $scope.tasks.concat(data);
-                    $scope.fTasks = applyAllFilters($scope);
-                }
-                else endOfData = true;
-            });
-        }
-    };
+    $scope.scrollCallback = function(data) {
+        $scope.tasks = $scope.tasks.concat(data);
+        $scope.fTasks = applyAllFilters($scope);
+    }
 });
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived) {
