@@ -36,6 +36,7 @@
     <script src="/bower_components/angular-scroll-watch/build/angular-scroll-watch.min.js"></script>
 
     <script src="/front/app.js"></script>
+    <script src="/front/factories.js"></script>
     <script src="/front/filters.js"></script>
     <script src="/front/directives.js"></script>
     <script src="/front/competences/controllers.js"></script>
@@ -108,7 +109,7 @@
             </div>
         </div>
     </md-toolbar>
-    <md-content ng-view md-scroll-y flex style="background-color: #FAFAFA;">
+    <md-content ng-view md-scroll-y flex sw-stage="loader" style="background-color: #FAFAFA;">
     </md-content>
 </div>
 

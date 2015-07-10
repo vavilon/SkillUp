@@ -13,7 +13,9 @@ var knex = require('knex')(config.get('knex'));
         return;
     });*/
 
-knex('approvements').where('task_id', '=', 'cf426df8-6ca4-41d2-bf91-37984d1a5844').then(function(rows) {
+var q = knex('tasks').andWhere('skills', '&&', ['233955be-12bb-497d-93fa-b924742930f1', 'd568fd77-26e2-4226-9554-924af817c71e']);
+
+q.then(function(rows) {
     console.log(rows);
 
 }).catch(function (error) {

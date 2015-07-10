@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="/front/tasks/styles.css">
 
 <div layout="row" flex style="min-height: calc(100vh - 64px);">
+
+    <div scroll-watch="{from: 0, to: -1, stage: 'loader'}"
+         sw-broadcast="{$rootScope: true, 'onScrollToBottom': '$percentage  >= 100'}">
+    </div>
+
     <div class="md-whiteframe-z2" flex="20" style="padding: 16px; z-index: 1; background-color: #FAFAFA;">
         <md-chips ng-model="chips.selectedTasks" md-autocomplete-snap md-require-match>
             <md-autocomplete

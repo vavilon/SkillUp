@@ -63,7 +63,7 @@ function applyAllFilters(scope) {
     return target;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived) {
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived, loadTasks) {
 
     $scope.getObjByID = getObjByID;
     $scope.chips = {};
@@ -128,6 +128,33 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
     $scope.$watchCollection('chips.selectedAuthors', function(newVal) {
         $scope.fTasks = applyAllFilters($scope);
     });
+
+    var firedFirst = true;
+    $scope.$on('onScrollToBottom', function ($evt, active, locals) {
+        if (firedFirst) {
+            firedFirst = false;
+            return;
+        }
+        if (!active) return;
+        $scope.loadMoreData();
+    });
+
+    var endOfData = false;
+    var offset = 6;
+    $scope.loadMoreData = function() {
+        if (!endOfData) {
+            loadTasks(null, offset, null, function(data) {
+                if (data.length) {
+                    offset += data.length;
+                    setLiked(data, loggedUser().tasks_liked, true);
+                    setReceived(data, loggedUser().tasks_received, true);
+                    $scope.tasks = $scope.tasks.concat(data);
+                    $scope.fTasks = applyAllFilters($scope);
+                }
+                else endOfData = true;
+            });
+        }
+    };
 });
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived) {

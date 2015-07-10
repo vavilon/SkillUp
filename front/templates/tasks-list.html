@@ -2,7 +2,7 @@
 <md-content>
 <md-list layout="column" ng-if="usersObj">
     <md-list-item class="item-animate"
-                  ng-repeat="taskVal in tasksObj | orderBy: ['-difficulty', 'title']">
+                  ng-repeat="taskVal in tasksObj"> <!--  | orderBy: ['-difficulty', 'title'] -->
         <div layout="column" flex>
             <div layout="row" class="task-header">
                 <div>

@@ -1,21 +1,20 @@
 
-module.exports = function(knex, tableName, ids, select, limit, offset, callback) {
-    if (ids) {
-        knex(tableName).whereIn('id', ids).select(select).limit(limit).offset(offset || 0)
-            .then(function(rows) {
-                callback(rows);
-            }).catch(function (error) {
-                console.log(error);
-                callback(null, error);
-            });
-    }
-    else {
-        knex(tableName).select(select).limit(limit).offset(offset || 0)
-            .then(function(rows) {
-                callback(rows);
-            }).catch(function (error) {
-                console.log(error);
-                callback(null, error);
-            });
-    }
+module.exports = function(knex, options, callback) {
+    var tableName = options.tableName;
+    var ids = options.ids;
+    var andWhere = options.andWhere;
+    var select = options.select;
+    var limit = options.limit;
+    var offset = options.offset;
+
+    var query = knex(tableName);
+    if (ids) query = query.whereIn('id', ids);
+    if (andWhere) query = query.andWhere(andWhere[0], andWhere[1], andWhere[2]);
+    query.select(select).limit(limit).offset(offset || 0)
+        .then(function(rows) {
+            callback(rows);
+        }).catch(function (error) {
+            console.log(error);
+            callback(null, error);
+        });
 };
