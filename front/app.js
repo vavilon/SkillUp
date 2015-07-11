@@ -5,11 +5,10 @@ var app = angular.module('skills', [
     'hljs',
     'ngCookies',
     'ngMessages',
-    'ngImgCrop',
-    'pc035860.scrollWatch'
+    'ngImgCrop'
 ]);
 
-    app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
+app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
 
         $httpProvider.defaults.useXDomain = true;

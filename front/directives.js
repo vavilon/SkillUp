@@ -315,28 +315,40 @@ app.directive('receiveButton', function() {
     };
 });
 
+app.directive("onScrollBottom", function ($rootScope) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var options = JSON.parse(attrs.onScrollBottom);
+            var reached = false;
+            options.percent = options.percent || 100;
+            options.percent /= 100;
+            angular.element(element).bind("scroll", function() {
+                if (element[0].offsetHeight + element[0].scrollTop >= element[0].scrollHeight * options.percent) {
+                    if (!reached) {
+                        reached = true;
+                        $rootScope.$broadcast(options.event, element);
+                    }
+                } else reached = false;
+            });
+        }
+    };
+});
+
+
 app.directive('scrollLoader', function() {
     return {
         restrict: 'E',
-        templateUrl: '/front/templates/scroll-loader.html',
         scope: {
-            stage: '@',
+            event: '@',
             loadFunc: '=',
             offset: '=',
             setLiked: '=?',
             setReceived: '=?',
+            array: '=?',
             callback: '=?'
         },
-        controller: function($scope, loggedUser, setLiked, setReceived) {
-            var firedFirst = true;
-            $scope.$on('onScrollToBottom', function ($evt, active, locals) {
-                if (firedFirst) {
-                    firedFirst = false;
-                    return;
-                }
-                if (!active) return;
-                $scope.loadMoreData();
-            });
+        controller: function($rootScope, $scope, loggedUser, setLiked, setReceived) {
 
             var endOfData = false;
             $scope.loadMoreData = function() {
@@ -352,6 +364,8 @@ app.directive('scrollLoader', function() {
                     });
                 }
             };
+
+            $scope.$on($scope.event, $scope.loadMoreData);
         }
     };
 });

@@ -135,7 +135,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
     $scope.scrollCallback = function(data) {
         $scope.tasks = $scope.tasks.concat(data);
         $scope.fTasks = applyAllFilters($scope);
-    }
+    };
 });
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived) {
