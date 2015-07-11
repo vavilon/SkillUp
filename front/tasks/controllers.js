@@ -110,7 +110,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 
             $scope.tasks = tasks;
 
-            $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback, array: $scope.tasks};
+            $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback, offset: $scope.tasks.length};
 
             for(var item in tasks) {
                 $scope.chips.tasksNames.push(tasks[item].title);

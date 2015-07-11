@@ -345,7 +345,6 @@ app.directive('scrollLoader', function() {
             offset: '=',
             setLiked: '=?',
             setReceived: '=?',
-            array: '=?',
             callback: '=?'
         },
         controller: function($rootScope, $scope, loggedUser, setLiked, setReceived) {
