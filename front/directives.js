@@ -11,6 +11,7 @@ app.directive('tasksList', function() {
             solvable: '=?',
             approvable: '=?',
             showExp: '=?',
+            expStyle: '@?',
             showSkills: '=?',
             send: '=?',
             callback: '=?',
@@ -124,6 +125,7 @@ app.directive('solutionsList', function() {
             solutionsObj: '=',
             showExpand: '=?',
             showExp: '=?',
+            expStyle: '@?',
             showSkills: '=?',
             send: '=?',
             callback: '=?',
@@ -324,7 +326,6 @@ app.directive("onScrollBottom", function ($rootScope) {
         angular.element(element).bind("scroll", function() {
             if (element[0].offsetHeight + element[0].scrollTop >= element[0].scrollHeight * options.percent) {
                 if (!reached) {
-                    console.log(options);
                     reached = true;
                     $rootScope.$broadcast(options.event, element);
                 }
@@ -343,7 +344,7 @@ app.directive('scrollLoader', function() {
     return {
         restrict: 'E',
         scope: {
-            event: '@',
+            events: '=',
             loadFunc: '=',
             offset: '=',
             setLiked: '=?',
@@ -355,7 +356,7 @@ app.directive('scrollLoader', function() {
             var endOfData = false;
             $scope.loadMoreData = function() {
                 if (!endOfData) {
-                    $scope.loadFunc(null, $scope.offset, null, function(data) {
+                    $scope.loadFunc({offset: $scope.offset}, function(data) {
                         if (data.length) {
                             $scope.offset += data.length;
                             if ($scope.setLiked) setLiked(data, loggedUser().tasks_liked, true);
@@ -367,7 +368,12 @@ app.directive('scrollLoader', function() {
                 }
             };
 
-            $scope.$on($scope.event, $scope.loadMoreData);
+            if (angular.isArray($scope.events)) {
+                for (var i in $scope.events) {
+                    $scope.$on($scope.events[i], $scope.loadMoreData);
+                }
+            }
+            else $scope.$on($scope.events, $scope.loadMoreData);
         }
     };
 });

@@ -9,7 +9,11 @@
                         <h3 class="task-title"><a href="tasks/{{solution.task_id}}">{{findTask(solution.task_id).title}}</a></h3>
                     </div>
                     <div flex="15">
-                        <p class="task-exp">exp: {{findTask(solution.task_id).exp | thousand}}</p>
+                        <p class="task-exp">exp:
+                            <span ng-if="expStyle === undefined">{{findTask(solution.task_id).exp || 0 | thousand}}</span>
+                            <span ng-if="expStyle === '+'" style="color: #4CAF50;">+{{findTask(solution.task_id).exp || 0 | thousand}}</span>
+                            <span ng-if="expStyle === '-'" style="color: #F44336;">-{{findTask(solution.task_id).exp || 0 | thousand}}</span>
+                        </p>
                     </div>
                 </div>
                 <div layout="row" class="task-body">

@@ -1,9 +1,12 @@
-app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills) {
+app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills, loadUsers) {
     $scope.username = "";
     $scope.filteredUsers = [];
 
     $http.get('db/users').success(function (data) {
         $scope.users = data;
+
+        $scope.scrollWrap = {loadFunc: loadUsers, callback: $scope.scrollCallback, offset: $scope.users.length};
+
         $scope.lastExpandedUser = $scope.users[0];
 
         for (var i in $scope.users) {
@@ -26,10 +29,17 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
     $scope.$watch('username', function () {
         if ($scope.lastExpandedUser) $scope.lastExpandedUser.expanded = false;
     });
+
+    $scope.scrollCallback = function(data) {
+        for (var i in data) {
+            data[i].skills = parseSkills(data[i].skills);
+        }
+        $scope.users = $scope.users.concat(data);
+    };
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, getIsLoggedIn,
-                                        loggedUser, parseSkills, loadTasks) {
+                                        loggedUser, parseSkills, loadTasks, loadUsers) {
         $scope.categoryNum = 0;
 
         $scope.findTask = function (id) {
@@ -40,9 +50,9 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             return getObjByID(id, $scope.skills);
         };
 
-        $http.get('db/users').success(function (users) {
-            $scope.users = users;
-            $scope.user = getObjByID($routeParams.user_id, $scope.users);
+        $http.post('db/users', {ids: [$routeParams.user_id]}).success(function (data) {
+            if (!data || !data.length) return;
+            $scope.user = data[0];
             $scope.user.skills = parseSkills($scope.user.skills);
 
             getIsLoggedIn(function () {
@@ -75,7 +85,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                     $scope.tasks = tasks;
 
                     $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback,
-                        offset: $scope.tasks.length, scrollOptions: {percent: 95}};
+                        offset: $scope.tasks.length, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
 
                     $scope.tasks_done = [];
                     $scope.tasks_checked = [];
@@ -117,7 +127,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
         };
 
         $scope.scrollCallback = function(data) {
-            //coming soon...
+            console.log('asdasdasd');
         };
     }
 );
@@ -129,7 +139,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         $scope.step = 1;
 
         if ($location.path() === '/registration/step2') {
-            $http.get('/is_logged_in').success(function(user) {
+            $http.get('/logged_user').success(function(user) {
                 if (!user) return;
                 $scope.step = 2;
                 $scope.reg.birthday = new Date(user.birthday);

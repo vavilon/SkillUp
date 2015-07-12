@@ -162,7 +162,7 @@ app.use('/avatars', function (req, res) {
     }
     else res.end();
 });
-app.use('/is_logged_in', function (req, res) {
+app.use('/logged_user', function (req, res) {
     if (req.isAuthenticated()) {
         res.end(JSON.stringify(req.user.attributes));
     }

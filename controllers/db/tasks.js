@@ -1,7 +1,7 @@
 
 module.exports = function(knex, req, res, next) {
     var q = knex.select("tasks.*").from('tasks');
-    if (req.body.ids) q.whereIn('tasks.id', req.body.id);
+    if (req.body.ids) q.whereIn('tasks.id', req.body.ids);
     if (req.body.skills) q.andWhere('tasks.skills', '&&', req.body.skills);
     q.join('users', 'tasks.author', '=', 'users.id').select('users.name as author_name');
     q.limit(10).offset(req.body.offset || 0);

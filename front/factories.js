@@ -8,7 +8,7 @@ app.factory('getObjByID', function() {
 //Вызывается в run, а также при регистрации, входе и выходе
 app.factory('getIsLoggedIn', function($rootScope, $http, parseSkills) {
     return function(callback) {
-        $http.get('/is_logged_in').success(function (data) {
+        $http.get('/logged_user').success(function (data) {
             $rootScope.loggedUser = data;
             if (data) $rootScope.loggedUser.skills = parseSkills($rootScope.loggedUser.skills);
             callback && callback(data);
@@ -143,20 +143,34 @@ app.factory('skillsProgressToIDs', function () {
     };
 });
 
-app.factory('loadTasks', function($http) {
-    return function(ids, offset, skills, callback) {
-        $http.post('db/tasks', {ids: ids, offset: offset, skills: skills}).success(callback);
+app.factory('loadFunc', function($http) {
+    return function(options, callback) {
+        $http.post('db/' + options.tableName, options).success(callback);
+    };
+});
+
+app.factory('loadTasks', function(loadFunc) {
+    return function(options, callback) {
+        options.tableName = 'tasks';
+        loadFunc(options, callback);
+    };
+});
+
+app.factory('loadUsers', function(loadFunc) {
+    return function(options, callback) {
+        options.tableName = 'users';
+        loadFunc(options, callback);
     };
 });
 
 app.factory('loadReceivedTasks', function (loadTasks, loggedUser) {
     return function(offset, callback) {
-        loadTasks(loggedUser().tasks_received, offset, null, callback);
+        loadTasks({ids: loggedUser().tasks_received, offset: offset}, callback);
     };
 });
 
 app.factory('loadRecommendedTasks', function (loadTasks, skillsProgressToIDs, loggedUser) {
     return function(offset, callback) {
-        loadTasks(null, offset, skillsProgressToIDs(loggedUser().skills), callback);
+        loadTasks({offset: offset, skills: skillsProgressToIDs(loggedUser().skills)}, callback);
     };
 });

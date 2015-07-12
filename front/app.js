@@ -116,7 +116,10 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
                 getIsLoggedIn(function(user){
                     if (user) {
                         $mdDialog.hide();
-                        $location.path(data);
+                        $location.path('/main'); //фикс, если логинишься со своей страницы, а не с главной
+                        $timeout(function() {
+                            $location.path(data);
+                        }, 1);
                     }
                 });
             });

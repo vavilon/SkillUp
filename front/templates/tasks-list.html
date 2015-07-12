@@ -16,7 +16,11 @@
                     <h3 class="task-title"><a href="tasks/{{taskVal.id}}">{{taskVal.title}}</a></h3>
                 </div>
                 <div flex="15">
-                    <p class="task-exp">exp: {{taskVal.exp | thousand}}</p>
+                    <p class="task-exp">exp:
+                        <span ng-if="expStyle === undefined">{{taskVal.exp || 0 | thousand}}</span>
+                        <span ng-if="expStyle === '+'" style="color: #4CAF50;">+{{taskVal.exp || 0 | thousand}}</span>
+                        <span ng-if="expStyle === '-'" style="color: #F44336;">-{{taskVal.exp || 0 | thousand}}</span>
+                    </p>
                 </div>
             </div>
             <div layout="row" class="task-body">

@@ -2,7 +2,8 @@
 
 <div layout="row" style="padding-top: 30px; padding-bottom: 30px;">
 
-    <scroll-loader event="tasksCreatedScrolled" load-func="scrollWrap.loadFunc" offset="scrollWrap.offset"
+    <scroll-loader events="['tasksDoneScrolled', 'tasksCheckedScrolled', 'tasksApprovedScrolled', 'tasksCreatedScrolled']"
+                   load-func="scrollWrap.loadFunc" offset="scrollWrap.offset"
                    set-liked="true" set-received="true" callback="scrollWrap.callback"></scroll-loader>
 
     <div flex="15"></div>
@@ -18,7 +19,7 @@
                 <h3 style="margin-bottom: 0px; margin-top: 10px;">{{user.name}}</h3>
                 <h4 style="margin: 0 0 5px 0; color: rgba(0,0,0,0.54);">{{user.nick}}</h4>
                 <h4 style="margin-top: 5px; margin-bottom: 0px; color: rgba(0,0,0,0.54); font-weight: normal;">exp:
-                    {{user.exp | thousand}}</h4>
+                    {{user.exp || 0 | thousand}}</h4>
             </div>
 
             <md-divider style="margin-top: 10px; margin-bottom: 10px;"></md-divider>

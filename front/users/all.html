@@ -3,6 +3,10 @@
 <div style="position: absolute; background-color: #3F51B5; height: 232px; width: 100%;"></div>
 
 <div style="position: relative;">
+
+    <scroll-loader events="'indexPageScrolled'" load-func="scrollWrap.loadFunc" offset="scrollWrap.offset"
+                   callback="scrollWrap.callback"></scroll-loader>
+
     <div layout="row">
         <div flex="15" flex-md="5" hide-sm></div>
         <div flex
@@ -24,7 +28,7 @@
             <md-content>
                 <md-list>
                     <md-list-item class="md-3-line users-list"
-                                  ng-repeat="user in filteredUsers = (users | filter: {name:username} | orderBy: 'name')">
+                                  ng-repeat="user in filteredUsers = (users | filter: {name:username})">
                         <div layout="column" flex>
                             <div layout="row">
                                 <div layout="row" layout-align="end start" style="padding: 16px 16px 0 0;">
