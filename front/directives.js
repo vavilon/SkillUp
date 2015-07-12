@@ -6,7 +6,6 @@ app.directive('tasksList', function() {
         scope: {
             tasksObj: '=',
             skillsObj: '=',
-            usersObj: '=',
             showDifficulty: '=?',
             showExpand: '=?',
             solvable: '=?',
@@ -106,14 +105,8 @@ app.directive('tasksList', function() {
                 $scope.lastExpandedTask = task;
             };
 
-            $scope.findUser = function (id) {
-                return getObjByID(id, $scope.usersObj);
-            };
             $scope.findSkill = function (id) {
                 return getObjByID(id, $scope.skillsObj);
-            };
-            $scope.findTask = function (id) {
-                return getObjByID(id, $scope.tasksObj);
             };
         }
     }
@@ -316,22 +309,32 @@ app.directive('receiveButton', function() {
 });
 
 app.directive("onScrollBottom", function ($rootScope) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-            var options = JSON.parse(attrs.onScrollBottom);
-            var reached = false;
+
+    function link (scope, element, attrs) {
+        var reached = false;
+        var options;
+
+        scope.$watch(attrs.onScrollBottom, function(value) {
+            if (!value) return;
+            options = value;
             options.percent = options.percent || 100;
             options.percent /= 100;
-            angular.element(element).bind("scroll", function() {
-                if (element[0].offsetHeight + element[0].scrollTop >= element[0].scrollHeight * options.percent) {
-                    if (!reached) {
-                        reached = true;
-                        $rootScope.$broadcast(options.event, element);
-                    }
-                } else reached = false;
-            });
-        }
+        });
+
+        angular.element(element).bind("scroll", function() {
+            if (element[0].offsetHeight + element[0].scrollTop >= element[0].scrollHeight * options.percent) {
+                if (!reached) {
+                    console.log(options);
+                    reached = true;
+                    $rootScope.$broadcast(options.event, element);
+                }
+            } else reached = false;
+        });
+    }
+
+    return {
+        restrict: 'A',
+        link: link
     };
 });
 

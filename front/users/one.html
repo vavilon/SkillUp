@@ -1,6 +1,10 @@
 <link rel="stylesheet" href="/front/users/styles.css">
 
 <div layout="row" style="padding-top: 30px; padding-bottom: 30px;">
+
+    <scroll-loader event="tasksCreatedScrolled" load-func="scrollWrap.loadFunc" offset="scrollWrap.offset"
+                   set-liked="true" set-received="true" callback="scrollWrap.callback"></scroll-loader>
+
     <div flex="15"></div>
     <div layout="row" style="min-width: 225px; max-width: 225px;">
         <div layout="column" flex>
@@ -69,7 +73,7 @@
             </div>
             <div ng-switch="categoryNum">
                 <div ng-switch-when="0" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);">
-                    <md-tabs md-selected="tabSelected">
+                    <md-tabs md-selected="tabSelected" ng-click="setScrollOptions(tabSelected)">
                         <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length || 0}}</span></md-tab>
                         <md-tab>Проверено: <span style="font-weight: bold;">{{user.tasks_checked.length || 0}}</span>
                         </md-tab>
@@ -78,11 +82,12 @@
                         <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length || 0}}</span>
                         </md-tab>
                     </md-tabs>
-                    <md-content flex style="max-height: calc(100vh - 215px); overflow-y: scroll;">
+                    <md-content flex style="max-height: calc(100vh - 215px); overflow-y: scroll;"
+                                on-scroll-bottom="scrollWrap.scrollOptions">
                         <md-list>
                             <ng-switch on="tabSelected">
                                 <div ng-switch-when="0">
-                                    <tasks-list tasks-obj="tasks_done" users-obj="users" skills-obj="skills" show-like="!canEdit"
+                                    <tasks-list tasks-obj="tasks_done" skills-obj="skills" show-like="!canEdit"
                                                       show-expand="false" show-difficulty="false" solvable="false" show-receive="!canEdit">
                                     </tasks-list>
                                     <div ng-if="!user.tasks_done" class="md-tile-content"
@@ -91,7 +96,7 @@
                                     </div>
                                 </div>
                                 <div ng-switch-when="1">
-                                    <tasks-list tasks-obj="tasks_checked" users-obj="users" skills-obj="skills"
+                                    <tasks-list tasks-obj="tasks_checked" skills-obj="skills"
                                                       show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_checked" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
@@ -99,7 +104,7 @@
                                     </div>
                                 </div>
                                 <div ng-switch-when="2">
-                                    <tasks-list tasks-obj="tasks_approved" users-obj="users" skills-obj="skills"
+                                    <tasks-list tasks-obj="tasks_approved" skills-obj="skills"
                                                       show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_approved" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
@@ -107,7 +112,7 @@
                                     </div>
                                 </div>
                                 <div ng-switch-when="3">
-                                    <tasks-list tasks-obj="tasks_created" users-obj="users" skills-obj="skills"
+                                    <tasks-list tasks-obj="tasks_created" skills-obj="skills"
                                                       show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_created" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>

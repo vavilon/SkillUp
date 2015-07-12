@@ -29,7 +29,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, getIsLoggedIn,
-                                        loggedUser, parseSkills) {
+                                        loggedUser, parseSkills, loadTasks) {
         $scope.categoryNum = 0;
 
         $scope.findTask = function (id) {
@@ -57,7 +57,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             }
             $http.get('db/tasks').success(function (tasks) {
                 $http.get('db/solutions').success(function (sols) {
-                    for (i in sols) {
+                    for (var i in sols) {
                         for (var j in loggedUser().solutions_liked) {
                             if (sols[i].id === loggedUser().solutions_liked[j]) {
                                 sols[i].liked = true;
@@ -67,12 +67,15 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                     }
                     $scope.solutions = sols;
 
-                    for (var i in tasks) {
-                        if (loggedUser().tasks_liked && loggedUser().tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
-                        if (loggedUser().tasks_received && loggedUser().tasks_received.indexOf(tasks[i].id) !== -1)tasks[i].received = true;
+                    for (i in tasks) {
+                        if (loggedUser().tasks_liked && loggedUser().tasks_liked.indexOf(tasks[i].id) !== -1) tasks[i].liked = true;
+                        if (loggedUser().tasks_received && loggedUser().tasks_received.indexOf(tasks[i].id) !== -1) tasks[i].received = true;
                     }
 
                     $scope.tasks = tasks;
+
+                    $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback,
+                        offset: $scope.tasks.length, scrollOptions: {percent: 95}};
 
                     $scope.tasks_done = [];
                     $scope.tasks_checked = [];
@@ -80,7 +83,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                     $scope.tasks_created = [];
 
                     if ($scope.user.tasks_done)
-                        for (var i = 0; i < $scope.user.tasks_done.length; i++) {
+                        for (i = 0; i < $scope.user.tasks_done.length; i++) {
                             $scope.tasks_done.push($scope.findTask(getObjByID($scope.user.tasks_done[i],$scope.solutions).task_id));
                         }
 
@@ -107,6 +110,15 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
         $scope.tabSelected = 0;
 
+        $scope.setScrollOptions = function(num) {
+            $scope.scrollWrap.scrollOptions.event = num === 0 ? 'tasksDoneScrolled' :
+                num === 1 ? 'tasksCheckedScrolled' :
+                    num === 2 ? 'tasksApprovedScrolled' : 'tasksCreatedScrolled';
+        };
+
+        $scope.scrollCallback = function(data) {
+            //coming soon...
+        };
     }
 );
 

@@ -1,6 +1,6 @@
 
 <md-content>
-<md-list layout="column" ng-if="usersObj">
+<md-list layout="column">
     <md-list-item class="item-animate"
                   ng-repeat="taskVal in tasksObj"> <!--  | orderBy: ['-difficulty', 'title'] -->
         <div layout="column" flex>
@@ -93,7 +93,7 @@
                 <div flex="85">
                     <span class="task-date">Дата создания: {{taskVal.date_created | date: 'dd.MM.yyyy'}}</span>
                     <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">
-                        {{findUser(taskVal.author).name}}</a></span>
+                        {{taskVal.author_name}}</a></span>
                 </div>
                 <div layout="row" flex>
                     <like-button ng-if="showLike" type="task" id="taskVal.id" likes="taskVal.likes" liked="taskVal.liked"
