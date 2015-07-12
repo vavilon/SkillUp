@@ -29,7 +29,7 @@
                          ng-switch-when="0"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <tasks-list tasks-obj="tasksObj" skills-obj="skillsObj" users-obj="usersObj" solution="temp.solution"></tasks-list>
+                        <tasks-list tasks-obj="tasksObj" skills-obj="skillsObj" solution="temp.solution"></tasks-list>
                         <div ng-if="!tasksObj.length" flex layout="column" layout-align="center center" class="md-tile-content">
                             <h3 class="list-empty">Нет заданий для решения</h3>
                         </div>
@@ -49,7 +49,7 @@
                          ng-switch-when="2"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <tasks-list tasks-obj="tasksObjAppr" skills-obj="skillsObj" users-obj="usersObj" solution="temp.solution"
+                        <tasks-list tasks-obj="tasksObjAppr" skills-obj="skillsObj" solution="temp.solution"
                                     show-difficulty="false" show-receive="false" solvable="false" approvable="true"></tasks-list>
                         <div ng-if="!tasksObjAppr.length" flex layout="column" layout-align="center center" class="md-tile-content">
                             <h3 class="list-empty">Нет заданий для подтверждения</h3>

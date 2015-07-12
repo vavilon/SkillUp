@@ -13,15 +13,16 @@ var knex = require('knex')(config.get('knex'));
         return;
     });*/
 
-var q = knex('tasks').andWhere('skills', '&&', ['233955be-12bb-497d-93fa-b924742930f1', 'd568fd77-26e2-4226-9554-924af817c71e']);
+    var q = knex.select("tasks.*").from('tasks');
+    q.join('users', 'tasks.author', '=', 'users.id').select('users.name as author_name');
+    q.limit(10).offset(0);
 
-q.then(function(rows) {
-    console.log(rows);
+    q.then(function(rows) {
+        console.log(rows);
 
-}).catch(function (error) {
-    console.log(error);
-    res.end();
-});
+    }).catch(function (error) {
+        console.log(error);
+    });
 
 /*
 var User = bookshelf.Model.extend({

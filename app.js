@@ -123,7 +123,7 @@ app.use('/front', express.static(__dirname + '/front'));
 
 app.use('/db', function (req, res, next) {
     if (req.isAuthenticated()) {
-        var options = {ids: req.body.ids, select: req.body.select, limit: 6, offset: req.body.offset};
+        var options = {ids: req.body.ids, select: req.body.select, limit: 10, offset: req.body.offset};
 
         if (req.path === '/skills') {
             knex('skills').then(function (rows) {
@@ -131,16 +131,10 @@ app.use('/db', function (req, res, next) {
             });
         }
         else if (req.path === '/tasks') {
-            options.tableName = 'tasks';
-            if (req.body.skills) options.andWhere = ['skills', '&&', req.body.skills];
-            controllers.db.portion(knex, options, function(rows) {
-                if (!rows) return res.end();
-                res.end(JSON.stringify(rows));
-            });
+            controllers.db.tasks(knex, req, res, next);
         }
         else if (req.path === '/users') {
             options.tableName = 'users';
-            options.limit = 100;
             controllers.db.portion(knex, options, function(rows) {
                 if (!rows) return res.end();
                 res.end(JSON.stringify(rows));
@@ -148,7 +142,6 @@ app.use('/db', function (req, res, next) {
         }
         else if (req.path === '/solutions') {
             options.tableName = 'solutions';
-            options.limit = 100;
             controllers.db.portion(knex, options, function(rows) {
                 if (!rows) return res.end();
                 res.end(JSON.stringify(rows));
