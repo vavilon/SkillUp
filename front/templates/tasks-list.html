@@ -31,8 +31,8 @@
                     <div layout="row" layout-wrap flex>
                         <md-button class="md-raised md-primary skill-button"
                                    aria-label="skillBtn"
-                                   ng-repeat="skill in taskVal.skills">
-                            {{findSkill(skill).title}}
+                                   ng-repeat="skillID in taskVal.skills">
+                            {{skillsObj.skills[skillID].title}}
                         </md-button>
                     </div>
                 </div>

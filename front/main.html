@@ -29,7 +29,7 @@
                          ng-switch-when="0"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <tasks-list tasks-obj="tasksObj" skills-obj="skillsObj" solution="temp.solution" exp-style="-"></tasks-list>
+                        <tasks-list tasks-obj="tasksObj" solution="temp.solution" exp-style="-"></tasks-list>
                         <div ng-if="!tasksObj.length" flex layout="column" layout-align="center center" class="md-tile-content">
                             <h3 class="list-empty">Нет заданий для решения</h3>
                         </div>
@@ -39,8 +39,8 @@
                          ng-switch-when="1"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <solutions-list tasks-obj="tasksObjSolve" skills-obj="skillsObj" users-obj="usersObj"
-                                        solutions-obj="solutionsObj" exp-style="+"></solutions-list>
+                        <solutions-list tasks-obj="tasksObjSolve" users-obj="usersObj" solutions-obj="solutionsObj"
+                                        exp-style="+"></solutions-list>
                         <div ng-if="!solutionsObj.length" flex layout="column" layout-align="center center" class="md-tile-content">
                             <h3 class="list-empty">Нет решений для проверки</h3>
                         </div>
@@ -50,9 +50,8 @@
                          ng-switch-when="2"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <tasks-list tasks-obj="tasksObjAppr" skills-obj="skillsObj" solution="temp.solution"
-                                    show-difficulty="false" show-receive="false" solvable="false" approvable="true"
-                                    exp-style="+"></tasks-list>
+                        <tasks-list tasks-obj="tasksObjAppr" solution="temp.solution" show-difficulty="false"
+                                    show-receive="false" solvable="false" approvable="true" exp-style="+"></tasks-list>
                         <div ng-if="!tasksObjAppr.length" flex layout="column" layout-align="center center" class="md-tile-content">
                             <h3 class="list-empty">Нет заданий для подтверждения</h3>
                         </div>

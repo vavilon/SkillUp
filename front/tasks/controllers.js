@@ -63,7 +63,8 @@ function applyAllFilters(scope) {
     return target;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived, loadTasks) {
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived, loadTasks,
+                                         $rootScope) {
 
     $scope.getObjByID = getObjByID;
     $scope.chips = {};
@@ -87,13 +88,11 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 
     $scope.getfTasks = function() { return $scope.fTasks;};
 
-    $http.get('db/skills').success(function (skills) {
-        $scope.skills = skills;
-        for(var item in skills) {
-            $scope.chips.skillsNames.push(skills[item].title);
+        $scope.exs = $rootScope.exs;
+        for(var item in $scope.exs.skills) {
+            $scope.chips.skillsNames.push($scope.exs.skills[item].title);
         }
         $scope.chips.skillsQuerySearch = FiltersFactory($scope.chips.skillsNames);
-    });
 
     $http.get('db/users').success(function (users) {
         $scope.users = users;
@@ -138,11 +137,9 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
     };
 });
 
-app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived) {
-        $http.get('db/skills').success(function (skills) {
-            $scope.skills = skills;
-
-        });
+app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived,
+                                        $rootScope) {
+        $scope.exs = $rootScope.exs;
 
         $http.get('db/tasks').success(function (tasks) {
             $scope.tasks = tasks;
@@ -160,7 +157,7 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
         });
 
         $scope.findSkill = function (id) {
-            return getObjByID(id, $scope.skills);
+            return $scope.exs.skills[id];
         };
 
         $scope.findTask = function (id) {

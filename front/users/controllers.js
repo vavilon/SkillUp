@@ -1,4 +1,4 @@
-app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills, loadUsers) {
+app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills, loadUsers, $rootScope) {
     $scope.username = "";
     $scope.filteredUsers = [];
 
@@ -13,13 +13,13 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
             $scope.users[i].skills = parseSkills($scope.users[i].skills);
         }
     });
-    $http.get('db/skills').success(function (data) {
-        $scope.skills = data;
-    });
+
+    $scope.exs = $rootScope.exs;
 
     $scope.findSkill = function (id) {
-        return getObjByID(id, $scope.skills);
+        return $scope.exs.skills[id];
     };
+
     $scope.expand = function (user) {
         if ($scope.lastExpandedUser !== user) $scope.lastExpandedUser.expanded = false;
         user.expanded = !user.expanded;
@@ -39,7 +39,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, getIsLoggedIn,
-                                        loggedUser, parseSkills, loadTasks, loadUsers) {
+                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope) {
         $scope.categoryNum = 0;
 
         $scope.findTask = function (id) {
@@ -47,8 +47,10 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
         };
 
         $scope.findSkill = function (id) {
-            return getObjByID(id, $scope.skills);
+            return $scope.exs.skills[id];
         };
+
+        $scope.exs = $rootScope.exs;
 
         $http.post('db/users', {ids: [$routeParams.user_id]}).success(function (data) {
             if (!data || !data.length) return;
@@ -112,9 +114,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                             $scope.tasks_created.push($scope.findTask($scope.user.tasks_created[i]));
                         }
                 });
-            });
-            $http.get('db/skills').success(function (skills) {
-                $scope.skills = skills;
             });
         });
 

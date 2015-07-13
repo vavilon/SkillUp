@@ -88,8 +88,8 @@
                         <md-list>
                             <ng-switch on="tabSelected">
                                 <div ng-switch-when="0">
-                                    <tasks-list tasks-obj="tasks_done" skills-obj="skills" show-like="!canEdit"
-                                                      show-expand="false" show-difficulty="false" solvable="false" show-receive="!canEdit">
+                                    <tasks-list tasks-obj="tasks_done" show-like="!canEdit" show-expand="false"
+                                                show-difficulty="false" solvable="false" show-receive="!canEdit">
                                     </tasks-list>
                                     <div ng-if="!user.tasks_done" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
@@ -97,24 +97,24 @@
                                     </div>
                                 </div>
                                 <div ng-switch-when="1">
-                                    <tasks-list tasks-obj="tasks_checked" skills-obj="skills"
-                                                      show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
+                                    <tasks-list tasks-obj="tasks_checked" show-expand="false" show-difficulty="false"
+                                                solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_checked" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не проверил ни одного решения</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="2">
-                                    <tasks-list tasks-obj="tasks_approved" skills-obj="skills"
-                                                      show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
+                                    <tasks-list tasks-obj="tasks_approved" show-expand="false" show-difficulty="false"
+                                                solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_approved" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не подтвердил ни одного задания</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="3">
-                                    <tasks-list tasks-obj="tasks_created" skills-obj="skills"
-                                                      show-expand="false" show-difficulty="false" solvable="false"></tasks-list>
+                                    <tasks-list tasks-obj="tasks_created" show-expand="false" show-difficulty="false"
+                                                solvable="false"></tasks-list>
                                     <div ng-if="!user.tasks_created" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не создал ни одного задания</h3>

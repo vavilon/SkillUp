@@ -5,7 +5,7 @@ app.directive('tasksList', function() {
         templateUrl: '/front/templates/tasks-list.html',
         scope: {
             tasksObj: '=',
-            skillsObj: '=',
+            skillsObj: '=?',
             showDifficulty: '=?',
             showExpand: '=?',
             solvable: '=?',
@@ -21,7 +21,7 @@ app.directive('tasksList', function() {
             approve: '=?',
             approveCallback: '=?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID) {
+        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID, $rootScope) {
 
             $scope.showToast = function (msg, parent) {
                 parent = parent || '#toastError';
@@ -35,7 +35,7 @@ app.directive('tasksList', function() {
             };
 
             $scope.apprData = {title: true, skills: true, desc: true, links: true};
-
+            $scope.skillsObj = $scope.skillsObj || $rootScope.exs;
             if ($scope.showDifficulty === undefined) $scope.showDifficulty = true;
             if ($scope.showExpand === undefined) $scope.showExpand = true;
             if ($scope.solvable === undefined) $scope.solvable = true;
@@ -105,10 +105,6 @@ app.directive('tasksList', function() {
                 task.expanded = !task.expanded;
                 $scope.lastExpandedTask = task;
             };
-
-            $scope.findSkill = function (id) {
-                return getObjByID(id, $scope.skillsObj);
-            };
         }
     }
 });
@@ -120,7 +116,7 @@ app.directive('solutionsList', function() {
         templateUrl: '/front/templates/solutions-list.html',
         scope: {
             tasksObj: '=',
-            skillsObj: '=',
+            skillsObj: '=?',
             usersObj: '=',
             solutionsObj: '=',
             showExpand: '=?',
@@ -133,7 +129,7 @@ app.directive('solutionsList', function() {
             showCheck: '=?',
             check: '=?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID) {
+        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID, $rootScope) {
 
             $scope.showToast = function (msg, parent, position, delay) {
                 parent = parent || '#toastError';
@@ -148,6 +144,7 @@ app.directive('solutionsList', function() {
                 );
             };
 
+            $scope.skillsObj = $scope.skillsObj || $rootScope.exs;
             if ($scope.showExpand === undefined) $scope.showExpand = true;
             if ($scope.showExp === undefined) $scope.showExp = true;
             if ($scope.showSkills === undefined) $scope.showSkills = true;
@@ -231,9 +228,6 @@ app.directive('solutionsList', function() {
 
             $scope.findUser = function (id) {
                 return getObjByID(id, $scope.usersObj);
-            };
-            $scope.findSkill = function (id) {
-                return getObjByID(id, $scope.skillsObj);
             };
             $scope.findTask = function (id) {
                 return getObjByID(id, $scope.tasksObj);
