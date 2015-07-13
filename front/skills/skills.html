@@ -41,46 +41,49 @@
         </div>
     </div>
 
-    <div layout="column" flex class="md-whiteframe-z2" id="w-frame-z2_1">
-        <div class="animate-if-skill" ng-if="skillTitle.length === 0" flex>
-            <div class="exs-root" layout="row">
-                <md-button class="md-mini md-primary expand-skill"
-                           ng-click="expand(exs.root)" aria-label="expand-toogle">
-                    <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': exs.root.expanded}"></i>
-                </md-button>
-                <md-button class="md-raised skill-button" id="button-exs-root">
-                    {{exs.root.title}}
-                </md-button>
-            </div>
+    <md-content flex style="min-height: calc(100vh - 65px); max-height: calc(100vh - 65px);">
+        <div layout="column" flex class="md-whiteframe-z2" id="w-frame-z2_1"
+             style="min-height: calc(100vh - 65px);">
+            <div class="animate-if-skill" ng-if="skillTitle.length === 0" flex>
+                <div class="exs-root" layout="row">
+                    <md-button class="md-mini md-primary expand-skill"
+                               ng-click="expand(exs.root)" aria-label="expand-toogle">
+                        <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': exs.root.expanded}"></i>
+                    </md-button>
+                    <md-button class="md-raised skill-button" id="button-exs-root">
+                        {{exs.root.title}}
+                    </md-button>
+                </div>
 
-            <ul class="animate-if-skill" ng-if="exs.root.expanded" style="margin-left: 19px;">
-                <li ng-repeat="skill in exs.root.children" ng-include="'skills-tree'">
-                </li>
-            </ul>
+                <ul class="animate-if-skill" ng-if="exs.root.expanded" style="margin-left: 19px;">
+                    <li ng-repeat="skill in exs.root.children" ng-include="'skills-tree'">
+                    </li>
+                </ul>
 
-        </div>
-        <div class="animate-if-skill" ng-if="skillTitle.length !== 0" flex>
-            <div class="search">
-                <h4>Результаты поиска:</h4>
             </div>
-            <div ng-repeat="skill in filteredSkills">
-                <div class="button-skill">
-                    <div layout="row">
-                        <md-button class="md-mini md-primary expand-skill" ng-if="skill.children.length > 0"
-                                   ng-click="expand(skill)" aria-label="expand-toogle">
-                            <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
-                        </md-button>
-                        <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
-                        <md-button class="md-raised skill-button">
-                            {{skill.title}}
-                        </md-button>
+            <div class="animate-if-skill" ng-if="skillTitle.length !== 0" flex>
+                <div class="search">
+                    <h4>Результаты поиска:</h4>
+                </div>
+                <div ng-repeat="skill in filteredSkills">
+                    <div class="button-skill">
+                        <div layout="row">
+                            <md-button class="md-mini md-primary expand-skill" ng-if="skill.children.length > 0"
+                                       ng-click="expand(skill)" aria-label="expand-toogle">
+                                <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
+                            </md-button>
+                            <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
+                            <md-button class="md-raised skill-button">
+                                {{skill.title}}
+                            </md-button>
+                        </div>
+                        <ul class="animate-if-skill" ng-if="skill.expanded">
+                            <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">
+                            </li>
+                        </ul>
                     </div>
-                    <ul class="animate-if-skill" ng-if="skill.expanded">
-                        <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
-    </div>
+    </md-content>
 </div>
