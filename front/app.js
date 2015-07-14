@@ -240,7 +240,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                 $scope.exs = $rootScope.exs;
                 $scope.skillsTitles = [];
 
-                for (var i in $scope.skillsObj) {
+                for (var i in $scope.exs.skills) {
                     $scope.chips.skillsTitles.push($scope.exs.skills[i].title);
                 }
 
@@ -252,7 +252,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
                 $scope.tasksObjAppr = [];
                 for (var i in tasks) {
-                    if (tasks[i].is_approved) continue;
+                    if (tasks[i].is_approved !== undefined) continue;
 
                     found = user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1;
                     if (!found && user.tasks_approved && user.tasks_approved.indexOf(tasks[i].id) !== -1) found = true;
@@ -378,9 +378,9 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             skills: []
         };
         for (var i in $scope.chips.selectedSkills) {
-            for (var j in $scope.skillsObj) {
-                if ($scope.chips.selectedSkills[i] === $scope.skillsObj[j].title) {
-                    obj.skills.push($scope.skillsObj[j].id);
+            for (var j in $scope.exs.skills) {
+                if ($scope.chips.selectedSkills[i] === $scope.exs.skills[j].title) {
+                    obj.skills.push(j);
                     break;
                 }
             }
