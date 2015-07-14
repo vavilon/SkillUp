@@ -145,7 +145,7 @@ app.factory('skillsProgressToIDs', function () {
 
 app.factory('loadFunc', function($http) {
     return function(options, callback) {
-        $http.post('db/' + options.tableName, options).success(callback);
+        $http.post('/db/' + options.tableName, options).success(callback);
     };
 });
 
@@ -159,6 +159,13 @@ app.factory('loadTasks', function(loadFunc) {
 app.factory('loadUsers', function(loadFunc) {
     return function(options, callback) {
         options.tableName = 'users';
+        loadFunc(options, callback);
+    };
+});
+
+app.factory('loadSolutions', function(loadFunc) {
+    return function(options, callback) {
+        options.tableName = 'solutions';
         loadFunc(options, callback);
     };
 });

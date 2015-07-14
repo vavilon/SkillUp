@@ -141,11 +141,7 @@ app.use('/db', function (req, res, next) {
             });
         }
         else if (req.path === '/solutions') {
-            options.tableName = 'solutions';
-            controllers.db.portion(knex, options, function(rows) {
-                if (!rows) return res.end();
-                res.end(JSON.stringify(rows));
-            });
+            controllers.db.solutions(knex, req, res, next);
         }
         else res.end();
     }

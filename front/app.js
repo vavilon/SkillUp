@@ -173,7 +173,8 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 }
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
-                                         $mdToast, $rootScope, extendedSkills, getIsLoggedIn, getObjByID, setLiked, setReceived) {
+                                         $mdToast, $rootScope, extendedSkills, getIsLoggedIn, getObjByID, setLiked,
+                                         setReceived, loadSolutions) {
     $scope.selectedTab = 0;
     $scope.reg = {email: '', password: ''};
 
@@ -234,13 +235,15 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     };
 
-    $http.get('db/tasks').success(function (tasks) {
-        $http.get('db/solutions').success(function (sols) {
-            $http.get('db/users').success(function (users) {
+    $http.get('/db/tasks').success(function (tasks) {
+        $http.post('/db/solutions').success(function (sols) {
+            $http.get('/db/users').success(function (users) {
+                console.log(sols);
+
                 $scope.exs = $rootScope.exs;
                 $scope.skillsTitles = [];
 
-                for (var i in $scope.exs.skills) {
+                if ($scope.exs) for (var i in $scope.exs.skills) {
                     $scope.chips.skillsTitles.push($scope.exs.skills[i].title);
                 }
 
@@ -289,7 +292,6 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                 for (i in sols) {
                     found = false;
                     if (sols[i].user_id === user.id) continue;
-                    if (sols[i].is_correct === false || sols[i].is_correct === true) continue;
                     for (var j in user.tasks_checked) {
                         if (sols[i].task_id === user.tasks_checked[j]) {
                             found = true;

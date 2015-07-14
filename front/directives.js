@@ -115,10 +115,8 @@ app.directive('solutionsList', function() {
         restrict: 'E',
         templateUrl: '/front/templates/solutions-list.html',
         scope: {
-            tasksObj: '=',
-            skillsObj: '=?',
-            usersObj: '=',
             solutionsObj: '=',
+            skillsObj: '=?',
             showExpand: '=?',
             showExp: '=?',
             expStyle: '@?',
@@ -225,17 +223,6 @@ app.directive('solutionsList', function() {
                 solution.expanded = !solution.expanded;
                 $scope.lastExpandedSolution = solution;
             };
-
-            $scope.findUser = function (id) {
-                return getObjByID(id, $scope.usersObj);
-            };
-            $scope.findTask = function (id) {
-                return getObjByID(id, $scope.tasksObj);
-            };
-            $scope.findSolution = function (id) {
-                return getObjByID(id, $scope.solutionsObj);
-            };
-            //console.log($scope.findTask($scope.solutionsObj[0].task_id).title);
         }
     }
 });
