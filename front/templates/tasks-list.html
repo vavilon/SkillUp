@@ -57,7 +57,7 @@
                         <form name="solutionForm" ng-if="solvable">
                             <md-input-container>
                                 <label>Ваше решение</label>
-                                <textarea ng-model="$parent.$parent.$parent.$parent.solution" name="solutionT" required></textarea>
+                                <textarea ng-model="$parent.$parent.$parent.solution" name="solutionT" required></textarea>
                                 <div ng-messages="solutionForm.solutionT.$error">
                                     <div ng-message="required">Обязательное поле</div>
                                 </div>
