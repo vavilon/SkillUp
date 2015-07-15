@@ -4,7 +4,7 @@
 
 <div style="position: relative;">
 
-    <scroll-loader events="'indexPageScrolled'" load-func="scrollWrap.loadFunc" offset="scrollWrap.offset"
+    <scroll-loader events="'indexPageScrolled'" load-func="scrollWrap.loadFunc" options="scrollWrap.options"
                    callback="scrollWrap.callback"></scroll-loader>
 
     <div layout="row">
@@ -69,7 +69,7 @@
                                         <md-button class="count-button" ng-style="s2" ng-mouseenter="s2 = {color: '#FFEB3B'}"
                                                    ng-mouseleave="s2 = {}" aria-label="CheckedSolutions">
                                             <div layout="row" layout-align="center center">
-                                                {{user.tasks_checked.length || 0}}
+                                                {{user.solutions_checked.length || 0}}
                                                 <i class="mdi mdi-clipboard-check mdi-24" ng-class="{'mdi-secondary': !s2.color}"></i>
                                             </div>
                                             <md-tooltip>

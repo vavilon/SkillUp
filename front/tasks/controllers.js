@@ -100,23 +100,24 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
             $scope.chips.authorsNames.push(users[item].name);
         }
         $scope.chips.authorsQuerySearch = FiltersFactory($scope.chips.authorsNames);
+    });
 
-        $http.get('db/tasks').success(function (tasks) {
-            var user = loggedUser();
+    var dbTasksOptions = {filters: {for_solving: true}};
+    $http.post('/db/tasks', dbTasksOptions).success(function (tasks) {
+        var user = loggedUser();
 
-            setLiked(tasks, user.tasks_liked, true);
-            setReceived(tasks, user.tasks_received, true);
+        setLiked(tasks, user.tasks_liked, true);
+        setReceived(tasks, user.tasks_received, true);
 
-            $scope.tasks = tasks;
+        $scope.tasks = tasks;
+        dbTasksOptions.offset = $scope.tasks.length;
+        $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback, options: dbTasksOptions};
 
-            $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback, offset: $scope.tasks.length};
-
-            for(var item in tasks) {
-                $scope.chips.tasksNames.push(tasks[item].title);
-            }
-            $scope.chips.tasksQuerySearch = FiltersFactory($scope.chips.tasksNames);
-            $scope.fTasks = tasks;
-        });
+        for(var item in tasks) {
+            $scope.chips.tasksNames.push(tasks[item].title);
+        }
+        $scope.chips.tasksQuerySearch = FiltersFactory($scope.chips.tasksNames);
+        $scope.fTasks = tasks;
     });
 
     $scope.$watchCollection('chips.selectedTasks', function(newVal) {

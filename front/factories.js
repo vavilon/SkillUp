@@ -170,14 +170,13 @@ app.factory('loadSolutions', function(loadFunc) {
     };
 });
 
-app.factory('loadReceivedTasks', function (loadTasks, loggedUser) {
-    return function(offset, callback) {
-        loadTasks({ids: loggedUser().tasks_received, offset: offset}, callback);
-    };
-});
-
-app.factory('loadRecommendedTasks', function (loadTasks, skillsProgressToIDs, loggedUser) {
-    return function(offset, callback) {
-        loadTasks({offset: offset, skills: skillsProgressToIDs(loggedUser().skills)}, callback);
+app.factory('completedSkills', function ($rootScope) {
+    return function (skillsProgress) {
+        var res = [];
+        for (var i in skillsProgress) {
+            if (skillsProgress[i].count >= $rootScope.exs.skills[skillsProgress[i].id].count_to_get)
+                res.push(skillsProgress[i].id);
+        }
+        return res;
     };
 });

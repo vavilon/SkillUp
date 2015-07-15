@@ -1,5 +1,10 @@
 
-<md-content>
+<md-content ng-if="solutionsObj.length">
+    <section ng-if="subheader">
+        <md-divider></md-divider>
+        <md-subheader class="md-primary">{{subheader}}</md-subheader>
+        <md-divider></md-divider>
+    </section>
     <md-list layout="column">
         <md-list-item class="item-animate"
                        ng-repeat="solution in solutionsObj | orderBy: ['-date_created']">

@@ -19,7 +19,8 @@ app.directive('tasksList', function() {
             showLike: '=?',
             showReceive: '=?',
             approve: '=?',
-            approveCallback: '=?'
+            approveCallback: '=?',
+            subheader: '@?'
         },
         controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID, $rootScope) {
 
@@ -125,7 +126,8 @@ app.directive('solutionsList', function() {
             callback: '=?',
             showLike: '=?',
             showCheck: '=?',
-            check: '=?'
+            check: '=?',
+            subheader: '@?'
         },
         controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID, $rootScope) {
 
@@ -327,7 +329,7 @@ app.directive('scrollLoader', function() {
         scope: {
             events: '=',
             loadFunc: '=',
-            offset: '=',
+            options: '=',
             setLiked: '=?',
             setReceived: '=?',
             callback: '=?'
@@ -337,9 +339,9 @@ app.directive('scrollLoader', function() {
             var endOfData = false;
             $scope.loadMoreData = function() {
                 if (!endOfData) {
-                    $scope.loadFunc({offset: $scope.offset}, function(data) {
+                    $scope.loadFunc($scope.options, function(data) {
                         if (data.length) {
-                            $scope.offset += data.length;
+                            $scope.options.offset += data.length;
                             if ($scope.setLiked) setLiked(data, loggedUser().tasks_liked, true);
                             if ($scope.setReceived) setReceived(data, loggedUser().tasks_received, true);
                             if ($scope.callback) $scope.callback(data);

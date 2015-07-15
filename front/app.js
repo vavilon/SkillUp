@@ -173,10 +173,29 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 }
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
-                                         $mdToast, $rootScope, extendedSkills, getIsLoggedIn, getObjByID, setLiked,
-                                         setReceived, loadSolutions) {
-    $scope.selectedTab = 0;
+                                         $mdToast, $rootScope, getIsLoggedIn, getObjByID, setLiked, completedSkills,
+                                         setReceived, skillsProgressToIDs) {
+    $scope.isLoggedIn = isLoggedIn;
+    $scope.registrationPath = "/registration/";
     $scope.reg = {email: '', password: ''};
+
+    $scope.register = function () {
+        $scope.registrationPath += 'nick/' + ($scope.reg.nick || '0');
+        $scope.registrationPath += '/email/' + ($scope.reg.email || '0');
+        $scope.registrationPath += '/password/' + ($scope.reg.password || '0');
+        $location.path($scope.registrationPath);
+    };
+
+    $scope.showToast = function (msg, parent) {
+        parent = parent || '#toastError';
+        $mdToast.show(
+            $mdToast.simple()
+                .content(msg)
+                .position('bottom left')
+                .hideDelay(3000)
+                .parent(angular.element(document.querySelector(parent)))
+        );
+    };
 
     //Следующий блок кода нужен для того, чтобы избежать бага с плейсхолдером пароля
     var count = 0;
@@ -187,6 +206,9 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             count++;
         }
     });
+
+    $scope.exs = $rootScope.exs;
+    if (!$scope.exs) return;
 
     $scope.chips = {skillsTitles: [], skillsTitlesFiltered: [], selectedSkills: []};
 
@@ -199,6 +221,12 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
         return arr;
     };
+
+    $scope.skillsTitles = [];
+
+    for (var i in $scope.exs.skills) {
+        $scope.chips.skillsTitles.push($scope.exs.skills[i].title);
+    }
 
     $scope.$watchCollection('chips.selectedSkills', function (newVal) {
         if (newVal.length === 0) {
@@ -235,108 +263,40 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     };
 
-    $http.get('/db/tasks').success(function (tasks) {
-        $http.post('/db/solutions').success(function (sols) {
-            $http.get('/db/users').success(function (users) {
-                console.log(sols);
+    var user = loggedUser();
 
-                $scope.exs = $rootScope.exs;
-                $scope.skillsTitles = [];
-
-                if ($scope.exs) for (var i in $scope.exs.skills) {
-                    $scope.chips.skillsTitles.push($scope.exs.skills[i].title);
-                }
-
-                $scope.tasksObj = [];
-                var user = loggedUser();
-                var found = false;
-
-                setLiked(tasks, user.tasks_liked, true);
-
-                $scope.tasksObjAppr = [];
-                for (var i in tasks) {
-                    if (tasks[i].is_approved !== undefined) continue;
-
-                    found = user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1;
-                    if (!found && user.tasks_approved && user.tasks_approved.indexOf(tasks[i].id) !== -1) found = true;
-
-                    if (!found) {
-                        $scope.tasksObjAppr.push(tasks[i]);
-                    }
-                }
-
-                for (var i in tasks) {
-                    if (!tasks[i].is_approved) continue;
-                    found = false;
-                    for (var j in user.tasks_done) {
-                        if (tasks[i].id === getObjByID(user.tasks_done[j], sols).task_id) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        if (user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1) found = true;
-                    }
-                    if (!found) {
-                        setReceived(tasks[i], user.tasks_received);
-
-                        $scope.tasksObj.push(tasks[i]);
-                    }
-                }
-
-                $scope.calculateDifficulty($scope.tasksObj, loggedUser());
-
-                $scope.tasksObjSolve = angular.copy(tasks);
-
-                $scope.solutionsObj = [];
-                for (i in sols) {
-                    found = false;
-                    if (sols[i].user_id === user.id) continue;
-                    for (var j in user.tasks_checked) {
-                        if (sols[i].task_id === user.tasks_checked[j]) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        setLiked(sols[i], user.solutions_liked);
-                        $scope.solutionsObj.push(sols[i]);
-                    }
-                }
-
-                $scope.usersObj = users;
-            });
-        });
+    $http.post('/db/tasks', {filters: {for_solving: true, received: true}}).success(function(data) {
+        $scope.tasksReceived = data;
+        $scope.calculateDifficulty(data, user);
+        for (var i in $scope.tasksReceived) $scope.tasksReceived[i].received = true;
+        setLiked($scope.tasksReceived, user.tasks_liked, true);
     });
 
-    $scope.temp = {}; //для обхода вложенности scope
+    $http.post('/db/tasks', {filters: {for_solving: true, received: false}, skills: skillsProgressToIDs(user.skills)})
+        .success(function(data) {
+            $scope.tasksRecommended = data;
+            $scope.calculateDifficulty(data, user);
+            setLiked($scope.tasksRecommended, user.tasks_liked, true);
+    });
+
+    $http.post('/db/tasks', {filters: {for_approving: true}, skills: completedSkills(user.skills)}).success(function(data) {
+        $scope.tasksForApproving = data;
+    });
+
+    $http.post('/db/solutions', {filters: {for_checking: true}, skills: completedSkills(user.skills)}).success(function (data) {
+        $scope.solutionsForChecking = data;
+        setLiked($scope.solutionsForChecking, user.solutions_liked, true);
+    });
+
+    $scope.temp = {}; //связывает ng-model элемента input директивы tasks-list и temp.solution
+
+    $scope.selectedTab = 0;
 
     $scope.next = function () {
         $scope.data.selectedIndex = Math.min($scope.data.selectedIndex + 1, $scope.tooltips.length - 1);
     };
     $scope.previous = function () {
         $scope.data.selectedIndex = Math.max($scope.data.selectedIndex - 1, 0);
-    };
-    $scope.isLoggedIn = isLoggedIn;
-
-    $scope.registrationPath = "/registration/";
-
-    $scope.register = function () {
-        $scope.registrationPath += 'nick/' + ($scope.reg.nick || '0');
-        $scope.registrationPath += '/email/' + ($scope.reg.email || '0');
-        $scope.registrationPath += '/password/' + ($scope.reg.password || '0');
-        $location.path($scope.registrationPath);
-    };
-
-    $scope.showToast = function (msg, parent) {
-        parent = parent || '#toastError';
-        $mdToast.show(
-            $mdToast.simple()
-                .content(msg)
-                .position('bottom left')
-                .hideDelay(3000)
-                .parent(angular.element(document.querySelector(parent)))
-        );
     };
 
     $scope.sendTask = {name: '', description: '', links: [], link: ''};

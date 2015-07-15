@@ -1,114 +1,131 @@
-
-<md-content>
-<md-list layout="column">
-    <md-list-item class="item-animate"
-                  ng-repeat="taskVal in tasksObj"> <!--  | orderBy: ['-difficulty', 'title'] -->
-        <div layout="column" flex>
-            <div layout="row" class="task-header">
-                <div>
-                    <div ng-if="showDifficulty">
-                        <span class="diff-label easy" ng-if="taskVal.difficulty >= 0.9">ЛЕГКО</span>
-                        <span class="diff-label medium" ng-if="taskVal.difficulty < 0.9 && taskVal.difficulty > 0.5">СРЕДНЕ</span>
-                        <span class="diff-label hard" ng-if="taskVal.difficulty < 0.5">СЛОЖНО</span>
+<md-content ng-if="tasksObj.length">
+    <section ng-if="subheader">
+        <md-divider></md-divider>
+        <md-subheader class="md-primary">{{subheader}}</md-subheader>
+        <md-divider></md-divider>
+    </section>
+    <md-list layout="column">
+        <md-list-item class="item-animate"
+                      ng-repeat="taskVal in tasksObj"> <!--  | orderBy: ['-difficulty', 'title'] -->
+            <div layout="column" flex>
+                <div layout="row" class="task-header">
+                    <div>
+                        <div ng-if="showDifficulty">
+                            <span class="diff-label easy" ng-if="taskVal.difficulty >= 0.9">ЛЕГКО</span>
+                            <span class="diff-label medium"
+                                  ng-if="taskVal.difficulty < 0.9 && taskVal.difficulty > 0.5">СРЕДНЕ</span>
+                            <span class="diff-label hard" ng-if="taskVal.difficulty < 0.5">СЛОЖНО</span>
+                        </div>
+                    </div>
+                    <div flex>
+                        <h3 class="task-title"><a href="tasks/{{taskVal.id}}">{{taskVal.title}}</a></h3>
+                    </div>
+                    <div flex="15">
+                        <p class="task-exp">exp:
+                            <span ng-if="expStyle === undefined">{{taskVal.exp || 0 | thousand}}</span>
+                            <span ng-if="expStyle === '+'"
+                                  style="color: #4CAF50;">+{{taskVal.exp || 0 | thousand}}</span>
+                            <span ng-if="expStyle === '-'"
+                                  style="color: #F44336;">-{{taskVal.exp || 0 | thousand}}</span>
+                        </p>
                     </div>
                 </div>
-                <div flex>
-                    <h3 class="task-title"><a href="tasks/{{taskVal.id}}">{{taskVal.title}}</a></h3>
-                </div>
-                <div flex="15">
-                    <p class="task-exp">exp:
-                        <span ng-if="expStyle === undefined">{{taskVal.exp || 0 | thousand}}</span>
-                        <span ng-if="expStyle === '+'" style="color: #4CAF50;">+{{taskVal.exp || 0 | thousand}}</span>
-                        <span ng-if="expStyle === '-'" style="color: #F44336;">-{{taskVal.exp || 0 | thousand}}</span>
-                    </p>
-                </div>
-            </div>
-            <div layout="row" class="task-body">
-                <div layout="row" flex="85">
-                    <div style="margin-right: 5px;">
-                        <span class="task-skills-word">Умения: </span>
+                <div layout="row" class="task-body">
+                    <div layout="row" flex="85">
+                        <div style="margin-right: 5px;">
+                            <span class="task-skills-word">Умения: </span>
+                        </div>
+                        <div layout="row" layout-wrap flex>
+                            <md-button class="md-raised md-primary skill-button"
+                                       aria-label="skillBtn"
+                                       ng-repeat="skillID in taskVal.skills">
+                                {{skillsObj.skills[skillID].title}}
+                            </md-button>
+                        </div>
                     </div>
-                    <div layout="row" layout-wrap flex>
-                        <md-button class="md-raised md-primary skill-button"
-                                   aria-label="skillBtn"
-                                   ng-repeat="skillID in taskVal.skills">
-                            {{skillsObj.skills[skillID].title}}
+                    <div layout="row" layout-align="start start" flex ng-if="showExpand">
+                        <md-button class="md-mini md-primary expand-button"
+                                   ng-click="expand(taskVal)" aria-label="expand-toogle">
+                            <i class="mdi mdi-chevron-down mdi-24 rotate-base"
+                               ng-class="{'rotate-btn': taskVal.expanded}"></i>
                         </md-button>
                     </div>
                 </div>
-                <div layout="row" layout-align="start start" flex ng-if="showExpand">
-                    <md-button class="md-mini md-primary expand-button"
-                               ng-click="expand(taskVal)" aria-label="expand-toogle">
-                        <i class="mdi mdi-chevron-down mdi-24 rotate-base" ng-class="{'rotate-btn': taskVal.expanded}"></i>
-                    </md-button>
-                </div>
-            </div>
-            <div class="animate-if" layout="column" ng-if="taskVal.expanded">
-                <md-card class="task-description-card">
-                    <md-card-content>
-                        <h2 class="md-title task-description-word">Условие</h2>
-                        <div class="task-description">
-                            {{taskVal.description}}
-                        </div>
-                        <div style="margin-top: 10px; color: rgba(0, 0, 0, 0.54);">Ссылки на учебные материалы:</div>
-                        <div ng-repeat="link in taskVal.links">
-                            <a class="learning-links" href="{{link}}">{{link}}</a>
-                        </div>
-                        <form name="solutionForm" ng-if="solvable">
-                            <md-input-container>
-                                <label>Ваше решение</label>
-                                <textarea ng-model="$parent.$parent.$parent.solution" name="solutionT" required></textarea>
-                                <div ng-messages="solutionForm.solutionT.$error">
-                                    <div ng-message="required">Обязательное поле</div>
-                                </div>
-                            </md-input-container>
-                            <md-button class="md-raised md-primary" style="float: right; " ng-click="send(taskVal.id)">Отправить</md-button>
-                        </form>
-                    </md-card-content>
-                </md-card>
-                <md-card ng-if="approvable" class="task-description-card">
-                    <md-card-content>
-                        <h2 class="md-title task-description-word">Подтверждение</h2>
-                        <md-checkbox ng-model="apprData.title" class="md-primary">
-                            Название:
+                <div class="animate-if" layout="column" ng-if="taskVal.expanded">
+                    <md-card class="task-description-card">
+                        <md-card-content>
+                            <h2 class="md-title task-description-word">Условие</h2>
+
+                            <div class="task-description">
+                                {{taskVal.description}}
+                            </div>
+                            <div style="margin-top: 10px; color: rgba(0, 0, 0, 0.54);">Ссылки на учебные материалы:
+                            </div>
+                            <div ng-repeat="link in taskVal.links">
+                                <a class="learning-links" href="{{link}}">{{link}}</a>
+                            </div>
+                            <form name="solutionForm" ng-if="solvable">
+                                <md-input-container>
+                                    <label>Ваше решение</label>
+                                    <textarea ng-model="$parent.$parent.$parent.solution" name="solutionT"
+                                              required></textarea>
+
+                                    <div ng-messages="solutionForm.solutionT.$error">
+                                        <div ng-message="required">Обязательное поле</div>
+                                    </div>
+                                </md-input-container>
+                                <md-button class="md-raised md-primary" style="float: right; "
+                                           ng-click="send(taskVal.id)">Отправить
+                                </md-button>
+                            </form>
+                        </md-card-content>
+                    </md-card>
+                    <md-card ng-if="approvable" class="task-description-card">
+                        <md-card-content>
+                            <h2 class="md-title task-description-word">Подтверждение</h2>
+                            <md-checkbox ng-model="apprData.title" class="md-primary">
+                                Название:
                             <span ng-class="{'checked-correct': apprData.title, 'checked-incorrect': !apprData.title}">
                                 {{apprData.title ? 'правильно' : 'неправильно'}}</span>
-                        </md-checkbox>
-                        <md-checkbox ng-model="apprData.skills" class="md-primary">
-                            Умения:
+                            </md-checkbox>
+                            <md-checkbox ng-model="apprData.skills" class="md-primary">
+                                Умения:
                             <span ng-class="{'checked-correct': apprData.skills, 'checked-incorrect': !apprData.skills}">
                                 {{apprData.skills ? 'правильно' : 'неправильно'}}</span>
-                        </md-checkbox>
-                        <md-checkbox ng-model="apprData.desc" class="md-primary">
-                            Условие:
+                            </md-checkbox>
+                            <md-checkbox ng-model="apprData.desc" class="md-primary">
+                                Условие:
                             <span ng-class="{'checked-correct': apprData.desc, 'checked-incorrect': !apprData.desc}">
                                 {{apprData.desc ? 'правильно' : 'неправильно'}}</span>
-                        </md-checkbox>
-                        <md-checkbox ng-model="apprData.links" class="md-primary">
-                            Ссылки на учебные материалы:
+                            </md-checkbox>
+                            <md-checkbox ng-model="apprData.links" class="md-primary">
+                                Ссылки на учебные материалы:
                             <span ng-class="{'checked-correct': apprData.links, 'checked-incorrect': !apprData.links}">
                                 {{apprData.links ? 'правильно' : 'неправильно'}}</span>
-                        </md-checkbox>
-                        <md-button class="md-raised md-primary" style="float: right; " ng-click="approve(taskVal.id)">Отправить</md-button>
-                    </md-card-content>
-                </md-card>
-            </div>
-            <div layout="row" class="task-footer" ng-class="{'task-padding': $last}">
-                <div flex="85">
-                    <span class="task-date">Дата создания: {{taskVal.date_created | date: 'dd.MM.yyyy'}}</span>
+                            </md-checkbox>
+                            <md-button class="md-raised md-primary" style="float: right; "
+                                       ng-click="approve(taskVal.id)">Отправить
+                            </md-button>
+                        </md-card-content>
+                    </md-card>
+                </div>
+                <div layout="row" class="task-footer" ng-class="{'task-padding': $last}">
+                    <div flex="85">
+                        <span class="task-date">Дата создания: {{taskVal.date_created | date: 'dd.MM.yyyy'}}</span>
                     <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">
                         {{taskVal.author_name}}</a></span>
-                </div>
-                <div layout="row" flex>
-                    <like-button ng-if="showLike" type="task" id="taskVal.id" likes="taskVal.likes" liked="taskVal.liked"
-                                 style="margin-right: 25px;"></like-button>
-                    <receive-button ng-if="showReceive" id="taskVal.id" count="taskVal.participants.length"
-                                    received="taskVal.received"></receive-button>
+                    </div>
+                    <div layout="row" flex>
+                        <like-button ng-if="showLike" type="task" id="taskVal.id" likes="taskVal.likes"
+                                     liked="taskVal.liked"
+                                     style="margin-right: 25px;"></like-button>
+                        <receive-button ng-if="showReceive" id="taskVal.id" count="taskVal.participants.length"
+                                        received="taskVal.received"></receive-button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <md-divider ng-if="!$last"></md-divider>
-    </md-list-item>
-    <!--<md-progress-linear ng-if="!tasksObj" md-mode="indeterminate"></md-progress-linear>-->
-</md-list>
+            <md-divider ng-if="!$last"></md-divider>
+        </md-list-item>
+    </md-list>
+
 </md-content>

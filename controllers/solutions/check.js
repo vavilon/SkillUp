@@ -36,7 +36,7 @@ module.exports = function(knex, updateArray) {
                         raw += " WHERE id = '" + req.body.solution_id + "';";
 
                         knex.raw(raw).then(function(ans) {
-                            knex.raw("UPDATE users SET tasks_checked = array_append(tasks_checked, '" + solutions[0].task_id + "')"
+                            knex.raw("UPDATE users SET solutions_checked = array_append(solutions_checked, '" + req.body.solution_id + "')"
                                 + ", exp = exp + " + tasks[0].exp  + " WHERE id = '" + req.user.id + "';").then(function() {
                                 res.end('ok');
                             }).catch(function (error) {

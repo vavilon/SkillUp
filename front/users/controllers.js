@@ -5,7 +5,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
     $http.get('db/users').success(function (data) {
         $scope.users = data;
 
-        $scope.scrollWrap = {loadFunc: loadUsers, callback: $scope.scrollCallback, offset: $scope.users.length};
+        $scope.scrollWrap = {loadFunc: loadUsers, callback: $scope.scrollCallback, options: {offset: $scope.users.length}};
 
         $scope.lastExpandedUser = $scope.users[0];
 
@@ -52,7 +52,8 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
         $scope.exs = $rootScope.exs;
 
-        $http.post('db/users', {ids: [$routeParams.user_id]}).success(function (data) {
+        var dbUsersOptions = {ids: [$routeParams.user_id]};
+        $http.post('/db/users', dbUsersOptions).success(function (data) {
             if (!data || !data.length) return;
             $scope.user = data[0];
             $scope.user.skills = parseSkills($scope.user.skills);
@@ -86,11 +87,12 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
                     $scope.tasks = tasks;
 
+                    dbUsersOptions.offset = $scope.tasks.length;
                     $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback,
-                        offset: $scope.tasks.length, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
+                        options: dbUsersOptions, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
 
                     $scope.tasks_done = [];
-                    $scope.tasks_checked = [];
+                    $scope.solutions_checked = [];
                     $scope.tasks_approved = [];
                     $scope.tasks_created = [];
 
@@ -99,9 +101,9 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                             $scope.tasks_done.push($scope.findTask(getObjByID($scope.user.tasks_done[i],$scope.solutions).task_id));
                         }
 
-                    if ($scope.user.tasks_checked)
-                        for (i = 0; i < $scope.user.tasks_checked.length; i++) {
-                            $scope.tasks_checked.push($scope.findTask($scope.user.tasks_checked[i]));
+                    if ($scope.user.solutions_checked)
+                        for (i = 0; i < $scope.user.solutions_checked.length; i++) {
+                            $scope.solutions_checked.push($scope.findTask($scope.user.solutions_checked[i]));
                         }
 
                     if ($scope.user.tasks_approved)

@@ -3,7 +3,7 @@
 <div layout="row" style="padding-top: 30px; padding-bottom: 30px;">
 
     <scroll-loader events="['tasksDoneScrolled', 'tasksCheckedScrolled', 'tasksApprovedScrolled', 'tasksCreatedScrolled']"
-                   load-func="scrollWrap.loadFunc" offset="scrollWrap.offset"
+                   load-func="scrollWrap.loadFunc" options="scrollWrap.options"
                    set-liked="true" set-received="true" callback="scrollWrap.callback"></scroll-loader>
 
     <div flex="15"></div>
@@ -76,7 +76,7 @@
                 <div ng-switch-when="0" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);">
                     <md-tabs md-selected="tabSelected" ng-click="setScrollOptions(tabSelected)">
                         <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length || 0}}</span></md-tab>
-                        <md-tab>Проверено: <span style="font-weight: bold;">{{user.tasks_checked.length || 0}}</span>
+                        <md-tab>Проверено: <span style="font-weight: bold;">{{user.solutions_checked.length || 0}}</span>
                         </md-tab>
                         <md-tab>Подтверждено: <span
                                 style="font-weight: bold;">{{user.tasks_approved.length || 0}}</span></md-tab>
@@ -97,9 +97,9 @@
                                     </div>
                                 </div>
                                 <div ng-switch-when="1">
-                                    <tasks-list tasks-obj="tasks_checked" show-expand="false" show-difficulty="false"
-                                                solvable="false"></tasks-list>
-                                    <div ng-if="!user.tasks_checked" class="md-tile-content"
+                                    <!-- ИСПРАВИТЬ!!! -->
+                                    <solutions-list solutions-obj="solutions_checked" show-expand="false"></solutions-list>
+                                    <div ng-if="!user.solutions_checked" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не проверил ни одного решения</h3>
                                     </div>
