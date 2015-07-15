@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="/front/tasks/styles.css">
 
+
 <div layout="row" flex style="min-height: calc(100vh - 64px);">
+
+    <scroll-loader events="'allTasksScrolled'" load-func="scrollWrap.loadFunc" options="scrollWrap.options"
+                   set-liked="true" set-received="true" callback="scrollWrap.callback"></scroll-loader>
+
     <div class="md-whiteframe-z2" flex="20" style="padding: 16px; z-index: 1; background-color: #FAFAFA;">
         <md-chips ng-model="chips.selectedTasks" md-autocomplete-snap md-require-match>
             <md-autocomplete
@@ -62,6 +67,9 @@
             </div>
         </div>
         <md-divider></md-divider>
-        <tasks-list skills-obj="skills" tasks-obj="getfTasks()" users-obj="users" solvable="false"></tasks-list>
+        <md-content flex on-scroll-bottom="{event: 'allTasksScrolled', percent: 95}"
+                    style="min-height: calc(100vh - 129px); max-height: calc(100vh - 129px);">
+            <tasks-list tasks-obj="getfTasks()" solvable="false" style="min-height: calc(100vh - 129px);"></tasks-list>
+        </md-content>
     </div>
 </div>

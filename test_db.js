@@ -6,20 +6,28 @@ var config = require(__dirname + '/config');
 var knex = require('knex')(config.get('knex'));
 //var bookshelf = require('bookshelf')(knex);
 //var temp;
-
+var uuid = require('uuid');
 /*knex('approvements').returning('id').insert({task_id: 'cf133be1-3e14-4678-acce-821684098d79'})
     .then(function(id) {
         console.log(id);
         return;
     });*/
 
-knex('approvements').where('task_id', '=', 'cf426df8-6ca4-41d2-bf91-37984d1a5844').then(function(rows) {
-    console.log(rows);
+/*    var q = knex.select("tasks.*").from('tasks');
+    q.join('users', 'tasks.author', '=', 'users.id').select('users.name as author_name');
+    q.limit(10).offset(0);
 
-}).catch(function (error) {
-    console.log(error);
-    res.end();
-});
+    q.then(function(rows) {
+        console.log(rows);
+
+    }).catch(function (error) {
+        console.log(error);
+    });*/
+
+knex.raw("UPDATE solutions SET is_correct = true WHERE id = '248ab5b8-52a7-4a6a-8f25-0927cab2dec4' RETURNING likes, checked_correct, checked_incorrect;")
+    .then(function(ans) {
+        console.log(ans.rows);
+    });
 
 /*
 var User = bookshelf.Model.extend({

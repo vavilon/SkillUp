@@ -29,8 +29,11 @@
                          ng-switch-when="0"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <tasks-list tasks-obj="tasksObj" skills-obj="skillsObj" users-obj="usersObj" solution="temp.solution"></tasks-list>
-                        <div ng-if="!tasksObj.length" flex layout="column" layout-align="center center" class="md-tile-content">
+                        <tasks-list tasks-obj="tasksReceived" solution="temp.solution" exp-style="-"
+                                    subheader="Полученные задания"></tasks-list>
+                        <tasks-list tasks-obj="tasksRecommended" solution="temp.solution" exp-style="-"
+                                    subheader="Рекомендованные задания"></tasks-list>
+                        <div ng-if="!tasksReceived.length && !tasksRecommended.length" flex layout="column" layout-align="center center" class="md-tile-content">
                             <h3 class="list-empty">Нет заданий для решения</h3>
                         </div>
                     </div>
@@ -39,8 +42,8 @@
                          ng-switch-when="1"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <solutions-list tasks-obj="tasksObjSolve" skills-obj="skillsObj" users-obj="usersObj" solutions-obj="solutionsObj"></solutions-list>
-                        <div ng-if="!solutionsObj.length" flex layout="column" layout-align="center center" class="md-tile-content">
+                        <solutions-list solutions-obj="solutionsForChecking" exp-style="+"></solutions-list>
+                        <div ng-if="!solutionsForChecking.length" flex layout="column" layout-align="center center" class="md-tile-content">
                             <h3 class="list-empty">Нет решений для проверки</h3>
                         </div>
                     </div>
@@ -49,9 +52,9 @@
                          ng-switch-when="2"
                          md-swipe-left="next()"
                          md-swipe-right="previous()">
-                        <tasks-list tasks-obj="tasksObjAppr" skills-obj="skillsObj" users-obj="usersObj" solution="temp.solution"
-                                    show-difficulty="false" show-receive="false" solvable="false" approvable="true"></tasks-list>
-                        <div ng-if="!tasksObjAppr.length" flex layout="column" layout-align="center center" class="md-tile-content">
+                        <tasks-list tasks-obj="tasksForApproving" show-difficulty="false" show-receive="false"
+                                    solvable="false" approvable="true" exp-style="+"></tasks-list>
+                        <div ng-if="!tasksForApproving.length" flex layout="column" layout-align="center center" class="md-tile-content">
                             <h3 class="list-empty">Нет заданий для подтверждения</h3>
                         </div>
                     </div>

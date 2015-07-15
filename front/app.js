@@ -8,14 +8,14 @@ var app = angular.module('skills', [
     'ngImgCrop'
 ]);
 
-    app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
+app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
 
-        $httpProvider.defaults.useXDomain = true;
-        $httpProvider.defaults.withCredentials = true;
-        delete $httpProvider.defaults.headers.common["X-Requested-With"];
-        $httpProvider.defaults.headers.common["Accept"] = "application/json";
-        $httpProvider.defaults.headers.common["Content-Type"] = "application/json";
+    $httpProvider.defaults.useXDomain = true;
+    $httpProvider.defaults.withCredentials = true;
+    delete $httpProvider.defaults.headers.common["X-Requested-With"];
+    $httpProvider.defaults.headers.common["Accept"] = "application/json";
+    $httpProvider.defaults.headers.common["Content-Type"] = "application/json";
 
     $routeProvider
         .when('/main', {templateUrl: '/front/main.html', controller: 'mainPageCtrl'})
@@ -36,170 +36,35 @@ var app = angular.module('skills', [
         .when('/restore', {templateUrl: '/front/users/restore.html', controller: 'restoreCtrl'})
         .otherwise({redirectTo: '/main'});
 
-/*    $mdThemingProvider.theme('default')
-        .primaryPalette('indigo', {
-            'default': '500',
-            'hue-1': '300',
-            'hue-2': '800',
-            'hue-3': 'A100'
-        })
-        .accentPalette('pink', {
-            'default': '400',
-            'hue-1': '300',
-            'hue-2': '800',
-            'hue-3': 'A100'
-        })
-        .warnPalette('red', {
-            'default': '500',
-            'hue-1': '300',
-            'hue-2': '800',
-            'hue-3': 'A100'
-        });*/
+    /*    $mdThemingProvider.theme('default')
+     .primaryPalette('indigo', {
+     'default': '500',
+     'hue-1': '300',
+     'hue-2': '800',
+     'hue-3': 'A100'
+     })
+     .accentPalette('pink', {
+     'default': '400',
+     'hue-1': '300',
+     'hue-2': '800',
+     'hue-3': 'A100'
+     })
+     .warnPalette('red', {
+     'default': '500',
+     'hue-1': '300',
+     'hue-2': '800',
+     'hue-3': 'A100'
+     });*/
 
     hljsServiceProvider.setOptions({
         tabReplace: '    '
     });
 });
 
-app.factory('getObjByID', function() {
-    return function(id, collection) {
-        for (var elem in collection)
-            if (collection[elem].id === id) return collection[elem];
-    };
-});
-
-//Вызывается в run, а также при регистрации, входе и выходе
-app.factory('getIsLoggedIn', function($rootScope, $http, parseSkills) {
-    return function(callback) {
-        $http.get('/is_logged_in').success(function (data) {
-            $rootScope.loggedUser = data;
-            if (data) $rootScope.loggedUser.skills = parseSkills($rootScope.loggedUser.skills);
-            callback && callback(data);
-        });
-    };
-});
-
-//Вызывается в ng-show или ng-if, чтобы определить, что показывать в зависимости от того, вошел юзер или не вошел
-app.factory('isLoggedIn', function($rootScope){
-    return function() {
-        return $rootScope.loggedUser ? true : false;
-    };
-});
-
-app.factory('loggedUser', function($rootScope) {
-    return function() {
-        return $rootScope.loggedUser;
-    };
-});
-
-app.factory('isImage', function($q) {
-    return  function(src) {
-        var deferred = $q.defer();
-        var image = new Image();
-        image.onerror = function() {
-            deferred.resolve(false);
-        };
-        image.onload = function() {
-            deferred.resolve(true);
-        };
-        image.src = src;
-        return deferred.promise;
-    };
-});
-
-app.factory('educationStr', function() {
-    return function(education) {
-        var educationStr = [], s = '', buff = {};
-        for (var i in education) {
-            buff = education[i];
-            s = buff.school.name;
-            if (buff.year && buff.year.name) s += ' (' + buff.year.name + ')';
-            if (buff.concentration && buff.concentration[0] && buff.concentration[0].name) {
-                s += ', ' + buff.concentration[0].name;
-            }
-            educationStr.push(s);
-        }
-        return educationStr.reverse();
-    };
-});
-
-app.factory('workStr', function($filter) {
-    return function(work) {
-        var workStr = [], s = '', buff = {};
-        for (var i in work) {
-            buff = work[i];
-            s = buff.employer.name;
-            if (buff.start_date || buff.end_date) {
-                s += ' (';
-                if (buff.start_date) s += 'с ' + $filter('date')(buff.start_date, 'MMMM yyyy');
-                if (buff.start_date && buff.end_date) s += ' ';
-                if (buff.end_date) s += 'по ' + $filter('date')(buff.end_date, 'MMMM yyyy');
-                s += ')'
-            }
-            if (buff.position && buff.position.name) s += ', ' + buff.position.name;
-            workStr.push(s);
-        }
-        return workStr.reverse();
-    };
-});
-
-app.factory('parseSkills', function() {
-    return function(skills) {
-        if (!skills) return;
-        skills = skills.replace(/{/g, '[');
-        skills = skills.replace(/}/g, ']');
-        skills = skills.replace(/"\(/g, '{"id": "');
-        skills = skills.replace(/\)"/g, '}');
-        skills = skills.replace(/},{/g, '} , {');
-        skills = skills.replace(/(\S),/g, '$1", "count": ');
-        return JSON.parse(skills);
-    };
-});
-
-app.factory('setPropertyComparingArrays', function() {
-    return function(compPropName, setPropName, setValue, setArray, compArray) {
-        if (!angular.isObject(setArray) || !angular.isObject(compArray)) return;
-        for (var i in setArray) {
-            for (var j in compArray) {
-                if (setArray[i][compPropName] === compArray[j]) {
-                    setArray[i][setPropName] = setValue;
-                    break;
-                }
-            }
-        }
-    };
-});
-
-app.factory('setPropertyComparingObjArr', function() {
-    return function(compPropName, setPropName, setValue, setObj, compArray) {
-        if (!angular.isObject(setObj) || !angular.isObject(compArray)) return;
-        for (var j in compArray) {
-            if (setObj[compPropName] === compArray[j]) {
-                setObj[setPropName] = setValue;
-                break;
-            }
-        }
-    };
-});
-
-app.factory('setLiked', function(setPropertyComparingArrays, setPropertyComparingObjArr) {
-    return function(setArray, compArray, multiple) {
-        if (multiple) setPropertyComparingArrays('id', 'liked', true, setArray, compArray);
-        else setPropertyComparingObjArr('id', 'liked', true, setArray, compArray);
-    };
-});
-
-app.factory('setReceived', function(setPropertyComparingArrays, setPropertyComparingObjArr) {
-    return function(setArray, compArray, multiple) {
-        if (multiple) setPropertyComparingArrays('id', 'received', true, setArray, compArray);
-        else setPropertyComparingObjArr('id', 'received', true, setArray, compArray);
-    };
-});
-
-app.run(function($rootScope, $http, getIsLoggedIn, extendedSkills) {
+app.run(function ($rootScope, $http, getIsLoggedIn, extendedSkills) {
     getIsLoggedIn();
     $rootScope.navbarSelectedIndex = 0;
-    $rootScope.$on('$locationChangeSuccess', function(obj, newVal, oldVal) {
+    $rootScope.$on('$locationChangeSuccess', function (obj, newVal, oldVal) {
         if ((new RegExp('/main')).test(newVal)) $rootScope.navbarSelectedIndex = 0;
         else if ((new RegExp('/skills')).test(newVal)) $rootScope.navbarSelectedIndex = 1;
         else if ((new RegExp('/tasks')).test(newVal)) $rootScope.navbarSelectedIndex = 2;
@@ -207,22 +72,22 @@ app.run(function($rootScope, $http, getIsLoggedIn, extendedSkills) {
         else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
     });
 
-    $http.get('db/skills').success(function(data){
+    $http.get('db/skills').success(function (data) {
         if (data) {
             $rootScope.exs = new extendedSkills(data);
         }
     });
 
-/*    FB.init({
-        appId      : '490483854451281',
-        status     : true,
-        xfbml      : true,
-        version    : 'v2.3'
-    });*/
+    /*    FB.init({
+     appId      : '490483854451281',
+     status     : true,
+     xfbml      : true,
+     version    : 'v2.3'
+     });*/
 
 });
 
-app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout,
+app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout, extendedSkills,
                                        isLoggedIn, getIsLoggedIn, $mdDialog, $mdToast, loggedUser) {
     $scope.loginErr = {loginerr: false};
 
@@ -234,30 +99,38 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 
     $scope.loggedUser = loggedUser;
 
-    $rootScope.$watch('loginData', function(newVal) {
+    $rootScope.$watch('loginData', function (newVal) {
         if (newVal) $scope.login(newVal.email, newVal.password);
     });
 
-    $scope.login = function(email, password) {
-        $http.post('/login', { email: email, password: password })
+    $scope.login = function (email, password) {
+        $http.post('/login', {email: email, password: password})
             .success(function (data) {
                 if (!data) {
                     $rootScope.loginErr = {loginerr: true};
-                    $timeout(function() {
+                    $timeout(function () {
                         $rootScope.loginErr = {loginerr: false};
                     }, 3000);
                     return;
                 }
-                getIsLoggedIn(function(user){
+                getIsLoggedIn(function (user) {
                     if (user) {
-                        $mdDialog.hide();
-                        $location.path(data);
+                        $http.get('db/skills').success(function (skills) {
+                            if (skills) {
+                                $rootScope.exs = new extendedSkills(skills);
+                                $mdDialog.hide();
+                                $location.path('/main'); //фикс, если логинишься со своей страницы, а не с главной
+                                $timeout(function () {
+                                    $location.path(data);
+                                }, 1);
+                            }
+                        });
                     }
                 });
             });
     };
 
-    $scope.showLoginDialog = function(ev) {
+    $scope.showLoginDialog = function (ev) {
         $mdDialog.show({
             controller: LoginDialogController,
             templateUrl: '/front/users/login.html',
@@ -265,9 +138,9 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
         });
     };
 
-    $scope.logout = function() {
+    $scope.logout = function () {
         $http.get('/logout').success(function (data) {
-            getIsLoggedIn(function(){
+            getIsLoggedIn(function () {
                 $location.path(data);
             });
         });
@@ -278,17 +151,17 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 function LoginDialogController($scope, $mdDialog, $rootScope) {
     $scope.log = {};
 
-    $scope.hide = function() {
+    $scope.hide = function () {
         $scope.log.email = 'loh';
         $scope.log.password = 'loh';
         $mdDialog.hide();
     };
-    $scope.cancel = function() {
+    $scope.cancel = function () {
         $scope.log.email = 'loh';
         $scope.log.password = 'loh';
         $mdDialog.hide();
     };
-    $scope.answer = function() {
+    $scope.answer = function () {
         if (!$scope.log.email || !$scope.log.password) return;
         $rootScope.loginData = {email: $scope.log.email, password: $scope.log.password};
     };
@@ -300,13 +173,33 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 }
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
-                                         $mdToast, $rootScope, extendedSkills, getIsLoggedIn, getObjByID, setLiked, setReceived) {
-    $scope.selectedTab = 0;
+                                         $mdToast, $rootScope, getIsLoggedIn, getObjByID, setLiked, completedSkills,
+                                         setReceived, skillsProgressToIDs) {
+    $scope.isLoggedIn = isLoggedIn;
+    $scope.registrationPath = "/registration/";
     $scope.reg = {email: '', password: ''};
+
+    $scope.register = function () {
+        $scope.registrationPath += 'nick/' + ($scope.reg.nick || '0');
+        $scope.registrationPath += '/email/' + ($scope.reg.email || '0');
+        $scope.registrationPath += '/password/' + ($scope.reg.password || '0');
+        $location.path($scope.registrationPath);
+    };
+
+    $scope.showToast = function (msg, parent) {
+        parent = parent || '#toastError';
+        $mdToast.show(
+            $mdToast.simple()
+                .content(msg)
+                .position('bottom left')
+                .hideDelay(3000)
+                .parent(angular.element(document.querySelector(parent)))
+        );
+    };
 
     //Следующий блок кода нужен для того, чтобы избежать бага с плейсхолдером пароля
     var count = 0;
-    $scope.$watchCollection('reg', function(newVal, oldVal) {
+    $scope.$watchCollection('reg', function (newVal, oldVal) {
         if (count < 2) {
             $scope.reg.email = '';
             $scope.reg.password = '';
@@ -314,9 +207,12 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     });
 
+    $scope.exs = $rootScope.exs;
+    if (!$scope.exs) return;
+
     $scope.chips = {skillsTitles: [], skillsTitlesFiltered: [], selectedSkills: []};
 
-    $scope.chips.filteredSkills = function() {
+    $scope.chips.filteredSkills = function () {
         var str = angular.lowercase($scope.chips.searchTextSkills);
         var arr = [];
         for (var i in $scope.chips.skillsTitlesFiltered) {
@@ -325,6 +221,12 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
         return arr;
     };
+
+    $scope.skillsTitles = [];
+
+    for (var i in $scope.exs.skills) {
+        $scope.chips.skillsTitles.push($scope.exs.skills[i].title);
+    }
 
     $scope.$watchCollection('chips.selectedSkills', function (newVal) {
         if (newVal.length === 0) {
@@ -361,82 +263,34 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     };
 
-    $http.get('db/tasks').success(function (tasks) {
-        $http.get('db/solutions').success(function (sols) {
-            $http.get('db/skills').success(function (skills) {
-                $http.get('db/users').success(function (users) {
-                    $scope.skillsObj = skills;
-                    $scope.skillsTitles = [];
-                    for (var i in $scope.skillsObj) {
-                        $scope.chips.skillsTitles.push($scope.skillsObj[i].title);
-                    }
-                    $scope.exs = $rootScope.exs || (new extendedSkills($scope.skillsObj));
+    var user = loggedUser();
 
-                    $scope.tasksObj = [];
-                    var user = loggedUser();
-                    var found = false;
-
-                    setLiked(tasks, user.tasks_liked, true);
-
-                    $scope.tasksObjAppr = [];
-                    for (var i in tasks) {
-                        if (tasks[i].is_approved) continue;
-
-                        found = user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1;
-                        if (!found && user.tasks_approved && user.tasks_approved.indexOf(tasks[i].id) !== -1) found = true;
-
-                        if (!found) {
-                            $scope.tasksObjAppr.push(tasks[i]);
-                        }
-                    }
-
-                    for (var i in tasks) {
-                        if (!tasks[i].is_approved) continue;
-                        found = false;
-                        for (var j in user.tasks_done) {
-                            if (tasks[i].id === getObjByID(user.tasks_done[j], sols).task_id) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            if (user.tasks_created && user.tasks_created.indexOf(tasks[i].id) !== -1) found = true;
-                        }
-                        if (!found) {
-                            setReceived(tasks[i], user.tasks_received);
-
-                            $scope.tasksObj.push(tasks[i]);
-                        }
-                    }
-
-                    $scope.calculateDifficulty($scope.tasksObj, loggedUser());
-
-                    $scope.tasksObjSolve = angular.copy(tasks);
-
-                    $scope.solutionsObj = [];
-                    for (i in sols) {
-                        found = false;
-                        if (sols[i].user_id === user.id) continue;
-                        if (sols[i].is_correct === false || sols[i].is_correct === true) continue;
-                        for (var j in user.tasks_checked) {
-                            if (sols[i].task_id === user.tasks_checked[j]) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            setLiked(sols[i], user.solutions_liked);
-                            $scope.solutionsObj.push(sols[i]);
-                        }
-                    }
-
-                    $scope.usersObj = users;
-                });
-            });
-        });
+    $http.post('/db/tasks', {filters: {for_solving: true, received: true}}).success(function(data) {
+        $scope.tasksReceived = data;
+        $scope.calculateDifficulty(data, user);
+        for (var i in $scope.tasksReceived) $scope.tasksReceived[i].received = true;
+        setLiked($scope.tasksReceived, user.tasks_liked, true);
     });
 
-    $scope.temp = {}; //для обхода вложенности scope
+    $http.post('/db/tasks', {filters: {for_solving: true, received: false}, skills: skillsProgressToIDs(user.skills)})
+        .success(function(data) {
+            $scope.tasksRecommended = data;
+            $scope.calculateDifficulty(data, user);
+            setLiked($scope.tasksRecommended, user.tasks_liked, true);
+    });
+
+    $http.post('/db/tasks', {filters: {for_approving: true}, skills: completedSkills(user.skills)}).success(function(data) {
+        $scope.tasksForApproving = data;
+    });
+
+    $http.post('/db/solutions', {filters: {for_checking: true}, skills: completedSkills(user.skills)}).success(function (data) {
+        $scope.solutionsForChecking = data;
+        setLiked($scope.solutionsForChecking, user.solutions_liked, true);
+    });
+
+    $scope.temp = {}; //связывает ng-model элемента input директивы tasks-list и temp.solution
+
+    $scope.selectedTab = 0;
 
     $scope.next = function () {
         $scope.data.selectedIndex = Math.min($scope.data.selectedIndex + 1, $scope.tooltips.length - 1);
@@ -444,31 +298,10 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
     $scope.previous = function () {
         $scope.data.selectedIndex = Math.max($scope.data.selectedIndex - 1, 0);
     };
-    $scope.isLoggedIn = isLoggedIn;
-
-    $scope.registrationPath = "/registration/";
-
-    $scope.register = function() {
-        $scope.registrationPath += 'nick/' + ($scope.reg.nick || '0');
-        $scope.registrationPath += '/email/' + ($scope.reg.email || '0');
-        $scope.registrationPath += '/password/' + ($scope.reg.password || '0');
-        $location.path($scope.registrationPath);
-    };
-
-    $scope.showToast = function (msg, parent) {
-        parent = parent || '#toastError';
-        $mdToast.show(
-            $mdToast.simple()
-                .content(msg)
-                .position('bottom left')
-                .hideDelay(3000)
-                .parent(angular.element(document.querySelector(parent)))
-        );
-    };
 
     $scope.sendTask = {name: '', description: '', links: [], link: ''};
 
-    $scope.addLink = function() {
+    $scope.addLink = function () {
         if (!$scope.sendTask.link) {
             $scope.showToast('Введите ссылку!');
             return;
@@ -481,11 +314,11 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         $scope.sendTask.link = '';
     };
 
-    $scope.removeLink = function(index) {
+    $scope.removeLink = function (index) {
         $scope.sendTask.links.splice(index, 1);
     };
 
-    $scope.createTask = function() {
+    $scope.createTask = function () {
         if ($scope.sendTask.name.length < 10) return;
         if ($scope.sendTask.description.length < 30) return;
         if ($scope.chips.selectedSkills.length === 0) {
@@ -502,17 +335,19 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                 return;
             }
         }
-        var obj = {title: $scope.sendTask.name, description: $scope.sendTask.description, links: $scope.sendTask.links,
-            skills: []};
+        var obj = {
+            title: $scope.sendTask.name, description: $scope.sendTask.description, links: $scope.sendTask.links,
+            skills: []
+        };
         for (var i in $scope.chips.selectedSkills) {
-            for (var j in $scope.skillsObj) {
-                if ($scope.chips.selectedSkills[i] === $scope.skillsObj[j].title) {
-                    obj.skills.push($scope.skillsObj[j].id);
+            for (var j in $scope.exs.skills) {
+                if ($scope.chips.selectedSkills[i] === $scope.exs.skills[j].title) {
+                    obj.skills.push(j);
                     break;
                 }
             }
         }
-        $http.post('/create_task', obj).success(function(data) {
+        $http.post('/create_task', obj).success(function (data) {
             if (!data) {
                 $scope.showToast('Ваших умений недостаточно, чтобы создать такое задание!');
                 return;
@@ -525,5 +360,5 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
             getIsLoggedIn();
         });
-    }
+    };
 });

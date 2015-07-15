@@ -1,17 +1,17 @@
 
-app.directive('tasksList', function(getObjByID) {
+app.directive('tasksList', function() {
     return {
         restrict: 'E',
         templateUrl: '/front/templates/tasks-list.html',
         scope: {
             tasksObj: '=',
-            skillsObj: '=',
-            usersObj: '=',
+            skillsObj: '=?',
             showDifficulty: '=?',
             showExpand: '=?',
             solvable: '=?',
             approvable: '=?',
             showExp: '=?',
+            expStyle: '@?',
             showSkills: '=?',
             send: '=?',
             callback: '=?',
@@ -19,9 +19,10 @@ app.directive('tasksList', function(getObjByID) {
             showLike: '=?',
             showReceive: '=?',
             approve: '=?',
-            approveCallback: '=?'
+            approveCallback: '=?',
+            subheader: '@?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser) {
+        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID, $rootScope) {
 
             $scope.showToast = function (msg, parent) {
                 parent = parent || '#toastError';
@@ -35,7 +36,7 @@ app.directive('tasksList', function(getObjByID) {
             };
 
             $scope.apprData = {title: true, skills: true, desc: true, links: true};
-
+            $scope.skillsObj = $scope.skillsObj || $rootScope.exs;
             if ($scope.showDifficulty === undefined) $scope.showDifficulty = true;
             if ($scope.showExpand === undefined) $scope.showExpand = true;
             if ($scope.solvable === undefined) $scope.solvable = true;
@@ -105,40 +106,30 @@ app.directive('tasksList', function(getObjByID) {
                 task.expanded = !task.expanded;
                 $scope.lastExpandedTask = task;
             };
-
-            $scope.findUser = function (id) {
-                return getObjByID(id, $scope.usersObj);
-            };
-            $scope.findSkill = function (id) {
-                return getObjByID(id, $scope.skillsObj);
-            };
-            $scope.findTask = function (id) {
-                return getObjByID(id, $scope.tasksObj);
-            };
         }
     }
 });
 
 
-app.directive('solutionsList', function(getObjByID) {
+app.directive('solutionsList', function() {
     return {
         restrict: 'E',
         templateUrl: '/front/templates/solutions-list.html',
         scope: {
-            tasksObj: '=',
-            skillsObj: '=',
-            usersObj: '=',
             solutionsObj: '=',
+            skillsObj: '=?',
             showExpand: '=?',
             showExp: '=?',
+            expStyle: '@?',
             showSkills: '=?',
             send: '=?',
             callback: '=?',
             showLike: '=?',
             showCheck: '=?',
-            check: '=?'
+            check: '=?',
+            subheader: '@?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser) {
+        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID, $rootScope) {
 
             $scope.showToast = function (msg, parent, position, delay) {
                 parent = parent || '#toastError';
@@ -153,6 +144,7 @@ app.directive('solutionsList', function(getObjByID) {
                 );
             };
 
+            $scope.skillsObj = $scope.skillsObj || $rootScope.exs;
             if ($scope.showExpand === undefined) $scope.showExpand = true;
             if ($scope.showExp === undefined) $scope.showExp = true;
             if ($scope.showSkills === undefined) $scope.showSkills = true;
@@ -233,20 +225,6 @@ app.directive('solutionsList', function(getObjByID) {
                 solution.expanded = !solution.expanded;
                 $scope.lastExpandedSolution = solution;
             };
-
-            $scope.findUser = function (id) {
-                return getObjByID(id, $scope.usersObj);
-            };
-            $scope.findSkill = function (id) {
-                return getObjByID(id, $scope.skillsObj);
-            };
-            $scope.findTask = function (id) {
-                return getObjByID(id, $scope.tasksObj);
-            };
-            $scope.findSolution = function (id) {
-                return getObjByID(id, $scope.solutionsObj);
-            };
-            //console.log($scope.findTask($scope.solutionsObj[0].task_id).title);
         }
     }
 });
@@ -311,6 +289,74 @@ app.directive('receiveButton', function() {
                     getIsLoggedIn();
                 });
             };
+        }
+    };
+});
+
+app.directive("onScrollBottom", function ($rootScope) {
+
+    function link (scope, element, attrs) {
+        var reached = false;
+        var options;
+
+        scope.$watch(attrs.onScrollBottom, function(value) {
+            if (!value) return;
+            options = value;
+            options.percent = options.percent || 100;
+            options.percent /= 100;
+        });
+
+        angular.element(element).bind("scroll", function() {
+            if (element[0].offsetHeight + element[0].scrollTop >= element[0].scrollHeight * options.percent) {
+                if (!reached) {
+                    reached = true;
+                    $rootScope.$broadcast(options.event, element);
+                }
+            } else reached = false;
+        });
+    }
+
+    return {
+        restrict: 'A',
+        link: link
+    };
+});
+
+
+app.directive('scrollLoader', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            events: '=',
+            loadFunc: '=',
+            options: '=',
+            setLiked: '=?',
+            setReceived: '=?',
+            callback: '=?'
+        },
+        controller: function($rootScope, $scope, loggedUser, setLiked, setReceived) {
+
+            var endOfData = false;
+            $scope.loadMoreData = function() {
+                if (!endOfData) {
+                    $scope.loadFunc($scope.options, function(data) {
+                        if (data.length) {
+                            $scope.options.offset += data.length;
+                            if ($scope.setLiked) setLiked(data, loggedUser().tasks_liked, true);
+                            if ($scope.setReceived) setReceived(data, loggedUser().tasks_received, true);
+                            if ($scope.callback) $scope.callback(data);
+                        }
+                        else endOfData = true;
+                    });
+                }
+            };
+
+            if (angular.isArray($scope.events)) {
+                for (var i in $scope.events) {
+                    $scope.$on($scope.events[i], $scope.loadMoreData);
+                }
+            }
+            else $scope.$on($scope.events, $scope.loadMoreData);
         }
     };
 });

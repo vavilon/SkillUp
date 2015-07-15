@@ -1,15 +1,24 @@
 
-<md-content>
-    <md-list layout="column" ng-if="usersObj">
+<md-content ng-if="solutionsObj.length">
+    <section ng-if="subheader">
+        <md-divider></md-divider>
+        <md-subheader class="md-primary">{{subheader}}</md-subheader>
+        <md-divider></md-divider>
+    </section>
+    <md-list layout="column">
         <md-list-item class="item-animate"
                        ng-repeat="solution in solutionsObj | orderBy: ['-date_created']">
             <div layout="column" flex>
                 <div layout="row" class="task-header">
                     <div flex>
-                        <h3 class="task-title"><a href="tasks/{{solution.task_id}}">{{findTask(solution.task_id).title}}</a></h3>
+                        <h3 class="task-title"><a href="tasks/{{solution.task_id}}">{{solution.task_title}}</a></h3>
                     </div>
                     <div flex="15">
-                        <p class="task-exp">exp: {{findTask(solution.task_id).exp | thousand}}</p>
+                        <p class="task-exp">exp:
+                            <span ng-if="expStyle === undefined">{{solution.task_exp || 0 | thousand}}</span>
+                            <span ng-if="expStyle === '+'" style="color: #4CAF50;">+{{solution.task_exp || 0 | thousand}}</span>
+                            <span ng-if="expStyle === '-'" style="color: #F44336;">-{{solution.task_exp || 0 | thousand}}</span>
+                        </p>
                     </div>
                 </div>
                 <div layout="row" class="task-body">
@@ -20,8 +29,8 @@
                         <div layout="row" layout-wrap flex>
                             <md-button class="md-raised md-primary skill-button"
                                        aria-label="skillBtn"
-                                       ng-repeat="skill in findTask(solution.task_id).skills">
-                                {{findSkill(skill).title}}
+                                       ng-repeat="skillID in solution.task_skills">
+                                {{skillsObj.skills[skillID].title}}
                             </md-button>
                         </div>
                     </div>
@@ -37,7 +46,7 @@
                         <md-card-content>
                             <h2 class="md-title task-description-word">Условие</h2>
                             <div class="task-description">
-                                {{findTask(solution.task_id).description}}
+                                {{solution.task_description}}
                             </div>
                         </md-card-content>
                     </md-card>
@@ -107,7 +116,7 @@
                     <div flex="70">
                         <span class="task-date">Дата решения: {{solution.date_created | date: 'dd.MM.yyyy'}}</span>
                     <span class="task-author">Решил: <a href="/users/{{solution.user_id}}">
-                        {{findUser(solution.user_id).name}}</a></span>
+                        {{solution.user_name}}</a></span>
                     </div>
                     <span flex></span>
                     <div ng-if="solution.expanded">
@@ -117,6 +126,5 @@
             </div>
             <md-divider ng-if="!$last"></md-divider>
         </md-list-item>
-        <!--<md-progress-linear ng-if="!tasksObj" md-mode="indeterminate"></md-progress-linear>-->
     </md-list>
 </md-content>

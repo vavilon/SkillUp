@@ -63,7 +63,8 @@ function applyAllFilters(scope) {
     return target;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived) {
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived, loadTasks,
+                                         $rootScope) {
 
     $scope.getObjByID = getObjByID;
     $scope.chips = {};
@@ -87,13 +88,11 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 
     $scope.getfTasks = function() { return $scope.fTasks;};
 
-    $http.get('db/skills').success(function (skills) {
-        $scope.skills = skills;
-        for(var item in skills) {
-            $scope.chips.skillsNames.push(skills[item].title);
+        $scope.exs = $rootScope.exs;
+        for(var item in $scope.exs.skills) {
+            $scope.chips.skillsNames.push($scope.exs.skills[item].title);
         }
         $scope.chips.skillsQuerySearch = FiltersFactory($scope.chips.skillsNames);
-    });
 
     $http.get('db/users').success(function (users) {
         $scope.users = users;
@@ -101,20 +100,24 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
             $scope.chips.authorsNames.push(users[item].name);
         }
         $scope.chips.authorsQuerySearch = FiltersFactory($scope.chips.authorsNames);
+    });
 
-        $http.get('db/tasks').success(function (tasks) {
-            var user = loggedUser();
+    var dbTasksOptions = {filters: {for_solving: true}};
+    $http.post('/db/tasks', dbTasksOptions).success(function (tasks) {
+        var user = loggedUser();
 
-            setLiked(tasks, user.tasks_liked, true);
-            setReceived(tasks, user.tasks_received, true);
+        setLiked(tasks, user.tasks_liked, true);
+        setReceived(tasks, user.tasks_received, true);
 
-            $scope.tasks = tasks;
-            for(var item in tasks) {
-                $scope.chips.tasksNames.push(tasks[item].title);
-            }
-            $scope.chips.tasksQuerySearch = FiltersFactory($scope.chips.tasksNames);
-            $scope.fTasks = tasks;
-        });
+        $scope.tasks = tasks;
+        dbTasksOptions.offset = $scope.tasks.length;
+        $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback, options: dbTasksOptions};
+
+        for(var item in tasks) {
+            $scope.chips.tasksNames.push(tasks[item].title);
+        }
+        $scope.chips.tasksQuerySearch = FiltersFactory($scope.chips.tasksNames);
+        $scope.fTasks = tasks;
     });
 
     $scope.$watchCollection('chips.selectedTasks', function(newVal) {
@@ -128,13 +131,16 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
     $scope.$watchCollection('chips.selectedAuthors', function(newVal) {
         $scope.fTasks = applyAllFilters($scope);
     });
+
+    $scope.scrollCallback = function(data) {
+        $scope.tasks = $scope.tasks.concat(data);
+        $scope.fTasks = applyAllFilters($scope);
+    };
 });
 
-app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived) {
-        $http.get('db/skills').success(function (skills) {
-            $scope.skills = skills;
-
-        });
+app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived,
+                                        $rootScope) {
+        $scope.exs = $rootScope.exs;
 
         $http.get('db/tasks').success(function (tasks) {
             $scope.tasks = tasks;
@@ -152,7 +158,7 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
         });
 
         $scope.findSkill = function (id) {
-            return getObjByID(id, $scope.skills);
+            return $scope.exs.skills[id];
         };
 
         $scope.findTask = function (id) {

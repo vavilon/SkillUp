@@ -29,7 +29,7 @@ function arrToObj(skillArr) {
     return res;
 }
 
-app.factory('extendedSkills', function() {
+app.factory('extendedSkills', function () {
     return function (skills) {
         if (!skills) return;
         skills = arrToObj(skills);
@@ -124,6 +124,7 @@ app.factory('extendedSkills', function() {
                 calculateLevels(skill.children[i]);
             }
         }
+
         calculateLevels(this.root);
 
         for (var i in this.skills) {
@@ -149,52 +150,50 @@ app.factory('extendedSkills', function() {
 
 
 app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, extendedSkills) {
-    $http.get('db/skills').success(function (skills) {
 
-        $scope.user = $rootScope.loggedUser;
+    $scope.user = $rootScope.loggedUser;
 
-        $scope.skillTitle = "";
-        $scope.filteredSkills = [];
+    $scope.skillTitle = "";
+    $scope.filteredSkills = [];
 
-        $scope.highlightSkills = true;
-        $scope.highlightNeeds = true;
+    $scope.highlightSkills = true;
+    $scope.highlightNeeds = true;
 
-        $scope.exs = $rootScope.exs || (new extendedSkills(skills));
+    $scope.exs = $rootScope.exs;
 
-        $scope.toogleExpandedForAll = function (expand) {
-            for (var skill in $scope.exs.skills) {
-                $scope.exs.skills[skill].expanded = expand;
-            }
-        };
-
-        $scope.toogleExpandedForAll(true);
-
-        $scope.expand = function (skill) {
-            skill.expanded = !skill.expanded;
-        };
-
-        $scope.isInUserSkills = function (skill) {
-            for (var i in $scope.user.skills) {
-                if (skill.id === $scope.user.skills[i].id) return true;
-            }
-            return false;
-        };
-
-        $scope.isInUserNeeds = function (skill) {
-            return _.includes($scope.user.needs, skill.id);
-        };
-
-        for (var i in $scope.exs.skills) {
-            $scope.exs.skills[i].isInUserSkills = $scope.isInUserSkills($scope.exs.skills[i]);
-            $scope.exs.skills[i].isInUserNeeds = $scope.isInUserNeeds($scope.exs.skills[i]);
+    $scope.toogleExpandedForAll = function (expand) {
+        for (var skill in $scope.exs.skills) {
+            $scope.exs.skills[skill].expanded = expand;
         }
+    };
 
-        $scope.$watch('skillTitle', function (newval, oldval) {
-            if ($scope.skillTitle && $scope.filteredSkills)
-                $scope.filteredSkills = $filter('objectByKeyValFilterArr')($scope.exs.skills, 'title', newval);
-            for (var skill in $scope.filteredSkills) {
-                $scope.filteredSkills[skill].expanded = false;
-            }
-        });
+    $scope.toogleExpandedForAll(true);
+
+    $scope.expand = function (skill) {
+        skill.expanded = !skill.expanded;
+    };
+
+    $scope.isInUserSkills = function (skill) {
+        for (var i in $scope.user.skills) {
+            if (skill.id === $scope.user.skills[i].id) return true;
+        }
+        return false;
+    };
+
+    $scope.isInUserNeeds = function (skill) {
+        return _.includes($scope.user.needs, skill.id);
+    };
+
+    for (var i in $scope.exs.skills) {
+        $scope.exs.skills[i].isInUserSkills = $scope.isInUserSkills($scope.exs.skills[i]);
+        $scope.exs.skills[i].isInUserNeeds = $scope.isInUserNeeds($scope.exs.skills[i]);
+    }
+
+    $scope.$watch('skillTitle', function (newval, oldval) {
+        if ($scope.skillTitle && $scope.filteredSkills)
+            $scope.filteredSkills = $filter('objectByKeyValFilterArr')($scope.exs.skills, 'title', newval);
+        for (var skill in $scope.filteredSkills) {
+            $scope.filteredSkills[skill].expanded = false;
+        }
     });
 });

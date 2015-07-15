@@ -1,22 +1,25 @@
-app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills) {
+app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills, loadUsers, $rootScope) {
     $scope.username = "";
     $scope.filteredUsers = [];
 
     $http.get('db/users').success(function (data) {
         $scope.users = data;
+
+        $scope.scrollWrap = {loadFunc: loadUsers, callback: $scope.scrollCallback, options: {offset: $scope.users.length}};
+
         $scope.lastExpandedUser = $scope.users[0];
 
         for (var i in $scope.users) {
             $scope.users[i].skills = parseSkills($scope.users[i].skills);
         }
     });
-    $http.get('db/skills').success(function (data) {
-        $scope.skills = data;
-    });
+
+    $scope.exs = $rootScope.exs;
 
     $scope.findSkill = function (id) {
-        return getObjByID(id, $scope.skills);
+        return $scope.exs.skills[id];
     };
+
     $scope.expand = function (user) {
         if ($scope.lastExpandedUser !== user) $scope.lastExpandedUser.expanded = false;
         user.expanded = !user.expanded;
@@ -26,10 +29,17 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
     $scope.$watch('username', function () {
         if ($scope.lastExpandedUser) $scope.lastExpandedUser.expanded = false;
     });
+
+    $scope.scrollCallback = function(data) {
+        for (var i in data) {
+            data[i].skills = parseSkills(data[i].skills);
+        }
+        $scope.users = $scope.users.concat(data);
+    };
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, getIsLoggedIn,
-                                        loggedUser, parseSkills) {
+                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope) {
         $scope.categoryNum = 0;
 
         $scope.findTask = function (id) {
@@ -37,12 +47,15 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
         };
 
         $scope.findSkill = function (id) {
-            return getObjByID(id, $scope.skills);
+            return $scope.exs.skills[id];
         };
 
-        $http.get('db/users').success(function (users) {
-            $scope.users = users;
-            $scope.user = getObjByID($routeParams.user_id, $scope.users);
+        $scope.exs = $rootScope.exs;
+
+        var dbUsersOptions = {ids: [$routeParams.user_id]};
+        $http.post('/db/users', dbUsersOptions).success(function (data) {
+            if (!data || !data.length) return;
+            $scope.user = data[0];
             $scope.user.skills = parseSkills($scope.user.skills);
 
             getIsLoggedIn(function () {
@@ -57,7 +70,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             }
             $http.get('db/tasks').success(function (tasks) {
                 $http.get('db/solutions').success(function (sols) {
-                    for (i in sols) {
+                    for (var i in sols) {
                         for (var j in loggedUser().solutions_liked) {
                             if (sols[i].id === loggedUser().solutions_liked[j]) {
                                 sols[i].liked = true;
@@ -67,26 +80,30 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                     }
                     $scope.solutions = sols;
 
-                    for (var i in tasks) {
-                        if (loggedUser().tasks_liked && loggedUser().tasks_liked.indexOf(tasks[i].id) !== -1)tasks[i].liked = true;
-                        if (loggedUser().tasks_received && loggedUser().tasks_received.indexOf(tasks[i].id) !== -1)tasks[i].received = true;
+                    for (i in tasks) {
+                        if (loggedUser().tasks_liked && loggedUser().tasks_liked.indexOf(tasks[i].id) !== -1) tasks[i].liked = true;
+                        if (loggedUser().tasks_received && loggedUser().tasks_received.indexOf(tasks[i].id) !== -1) tasks[i].received = true;
                     }
 
                     $scope.tasks = tasks;
 
+                    dbUsersOptions.offset = $scope.tasks.length;
+                    $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback,
+                        options: dbUsersOptions, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
+
                     $scope.tasks_done = [];
-                    $scope.tasks_checked = [];
+                    $scope.solutions_checked = [];
                     $scope.tasks_approved = [];
                     $scope.tasks_created = [];
 
                     if ($scope.user.tasks_done)
-                        for (var i = 0; i < $scope.user.tasks_done.length; i++) {
+                        for (i = 0; i < $scope.user.tasks_done.length; i++) {
                             $scope.tasks_done.push($scope.findTask(getObjByID($scope.user.tasks_done[i],$scope.solutions).task_id));
                         }
 
-                    if ($scope.user.tasks_checked)
-                        for (i = 0; i < $scope.user.tasks_checked.length; i++) {
-                            $scope.tasks_checked.push($scope.findTask($scope.user.tasks_checked[i]));
+                    if ($scope.user.solutions_checked)
+                        for (i = 0; i < $scope.user.solutions_checked.length; i++) {
+                            $scope.solutions_checked.push($scope.findTask($scope.user.solutions_checked[i]));
                         }
 
                     if ($scope.user.tasks_approved)
@@ -100,13 +117,19 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                         }
                 });
             });
-            $http.get('db/skills').success(function (skills) {
-                $scope.skills = skills;
-            });
         });
 
         $scope.tabSelected = 0;
 
+        $scope.setScrollOptions = function(num) {
+            $scope.scrollWrap.scrollOptions.event = num === 0 ? 'tasksDoneScrolled' :
+                num === 1 ? 'tasksCheckedScrolled' :
+                    num === 2 ? 'tasksApprovedScrolled' : 'tasksCreatedScrolled';
+        };
+
+        $scope.scrollCallback = function(data) {
+            console.log('asdasdasd');
+        };
     }
 );
 
@@ -117,7 +140,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         $scope.step = 1;
 
         if ($location.path() === '/registration/step2') {
-            $http.get('/is_logged_in').success(function(user) {
+            $http.get('/logged_user').success(function(user) {
                 if (!user) return;
                 $scope.step = 2;
                 $scope.reg.birthday = new Date(user.birthday);

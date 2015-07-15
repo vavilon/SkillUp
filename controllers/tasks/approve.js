@@ -2,12 +2,12 @@
 var parseSP = require('../../lib/parse-skills-progress');
 var userHasSkills = require('../../lib/user-has-skills');
 
-var countToApprove = 3, correctConstant = 2 / 3;
+var countToApprove = 3, correctConstant = 2 / 3, createTaskAwardMultiplier = 3;
 
 module.exports = function(knex, updateArray, pgApprove) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
-            knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'approvement_id', 'skills').then(function(rows) {
+            knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'approvement_id', 'skills', 'exp', 'author').then(function(rows) {
                 if (rows[0].is_approved) {
                     res.end();
                     return;
@@ -26,11 +26,9 @@ module.exports = function(knex, updateArray, pgApprove) {
                         res.end();
                         return console.error('error running query', err);
                     }
-                    updateArray('users', 'tasks_approved', req.user.id, 'append', req.body.task_id, function(err, result) {
-                        if (err) {
-                            res.end();
-                            return console.error('error running query', err);
-                        }
+
+                    knex.raw("UPDATE users SET tasks_approved = array_append(tasks_approved, '" + req.body.task_id + "')"
+                        + ", exp = exp + " + rows[0].exp  + " WHERE id = '" + req.user.id + "';").then(function() {
 
                         res.end('ok');
 
@@ -57,6 +55,15 @@ module.exports = function(knex, updateArray, pgApprove) {
                                     (dc / count >= correctConstant) && (lc / count >= correctConstant);
                                 knex('tasks').where('id', '=', req.body.task_id).update({is_approved: correct}).then(function() {
                                     console.log('Task approved!');
+
+                                    if (correct) knex('users').where('id', '=', rows[0].author)
+                                        .increment('exp', rows[0].exp * createTaskAwardMultiplier)
+                                        .then(function() {
+
+                                    }).catch(function (error) {
+                                        console.log(error);
+                                    });
+
                                 }).catch(function (error) {
                                     console.log(error);
                                 });
@@ -65,6 +72,9 @@ module.exports = function(knex, updateArray, pgApprove) {
                         }).catch(function (error) {
                             console.log(error);
                         });
+                    }).catch(function (error) {
+                        console.log(error);
+                        res.end();
                     });
                 });
             }).catch(function (error) {
