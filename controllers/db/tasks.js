@@ -2,7 +2,8 @@
 module.exports = function(knex, req, res, next) {
     var q = knex.select("tasks.*").from('tasks');
     if (req.body.ids) q.whereIn('tasks.id', req.body.ids);
-    if (req.body.skills) q.andWhere('tasks.skills', req.body.filters.for_approving || req.body.completed_skills ? '<@' : '&&', req.body.skills);
+    if (req.body.skills) q.andWhere('tasks.skills', (req.body.filters && req.body.filters.for_approving) || req.body.completed_skills
+        ? '<@' : '&&', req.body.skills);
     q.join('users', 'tasks.author', '=', 'users.id').select('users.name as author_name');
     if (req.body.filters) {
         if (req.body.filters.for_solving || req.body.filters.is_approved === true) q.andWhere('tasks.is_approved', '=', true);

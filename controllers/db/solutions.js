@@ -1,11 +1,11 @@
-
-module.exports = function(knex, req, res, next) {
+module.exports = function (knex, req, res, next) {
     var q = knex.select("solutions.*").from('solutions');
     if (req.body.ids) q.whereIn('solutions.id', req.body.ids);
     q.join('users', 'solutions.user_id', '=', 'users.id').select('users.name as user_name');
     q.join('tasks', 'solutions.task_id', '=', 'tasks.id').select('tasks.title as task_title',
         'tasks.skills as task_skills', 'tasks.exp as task_exp', 'tasks.description as task_description');
-    if (req.body.skills) q.andWhere('tasks.skills',  (req.body.filters.for_checking || req.body.completed_skills) ? '<@' : '&&', req.body.skills);
+    if (req.body.skills) q.andWhere('tasks.skills', ((req.body.filters && req.body.filters.for_checking) || req.body.completed_skills)
+        ? '<@' : '&&', req.body.skills);
     if (req.body.filters) {
         if (req.body.filters.for_checking || req.body.filters.is_correct === undefined) q.whereNull('solutions.is_correct');
         else if (req.body.filters.is_correct === true) q.andWhere('solutions.is_correct', '=', true);
@@ -21,9 +21,9 @@ module.exports = function(knex, req, res, next) {
         else if (req.user.attributes.solutions_liked && (req.body.filters.liked === false))
             q.whereNotIn('solutions.id', req.user.attributes.solutions_liked);
     }
-    q.limit(100).offset(req.body.offset || 0);
+    q.limit(2).offset(req.body.offset || 0);
 
-    q.then(function(rows) {
+    q.then(function (rows) {
         if (!rows) return res.end();
         res.end(JSON.stringify(rows));
 
