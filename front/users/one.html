@@ -3,7 +3,7 @@
 <div layout="row" style="padding-top: 30px; padding-bottom: 30px;">
 
     <scroll-loader events="['tasksDoneScrolled', 'tasksCheckedScrolled', 'tasksApprovedScrolled', 'tasksCreatedScrolled']"
-                   load-func="scrollWrap.loadFunc" options="scrollWrap.options"
+                   load-func="scrollWrap.loadFunc" options="scrollWrap.loadOptions"
                    set-liked="true" set-received="true" callback="scrollWrap.callback"></scroll-loader>
 
     <div flex="15"></div>
@@ -88,34 +88,29 @@
                         <md-list>
                             <ng-switch on="tabSelected">
                                 <div ng-switch-when="0">
-                                    <tasks-list tasks-obj="tasks_done" show-like="!canEdit" show-expand="false"
-                                                show-difficulty="false" solvable="false" show-receive="!canEdit">
-                                    </tasks-list>
+                                    <solutions-list solutions-obj="tasksDone" show-expand="false" for-profile-done="true"></solutions-list>
                                     <div ng-if="!user.tasks_done" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не решил ни одного задания</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="1">
-                                    <!-- ИСПРАВИТЬ!!! -->
-                                    <solutions-list solutions-obj="solutions_checked" show-expand="false"></solutions-list>
-                                    <div ng-if="!user.solutions_checked" class="md-tile-content"
+                                    <solutions-list solutions-obj="solutionsChecked" show-expand="false"></solutions-list>
+                                    <div ng-if="!user.solutionsChecked" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не проверил ни одного решения</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="2">
-                                    <tasks-list tasks-obj="tasks_approved" show-expand="false" show-difficulty="false"
-                                                solvable="false"></tasks-list>
-                                    <div ng-if="!user.tasks_approved" class="md-tile-content"
+                                    <tasks-list tasks-obj="tasksApproved" show-expand="false" show-difficulty="false"></tasks-list>
+                                    <div ng-if="!user.tasksApproved" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не подтвердил ни одного задания</h3>
                                     </div>
                                 </div>
                                 <div ng-switch-when="3">
-                                    <tasks-list tasks-obj="tasks_created" show-expand="false" show-difficulty="false"
-                                                solvable="false"></tasks-list>
-                                    <div ng-if="!user.tasks_created" class="md-tile-content"
+                                    <tasks-list tasks-obj="tasksCreated" show-expand="false" show-difficulty="false"></tasks-list>
+                                    <div ng-if="!user.tasksCreated" class="md-tile-content"
                                          layout="column" layout-align="center center" flex>
                                         <h3 class="list-empty">Пользователь не создал ни одного задания</h3>
                                     </div>
@@ -133,7 +128,7 @@
                                 <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
                                 <div class="info-empty" ng-if="!user.birthday">не указано</div>
                                 <div flex></div>
-                                <md-button class="edit-button" ng-if="r1 && canEdit" aria-label="LaLat">
+                                <md-button class="edit-button" ng-if="r1 && ownProfile" aria-label="LaLat">
                                     <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>
@@ -148,7 +143,7 @@
                                 </div>
                                 <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
                                 <div flex></div>
-                                <md-button class="edit-button" ng-if="r2 && canEdit">
+                                <md-button class="edit-button" ng-if="r2 && ownProfile">
                                     <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>
@@ -166,7 +161,7 @@
                                     </div>
                                     <div class="info-empty" ng-if="!user.educationStr || user.educationStr.length == 0">не указано</div>
                                 </div>
-                                <md-button class="edit-button" ng-if="r3 && canEdit">
+                                <md-button class="edit-button" ng-if="r3 && ownProfile">
                                     <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>
@@ -184,7 +179,7 @@
                                     </div>
                                     <div class="info-empty" ng-if="!user.workStr || user.workStr.length == 0">не указано</div>
                                 </div>
-                                <md-button class="edit-button" ng-if="r4 && canEdit">
+                                <md-button class="edit-button" ng-if="r4 && ownProfile">
                                     <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>

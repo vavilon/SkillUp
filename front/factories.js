@@ -6,7 +6,7 @@ app.factory('getObjByID', function() {
 });
 
 //Вызывается в run, а также при регистрации, входе и выходе
-app.factory('getIsLoggedIn', function($rootScope, $http, parseSkills) {
+app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
     return function(callback) {
         $http.get('/logged_user').success(function (data) {
             $rootScope.loggedUser = data;
@@ -119,17 +119,28 @@ app.factory('setPropertyComparingObjArr', function() {
     };
 });
 
-app.factory('setLiked', function(setPropertyComparingArrays, setPropertyComparingObjArr) {
-    return function(setArray, compArray, multiple) {
-        if (multiple) setPropertyComparingArrays('id', 'liked', true, setArray, compArray);
-        else setPropertyComparingObjArr('id', 'liked', true, setArray, compArray);
+app.factory('setPropertyFuzzy', function (setPropertyComparingArrays, setPropertyComparingObjArr) {
+    return function(newPropName, setArray, compArray, multiple, compPropName) {
+        if (multiple) setPropertyComparingArrays(compPropName || 'id', newPropName, true, setArray, compArray);
+        else setPropertyComparingObjArr(compPropName || 'id', newPropName, true, setArray, compArray);
     };
 });
 
-app.factory('setReceived', function(setPropertyComparingArrays, setPropertyComparingObjArr) {
-    return function(setArray, compArray, multiple) {
-        if (multiple) setPropertyComparingArrays('id', 'received', true, setArray, compArray);
-        else setPropertyComparingObjArr('id', 'received', true, setArray, compArray);
+app.factory('setLiked', function(setPropertyFuzzy) {
+    return function(setArray, compArray, multiple, compPropName) {
+        setPropertyFuzzy('liked', setArray, compArray, multiple, compPropName);
+    };
+});
+
+app.factory('setReceived', function(setPropertyFuzzy) {
+    return function(setArray, compArray, multiple, compPropName) {
+        setPropertyFuzzy('received', setArray, compArray, multiple, compPropName);
+    };
+});
+
+app.factory('setNotReceivable', function(setPropertyFuzzy) {
+    return function(setArray, compArray, multiple, compPropName) {
+        setPropertyFuzzy('notReceivable', setArray, compArray, multiple, compPropName);
     };
 });
 

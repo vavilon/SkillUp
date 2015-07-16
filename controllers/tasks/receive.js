@@ -1,4 +1,5 @@
 
+//Сделать так, чтобы нельзя было получить задание, которое создал
 module.exports = function(knex, updateArray) {
     return function(req, res, next) {
         if (req.isAuthenticated()) {

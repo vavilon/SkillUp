@@ -61,8 +61,8 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
     });
 });
 
-app.run(function ($rootScope, $http, getIsLoggedIn, extendedSkills) {
-    getIsLoggedIn();
+app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills) {
+    loadLoggedUser();
     $rootScope.navbarSelectedIndex = 0;
     $rootScope.$on('$locationChangeSuccess', function (obj, newVal, oldVal) {
         if ((new RegExp('/main')).test(newVal)) $rootScope.navbarSelectedIndex = 0;
@@ -88,7 +88,7 @@ app.run(function ($rootScope, $http, getIsLoggedIn, extendedSkills) {
 });
 
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout, extendedSkills,
-                                       isLoggedIn, getIsLoggedIn, $mdDialog, $mdToast, loggedUser) {
+                                       isLoggedIn, loadLoggedUser, $mdDialog, $mdToast, loggedUser) {
     $scope.loginErr = {loginerr: false};
 
     $scope.getSelectedIndex = function () {
@@ -113,7 +113,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
                     }, 3000);
                     return;
                 }
-                getIsLoggedIn(function (user) {
+                loadLoggedUser(function (user) {
                     if (user) {
                         $http.get('db/skills').success(function (skills) {
                             if (skills) {
@@ -140,7 +140,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 
     $scope.logout = function () {
         $http.get('/logout').success(function (data) {
-            getIsLoggedIn(function () {
+            loadLoggedUser(function () {
                 $location.path(data);
             });
         });
@@ -173,7 +173,7 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 }
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
-                                         $mdToast, $rootScope, getIsLoggedIn, getObjByID, setLiked, completedSkills,
+                                         $mdToast, $rootScope, loadLoggedUser, getObjByID, setLiked, completedSkills,
                                          setReceived, skillsProgressToIDs) {
     $scope.isLoggedIn = isLoggedIn;
     $scope.registrationPath = "/registration/";
@@ -358,7 +358,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             $scope.chips.skillsTitlesFiltered = [];
             $scope.chips.selectedSkills = [];
 
-            getIsLoggedIn();
+            loadLoggedUser();
         });
     };
 });

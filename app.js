@@ -123,7 +123,7 @@ app.use('/front', express.static(__dirname + '/front'));
 
 app.use('/db', function (req, res, next) {
     if (req.isAuthenticated()) {
-        var options = {ids: req.body.ids, select: req.body.select, limit: 100, offset: req.body.offset};
+        var options = {ids: req.body.ids, select: req.body.select, limit: 20, offset: req.body.offset};
 
         if (req.path === '/skills') {
             knex('skills').then(function (rows) {

@@ -20,7 +20,7 @@
                     <div flex>
                         <h3 class="task-title"><a href="tasks/{{taskVal.id}}">{{taskVal.title}}</a></h3>
                     </div>
-                    <div flex="15">
+                    <div flex="15" ng-if="showExp">
                         <p class="task-exp">exp:
                             <span ng-if="expStyle === undefined">{{taskVal.exp || 0 | thousand}}</span>
                             <span ng-if="expStyle === '+'"
@@ -67,7 +67,7 @@
                             <form name="solutionForm" ng-if="solvable">
                                 <md-input-container>
                                     <label>Ваше решение</label>
-                                    <textarea ng-model="$parent.$parent.$parent.solution" name="solutionT"
+                                    <textarea ng-model="$parent.$parent.$parent.$parent.solution" name="solutionT"
                                               required></textarea>
 
                                     <div ng-messages="solutionForm.solutionT.$error">
@@ -120,7 +120,7 @@
                                      liked="taskVal.liked"
                                      style="margin-right: 25px;"></like-button>
                         <receive-button ng-if="showReceive" id="taskVal.id" count="taskVal.participants.length"
-                                        received="taskVal.received"></receive-button>
+                                        received="taskVal.received" disabled="taskVal.notReceivable"></receive-button>
                     </div>
                 </div>
             </div>

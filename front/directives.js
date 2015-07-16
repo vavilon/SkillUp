@@ -22,7 +22,7 @@ app.directive('tasksList', function() {
             approveCallback: '=?',
             subheader: '@?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID, $rootScope) {
+        controller: function($http, $scope, $mdToast, loadLoggedUser, loggedUser, getObjByID, $rootScope) {
 
             $scope.showToast = function (msg, parent) {
                 parent = parent || '#toastError';
@@ -48,7 +48,7 @@ app.directive('tasksList', function() {
             if ($scope.callback === undefined) $scope.callback = function (data, id) {
                 if (!data) $scope.showToast('Не удалось отправить решение...');
                 else {
-                    getIsLoggedIn(function() {
+                    loadLoggedUser(function() {
                         $scope.showToast('Решение отправлено!', '#toastSuccess');
                         $scope.solution = '';
                         var index = 0;
@@ -74,7 +74,7 @@ app.directive('tasksList', function() {
             if ($scope.approveCallback === undefined) $scope.approveCallback = function (data, id) {
                 if (!data) $scope.showToast('Не удалось отправить подтверждение...');
                 else {
-                    getIsLoggedIn(function() {
+                    loadLoggedUser(function() {
                         $scope.showToast('Подтверждение отправлено!', '#toastSuccess');
                         var index = 0;
                         for (var i in $scope.tasksObj) {
@@ -127,9 +127,10 @@ app.directive('solutionsList', function() {
             showLike: '=?',
             showCheck: '=?',
             check: '=?',
-            subheader: '@?'
+            subheader: '@?',
+            forProfileDone: '=?'
         },
-        controller: function($http, $scope, $mdToast, getIsLoggedIn, loggedUser, getObjByID, $rootScope) {
+        controller: function($http, $scope, $mdToast, loadLoggedUser, loggedUser, getObjByID, $rootScope) {
 
             $scope.showToast = function (msg, parent, position, delay) {
                 parent = parent || '#toastError';
@@ -166,7 +167,7 @@ app.directive('solutionsList', function() {
             if ($scope.callback === undefined) $scope.callback = function (data, id) {
                 if (!data) $scope.showToast('Не удалось отправить результат...');
                 else {
-                    getIsLoggedIn(function() {
+                    loadLoggedUser(function() {
                         $scope.showToast('Решение проверено!', '#toastSuccess');
                         var index = 0;
                         for (var i in $scope.solutionsObj) {
@@ -238,9 +239,10 @@ app.directive('likeButton', function() {
             id: '=',
             likes: '=',
             liked: '=',
-            like: '=?'
+            like: '=?',
+            disabled: '=?'
         },
-        controller: function($scope, $http, getIsLoggedIn) {
+        controller: function($scope, $http, loadLoggedUser) {
             if ($scope.like === undefined) $scope.like = function () {
                 $scope.liked = !$scope.liked;
                 $scope.liked ? $scope.likes++ : $scope.likes--;
@@ -252,7 +254,7 @@ app.directive('likeButton', function() {
                         $scope.liked ? $scope.likes++ : $scope.likes--;
                         return;
                     }
-                    getIsLoggedIn();
+                    loadLoggedUser();
                 });
             };
         }
@@ -268,9 +270,10 @@ app.directive('receiveButton', function() {
             id: '=',
             count: '=',
             received: '=',
-            receive: '=?'
+            receive: '=?',
+            disabled: '=?'
         },
-        controller: function($scope, $http, getIsLoggedIn) {
+        controller: function($scope, $http, loadLoggedUser) {
             if (!angular.isNumber($scope.count) || $scope.count < 0) $scope.count = 0;
 
             if ($scope.type === undefined) $scope.type = 'task';
@@ -286,7 +289,7 @@ app.directive('receiveButton', function() {
                         $scope.received ? $scope.count++ : $scope.count--;
                         return;
                     }
-                    getIsLoggedIn();
+                    loadLoggedUser();
                 });
             };
         }

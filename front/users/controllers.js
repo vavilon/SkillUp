@@ -38,13 +38,10 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
     };
 });
 
-app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, getIsLoggedIn,
-                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope) {
+app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, loadLoggedUser,
+                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
+                                        setNotReceivable) {
         $scope.categoryNum = 0;
-
-        $scope.findTask = function (id) {
-            return getObjByID(id, $scope.tasks);
-        };
 
         $scope.findSkill = function (id) {
             return $scope.exs.skills[id];
@@ -52,15 +49,15 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
         $scope.exs = $rootScope.exs;
 
+        
         var dbUsersOptions = {ids: [$routeParams.user_id]};
         $http.post('/db/users', dbUsersOptions).success(function (data) {
             if (!data || !data.length) return;
             $scope.user = data[0];
-            $scope.user.skills = parseSkills($scope.user.skills);
 
-            getIsLoggedIn(function () {
-                $scope.canEdit = (loggedUser().id === $scope.user.id);
-            });
+            $scope.ownProfile = (loggedUser().id === $scope.user.id);
+
+            $scope.user.skills = parseSkills($scope.user.skills);
 
             if ($scope.user.education) {
                 $scope.user.educationStr = educationStr(JSON.parse($scope.user.education));
@@ -68,55 +65,41 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             if ($scope.user.work) {
                 $scope.user.workStr = workStr(JSON.parse($scope.user.work));
             }
-            $http.get('db/tasks').success(function (tasks) {
-                $http.get('db/solutions').success(function (sols) {
-                    for (var i in sols) {
-                        for (var j in loggedUser().solutions_liked) {
-                            if (sols[i].id === loggedUser().solutions_liked[j]) {
-                                sols[i].liked = true;
-                                break;
-                            }
-                        }
-                    }
-                    $scope.solutions = sols;
 
-                    for (i in tasks) {
-                        if (loggedUser().tasks_liked && loggedUser().tasks_liked.indexOf(tasks[i].id) !== -1) tasks[i].liked = true;
-                        if (loggedUser().tasks_received && loggedUser().tasks_received.indexOf(tasks[i].id) !== -1) tasks[i].received = true;
-                    }
+            var dbTasksDoneOptions = {ids: $scope.user.tasks_done, filters: {for_profile_done: true, is_correct: 'all'}};
+            $http.post('/db/solutions', dbTasksDoneOptions).success(function (tasksDone) {
+                $scope.tasksDone = tasksDone;
+                setLiked($scope.tasksDone, loggedUser().tasks_liked, true, 'task_id');
+                setReceived($scope.tasksDone, loggedUser().tasks_received, true, 'task_id');
+                setNotReceivable($scope.tasksDone, loggedUser().tasks_created, true, 'task_id');
+                dbTasksDoneOptions.offset = $scope.tasksDone.length;
 
-                    $scope.tasks = tasks;
-
-                    dbUsersOptions.offset = $scope.tasks.length;
-                    $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback,
-                        options: dbUsersOptions, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
-
-                    $scope.tasks_done = [];
-                    $scope.solutions_checked = [];
-                    $scope.tasks_approved = [];
-                    $scope.tasks_created = [];
-
-                    if ($scope.user.tasks_done)
-                        for (i = 0; i < $scope.user.tasks_done.length; i++) {
-                            $scope.tasks_done.push($scope.findTask(getObjByID($scope.user.tasks_done[i],$scope.solutions).task_id));
-                        }
-
-                    if ($scope.user.solutions_checked)
-                        for (i = 0; i < $scope.user.solutions_checked.length; i++) {
-                            $scope.solutions_checked.push($scope.findTask($scope.user.solutions_checked[i]));
-                        }
-
-                    if ($scope.user.tasks_approved)
-                        for (i = 0; i < $scope.user.tasks_approved.length; i++) {
-                            $scope.tasks_approved.push($scope.findTask($scope.user.tasks_approved[i]));
-                        }
-
-                    if ($scope.user.tasks_created)
-                        for (i = 0; i < $scope.user.tasks_created.length; i++) {
-                            $scope.tasks_created.push($scope.findTask($scope.user.tasks_created[i]));
-                        }
-                });
+                $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback,
+                    loadOptions: dbTasksDoneOptions, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
             });
+
+            var dbSolutionsCheckedOptions = {ids: $scope.user.solutions_checked};
+            $http.post('/db/solutions', dbSolutionsCheckedOptions).success(function (solutionsChecked) {
+                $scope.solutionsChecked = solutionsChecked;
+                setLiked($scope.solutionsChecked, loggedUser().solutions_liked, true);
+            });
+
+            var dbTasksApprovedOptions = {ids: $scope.user.tasks_approved};
+            $http.post('/db/tasks', dbTasksApprovedOptions).success(function (tasksApproved) {
+                $scope.tasksApproved = tasksApproved;
+                setLiked($scope.tasksApproved, loggedUser().tasks_liked, true);
+                setReceived($scope.tasksApproved, loggedUser().tasks_received, true);
+                setNotReceivable($scope.tasksApproved, loggedUser().tasks_created, true);
+            });
+
+            var dbTasksCreatedOptions = {ids: $scope.user.tasks_created};
+            $http.post('/db/tasks', dbTasksCreatedOptions).success(function (tasksCreated) {
+                $scope.tasksCreated = tasksCreated;
+                setLiked($scope.tasksCreated, $scope.user.tasks_liked, true);
+                if (!$scope.ownProfile) setReceived($scope.tasksCreated, $scope.user.tasks_received, true);
+                else for (var i in $scope.tasksCreated) $scope.tasksCreated[i].notReceivable = true;
+            });
+
         });
 
         $scope.tabSelected = 0;
@@ -133,7 +116,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
     }
 );
 
-app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, getIsLoggedIn, isImage, $mdToast,
+app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, loadLoggedUser, isImage, $mdToast,
                                              $animate, $timeout, educationStr, workStr, loggedUser) {
         $scope.reg = {};
 
@@ -349,7 +332,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 work: JSON.stringify($scope.reg.work)
             }).success(function(data) {
                 if (data) {
-                    getIsLoggedIn(function(user) {
+                    loadLoggedUser(function(user) {
                         $http.get('db/skills').success(function(skills) {
                             $scope.skills = skills;
 
