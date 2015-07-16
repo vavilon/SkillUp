@@ -15,8 +15,10 @@ module.exports = function(knex, req, res, next) {
             q.whereNotIn('tasks.id', req.user.attributes.tasks_created);
         if (req.user.attributes.tasks_approved && (req.body.filters.for_approving || req.body.filters.not_in_approved))
             q.whereNotIn('tasks.id', req.user.attributes.tasks_approved);
-        if (req.user.attributes.tasks_done && (req.body.filters.for_solving || req.body.filters.not_in_done))
-            q.whereNotIn('tasks.id', req.user.attributes.tasks_done);
+        if (req.user.attributes.tasks_done && (req.body.filters.for_solving || req.body.filters.not_in_done)) {
+            q.join('solutions', 'solutions.task_id', '=', 'tasks.id');
+            q.whereNotIn('solutions.id', req.user.attributes.tasks_done);
+        }
 
         if (req.body.filters.received === true) q.whereIn('tasks.id', req.user.attributes.tasks_received);
         else if (req.user.attributes.tasks_received && (req.body.filters.received === false))
@@ -26,7 +28,7 @@ module.exports = function(knex, req, res, next) {
         else if (req.user.attributes.tasks_liked && (req.body.filters.liked === false))
             q.whereNotIn('tasks.id', req.user.attributes.tasks_liked);
     }
-    q.limit(100).offset(req.body.offset || 0);
+    q.limit(2).offset(req.body.offset || 0);
 
     q.then(function(rows) {
         if (!rows) return res.end();
