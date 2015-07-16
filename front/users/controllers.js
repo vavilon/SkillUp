@@ -71,7 +71,11 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 $scope.tasksDone = tasksDone;
                 setLiked($scope.tasksDone, loggedUser().tasks_liked, true, 'task_id');
                 setReceived($scope.tasksDone, loggedUser().tasks_received, true, 'task_id');
-                setNotReceivable($scope.tasksDone, loggedUser().tasks_created, true, 'task_id');
+                if ($scope.ownProfile) for (var i in $scope.tasksDone) $scope.tasksDone[i].notReceivable = true;
+                else {
+                    setNotReceivable($scope.tasksDone, loggedUser().tasks_created, true, 'task_id');
+                    setNotReceivable($scope.tasksDone, loggedUser().tasks_done, true);
+                }
                 dbTasksDoneOptions.offset = $scope.tasksDone.length;
 
                 $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback,
@@ -90,6 +94,8 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 setLiked($scope.tasksApproved, loggedUser().tasks_liked, true);
                 setReceived($scope.tasksApproved, loggedUser().tasks_received, true);
                 setNotReceivable($scope.tasksApproved, loggedUser().tasks_created, true);
+                // Тут необходимо добавить setNotReceived на loggedUser().tasks_done, но tasks_done хранит id решений
+                // поэтому нужно либо все менять, либо ужасный костыль
             });
 
             var dbTasksCreatedOptions = {ids: $scope.user.tasks_created};

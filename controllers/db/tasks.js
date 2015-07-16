@@ -1,5 +1,7 @@
 
 module.exports = function(knex, req, res, next) {
+    var recf = false;
+
     var q = knex.select("tasks.*").from('tasks');
     if (req.body.ids) q.whereIn('tasks.id', req.body.ids);
     if (req.body.skills) q.andWhere('tasks.skills', (req.body.filters && req.body.filters.for_approving) || req.body.completed_skills
@@ -16,11 +18,8 @@ module.exports = function(knex, req, res, next) {
             q.whereNotIn('tasks.id', req.user.attributes.tasks_created);
         if (req.user.attributes.tasks_approved && (req.body.filters.for_approving || req.body.filters.not_in_approved))
             q.whereNotIn('tasks.id', req.user.attributes.tasks_approved);
-        if (req.user.attributes.tasks_done && (req.body.filters.for_solving || req.body.filters.not_in_done)) {
-            q.leftJoin('solutions', 'solutions.task_id', '=', 'tasks.id');
-            q.whereNotIn('solutions.id', req.user.attributes.tasks_done).orWhereNull('solutions.id');
-        }
 
+        if (req.body.filters.received) recf = true;
         if (req.body.filters.received === true) q.whereIn('tasks.id', req.user.attributes.tasks_received);
         else if (req.user.attributes.tasks_received && (req.body.filters.received === false))
             q.whereNotIn('tasks.id', req.user.attributes.tasks_received);
@@ -28,11 +27,16 @@ module.exports = function(knex, req, res, next) {
         if (req.body.filters.liked === true) q.whereIn('tasks.id', req.user.attributes.tasks_liked);
         else if (req.user.attributes.tasks_liked && (req.body.filters.liked === false))
             q.whereNotIn('tasks.id', req.user.attributes.tasks_liked);
+
+        if (req.user.attributes.tasks_done && (req.body.filters.for_solving || req.body.filters.not_in_done)) {
+            q.leftJoin('solutions', 'solutions.task_id', '=', 'tasks.id');
+            q.whereNull('solutions.id').orWhereNotIn('solutions.id', req.user.attributes.tasks_done);
+        }
     }
     q.limit(20).offset(req.body.offset || 0);
 
     q.then(function(rows) {
-        if (!rows.length) console.log(q.toString());
+        if (recf) console.log(q.toString());
         if (!rows) return res.end();
         res.end(JSON.stringify(rows));
 

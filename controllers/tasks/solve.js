@@ -1,5 +1,6 @@
 
 //Добавить проверку, решал ли пользователь такое задание!!!
+//Удалять задание из полученных после его решения
 module.exports = function(knex, updateArray) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
