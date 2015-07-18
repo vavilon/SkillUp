@@ -13,7 +13,7 @@ module.exports = function(knex, updateArray, pgApprove) {
                 return;
             }
             knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'approvement_id', 'skills', 'exp', 'author').then(function(rows) {
-                if (rows[0].is_approved !== undefined) {
+                if (rows[0].is_approved !== null) {
                     res.end();
                     return;
                 }

@@ -15,7 +15,7 @@ module.exports = function(knex, updateArray) {
             knex('solutions').where('id', '=', req.body.solution_id)
                 .select('is_correct', 'task_id', 'checked_correct', 'checked_incorrect', 'user_id')
                 .then(function(solutions) {
-                    if (solutions[0].is_correct !== undefined || solutions[0].user_id === req.user.id) {
+                    if (solutions[0].is_correct !== null || solutions[0].user_id === req.user.id) {
                         res.end();
                         return;
                     }

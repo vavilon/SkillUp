@@ -15,7 +15,7 @@ module.exports = function(knex) {
                 knex('tasks').where('id', '=', req.body.task_id).select('exp').then(function(rows) {
                     knex.raw("UPDATE users SET tasks_done = array_append(tasks_done, '" + req.body.task_id + "')"
                         + ", exp = exp - " + rows[0].exp  + ", tasks_received = array_remove(tasks_received, '" +
-                        req.body.task_id + "'" + " WHERE id = '" + req.user.id + "';").then(function() {
+                        req.body.task_id + "')" + " WHERE id = '" + req.user.id + "';").then(function() {
                         res.end('ok');
                     }).catch(function (error) {
                         console.log(error);
