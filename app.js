@@ -232,7 +232,7 @@ app.post('/change_password', function(req, res) {
 
 app.post('/create_task', controllers.tasks.create(knex, updateArray));
 
-app.post('/solve_task', controllers.tasks.solve(knex, updateArray));
+app.post('/solve_task', controllers.tasks.solve(knex));
 
 app.post('/like_task', controllers.tasks.like(knex, updateArray));
 

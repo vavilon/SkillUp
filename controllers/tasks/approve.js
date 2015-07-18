@@ -7,8 +7,13 @@ var countToApprove = 3, correctConstant = 2 / 3, createTaskAwardMultiplier = 3;
 module.exports = function(knex, updateArray, pgApprove) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
+            if (req.user.attributes.tasks_approved && req.user.attributes.tasks_approved.indexOf(req.body.task_id) !== -1
+                || req.user.attributes.tasks_created && req.user.attributes.tasks_created.indexOf(req.body.task_id) !== -1) {
+                res.end();
+                return;
+            }
             knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'approvement_id', 'skills', 'exp', 'author').then(function(rows) {
-                if (rows[0].is_approved) {
+                if (rows[0].is_approved !== undefined) {
                     res.end();
                     return;
                 }

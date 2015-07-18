@@ -1,40 +1,28 @@
 
-//Сделать так, чтобы нельзя было получить задание, которое создал
 module.exports = function(knex, updateArray) {
     return function(req, res, next) {
         if (req.isAuthenticated()) {
-            knex('users').where('id', '=', req.user.id).andWhere('tasks_received', '@>', [req.body.task_id])
+            if (req.user.attributes.tasks_created && req.user.attributes.tasks_created.indexOf(req.body.task_id) !== -1
+                || req.user.attributes.tasks_done && req.user.attributes.tasks_done.indexOf(req.body.task_id) !== -1) {
+                res.end();
+                return;
+            }
+            knex('users').where('id', '=', req.user.id).andWhere('tasks_received', '@>', [req.body.task_id]).select('id')
                 .then(function (rows) {
-                    if (rows.length === 0) {
-                        updateArray('users', 'tasks_received', req.user.id, 'append', req.body.task_id, function (err, result) {
+                    var operation = rows.length === 0 ? 'append' : 'remove';
+                    updateArray('users', 'tasks_received', req.user.id, operation, req.body.task_id, function (err, result) {
+                        if (err) {
+                            res.end();
+                            return console.error('error running query', err);
+                        }
+                        updateArray('tasks', 'participants', req.body.task_id, operation, req.user.id, function (err, result) {
                             if (err) {
                                 res.end();
                                 return console.error('error running query', err);
                             }
-                            updateArray('tasks', 'participants', req.body.task_id, 'append', req.user.id, function (err, result) {
-                                if (err) {
-                                    res.end();
-                                    return console.error('error running query', err);
-                                }
-                                res.end('ok');
-                            });
+                            res.end('ok');
                         });
-                    }
-                    else {
-                        updateArray('users', 'tasks_received', req.user.id, 'remove', req.body.task_id, function (err, result) {
-                            if (err) {
-                                res.end();
-                                return console.error('error running query', err);
-                            }
-                            updateArray('tasks', 'participants', req.body.task_id, 'remove', req.user.id, function (err, result) {
-                                if (err) {
-                                    res.end();
-                                    return console.error('error running query', err);
-                                }
-                                res.end('ok');
-                            });
-                        });
-                    }
+                    });
                 }).catch(function (error) {
                     console.log(error);
                     res.end();
