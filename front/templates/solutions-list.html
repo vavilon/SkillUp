@@ -115,18 +115,10 @@
                 <div layout="row" layout-align="start center" class="task-footer" ng-class="{'task-padding': $last}">
                     <div flex="70">
                         <span class="task-date">Дата решения: {{solution.date_created | date: 'dd.MM.yyyy'}}</span>
-                        <span class="task-author" ng-if="!forProfileDone">Решил: <a href="/users/{{solution.user_id}}">
+                        <span class="task-author">Решил: <a href="/users/{{solution.user_id}}">
                             {{solution.user_name}}</a></span>
-                        <span class="task-author" ng-if="forProfileDone">Автор: <a href="/users/{{solution.author_id}}">
-                            {{solution.author_name}}</a></span>
                     </div>
                     <span flex></span>
-                    <div layout="row" flex ng-if="forProfileDone">
-                        <like-button type="task" id="solution.task_id" likes="solution.task_likes" liked="solution.liked"
-                                     style="margin-right: 25px;"></like-button>
-                        <receive-button id="solution.task_id" count="solution.task_participants.length"
-                                        received="solution.received" disabled="solution.notReceivable"></receive-button>
-                    </div>
                     <div ng-if="solution.expanded">
                         <md-button class="md-raised md-primary" style="float: right;" ng-click="send(solution)">Отправить</md-button>
                     </div>

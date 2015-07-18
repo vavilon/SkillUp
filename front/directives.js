@@ -20,7 +20,8 @@ app.directive('tasksList', function() {
             showReceive: '=?',
             approve: '=?',
             approveCallback: '=?',
-            subheader: '@?'
+            subheader: '@?',
+            receiveCallback: '=?'
         },
         controller: function($http, $scope, $mdToast, loadLoggedUser, loggedUser, getObjByID, $rootScope) {
 
@@ -93,7 +94,7 @@ app.directive('tasksList', function() {
                     .success(function(data) { $scope.approveCallback(data, id); });
             };
 
-            $scope.$watch('tasksObj', function(newVal, oldVal) {
+            $scope.$watchCollection('tasksObj', function(newVal, oldVal) {
                 try {
                     $scope.lastExpandedTask = $scope.tasksObj[0];
                     if (!$scope.lastExpandedTask) return;
@@ -127,8 +128,7 @@ app.directive('solutionsList', function() {
             showLike: '=?',
             showCheck: '=?',
             check: '=?',
-            subheader: '@?',
-            forProfileDone: '=?'
+            subheader: '@?'
         },
         controller: function($http, $scope, $mdToast, loadLoggedUser, loggedUser, getObjByID, $rootScope) {
 
@@ -271,7 +271,8 @@ app.directive('receiveButton', function() {
             count: '=',
             received: '=',
             receive: '=?',
-            disabled: '=?'
+            disabled: '=?',
+            callback: '=?'
         },
         controller: function($scope, $http, loadLoggedUser) {
             if (!angular.isNumber($scope.count) || $scope.count < 0) $scope.count = 0;
@@ -287,9 +288,9 @@ app.directive('receiveButton', function() {
                     if (!data) {
                         $scope.received = !$scope.received;
                         $scope.received ? $scope.count++ : $scope.count--;
-                        return;
                     }
-                    loadLoggedUser();
+                    else loadLoggedUser();
+                    $scope.callback && $scope.callback({id: $scope.id, received: $scope.received});
                 });
             };
         }

@@ -42,6 +42,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
                                         setNotReceivable) {
         $scope.categoryNum = 0;
+        $scope.tabSelected = 0;
 
         $scope.findSkill = function (id) {
             return $scope.exs.skills[id];
@@ -66,50 +67,60 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 $scope.user.workStr = workStr(JSON.parse($scope.user.work));
             }
 
-            var dbTasksDoneOptions = {ids: $scope.user.tasks_done, filters: {for_profile_done: true, is_correct: 'all'}};
-            $http.post('/db/solutions', dbTasksDoneOptions).success(function (tasksDone) {
-                $scope.tasksDone = tasksDone;
-                setLiked($scope.tasksDone, loggedUser().tasks_liked, true, 'task_id');
-                setReceived($scope.tasksDone, loggedUser().tasks_received, true, 'task_id');
-                if ($scope.ownProfile) for (var i in $scope.tasksDone) $scope.tasksDone[i].notReceivable = true;
-                else {
-                    setNotReceivable($scope.tasksDone, loggedUser().tasks_created, true, 'task_id');
-                    setNotReceivable($scope.tasksDone, loggedUser().tasks_done, true);
-                }
-                dbTasksDoneOptions.offset = $scope.tasksDone.length;
+            if ($scope.user.tasks_done) {
+                var dbTasksDoneOptions = {ids: $scope.user.tasks_done};
+                $http.post('/db/tasks', dbTasksDoneOptions).success(function (tasksDone) {
+                    $scope.tasksDone = tasksDone;
+                    setLiked($scope.tasksDone, loggedUser().tasks_liked, true);
+                    setReceived($scope.tasksDone, loggedUser().tasks_received, true);
+                    if ($scope.ownProfile) for (var i in $scope.tasksDone) $scope.tasksDone[i].notReceivable = true;
+                    else {
+                        setNotReceivable($scope.tasksDone, loggedUser().tasks_created, true);
+                        setNotReceivable($scope.tasksDone, loggedUser().tasks_done, true);
+                    }
+                    dbTasksDoneOptions.offset = $scope.tasksDone.length;
 
-                $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback,
-                    loadOptions: dbTasksDoneOptions, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
-            });
+                    $scope.scrollWrap = { loadFunc: loadTasks, callback: $scope.scrollCallback,
+                        loadOptions: dbTasksDoneOptions, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}
+                    };
+                });
+            }
 
-            var dbSolutionsCheckedOptions = {ids: $scope.user.solutions_checked};
-            $http.post('/db/solutions', dbSolutionsCheckedOptions).success(function (solutionsChecked) {
-                $scope.solutionsChecked = solutionsChecked;
-                setLiked($scope.solutionsChecked, loggedUser().solutions_liked, true);
-            });
+            if ($scope.user.solutions_checked) {
+                var dbSolutionsCheckedOptions = {ids: $scope.user.solutions_checked};
+                $http.post('/db/solutions', dbSolutionsCheckedOptions).success(function (solutionsChecked) {
+                    $scope.solutionsChecked = solutionsChecked;
+                    setLiked($scope.solutionsChecked, loggedUser().solutions_liked, true);
+                });
+            }
 
-            var dbTasksApprovedOptions = {ids: $scope.user.tasks_approved};
-            $http.post('/db/tasks', dbTasksApprovedOptions).success(function (tasksApproved) {
-                $scope.tasksApproved = tasksApproved;
-                setLiked($scope.tasksApproved, loggedUser().tasks_liked, true);
-                setReceived($scope.tasksApproved, loggedUser().tasks_received, true);
-                setNotReceivable($scope.tasksApproved, loggedUser().tasks_created, true);
-                // Тут необходимо добавить setNotReceived на loggedUser().tasks_done, но tasks_done хранит id решений
-                // поэтому нужно либо все менять, либо ужасный костыль
-            });
+            if ($scope.user.tasks_approved) {
+                var dbTasksApprovedOptions = {ids: $scope.user.tasks_approved};
+                $http.post('/db/tasks', dbTasksApprovedOptions).success(function (tasksApproved) {
+                    $scope.tasksApproved = tasksApproved;
+                    setLiked($scope.tasksApproved, loggedUser().tasks_liked, true);
+                    setReceived($scope.tasksApproved, loggedUser().tasks_received, true);
+                    setNotReceivable($scope.tasksApproved, loggedUser().tasks_created, true);
+                    setNotReceivable($scope.tasksApproved, loggedUser().tasks_done, true);
+                });
+            }
 
-            var dbTasksCreatedOptions = {ids: $scope.user.tasks_created};
-            $http.post('/db/tasks', dbTasksCreatedOptions).success(function (tasksCreated) {
-                $scope.tasksCreated = tasksCreated;
-                setLiked($scope.tasksCreated, $scope.user.tasks_liked, true);
-                if (!$scope.ownProfile) setReceived($scope.tasksCreated, $scope.user.tasks_received, true);
-                else for (var i in $scope.tasksCreated) $scope.tasksCreated[i].notReceivable = true;
-            });
-
+            if ($scope.user.tasks_created) {
+                var dbTasksCreatedOptions = {ids: $scope.user.tasks_created};
+                $http.post('/db/tasks', dbTasksCreatedOptions).success(function (tasksCreated) {
+                    $scope.tasksCreated = tasksCreated;
+                    setLiked($scope.tasksCreated, $scope.user.tasks_liked, true);
+                    if (!$scope.ownProfile) {
+                        setReceived($scope.tasksCreated, $scope.user.tasks_received, true);
+                        setNotReceivable($scope.tasksCreated, loggedUser().tasks_done, true);
+                    }
+                    else for (var i in $scope.tasksCreated) $scope.tasksCreated[i].notReceivable = true;
+                });
+            }
         });
 
-        $scope.tabSelected = 0;
-
+        $scope.scrollWrap = $scope.scrollWrap || {loadFunc: loadTasks, callback: $scope.scrollCallback,
+                scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
         $scope.setScrollOptions = function(num) {
             $scope.scrollWrap.scrollOptions.event = num === 0 ? 'tasksDoneScrolled' :
                 num === 1 ? 'tasksCheckedScrolled' :

@@ -120,7 +120,8 @@
                                      liked="taskVal.liked"
                                      style="margin-right: 25px;"></like-button>
                         <receive-button ng-if="showReceive" id="taskVal.id" count="taskVal.participants.length"
-                                        received="taskVal.received" disabled="taskVal.notReceivable"></receive-button>
+                                        received="taskVal.received" disabled="taskVal.notReceivable"
+                                        callback="receiveCallback"></receive-button>
                     </div>
                 </div>
             </div>

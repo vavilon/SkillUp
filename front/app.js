@@ -263,7 +263,27 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     };
 
+    $scope.receiveCallback = function (data) {
+        var arr = data.received ? $scope.tasksRecommended : $scope.tasksReceived;
+        var arrOther = data.received ? $scope.tasksReceived : $scope.tasksRecommended;
+        var index = 0;
+        for (var i in arr) {
+            if (arr[i].id === data.id) {
+                index = i;
+                break;
+            }
+        }
+        var el = arr.splice(index, 1)[0];
+        el.expanded = false;
+        arrOther.push(el);
+    };
+
     var user = loggedUser();
+
+    $scope.tasksReceived = [];
+    $scope.tasksRecommended = [];
+    $scope.solutionsForChecking = [];
+    $scope.tasksForApproving = [];
 
     $http.post('/db/tasks', {filters: {for_solving: true, received: true}}).success(function(data) {
         $scope.tasksReceived = data;
@@ -279,14 +299,15 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             setLiked($scope.tasksRecommended, user.tasks_liked, true);
     });
 
-    $http.post('/db/tasks', {filters: {for_approving: true}, skills: completedSkills(user.skills)}).success(function(data) {
-        $scope.tasksForApproving = data;
-    });
-
     $http.post('/db/solutions', {filters: {for_checking: true}, skills: completedSkills(user.skills)}).success(function (data) {
         $scope.solutionsForChecking = data;
         setLiked($scope.solutionsForChecking, user.solutions_liked, true);
     });
+
+    $http.post('/db/tasks', {filters: {for_approving: true}, skills: completedSkills(user.skills)}).success(function(data) {
+        $scope.tasksForApproving = data;
+    });
+
 
     $scope.temp = {}; //связывает ng-model элемента input директивы tasks-list и temp.solution
 
