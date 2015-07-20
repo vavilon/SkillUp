@@ -297,9 +297,8 @@ pre {
     line-height: normal;
 }
 
-.skill-progress {
-    background-color: #9FA8DA !important;
-    background: linear-gradient(to right, #3F51B5 50%, transparent 50%);
+.skill-button.root {
+    background-color: #FFEB3B !important;
 }
 
 .expand-button {

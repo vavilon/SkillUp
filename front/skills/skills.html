@@ -7,10 +7,7 @@
             <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
         </md-button>
         <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
-        <md-button class="md-raised skill-button"
-                   ng-class="{'md-primary': highlightSkills && skill.isInUserSkills,
-                          'md-accent': highlightNeeds && skill.isInUserNeeds}">{{skill.title}}
-        </md-button>
+        <skill-button id="skill.id" type="{{getSkillType(skill)}}" progress="skill.count || 100"></skill-button>
     </div>
     <ul class="animate-if-skill" ng-if="skill.children && skill.expanded">
         <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">
@@ -50,9 +47,7 @@
                                ng-click="expand(exs.root)" aria-label="expand-toogle">
                         <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': exs.root.expanded}"></i>
                     </md-button>
-                    <md-button class="md-raised skill-button" id="button-exs-root">
-                        {{exs.root.title}}
-                    </md-button>
+                    <skill-button id="'root'" type="root"></skill-button>
                 </div>
 
                 <ul class="animate-if-skill" ng-if="exs.root.expanded" style="margin-left: 19px;">
@@ -73,9 +68,7 @@
                                 <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
                             </md-button>
                             <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
-                            <md-button class="md-raised skill-button">
-                                {{skill.title}}
-                            </md-button>
+                            <skill-button id="skill.id" type="getSkillType(skill)" progress="skill.count || 100"></skill-button>
                         </div>
                         <ul class="animate-if-skill" ng-if="skill.expanded">
                             <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">

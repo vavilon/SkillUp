@@ -1,5 +1,5 @@
 
-<md-content ng-if="solutionsObj.length">
+<md-content ng-if="solutions.length">
     <section ng-if="subheader">
         <md-divider></md-divider>
         <md-subheader class="md-primary">{{subheader}}</md-subheader>
@@ -7,7 +7,7 @@
     </section>
     <md-list layout="column">
         <md-list-item class="item-animate"
-                       ng-repeat="solution in solutionsObj | orderBy: ['-date_created']">
+                       ng-repeat="solution in solutions | orderBy: ['-date_created']">
             <div layout="column" flex>
                 <div layout="row" class="task-header">
                     <div flex>
@@ -27,11 +27,7 @@
                             <span class="task-skills-word">Умения: </span>
                         </div>
                         <div layout="row" layout-wrap flex>
-                            <md-button class="md-raised md-primary skill-button"
-                                       aria-label="skillBtn"
-                                       ng-repeat="skillID in solution.task_skills">
-                                {{skillsObj.skills[skillID].title}}
-                            </md-button>
+                            <skill-button ng-repeat="skillID in solution.task_skills" id="skillID" type="skill"></skill-button>
                         </div>
                     </div>
                     <div layout="row" layout-align="start start" flex ng-if="showExpand">

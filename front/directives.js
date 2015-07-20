@@ -4,8 +4,8 @@ app.directive('tasksList', function() {
         restrict: 'E',
         templateUrl: '/front/templates/tasks-list.html',
         scope: {
-            tasksObj: '=',
-            skillsObj: '=?',
+            tasks: '=',
+            exs: '=?',
             showDifficulty: '=?',
             showExpand: '=?',
             solvable: '=?',
@@ -37,7 +37,7 @@ app.directive('tasksList', function() {
             };
 
             $scope.apprData = {title: true, skills: true, desc: true, links: true};
-            $scope.skillsObj = $scope.skillsObj || $rootScope.exs;
+            $scope.exs = $scope.exs || $rootScope.exs;
             if ($scope.showDifficulty === undefined) $scope.showDifficulty = true;
             if ($scope.showExpand === undefined) $scope.showExpand = true;
             if ($scope.solvable === undefined) $scope.solvable = true;
@@ -53,13 +53,13 @@ app.directive('tasksList', function() {
                         $scope.showToast('Решение отправлено!', '#toastSuccess');
                         $scope.solution = '';
                         var index = 0;
-                        for (var i in $scope.tasksObj) {
-                            if ($scope.tasksObj[i].id === id) {
+                        for (var i in $scope.tasks) {
+                            if ($scope.tasks[i].id === id) {
                                 index = i;
                                 break;
                             }
                         }
-                        $scope.tasksObj.splice(index, 1);
+                        $scope.tasks.splice(index, 1);
                     });
                 }
             };
@@ -78,13 +78,13 @@ app.directive('tasksList', function() {
                     loadLoggedUser(function() {
                         $scope.showToast('Подтверждение отправлено!', '#toastSuccess');
                         var index = 0;
-                        for (var i in $scope.tasksObj) {
-                            if ($scope.tasksObj[i].id === id) {
+                        for (var i in $scope.tasks) {
+                            if ($scope.tasks[i].id === id) {
                                 index = i;
                                 break;
                             }
                         }
-                        $scope.tasksObj.splice(index, 1);
+                        $scope.tasks.splice(index, 1);
                     });
                 }
             };
@@ -94,9 +94,9 @@ app.directive('tasksList', function() {
                     .success(function(data) { $scope.approveCallback(data, id); });
             };
 
-            $scope.$watchCollection('tasksObj', function(newVal, oldVal) {
+            $scope.$watchCollection('tasks', function(newVal, oldVal) {
                 try {
-                    $scope.lastExpandedTask = $scope.tasksObj[0];
+                    $scope.lastExpandedTask = $scope.tasks[0];
                     if (!$scope.lastExpandedTask) return;
                     $scope.lastExpandedTask.expanded = false;
                 } catch (e) {}
@@ -117,8 +117,8 @@ app.directive('solutionsList', function() {
         restrict: 'E',
         templateUrl: '/front/templates/solutions-list.html',
         scope: {
-            solutionsObj: '=',
-            skillsObj: '=?',
+            solutions: '=',
+            exs: '=?',
             showExpand: '=?',
             showExp: '=?',
             expStyle: '@?',
@@ -145,7 +145,7 @@ app.directive('solutionsList', function() {
                 );
             };
 
-            $scope.skillsObj = $scope.skillsObj || $rootScope.exs;
+            $scope.exs = $scope.exs || $rootScope.exs;
             if ($scope.showExpand === undefined) $scope.showExpand = true;
             if ($scope.showExp === undefined) $scope.showExp = true;
             if ($scope.showSkills === undefined) $scope.showSkills = true;
@@ -170,13 +170,13 @@ app.directive('solutionsList', function() {
                     loadLoggedUser(function() {
                         $scope.showToast('Решение проверено!', '#toastSuccess');
                         var index = 0;
-                        for (var i in $scope.solutionsObj) {
-                            if ($scope.solutionsObj[i].id === id) {
+                        for (var i in $scope.solutions) {
+                            if ($scope.solutions[i].id === id) {
                                 index = i;
                                 break;
                             }
                         }
-                        $scope.solutionsObj.splice(index, 1);
+                        $scope.solutions.splice(index, 1);
                     });
                 }
             };
@@ -213,9 +213,9 @@ app.directive('solutionsList', function() {
                 }
             };
 
-            $scope.$watch('solutionsObj', function(newVal, oldVal) {
+            $scope.$watch('solutions', function(newVal, oldVal) {
                 try {
-                    $scope.lastExpandedSolution = $scope.solutionsObj[0];
+                    $scope.lastExpandedSolution = $scope.solutions[0];
                     if (!$scope.lastExpandedSolution) return;
                     $scope.lastExpandedSolution.expanded = false;
                 } catch (e) {}
@@ -340,6 +340,9 @@ app.directive('scrollLoader', function() {
         },
         controller: function($rootScope, $scope, loggedUser, setLiked, setReceived) {
 
+            $scope.options = $scope.options || {};
+            $scope.options.offset = $scope.options.offset || 0;
+            
             var endOfData = false;
             $scope.loadMoreData = function() {
                 if (!endOfData) {
@@ -363,4 +366,28 @@ app.directive('scrollLoader', function() {
             else $scope.$on($scope.events, $scope.loadMoreData);
         }
     };
+});
+
+app.directive('skillButton', function($rootScope) {
+    return {
+        restrict: 'E',
+        templateUrl: '/front/templates/skill-button.html',
+        scope: {
+            type: '@?',
+            id: '=',
+            exs: '=?',
+            progress: '=?'
+        },
+        link: function (scope, element, attrs) {
+            scope.exs = scope.exs || $rootScope.exs;
+            if (angular.isNumber(scope.progress)) {
+                var percent = Math.round(100 - (scope.progress / scope.exs.skills[scope.id].count_to_get * 100));
+                if (percent > 100) percent = 100;
+                else if (percent < 0) percent = 0;
+                element[0].children[0].style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '
+                + percent + '%, transparent ' + percent + '%)';
+                element[0].children[0].style['background-color'] = '';
+            }
+        }
+    }
 });

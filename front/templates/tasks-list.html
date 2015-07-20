@@ -1,4 +1,4 @@
-<md-content ng-if="tasksObj.length">
+<md-content ng-if="tasks.length">
     <section ng-if="subheader">
         <md-divider></md-divider>
         <md-subheader class="md-primary">{{subheader}}</md-subheader>
@@ -6,27 +6,27 @@
     </section>
     <md-list layout="column">
         <md-list-item class="item-animate"
-                      ng-repeat="taskVal in tasksObj"> <!--  | orderBy: ['-difficulty', 'title'] -->
+                      ng-repeat="task in tasks"> <!--  | orderBy: ['-difficulty', 'title'] -->
             <div layout="column" flex>
                 <div layout="row" class="task-header">
                     <div>
                         <div ng-if="showDifficulty">
-                            <span class="diff-label easy" ng-if="taskVal.difficulty >= 0.9">ЛЕГКО</span>
+                            <span class="diff-label easy" ng-if="task.difficulty >= 0.9">ЛЕГКО</span>
                             <span class="diff-label medium"
-                                  ng-if="taskVal.difficulty < 0.9 && taskVal.difficulty > 0.5">СРЕДНЕ</span>
-                            <span class="diff-label hard" ng-if="taskVal.difficulty < 0.5">СЛОЖНО</span>
+                                  ng-if="task.difficulty < 0.9 && task.difficulty > 0.5">СРЕДНЕ</span>
+                            <span class="diff-label hard" ng-if="task.difficulty < 0.5">СЛОЖНО</span>
                         </div>
                     </div>
                     <div flex>
-                        <h3 class="task-title"><a href="tasks/{{taskVal.id}}">{{taskVal.title}}</a></h3>
+                        <h3 class="task-title"><a href="tasks/{{task.id}}">{{task.title}}</a></h3>
                     </div>
                     <div flex="15" ng-if="showExp">
                         <p class="task-exp">exp:
-                            <span ng-if="expStyle === undefined">{{taskVal.exp || 0 | thousand}}</span>
+                            <span ng-if="expStyle === undefined">{{task.exp || 0 | thousand}}</span>
                             <span ng-if="expStyle === '+'"
-                                  style="color: #4CAF50;">+{{taskVal.exp || 0 | thousand}}</span>
+                                  style="color: #4CAF50;">+{{task.exp || 0 | thousand}}</span>
                             <span ng-if="expStyle === '-'"
-                                  style="color: #F44336;">-{{taskVal.exp || 0 | thousand}}</span>
+                                  style="color: #F44336;">-{{task.exp || 0 | thousand}}</span>
                         </p>
                     </div>
                 </div>
@@ -36,32 +36,28 @@
                             <span class="task-skills-word">Умения: </span>
                         </div>
                         <div layout="row" layout-wrap flex>
-                            <md-button class="md-raised md-primary skill-button"
-                                       aria-label="skillBtn"
-                                       ng-repeat="skillID in taskVal.skills">
-                                {{skillsObj.skills[skillID].title}}
-                            </md-button>
+                            <skill-button ng-repeat="skillID in task.skills" id="skillID" type="skill"></skill-button>
                         </div>
                     </div>
                     <div layout="row" layout-align="start start" flex ng-if="showExpand">
                         <md-button class="md-mini md-primary expand-button"
-                                   ng-click="expand(taskVal)" aria-label="expand-toogle">
+                                   ng-click="expand(task)" aria-label="expand-toogle">
                             <i class="mdi mdi-chevron-down mdi-24 rotate-base"
-                               ng-class="{'rotate-btn': taskVal.expanded}"></i>
+                               ng-class="{'rotate-btn': task.expanded}"></i>
                         </md-button>
                     </div>
                 </div>
-                <div class="animate-if" layout="column" ng-if="taskVal.expanded">
+                <div class="animate-if" layout="column" ng-if="task.expanded">
                     <md-card class="task-description-card">
                         <md-card-content>
                             <h2 class="md-title task-description-word">Условие</h2>
 
                             <div class="task-description">
-                                {{taskVal.description}}
+                                {{task.description}}
                             </div>
                             <div style="margin-top: 10px; color: rgba(0, 0, 0, 0.54);">Ссылки на учебные материалы:
                             </div>
-                            <div ng-repeat="link in taskVal.links">
+                            <div ng-repeat="link in task.links">
                                 <a class="learning-links" href="{{link}}">{{link}}</a>
                             </div>
                             <form name="solutionForm" ng-if="solvable">
@@ -75,7 +71,7 @@
                                     </div>
                                 </md-input-container>
                                 <md-button class="md-raised md-primary" style="float: right; "
-                                           ng-click="send(taskVal.id)">Отправить
+                                           ng-click="send(task.id)">Отправить
                                 </md-button>
                             </form>
                         </md-card-content>
@@ -104,23 +100,23 @@
                                 {{apprData.links ? 'правильно' : 'неправильно'}}</span>
                             </md-checkbox>
                             <md-button class="md-raised md-primary" style="float: right; "
-                                       ng-click="approve(taskVal.id)">Отправить
+                                       ng-click="approve(task.id)">Отправить
                             </md-button>
                         </md-card-content>
                     </md-card>
                 </div>
                 <div layout="row" class="task-footer" ng-class="{'task-padding': $last}">
                     <div flex="85">
-                        <span class="task-date">Дата создания: {{taskVal.date_created | date: 'dd.MM.yyyy'}}</span>
-                    <span class="task-author">Автор: <a href="/users/{{taskVal.author}}">
-                        {{taskVal.author_name}}</a></span>
+                        <span class="task-date">Дата создания: {{task.date_created | date: 'dd.MM.yyyy'}}</span>
+                    <span class="task-author">Автор: <a href="/users/{{task.author}}">
+                        {{task.author_name}}</a></span>
                     </div>
                     <div layout="row" flex>
-                        <like-button ng-if="showLike" type="task" id="taskVal.id" likes="taskVal.likes"
-                                     liked="taskVal.liked"
+                        <like-button ng-if="showLike" type="task" id="task.id" likes="task.likes"
+                                     liked="task.liked"
                                      style="margin-right: 25px;"></like-button>
-                        <receive-button ng-if="showReceive" id="taskVal.id" count="taskVal.participants.length"
-                                        received="taskVal.received" disabled="taskVal.notReceivable"
+                        <receive-button ng-if="showReceive" id="task.id" count="task.participants.length"
+                                        received="task.received" disabled="task.notReceivable"
                                         callback="receiveCallback"></receive-button>
                     </div>
                 </div>

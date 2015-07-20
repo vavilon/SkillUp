@@ -16,6 +16,15 @@ app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
     };
 });
 
+app.factory('appendProgressToExs', function($rootScope) {
+    return function () {
+        var progress = $rootScope.loggedUser.skills, skills = $rootScope.exs.skills;
+        for (var i in progress) {
+            skills[progress[i].id].count = progress[i].count;
+        }
+    };
+});
+
 //Вызывается в ng-show или ng-if, чтобы определить, что показывать в зависимости от того, вошел юзер или не вошел
 app.factory('isLoggedIn', function($rootScope){
     return function() {
@@ -94,11 +103,12 @@ app.factory('parseSkills', function() {
 });
 
 app.factory('setPropertyComparingArrays', function() {
-    return function(compPropName, setPropName, setValue, setArray, compArray) {
+    return function(compPropName, setPropName, setValue, setArray, compArray, condition) {
         if (!angular.isObject(setArray) || !angular.isObject(compArray)) return;
         for (var i in setArray) {
             for (var j in compArray) {
-                if (setArray[i][compPropName] === compArray[j]) {
+                if (setArray[i][compPropName] === compArray[j] ||
+                    (condition && condition(setArray[i], compArray[j]))) {
                     setArray[i][setPropName] = setValue;
                     break;
                 }
@@ -108,10 +118,11 @@ app.factory('setPropertyComparingArrays', function() {
 });
 
 app.factory('setPropertyComparingObjArr', function() {
-    return function(compPropName, setPropName, setValue, setObj, compArray) {
+    return function(compPropName, setPropName, setValue, setObj, compArray, condition) {
         if (!angular.isObject(setObj) || !angular.isObject(compArray)) return;
         for (var j in compArray) {
-            if (setObj[compPropName] === compArray[j]) {
+            if (setObj[compPropName] === compArray[j] ||
+                (condition && condition(setObj, compArray[j]))) {
                 setObj[setPropName] = setValue;
                 break;
             }
@@ -120,9 +131,9 @@ app.factory('setPropertyComparingObjArr', function() {
 });
 
 app.factory('setPropertyFuzzy', function (setPropertyComparingArrays, setPropertyComparingObjArr) {
-    return function(newPropName, setArray, compArray, multiple, compPropName) {
-        if (multiple) setPropertyComparingArrays(compPropName || 'id', newPropName, true, setArray, compArray);
-        else setPropertyComparingObjArr(compPropName || 'id', newPropName, true, setArray, compArray);
+    return function(newPropName, setArray, compArray, multiple, compPropName, condition) {
+        if (multiple) setPropertyComparingArrays(compPropName || 'id', newPropName, true, setArray, compArray, condition);
+        else setPropertyComparingObjArr(compPropName || 'id', newPropName, true, setArray, compArray, condition);
     };
 });
 
@@ -139,8 +150,8 @@ app.factory('setReceived', function(setPropertyFuzzy) {
 });
 
 app.factory('setNotReceivable', function(setPropertyFuzzy) {
-    return function(setArray, compArray, multiple, compPropName) {
-        setPropertyFuzzy('notReceivable', setArray, compArray, multiple, compPropName);
+    return function(setArray, compArray, multiple, compPropName, condition) {
+        setPropertyFuzzy('notReceivable', setArray, compArray, multiple, compPropName, condition);
     };
 });
 
@@ -156,12 +167,14 @@ app.factory('skillsProgressToIDs', function () {
 
 app.factory('loadFunc', function($http) {
     return function(options, callback) {
+        if (!options) return;
         $http.post('/db/' + options.tableName, options).success(callback);
     };
 });
 
 app.factory('loadTasks', function(loadFunc) {
     return function(options, callback) {
+        options = options || {};
         options.tableName = 'tasks';
         loadFunc(options, callback);
     };
@@ -169,6 +182,7 @@ app.factory('loadTasks', function(loadFunc) {
 
 app.factory('loadUsers', function(loadFunc) {
     return function(options, callback) {
+        options = options || {};
         options.tableName = 'users';
         loadFunc(options, callback);
     };
@@ -176,6 +190,7 @@ app.factory('loadUsers', function(loadFunc) {
 
 app.factory('loadSolutions', function(loadFunc) {
     return function(options, callback) {
+        options = options || {};
         options.tableName = 'solutions';
         loadFunc(options, callback);
     };

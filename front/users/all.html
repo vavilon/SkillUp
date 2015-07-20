@@ -111,22 +111,15 @@
                                     <div layout="row" style="padding-bottom: 10px;" ng-if="user.skills.length > 0">
                                         <div layout="row" class="ican" flex="10">Умею:</div>
                                         <div layout="row" layout-wrap flex>
-                                            <md-button class="md-raised md-primary skill-button"
-                                                       aria-label="skillBtn"
-                                                       ng-repeat="skillProgress in user.skills">
-                                                {{findSkill(skillProgress.id).title}}
-                                            </md-button>
+                                            <skill-button ng-repeat="sp in user.skills" id="sp.id" type="skill"
+                                                    progress="sp.count"></skill-button>
                                         </div>
                                     </div>
 
                                     <div layout="row" style="padding-bottom: 15px;" ng-if="user.needs.length > 0">
                                         <div layout="row" class="ican" flex="10">Хочу:</div>
                                         <div layout="row" layout-wrap flex>
-                                            <md-button class="md-raised md-accent skill-button"
-                                                       aria-label="skillBtn"
-                                                       ng-repeat="skill in user.needs">
-                                                {{findSkill(skill).title}}
-                                            </md-button>
+                                            <skill-button ng-repeat="skill in user.needs" id="skill" type="need"></skill-button>
                                         </div>
                                     </div>
 

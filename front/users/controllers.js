@@ -1,46 +1,53 @@
 app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills, loadUsers, $rootScope) {
-    $scope.username = "";
-    $scope.filteredUsers = [];
+    $rootScope.ajaxCall.promise.then(function () {
+        $scope.username = "";
+        $scope.filteredUsers = [];
 
-    $http.get('db/users').success(function (data) {
-        $scope.users = data;
+        $http.get('db/users').success(function (data) {
+            $scope.users = data;
 
-        $scope.scrollWrap = {loadFunc: loadUsers, callback: $scope.scrollCallback, options: {offset: $scope.users.length}};
+            $scope.scrollWrap = {
+                loadFunc: loadUsers,
+                callback: $scope.scrollCallback,
+                options: {offset: $scope.users.length}
+            };
 
-        $scope.lastExpandedUser = $scope.users[0];
+            $scope.lastExpandedUser = $scope.users[0];
 
-        for (var i in $scope.users) {
-            $scope.users[i].skills = parseSkills($scope.users[i].skills);
-        }
+            for (var i in $scope.users) {
+                $scope.users[i].skills = parseSkills($scope.users[i].skills);
+            }
+        });
+
+        $scope.exs = $rootScope.exs;
+
+        $scope.findSkill = function (id) {
+            return $scope.exs.skills[id];
+        };
+
+        $scope.expand = function (user) {
+            if ($scope.lastExpandedUser !== user) $scope.lastExpandedUser.expanded = false;
+            user.expanded = !user.expanded;
+            $scope.lastExpandedUser = user;
+        };
+
+        $scope.$watch('username', function () {
+            if ($scope.lastExpandedUser) $scope.lastExpandedUser.expanded = false;
+        });
+
+        $scope.scrollCallback = function (data) {
+            for (var i in data) {
+                data[i].skills = parseSkills(data[i].skills);
+            }
+            $scope.users = $scope.users.concat(data);
+        };
     });
-
-    $scope.exs = $rootScope.exs;
-
-    $scope.findSkill = function (id) {
-        return $scope.exs.skills[id];
-    };
-
-    $scope.expand = function (user) {
-        if ($scope.lastExpandedUser !== user) $scope.lastExpandedUser.expanded = false;
-        user.expanded = !user.expanded;
-        $scope.lastExpandedUser = user;
-    };
-
-    $scope.$watch('username', function () {
-        if ($scope.lastExpandedUser) $scope.lastExpandedUser.expanded = false;
-    });
-
-    $scope.scrollCallback = function(data) {
-        for (var i in data) {
-            data[i].skills = parseSkills(data[i].skills);
-        }
-        $scope.users = $scope.users.concat(data);
-    };
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, loadLoggedUser,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
                                         setNotReceivable) {
+    $rootScope.ajaxCall.promise.then(function () {
         $scope.categoryNum = 0;
         $scope.tabSelected = 0;
 
@@ -50,7 +57,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
         $scope.exs = $rootScope.exs;
 
-        
+
         var dbUsersOptions = {ids: [$routeParams.user_id]};
         $http.post('/db/users', dbUsersOptions).success(function (data) {
             if (!data || !data.length) return;
@@ -80,7 +87,8 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                     }
                     dbTasksDoneOptions.offset = $scope.tasksDone.length;
 
-                    $scope.scrollWrap = { loadFunc: loadTasks, callback: $scope.scrollCallback,
+                    $scope.scrollWrap = {
+                        loadFunc: loadTasks, callback: $scope.scrollCallback,
                         loadOptions: dbTasksDoneOptions, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}
                     };
                 });
@@ -100,7 +108,9 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                     $scope.tasksApproved = tasksApproved;
                     setLiked($scope.tasksApproved, loggedUser().tasks_liked, true);
                     setReceived($scope.tasksApproved, loggedUser().tasks_received, true);
-                    setNotReceivable($scope.tasksApproved, loggedUser().tasks_created, true);
+                    setNotReceivable($scope.tasksApproved, loggedUser().tasks_created, true, null, function (el) {
+                        return !el.is_approved;
+                    });
                     setNotReceivable($scope.tasksApproved, loggedUser().tasks_done, true);
                 });
             }
@@ -119,19 +129,21 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             }
         });
 
-        $scope.scrollWrap = $scope.scrollWrap || {loadFunc: loadTasks, callback: $scope.scrollCallback,
-                scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}};
-        $scope.setScrollOptions = function(num) {
+        $scope.scrollWrap = $scope.scrollWrap || {
+                loadFunc: loadTasks, callback: $scope.scrollCallback,
+                scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}
+            };
+        $scope.setScrollOptions = function (num) {
             $scope.scrollWrap.scrollOptions.event = num === 0 ? 'tasksDoneScrolled' :
                 num === 1 ? 'tasksCheckedScrolled' :
                     num === 2 ? 'tasksApprovedScrolled' : 'tasksCreatedScrolled';
         };
 
-        $scope.scrollCallback = function(data) {
+        $scope.scrollCallback = function (data) {
             console.log('asdasdasd');
         };
-    }
-);
+    });
+});
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, loadLoggedUser, isImage, $mdToast,
                                              $animate, $timeout, educationStr, workStr, loggedUser) {
