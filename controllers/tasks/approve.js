@@ -1,10 +1,7 @@
 
-var parseSP = require('../../lib/parse-skills-progress');
-var userHasSkills = require('../../lib/user-has-skills');
-
 var countToApprove = 3, correctConstant = 2 / 3, createTaskAwardMultiplier = 3;
 
-module.exports = function(knex, updateArray, pgApprove) {
+module.exports = function(knex, updateArray, pgApprove, parseSP, userHasSkills) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (req.user.attributes.tasks_approved && req.user.attributes.tasks_approved.indexOf(req.body.task_id) !== -1
@@ -33,7 +30,7 @@ module.exports = function(knex, updateArray, pgApprove) {
                     }
 
                     knex.raw("UPDATE users SET tasks_approved = array_append(tasks_approved, '" + req.body.task_id + "')"
-                        + ", exp = exp + " + rows[0].exp  + " WHERE id = '" + req.user.id + "';").then(function() {
+                        + " WHERE id = '" + req.user.id + "';").then(function() {
 
                         res.end('ok');
 
@@ -59,15 +56,16 @@ module.exports = function(knex, updateArray, pgApprove) {
                                 var correct = (tc / count >= correctConstant) && (sc / count >= correctConstant) &&
                                     (dc / count >= correctConstant) && (lc / count >= correctConstant);
                                 knex('tasks').where('id', '=', req.body.task_id).update({is_approved: correct}).then(function() {
-                                    console.log('Task approved!');
 
-                                    if (correct) knex('users').where('id', '=', rows[0].author)
-                                        .increment('exp', rows[0].exp * createTaskAwardMultiplier)
-                                        .then(function() {
+                                    if (correct) {
+                                        knex('users').where('id', '=', rows[0].author)
+                                            .increment('exp', rows[0].exp * createTaskAwardMultiplier)
+                                            .then(function () {
 
-                                    }).catch(function (error) {
-                                        console.log(error);
-                                    });
+                                            }).catch(function (error) {
+                                                console.log(error);
+                                            });
+                                    }
 
                                 }).catch(function (error) {
                                     console.log(error);

@@ -1,8 +1,5 @@
 
-var parseSP = require('../../lib/parse-skills-progress');
-var userHasSkills = require('../../lib/user-has-skills');
-
-module.exports = function(knex, updateArray){
+module.exports = function(knex, updateArray, parseSP, userHasSkills){
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (!req.user.attributes.admin) {

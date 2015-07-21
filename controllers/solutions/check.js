@@ -1,10 +1,7 @@
 
-var parseSP = require('../../lib/parse-skills-progress');
-var userHasSkills = require('../../lib/user-has-skills');
-
 var countToCheck = 3, correctConstant = 2 / 3;
 
-module.exports = function(knex, updateArray) {
+module.exports = function(knex, updateArray, parseSP, userHasSkills) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (req.user.attributes.solutions_checked && req.user.attributes.solutions_checked.indexOf(req.body.solution_id) !== -1) {
