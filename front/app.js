@@ -284,7 +284,17 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             }
             var el = arr.splice(index, 1)[0];
             el.expanded = false;
-            arrOther.push(el);
+            if (arrOther === $scope.tasksRecommended) {
+                for (var i in user.skills) {
+                    for (var j in el.skills) {
+                        if (user.skills[i].id === el.skills[j]) {
+                            arrOther.push(el);
+                            return;
+                        }
+                    }
+                }
+            }
+            else arrOther.push(el);
         };
 
         var user = loggedUser();
