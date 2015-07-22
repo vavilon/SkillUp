@@ -1,7 +1,7 @@
 
 var countToCheck = 3, correctConstant = 2 / 3;
 
-module.exports = function(knex, updateArray, skillsProgress, userHasSkills) {
+module.exports = function(knex, skillsProgress, userHasSkills) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (req.user.attributes.solutions_checked && req.user.attributes.solutions_checked.indexOf(req.body.solution_id) !== -1) {

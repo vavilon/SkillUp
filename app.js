@@ -11,12 +11,12 @@ var exSkills = require(__dirname + '/lib/ex-skills');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
-var updateArray = require(__dirname + '/lib/pg-update-array');
-var pgApprove = require(__dirname + '/lib/pg-approve');
 var util = require('util');
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport(config.get('nodemailer'));
-var skillsProgress = require(__dirname + '/lib/skills-progress');
+var updateArray = require(__dirname + '/lib/update-array')(knex);
+var updateApprovement = require(__dirname + '/lib/update-approvement')(knex);
+var skillsProgress = require(__dirname + '/lib/skills-progress')(knex);
 var userHasSkills = require(__dirname + '/lib/user-has-skills');
 
 var app = express();
@@ -240,11 +240,11 @@ app.post('/like_task', controllers.tasks.like(knex, updateArray));
 
 app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
 
-app.post('/approve_task', controllers.tasks.approve(knex, updateArray, pgApprove, skillsProgress, userHasSkills));
+app.post('/approve_task', controllers.tasks.approve(knex, updateApprovement, skillsProgress, userHasSkills));
 
 app.post('/like_solution', controllers.solutions.like(knex, updateArray));
 
-app.post('/check_solution', controllers.solutions.check(knex, updateArray, skillsProgress, userHasSkills));
+app.post('/check_solution', controllers.solutions.check(knex, skillsProgress, userHasSkills));
 
 app.post('/append_needs', function (req, res, next) {
     if (req.isAuthenticated()) {

@@ -1,7 +1,7 @@
 
-var countToApprove = 3, correctConstant = 2 / 3, createTaskExpMultiplier = 3;
+var countToApprove = 3, correctConstant = 2 / 3, createTaskExpMultiplier = 3, createTaskSkillMultiplier = 2;
 
-module.exports = function(knex, updateArray, pgApprove, skillsProgress, userHasSkills) {
+module.exports = function(knex, updateApprovement, skillsProgress, userHasSkills) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (req.user.attributes.tasks_approved && req.user.attributes.tasks_approved.indexOf(req.body.task_id) !== -1
@@ -23,12 +23,7 @@ module.exports = function(knex, updateArray, pgApprove, skillsProgress, userHasS
                     }
                 }
 
-                pgApprove(req.body.task_id, req.body.data, req.user.id, function(err, result) {
-                    if (err) {
-                        res.end();
-                        return console.error('error running query', err);
-                    }
-
+                updateApprovement(req.body.task_id, req.body.data, req.user.id).then(function() {
                     knex.raw("UPDATE users SET tasks_approved = array_append(tasks_approved, '" + req.body.task_id + "')"
                         + " WHERE id = '" + req.user.id + "';").then(function() {
 
@@ -61,7 +56,7 @@ module.exports = function(knex, updateArray, pgApprove, skillsProgress, userHasS
                                         knex('users').where('id', '=', rows[0].author)
                                             .increment('exp', rows[0].exp * createTaskExpMultiplier)
                                             .then(function () {
-
+                                                skillsProgress.increment()
                                             }).catch(function (error) {
                                                 console.log(error);
                                             });
@@ -79,6 +74,9 @@ module.exports = function(knex, updateArray, pgApprove, skillsProgress, userHasS
                         console.log(error);
                         res.end();
                     });
+                }).catch(function (error) {
+                    console.log(error);
+                    res.end();
                 });
             }).catch(function (error) {
                 console.log(error);

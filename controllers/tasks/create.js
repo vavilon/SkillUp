@@ -27,12 +27,11 @@ module.exports = function(knex, updateArray, skillsProgress, userHasSkills){
                     .then(function(apprID) {
                         knex('tasks').where('id', '=', taskID[0]).update({approvement_id: apprID[0]})
                             .then(function() {
-                                updateArray('users', 'tasks_created', req.user.id, 'append', taskID[0], function (err, result) {
-                                    if (err) {
-                                        res.end();
-                                        return console.error('error running query', err);
-                                    }
+                                updateArray('users', 'tasks_created', req.user.id, 'append', taskID[0]).then(function () {
                                     res.end('ok');
+                                }).catch(function (error) {
+                                    console.log(error);
+                                    res.end();
                                 });
                             }).catch(function (error) {
                                 console.log(error);
