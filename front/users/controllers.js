@@ -47,6 +47,21 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, loadLoggedUser,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
                                         setNotReceivable) {
+
+    $scope.scrollWrap = $scope.scrollWrap || {
+            loadFunc: loadTasks, callback: $scope.scrollCallback,
+            scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}
+        };
+    $scope.setScrollOptions = function (num) {
+        $scope.scrollWrap.scrollOptions.event = num === 0 ? 'tasksDoneScrolled' :
+            num === 1 ? 'tasksCheckedScrolled' :
+                num === 2 ? 'tasksApprovedScrolled' : 'tasksCreatedScrolled';
+    };
+
+    $scope.scrollCallback = function (data) {
+        console.log('asdasdasd');
+    };
+
     $rootScope.ajaxCall.promise.then(function () {
         $scope.categoryNum = 0;
         $scope.tabSelected = 0;
@@ -108,10 +123,19 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                     $scope.tasksApproved = tasksApproved;
                     setLiked($scope.tasksApproved, loggedUser().tasks_liked, true);
                     setReceived($scope.tasksApproved, loggedUser().tasks_received, true);
-                    setNotReceivable($scope.tasksApproved, loggedUser().tasks_created, true, null, function (el) {
-                        return !el.is_approved;
-                    });
-                    setNotReceivable($scope.tasksApproved, loggedUser().tasks_done, true);
+                    for (var i in $scope.tasksApproved) {
+                        if (!$scope.tasksApproved[i].is_approved) {
+                            $scope.tasksApproved[i].notReceivable = true;
+                            continue;
+                        }
+                        if (loggedUser().tasks_created && loggedUser().tasks_created.indexOf($scope.tasksApproved[i].id) !== -1) {
+                            $scope.tasksApproved[i].notReceivable = true;
+                            continue;
+                        }
+                        if (loggedUser().tasks_done && loggedUser().tasks_done.indexOf($scope.tasksApproved[i].id) !== -1) {
+                            $scope.tasksApproved[i].notReceivable = true;
+                        }
+                    }
                 });
             }
 
@@ -128,20 +152,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 });
             }
         });
-
-        $scope.scrollWrap = $scope.scrollWrap || {
-                loadFunc: loadTasks, callback: $scope.scrollCallback,
-                scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}
-            };
-        $scope.setScrollOptions = function (num) {
-            $scope.scrollWrap.scrollOptions.event = num === 0 ? 'tasksDoneScrolled' :
-                num === 1 ? 'tasksCheckedScrolled' :
-                    num === 2 ? 'tasksApprovedScrolled' : 'tasksCreatedScrolled';
-        };
-
-        $scope.scrollCallback = function (data) {
-            console.log('asdasdasd');
-        };
     });
 });
 

@@ -103,12 +103,11 @@ app.factory('parseSkills', function() {
 });
 
 app.factory('setPropertyComparingArrays', function() {
-    return function(compPropName, setPropName, setValue, setArray, compArray, condition) {
+    return function(compPropName, setPropName, setValue, setArray, compArray) {
         if (!angular.isObject(setArray) || !angular.isObject(compArray)) return;
         for (var i in setArray) {
             for (var j in compArray) {
-                if (setArray[i][compPropName] === compArray[j] ||
-                    (condition && condition(setArray[i], compArray[j]))) {
+                if (setArray[i][compPropName] === compArray[j]) {
                     setArray[i][setPropName] = setValue;
                     break;
                 }
@@ -118,11 +117,10 @@ app.factory('setPropertyComparingArrays', function() {
 });
 
 app.factory('setPropertyComparingObjArr', function() {
-    return function(compPropName, setPropName, setValue, setObj, compArray, condition) {
+    return function(compPropName, setPropName, setValue, setObj, compArray) {
         if (!angular.isObject(setObj) || !angular.isObject(compArray)) return;
         for (var j in compArray) {
-            if (setObj[compPropName] === compArray[j] ||
-                (condition && condition(setObj, compArray[j]))) {
+            if (setObj[compPropName] === compArray[j]) {
                 setObj[setPropName] = setValue;
                 break;
             }
@@ -150,8 +148,8 @@ app.factory('setReceived', function(setPropertyFuzzy) {
 });
 
 app.factory('setNotReceivable', function(setPropertyFuzzy) {
-    return function(setArray, compArray, multiple, compPropName, condition) {
-        setPropertyFuzzy('notReceivable', setArray, compArray, multiple, compPropName, condition);
+    return function(setArray, compArray, multiple, compPropName) {
+        setPropertyFuzzy('notReceivable', setArray, compArray, multiple, compPropName);
     };
 });
 
