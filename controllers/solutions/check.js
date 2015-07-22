@@ -1,7 +1,7 @@
 
 var countToCheck = 3, correctConstant = 2 / 3;
 
-module.exports = function(knex, updateArray, parseSP, userHasSkills) {
+module.exports = function(knex, updateArray, skillsProgress, userHasSkills) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (req.user.attributes.solutions_checked && req.user.attributes.solutions_checked.indexOf(req.body.solution_id) !== -1) {
@@ -18,7 +18,7 @@ module.exports = function(knex, updateArray, parseSP, userHasSkills) {
                     }
                     knex('tasks').where('id', '=', solutions[0].task_id).select('exp', 'skills').then(function(tasks) {
                         if (!req.user.attributes.admin) {
-                            var userSkills = parseSP(req.user.attributes.skills);
+                            var userSkills = skillsProgress.parse(req.user.attributes.skills);
                             if (!userHasSkills(userSkills, tasks[0].skills)) {
                                 res.end();
                                 return;

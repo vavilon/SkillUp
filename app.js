@@ -16,7 +16,7 @@ var pgApprove = require(__dirname + '/lib/pg-approve');
 var util = require('util');
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport(config.get('nodemailer'));
-var parseSP = require(__dirname + '/lib/skills-progress').parse;
+var skillsProgress = require(__dirname + '/lib/skills-progress');
 var userHasSkills = require(__dirname + '/lib/user-has-skills');
 
 var app = express();
@@ -232,7 +232,7 @@ app.post('/change_password', function(req, res) {
         });
 });
 
-app.post('/create_task', controllers.tasks.create(knex, updateArray, parseSP, userHasSkills));
+app.post('/create_task', controllers.tasks.create(knex, updateArray, skillsProgress, userHasSkills));
 
 app.post('/solve_task', controllers.tasks.solve(knex));
 
@@ -240,11 +240,11 @@ app.post('/like_task', controllers.tasks.like(knex, updateArray));
 
 app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
 
-app.post('/approve_task', controllers.tasks.approve(knex, updateArray, pgApprove, parseSP, userHasSkills));
+app.post('/approve_task', controllers.tasks.approve(knex, updateArray, pgApprove, skillsProgress, userHasSkills));
 
 app.post('/like_solution', controllers.solutions.like(knex, updateArray));
 
-app.post('/check_solution', controllers.solutions.check(knex, updateArray, parseSP, userHasSkills));
+app.post('/check_solution', controllers.solutions.check(knex, updateArray, skillsProgress, userHasSkills));
 
 app.post('/append_needs', function (req, res, next) {
     if (req.isAuthenticated()) {

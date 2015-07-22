@@ -1,9 +1,9 @@
 
-module.exports = function(knex, updateArray, parseSP, userHasSkills){
+module.exports = function(knex, updateArray, skillsProgress, userHasSkills){
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (!req.user.attributes.admin) {
-                var skills = parseSP(req.user.attributes.skills);
+                var skills = skillsProgress.parse(req.user.attributes.skills);
                 if (!userHasSkills(skills, req.body.skills)) {
                     res.end();
                     return;

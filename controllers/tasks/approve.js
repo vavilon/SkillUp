@@ -1,7 +1,7 @@
 
-var countToApprove = 3, correctConstant = 2 / 3, createTaskAwardMultiplier = 3;
+var countToApprove = 3, correctConstant = 2 / 3, createTaskExpMultiplier = 3;
 
-module.exports = function(knex, updateArray, pgApprove, parseSP, userHasSkills) {
+module.exports = function(knex, updateArray, pgApprove, skillsProgress, userHasSkills) {
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (req.user.attributes.tasks_approved && req.user.attributes.tasks_approved.indexOf(req.body.task_id) !== -1
@@ -16,7 +16,7 @@ module.exports = function(knex, updateArray, pgApprove, parseSP, userHasSkills) 
                 }
 
                 if (!req.user.attributes.admin) {
-                    var userSkills = parseSP(req.user.attributes.skills);
+                    var userSkills = skillsProgress.parse(req.user.attributes.skills);
                     if (!userHasSkills(userSkills, rows[0].skills)) {
                         res.end();
                         return;
@@ -59,7 +59,7 @@ module.exports = function(knex, updateArray, pgApprove, parseSP, userHasSkills) 
 
                                     if (correct) {
                                         knex('users').where('id', '=', rows[0].author)
-                                            .increment('exp', rows[0].exp * createTaskAwardMultiplier)
+                                            .increment('exp', rows[0].exp * createTaskExpMultiplier)
                                             .then(function () {
 
                                             }).catch(function (error) {
