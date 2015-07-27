@@ -9,6 +9,13 @@ var LocalStrategy = require('passport-local').Strategy;
 var config = require(__dirname + '/config');
 var exSkills = require(__dirname + '/lib/ex-skills');
 var knex = require('knex')(config.get('knex'));
+
+knex.idsToRecord = function (ids) {
+    var res = "(";
+    for (var i in ids) res += " '" + ids[i] + "',"
+    return res.substring(0, res.length - 1) + ")";
+};
+
 var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
 var util = require('util');
@@ -16,7 +23,6 @@ var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport(config.get('nodemailer'));
 var updateArray = require(__dirname + '/lib/update-array')(knex);
 var updateApprovement = require(__dirname + '/lib/update-approvement')(knex);
-var skillsProgress = require(__dirname + '/lib/skills-progress')(knex);
 var userHasSkills = require(__dirname + '/lib/user-has-skills');
 
 var app = express();
@@ -51,10 +57,6 @@ knex.select().from('skills').then(function (rows) {
 });
 
 var bcrypt = require('bcryptjs');
-
-//app.all('*', function (req, res) {
-//    res.sendFile(__dirname + '/front/index.html');
-//});
 
 app.use(cookieParser());
 app.use(bodyParser.json({limit: '50mb'}));
@@ -109,14 +111,6 @@ passport.deserializeUser(function (id, done) {
         });
 });
 
-//Проверка авторизации
-var mustAuthenticated = function (req, res, next) {
-    req.isAuthenticated()
-        ? next()
-        : res.end('/main');
-};
-
-// Passport:
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -125,8 +119,6 @@ app.use('/front', express.static(__dirname + '/front'));
 
 app.use('/db', function (req, res, next) {
     if (req.isAuthenticated()) {
-        var options = {ids: req.body.ids, select: req.body.select, limit: 20, offset: req.body.offset};
-
         if (req.path === '/skills') {
             knex('skills').then(function (rows) {
                 res.end(JSON.stringify(rows));
@@ -136,11 +128,7 @@ app.use('/db', function (req, res, next) {
             controllers.db.tasks(knex, req, res, next);
         }
         else if (req.path === '/users') {
-            options.tableName = 'users';
-            controllers.db.portion(knex, options, function(rows) {
-                if (!rows) return res.end();
-                res.end(JSON.stringify(rows));
-            });
+            controllers.db.users(knex, req, res, next);
         }
         else if (req.path === '/solutions') {
             controllers.db.solutions(knex, req, res, next);
@@ -160,9 +148,10 @@ app.use('/avatars', function (req, res) {
     }
     else res.end();
 });
-app.use('/logged_user', function (req, res) {
+app.use('/logged_user', function (req, res, next) {
     if (req.isAuthenticated()) {
-        res.end(JSON.stringify(req.user.attributes));
+        req.body.ids = [req.user.id];
+        controllers.db.users(knex, req, res, next);
     }
     else res.end();
 });
@@ -232,7 +221,7 @@ app.post('/change_password', function(req, res) {
         });
 });
 
-app.post('/create_task', controllers.tasks.create(knex, updateArray, skillsProgress, userHasSkills));
+app.post('/create_task', controllers.tasks.create(knex, updateArray, userHasSkills));
 
 app.post('/solve_task', controllers.tasks.solve(knex));
 
@@ -240,11 +229,11 @@ app.post('/like_task', controllers.tasks.like(knex, updateArray));
 
 app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
 
-app.post('/approve_task', controllers.tasks.approve(knex, updateApprovement, skillsProgress, userHasSkills));
+app.post('/approve_task', controllers.tasks.approve(knex, updateApprovement, userHasSkills));
 
 app.post('/like_solution', controllers.solutions.like(knex, updateArray));
 
-app.post('/check_solution', controllers.solutions.check(knex, skillsProgress, userHasSkills));
+app.post('/check_solution', controllers.solutions.check(knex, userHasSkills));
 
 app.post('/append_needs', function (req, res, next) {
     if (req.isAuthenticated()) {

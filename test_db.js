@@ -8,7 +8,6 @@ var knex = require('knex')(config.get('knex'));
 //var temp;
 var uuid = require('uuid');
 
-var skillsProgress = require(__dirname + '/lib/skills-progress')(knex);
 /*knex('approvements').returning('id').insert({task_id: 'cf133be1-3e14-4678-acce-821684098d79'})
     .then(function(id) {
         console.log(id);
@@ -31,10 +30,20 @@ var skillsProgress = require(__dirname + '/lib/skills-progress')(knex);
         console.log(ans.rows);
     });*/
 
-skillsProgress.increment(['2178d930-0365-4962-89f2-58fbfe28c996'],
+/*skillsProgress.increment(['2178d930-0365-4962-89f2-58fbfe28c996'],
     '{"(5a0574cc-66b7-4c89-9950-03a2eea0c701,1)","(8b33a559-a0b4-47da-a27e-84439cdecf9c,1)"}',
     [{id: '5a0574cc-66b7-4c89-9950-03a2eea0c701', count: 1}, {id: '8b33a559-a0b4-47da-a27e-84439cdecf9c'}])
-    .then(console.log).catch(console.log);
+    .then(console.log).catch(console.log);*/
+var a = 0;
+
+knex.select("users.nick", knex.raw("array_agg((skill_id, count)) AS skills")).from('users')
+    .leftJoin('skills_progress', 'id', '=', 'user_id')
+    .groupBy('id').then(function (rows) {
+        console.log(a);
+        clearInterval(id);
+    }).catch(console.log);
+
+var id = setInterval(function () {a++;});
 
 /*
 var User = bookshelf.Model.extend({

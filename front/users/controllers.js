@@ -164,6 +164,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         if ($location.path() === '/registration/step2') {
             $http.get('/logged_user').success(function(user) {
                 if (!user) return;
+                user = user[0];
                 $scope.step = 2;
                 $scope.reg.birthday = new Date(user.birthday);
                 $scope.reg.isImageRes = true;

@@ -9,7 +9,7 @@ app.factory('getObjByID', function() {
 app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
     return function(callback) {
         $http.get('/logged_user').success(function (data) {
-            $rootScope.loggedUser = data;
+            $rootScope.loggedUser = data[0];
             if (data) $rootScope.loggedUser.skills = parseSkills($rootScope.loggedUser.skills);
             callback && callback(data);
         });
@@ -98,7 +98,10 @@ app.factory('parseSkills', function() {
         skills = skills.replace(/\)"/g, '}');
         skills = skills.replace(/},{/g, '} , {');
         skills = skills.replace(/(\S),/g, '$1", "count": ');
-        return JSON.parse(skills);
+        try {
+            return JSON.parse(skills);
+        }
+        catch (e) { }
     };
 });
 
