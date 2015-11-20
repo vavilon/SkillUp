@@ -9,6 +9,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var config = require(__dirname + '/config');
 var exSkills = require(__dirname + '/lib/ex-skills');
 var knex = require('knex')(config.get('knex'));
+var bcrypt = require('bcryptjs');
 
 knex.idsToRecord = function (ids) {
     var res = "(";
@@ -55,8 +56,6 @@ knex.select().from('skills').then(function (rows) {
     }
     console.log('Exp for all skills updated!');
 });
-
-var bcrypt = require('bcryptjs');
 
 app.use(cookieParser());
 app.use(bodyParser.json({limit: '50mb'}));

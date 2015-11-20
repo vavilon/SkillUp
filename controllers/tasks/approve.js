@@ -1,5 +1,6 @@
 
-var countToApprove = 3, correctConstant = 2 / 3, createTaskExpMultiplier = 3, createTaskExpDivider = 2, createTaskSkillMultiplier = 2;
+var countToApprove = 3, correctConstant = 2 / 3, correctTaskExpMultiplier = 3, incorrectTaskExpDivider = 2,
+    incorrectTaskExp = 200, createTaskSkillMultiplier = 2;
 
 module.exports = function(knex, updateApprovement, userHasSkills) {
     function callback (tasks, req, res, next) {
@@ -37,6 +38,17 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
 
                         var correct = tcCor && scCor && dcCor && lcCor;
 
+                        /*
+                        Если задание полностью корректно, то експа начисляется по 1/4 за каждый отмеченный корректно пункт * експу за задание,
+                        а скиллы начисляются +1 к каждому из указанных в задании только если большинство пунктов отмечено корректно.
+                        Автору задания дается больше експы и очков скилла.
+
+                        Если в задании некорректны ссылки на учебные материалы или название, то скиллы и експа начисляются по той же схеме.
+                        Автору задания снимается експа за задание / 4 * количество неправильных пунктов.
+
+
+                         */
+
                         knex('tasks').where('id', '=', req.body.task_id).update({is_approved: correct}).then(function() {
                             var arr = {}, curArr;
 
@@ -67,10 +79,22 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
                                 arr[curArr[i]].skills += 1 / 4;
                             }
 
+                            if (task.correct) {
+                                for (var user in users) {
+                                    user.exp += exp;
+                                    user.skills[task.skills] += 1;
+                                }
+                                author.exp += exp * 3;
+                                author.skills[task.skills] += 2;
+                            }
+                            else {
+
+                            }
+
                             var q = "UPDATE users SET exp = exp + CASE \n";
                             q += "WHEN id = '" + tasks[0].author + "' THEN ";
-                            if (correct) q += tasks[0].exp * createTaskExpMultiplier;
-                            else q += -tasks[0].exp / createTaskExpDivider;
+                            if (correct) q += tasks[0].exp * correctTaskExpMultiplier;
+                            else q += -tasks[0].exp / incorrectTaskExpDivider;
 
                             for (var id in arr) q += "\n WHEN id = '" + id + "' THEN " + arr[id].exp;
                             q += "\n ELSE 0 END;";
