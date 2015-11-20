@@ -1,9 +1,9 @@
 
 var countToApprove = 3, correctConstant = 2 / 3, correctTaskExpMultiplier = 3, incorrectTaskExpDivider = 2,
-    incorrectTaskExp = 200, createTaskSkillMultiplier = 2;
+    createTaskSkillMultiplier = 2;
 
 module.exports = function(knex, updateApprovement, userHasSkills) {
-    function callback (tasks, req, res, next) {
+    function callback (task, req, res, next) {
         updateApprovement(req.body.task_id, req.body.data, req.user.id).then(function() {
             knex.raw("UPDATE users SET tasks_approved = array_append(tasks_approved, '" + req.body.task_id + "')"
                 + " WHERE id = '" + req.user.id + "';").then(function() {
@@ -52,65 +52,65 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
                         knex('tasks').where('id', '=', req.body.task_id).update({is_approved: correct}).then(function() {
                             var arr = {}, curArr;
 
+                            for (var i in a.title_correct) arr[a.title_correct[i]] = {exp: 0, skills: 0};
+                            for (var i in a.title_incorrect) arr[a.title_incorrect[i]] = {exp: 0, skills: 0};
+
                             if (tcCor) curArr = a.title_correct;
                             else curArr = a.title_incorrect;
                             for (var i in curArr) {
-                                arr[curArr[i]] = {exp: tasks[0].exp / 4, skills: 1 / 4};
+                                arr[curArr[i]] = {exp: task.exp / 4, skills: 1 / 4};
                             }
 
                             if (scCor) curArr = a.skills_correct;
                             else curArr = a.skills_incorrect;
                             for (var i in curArr) {
-                                arr[curArr[i]].exp += tasks[0].exp / 4;
+                                arr[curArr[i]].exp += task.exp / 4;
                                 arr[curArr[i]].skills += 1 / 4;
                             }
 
                             if (dcCor) curArr = a.desc_correct;
                             else curArr = a.desc_incorrect;
                             for (var i in curArr) {
-                                arr[curArr[i]].exp += tasks[0].exp / 4;
+                                arr[curArr[i]].exp += task.exp / 4;
                                 arr[curArr[i]].skills += 1 / 4;
                             }
 
                             if (lcCor) curArr = a.links_correct;
                             else curArr = a.links_incorrect;
                             for (var i in curArr) {
-                                arr[curArr[i]].exp += tasks[0].exp / 4;
+                                arr[curArr[i]].exp += task.exp / 4;
                                 arr[curArr[i]].skills += 1 / 4;
                             }
 
-                            if (task.correct) {
-                                for (var user in users) {
-                                    user.exp += exp;
-                                    user.skills[task.skills] += 1;
-                                }
-                                author.exp += exp * 3;
-                                author.skills[task.skills] += 2;
-                            }
-                            else {
-
-                            }
-
                             var q = "UPDATE users SET exp = exp + CASE \n";
-                            q += "WHEN id = '" + tasks[0].author + "' THEN ";
-                            if (correct) q += tasks[0].exp * correctTaskExpMultiplier;
-                            else q += -tasks[0].exp / incorrectTaskExpDivider;
+                            q += "WHEN id = '" + task.author + "' THEN ";
+                            if (correct) q += task.exp * correctTaskExpMultiplier;
+                            else q += -task.exp / incorrectTaskExpDivider;
 
                             for (var id in arr) q += "\n WHEN id = '" + id + "' THEN " + arr[id].exp;
                             q += "\n ELSE 0 END;";
-                            console.log(q);
 
                             knex.raw(q).then(function() {
+                                var skillsRecord = knex.idsToRecord(task.skills);
+                                var q = "UPDATE skills_progress SET count = count + CASE \n";
+                                q += "WHEN user_id = '" + task.author + "' AND skill_id in " + skillsRecord + " THEN ";
+                                if (correct) q += createTaskSkillMultiplier;
+                                else q += 0;
 
+                                for (var id in arr) q += "\n WHEN user_id = '" + id + "' AND skill_id in " + skillsRecord + " THEN " + arr[id].skills;
+                                q += "\n ELSE 0 END;";
+                                knex.raw(q).then(function (){
+
+                                }).catch(function (error) {
+                                    console.log(error);
+                                });
                             }).catch(function (error) {
                                 console.log(error);
                             });
-
                         }).catch(function (error) {
                             console.log(error);
                         });
                     }
-
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -144,13 +144,13 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
                                 res.end();
                                 return;
                             }
-                            callback(tasks, req, res, next);
+                            callback(tasks[0], req, res, next);
                         }).catch(function (error) {
                             console.log(error);
                             res.end();
                         });
                 }
-                callback(tasks, req, res, next);
+                else callback(tasks[0], req, res, next);
             }).catch(function (error) {
                 console.log(error);
                 res.end();

@@ -46,7 +46,7 @@ module.exports = function(knex, updateArray, userHasSkills){
                         res.end();
                     });
             }
-            callback(req, res, next);
+            else callback(req, res, next);
         } else res.end();
     };
 };

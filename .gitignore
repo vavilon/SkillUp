@@ -4,3 +4,6 @@
 # ignore Node Package Manager Installs
 /bower_components
 # ignore Bower Package Manager Installs
+/avatars
+*.backup
+*.sql

@@ -57,7 +57,7 @@ module.exports = function(knex, userHasSkills) {
                                     res.end();
                                 });
                         }
-                        callback(solutions, tasks, req, res, next);
+                        else callback(solutions, tasks, req, res, next);
                     }).catch(function (error) {
                         console.log(error);
                         res.end();
