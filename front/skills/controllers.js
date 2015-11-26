@@ -113,7 +113,7 @@ app.factory('extendedSkills', function () {
             for (var prop in this) console.log(this[prop]);
         };
 
-        this.root = this.skills['da401de4-c1fa-48ca-b217-6641eb3c963e'];
+        this.root = this.skills['38'];
         this.skills['root'] = this.root;
         this.root.level = 0;
         this.maxLevel = 0;
