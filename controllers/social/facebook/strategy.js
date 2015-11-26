@@ -4,7 +4,6 @@ var requireTree = require('require-tree');
 var config = requireTree('../../../config');
 var knex = require('knex')(config.get('knex'));
 var bookshelf = require('bookshelf')(knex);
-var uuid = require('uuid');
 var bcrypt = require('bcryptjs');
 
 var User = bookshelf.Model.extend({
@@ -29,7 +28,6 @@ module.exports = function (token, refreshToken, profile, done) {
 
                 getJson(options, function(statusCode, result) {
                     var u = {
-                        id: uuid.v4(),
                         nick: profile.emails[0].value.split('@')[0],
                         name: profile.displayName,
                         email: profile.emails[0].value,
@@ -65,9 +63,9 @@ module.exports = function (token, refreshToken, profile, done) {
                         } catch (e) { }
                     }
 
-                    knex('users').insert(u)
-                        .then(function () {
-                            new User({'id': u.id})
+                    knex('users').insert(u).returning('id')
+                        .then(function (ids) {
+                            new User({'id': ids[0]})
                                 .fetch()
                                 .then(function (user) {
                                     return done(null, user, {message: 'first'});

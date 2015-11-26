@@ -33,8 +33,6 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var FACEBOOK_APP_ID = "490483854451281";
 var FACEBOOK_APP_SECRET = "387964dc2fbee4a25aace154e3df1c1d";
 
-var uuid = require('uuid');
-
 var User = bookshelf.Model.extend({
     tableName: 'users'
 });
