@@ -46,6 +46,8 @@ var Solution = bookshelf.Model.extend({
     tableName: 'solutions'
 });
 
+GLOBAL.countToApprove = 3; GLOBAL.correctConstant = 2 / 3; GLOBAL.correctTaskExpMultiplier = 3; GLOBAL.incorrectTaskExpDivider = 2;
+
 knex.select().from('skills').then(function (rows) {
     GLOBAL.exs = new exSkills(rows);
     for (var i in exs.skills) {

@@ -1,11 +1,6 @@
 
 module.exports = function(knex, updateArray, userHasSkills){
-    function callback (req, res, next) {
-        var exp = 0;
-        for (var i in req.body.skills) {
-            exp += GLOBAL.exs.skills[req.body.skills[i]].exp;
-        }
-
+    function callback (exp, req, res, next) {
         knex('tasks').returning('id').insert({
             title: req.body.title,
             description: req.body.description,
@@ -34,18 +29,23 @@ module.exports = function(knex, updateArray, userHasSkills){
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (!req.user.attributes.admin) {
-                knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
+                var exp = 0;
+                for (var i in req.body.skills) {
+                    exp += GLOBAL.exs.skills[req.body.skills[i]].exp;
+                }
+                if (req.user.attributes.exp < exp / GLOBAL.incorrectTaskExpDivider) res.end();
+                else knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
                     .then(function(userSkills) {
                         if (!userHasSkills(userSkills, req.body.skills)) {
                             res.end();
                         }
-                        else callback(req, res, next);
+                        else callback(exp, req, res, next);
                     }).catch(function (error) {
                         console.log(error);
                         res.end();
                     });
             }
-            else callback(req, res, next);
+            else callback(exp, req, res, next);
         } else res.end();
     };
 };

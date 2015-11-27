@@ -1,6 +1,4 @@
 
-var countToApprove = 3, correctConstant = 2 / 3, correctTaskExpMultiplier = 3, incorrectTaskExpDivider = 2;
-
 module.exports = function(knex, updateApprovement, userHasSkills) {
     function callback (task, req, res, next) {
         updateApprovement(req.body.task_id, req.body.data, req.user.id).then(function() {
@@ -18,7 +16,7 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
 
                     count = tc + tic;
 
-                    if (count == countToApprove) {
+                    if (count == GLOBAL.countToApprove) {
                         var sc = 0, sic = 0, dc = 0, dic = 0, lc = 0, lic = 0;
 
                         if (a.skills_correct) sc += a.skills_correct.length;
@@ -30,10 +28,10 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
                         if (a.links_correct) lc += a.links_correct.length;
                         if (a.links_incorrect) lic += a.links_incorrect.length;
 
-                        var tcCor = tc / count >= correctConstant;
-                        var scCor = sc / count >= correctConstant;
-                        var dcCor = dc / count >= correctConstant;
-                        var lcCor = lc / count >= correctConstant;
+                        var tcCor = tc / count >= GLOBAL.correctConstant;
+                        var scCor = sc / count >= GLOBAL.correctConstant;
+                        var dcCor = dc / count >= GLOBAL.correctConstant;
+                        var lcCor = lc / count >= GLOBAL.correctConstant;
 
                         var correct = tcCor && scCor && dcCor && lcCor;
 
@@ -83,8 +81,8 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
 
                             var q = "UPDATE users SET exp = exp + CASE \n";
                             q += "WHEN id = '" + task.author + "' THEN ";
-                            if (correct) q += task.exp * correctTaskExpMultiplier;
-                            else q += -task.exp / incorrectTaskExpDivider;
+                            if (correct) q += task.exp * GLOBAL.correctTaskExpMultiplier;
+                            else q += -task.exp / GLOBAL.incorrectTaskExpDivider;
 
                             for (var id in arr) q += "\n WHEN id = '" + id + "' THEN " + arr[id].exp;
                             q += "\n ELSE 0 END;";
