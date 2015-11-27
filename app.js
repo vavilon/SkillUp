@@ -2,6 +2,7 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var KnexSessionStore = require('connect-session-knex')(session);
 var requireTree = require('require-tree');
 var controllers = requireTree('./controllers');
 var passport = require('passport');
@@ -52,10 +53,16 @@ app.use(bodyParser.urlencoded({
     limit: '50mb',
     extended: true
 }));
+
+var store = new KnexSessionStore({
+    knex: knex
+});
+
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: store
 }));
 
 //Подключим и настроим стратегию авторизации
