@@ -33,25 +33,21 @@ module.exports = function(knex, userHasSkills) {
         if (req.isAuthenticated()) {
             if (req.user.attributes.solutions_checked && req.user.attributes.solutions_checked.indexOf(req.body.solution_id) !== -1) {
                 res.end();
-                return;
             }
-
-            knex('solutions').where('id', '=', req.body.solution_id)
+            else knex('solutions').where('id', '=', req.body.solution_id)
                 .select('is_correct', 'task_id', 'checked_correct', 'checked_incorrect', 'user_id')
                 .then(function(solutions) {
                     if (solutions[0].is_correct !== null || solutions[0].user_id === req.user.id) {
                         res.end();
-                        return;
                     }
-                    knex('tasks').where('id', '=', solutions[0].task_id).select('exp', 'skills').then(function(tasks) {
+                    else knex('tasks').where('id', '=', solutions[0].task_id).select('exp', 'skills').then(function(tasks) {
                         if (!req.user.attributes.admin) {
                             knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
                                 .then(function(userSkills) {
                                     if (!userHasSkills(userSkills, tasks[0].skills)) {
                                         res.end();
-                                        return;
                                     }
-                                    callback(solutions, tasks, req, res, next);
+                                    else callback(solutions, tasks, req, res, next);
                                 }).catch(function (error) {
                                     console.log(error);
                                     res.end();

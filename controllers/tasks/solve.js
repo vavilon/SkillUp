@@ -5,14 +5,12 @@ module.exports = function(knex) {
             if (req.user.attributes.tasks_done && req.user.attributes.tasks_done.indexOf(req.body.task_id) !== -1
                 || req.user.attributes.tasks_created && req.user.attributes.tasks_created.indexOf(req.body.task_id) !== -1) {
                 res.end();
-                return;
             }
-            knex('tasks').where('id', '=', req.body.task_id).select('exp', 'is_approved').then(function(rows) {
+            else knex('tasks').where('id', '=', req.body.task_id).select('exp', 'is_approved').then(function(rows) {
                 if (!rows[0].is_approved) {
                     res.end();
-                    return;
                 }
-                knex('solutions').returning('id').insert({
+                else knex('solutions').returning('id').insert({
                     task_id: req.body.task_id,
                     user_id: req.user.id,
                     content: req.body.content

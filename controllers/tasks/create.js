@@ -38,9 +38,8 @@ module.exports = function(knex, updateArray, userHasSkills){
                     .then(function(userSkills) {
                         if (!userHasSkills(userSkills, req.body.skills)) {
                             res.end();
-                            return;
                         }
-                        callback(req, res, next);
+                        else callback(req, res, next);
                     }).catch(function (error) {
                         console.log(error);
                         res.end();

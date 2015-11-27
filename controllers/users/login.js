@@ -11,8 +11,8 @@ module.exports = function(req, res, next) {
                 : user
                     ? req.logIn(user, function(err) {
                         console.log('User with nick "' + user.attributes.nick + '" logged in!');
-                        if (err) return next(err);
-                        return res.end('/users/' + user.id);
+                        if (err) next(err);
+                        else res.end('/users/' + user.id);
                     })
                     : res.end();
         }

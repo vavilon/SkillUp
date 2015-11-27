@@ -1,6 +1,5 @@
 
-var countToApprove = 3, correctConstant = 2 / 3, correctTaskExpMultiplier = 3, incorrectTaskExpDivider = 2,
-    createTaskSkillMultiplier = 2;
+var countToApprove = 3, correctConstant = 2 / 3, correctTaskExpMultiplier = 3, incorrectTaskExpDivider = 2;
 
 module.exports = function(knex, updateApprovement, userHasSkills) {
     function callback (task, req, res, next) {
@@ -94,10 +93,11 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
                                 var skillsRecord = knex.idsToRecord(task.skills);
                                 var q = "UPDATE skills_progress SET count = count + CASE \n";
                                 q += "WHEN user_id = '" + task.author + "' AND skill_id in " + skillsRecord + " THEN ";
-                                if (correct) q += createTaskSkillMultiplier;
+                                if (correct) q += 1;
                                 else q += 0;
 
-                                for (var id in arr) q += "\n WHEN user_id = '" + id + "' AND skill_id in " + skillsRecord + " THEN " + arr[id].skills;
+                                for (var id in arr) q += "\n WHEN user_id = '" + id + "' AND skill_id in "
+                                    + skillsRecord + " THEN " + (arr[id].skills * 0.5);
                                 q += "\n ELSE 0 END;";
                                 knex.raw(q).then(function (){
 
@@ -129,22 +129,18 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
             if (req.user.attributes.tasks_approved && req.user.attributes.tasks_approved.indexOf(req.body.task_id) !== -1
                 || req.user.attributes.tasks_created && req.user.attributes.tasks_created.indexOf(req.body.task_id) !== -1) {
                 res.end();
-                return;
             }
-            knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'skills', 'exp', 'author').then(function(tasks) {
+            else knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'skills', 'exp', 'author').then(function(tasks) {
                 if (tasks[0].is_approved !== null) {
                     res.end();
-                    return;
                 }
-
-                if (!req.user.attributes.admin) {
+                else if (!req.user.attributes.admin) {
                     knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
                         .then(function(userSkills) {
                             if (!userHasSkills(userSkills, tasks[0].skills)) {
                                 res.end();
-                                return;
                             }
-                            callback(tasks[0], req, res, next);
+                            else callback(tasks[0], req, res, next);
                         }).catch(function (error) {
                             console.log(error);
                             res.end();

@@ -28,8 +28,8 @@ module.exports = function (knex, req, res, next) {
     q.limit(20).offset(req.body.offset || 0);
 
     q.then(function (rows) {
-        if (!rows) return res.end();
-        res.end(JSON.stringify(rows));
+        if (!rows) res.end();
+        else res.end(JSON.stringify(rows));
 
     }).catch(function (error) {
         console.log(error);
