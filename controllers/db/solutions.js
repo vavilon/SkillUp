@@ -17,13 +17,13 @@ module.exports = function (knex, req, res, next) {
         // отличное от true, false или undefined значение
         else if (req.body.filters.is_correct === false) q.andWhere('solutions.is_correct', '=', false);
 
-        if (req.user.attributes.solutions_checked && (req.body.filters.for_checking || req.body.filters.not_in_checked))
-            q.whereNotIn('solutions.id', req.user.attributes.solutions_checked);
+        if (req.user.solutions_checked && (req.body.filters.for_checking || req.body.filters.not_in_checked))
+            q.whereNotIn('solutions.id', req.user.solutions_checked);
         if (req.body.filters.for_checking || req.body.filters.not_own) q.andWhere('solutions.user_id', '!=', req.user.id);
 
-        if (req.body.filters.liked === true) q.whereIn('solutions.id', req.user.attributes.solutions_liked);
-        else if (req.user.attributes.solutions_liked && (req.body.filters.liked === false))
-            q.whereNotIn('solutions.id', req.user.attributes.solutions_liked);
+        if (req.body.filters.liked === true) q.whereIn('solutions.id', req.user.solutions_liked);
+        else if (req.user.solutions_liked && (req.body.filters.liked === false))
+            q.whereNotIn('solutions.id', req.user.solutions_liked);
     }
     q.limit(20).offset(req.body.offset || 0);
 

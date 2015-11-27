@@ -31,7 +31,7 @@ module.exports = function(knex, userHasSkills) {
 
     return function (req, res, next) {
         if (req.isAuthenticated()) {
-            if (req.user.attributes.solutions_checked && req.user.attributes.solutions_checked.indexOf(req.body.solution_id) !== -1) {
+            if (req.user.solutions_checked && req.user.solutions_checked.indexOf(req.body.solution_id) !== -1) {
                 res.end();
             }
             else knex('solutions').where('id', '=', req.body.solution_id)
@@ -41,7 +41,7 @@ module.exports = function(knex, userHasSkills) {
                         res.end();
                     }
                     else knex('tasks').where('id', '=', solutions[0].task_id).select('exp', 'skills').then(function(tasks) {
-                        if (!req.user.attributes.admin) {
+                        if (!req.user.admin) {
                             knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
                                 .then(function(userSkills) {
                                     if (!userHasSkills(userSkills, tasks[0].skills)) {

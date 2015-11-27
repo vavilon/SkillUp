@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
                 ? next(err)
                 : user
                     ? req.logIn(user, function(err) {
-                        console.log('User with nick "' + user.attributes.nick + '" logged in!');
+                        console.log('User with nick "' + user.nick + '" logged in!');
                         if (err) next(err);
                         else res.end('/users/' + user.id);
                     })

@@ -12,20 +12,20 @@ module.exports = function(knex, req, res, next) {
         // отличное от true, false или undefined значение
         else if (req.body.filters.for_approving || req.body.filters.is_approved === undefined) q.whereNull('tasks.is_approved');
 
-        if (req.user.attributes.tasks_created && (req.body.filters.for_solving || req.body.filters.for_approving ||  req.body.filters.not_in_created))
-            q.whereNotIn('tasks.id', req.user.attributes.tasks_created);
-        if (req.user.attributes.tasks_approved && (req.body.filters.for_approving || req.body.filters.not_in_approved))
-            q.whereNotIn('tasks.id', req.user.attributes.tasks_approved);
-        if (req.user.attributes.tasks_done && (req.body.filters.for_solving || req.body.filters.not_in_done))
-            q.whereNotIn('tasks.id', req.user.attributes.tasks_done);
+        if (req.user.tasks_created && (req.body.filters.for_solving || req.body.filters.for_approving ||  req.body.filters.not_in_created))
+            q.whereNotIn('tasks.id', req.user.tasks_created);
+        if (req.user.tasks_approved && (req.body.filters.for_approving || req.body.filters.not_in_approved))
+            q.whereNotIn('tasks.id', req.user.tasks_approved);
+        if (req.user.tasks_done && (req.body.filters.for_solving || req.body.filters.not_in_done))
+            q.whereNotIn('tasks.id', req.user.tasks_done);
 
-        if (req.body.filters.received === true) q.whereIn('tasks.id', req.user.attributes.tasks_received);
-        else if (req.user.attributes.tasks_received && (req.body.filters.received === false))
-            q.whereNotIn('tasks.id', req.user.attributes.tasks_received);
+        if (req.body.filters.received === true) q.whereIn('tasks.id', req.user.tasks_received);
+        else if (req.user.tasks_received && (req.body.filters.received === false))
+            q.whereNotIn('tasks.id', req.user.tasks_received);
 
-        if (req.body.filters.liked === true) q.whereIn('tasks.id', req.user.attributes.tasks_liked);
-        else if (req.user.attributes.tasks_liked && (req.body.filters.liked === false))
-            q.whereNotIn('tasks.id', req.user.attributes.tasks_liked);
+        if (req.body.filters.liked === true) q.whereIn('tasks.id', req.user.tasks_liked);
+        else if (req.user.tasks_liked && (req.body.filters.liked === false))
+            q.whereNotIn('tasks.id', req.user.tasks_liked);
     }
     q.limit(20).offset(req.body.offset || 0);
 

@@ -17,7 +17,6 @@ knex.idsToRecord = function (ids) {
     return res.substring(0, res.length - 1) + ")";
 };
 
-var bookshelf = require('bookshelf')(knex);
 var cors = require('cors');
 var util = require('util');
 var nodemailer = require('nodemailer');
@@ -33,22 +32,12 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var FACEBOOK_APP_ID = "490483854451281";
 var FACEBOOK_APP_SECRET = "387964dc2fbee4a25aace154e3df1c1d";
 
-var User = bookshelf.Model.extend({
-    tableName: 'users'
-});
-var Skill = bookshelf.Model.extend({
-    tableName: 'skills'
-});
-var Task = bookshelf.Model.extend({
-    tableName: 'tasks'
-});
-var Solution = bookshelf.Model.extend({
-    tableName: 'solutions'
-});
+GLOBAL.countToApprove = 3;
+GLOBAL.correctConstant = 2 / 3;
+GLOBAL.correctTaskExpMultiplier = 3;
+GLOBAL.incorrectTaskExpDivider = 2;
 
-GLOBAL.countToApprove = 3; GLOBAL.correctConstant = 2 / 3; GLOBAL.correctTaskExpMultiplier = 3; GLOBAL.incorrectTaskExpDivider = 2;
-
-knex.select().from('skills').then(function (rows) {
+knex('skills').then(function (rows) {
     GLOBAL.exs = new exSkills(rows);
     for (var i in exs.skills) {
         knex('skills').where('id', '=', exs.skills[i].id).update({exp: exs.skills[i].exp}).then(function () {
@@ -74,17 +63,15 @@ passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
 }, function (email, password, done) {
-    new User({'email': email})
-        .fetch()
-        .then(function (user) {
-            return bcrypt.compareSync(password, user.get('pswhash'))
-                ? done(null, user)
-                : done(null, false, {message: 'Incorrect password.'})
-        })
-        .catch(function (err) {
-            console.log(err);
-            done(null, false, {message: 'Incorrect username.'});
-        });
+    knex('users').where('email', '=', email.toLowerCase()).then(function (users) {
+        if (users.length) {
+            return bcrypt.compareSync(password, users[0].pswhash)
+                ? done(null, users[0])
+                : done(null, false, {message: 'Incorrect password.'});
+        } else done(null, false, {message: 'User not found.'});
+    }).catch(function (err) {
+        done(null, false, {message: 'Incorrect email.'});
+    });
 }));
 
 passport.use(new FacebookStrategy({
@@ -100,14 +87,11 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(function (id, done) {
-    new User({'id': id})
-        .fetch()
-        .then(function (user) {
-            done(null, user);
-        })
-        .catch(function (err) {
-            done(err);
-        });
+    knex('users').where('id', id).then(function (users) {
+        done(null, users[0]);
+    }).catch(function (err) {
+        done(err);
+    });
 });
 
 app.use(passport.initialize());
@@ -149,57 +133,48 @@ app.use('/avatars', function (req, res) {
 });
 app.use('/logged_user', function (req, res, next) {
     if (req.isAuthenticated()) {
-        req.body.ids = [req.user.id];
+        req.body.id = req.user.id;
         controllers.db.users(knex, req, res, next);
     }
     else res.end();
 });
 app.use('/check_nick', function (req, res) {
-    var nick = req.body.nick;
-    new User({'nick': nick})
-        .fetch()
-        .then(function (user) {
-            if (user) {
-                console.log("User with nick '" + nick + "' already exists!");
-                res.end();
-            }
-            else {
-                res.end('ok');
-            }
-        })
-        .catch(function (err) {
-            console.log(err);
+    knex('users').where('nick', req.body.nick).then(function (users) {
+        if (users.length) {
+            console.log("User with nick '" + req.body.nick + "' already exists!");
             res.end();
-        });
+        }
+        else {
+            res.end('ok');
+        }
+    }).catch(function (err) {
+        console.log(err);
+        res.end();
+    });
 });
 app.use('/check_email', function (req, res) {
-    var email = req.body.email;
-    new User({'email': email})
-        .fetch()
-        .then(function (user) {
-            if (user) {
-                console.log("User with email '" + email + "' already exists!");
-                res.end();
-            }
-            else {
-                res.end('ok');
-            }
-        })
-        .catch(function (err) {
-            console.log(err);
+    knex('users').where('email', req.body.email.toLowerCase()).then(function (users) {
+        if (users.length) {
+            console.log("User with email '" + req.body.email + "' already exists!");
             res.end();
-        });
+        }
+        else {
+            res.end('ok');
+        }
+    }).catch(function (err) {
+        console.log(err);
+        res.end();
+    });
 });
 
-app.post('/restore', function(req, res) {
-    var email = req.body.email;
+app.post('/restore', function (req, res) {
     var secretCode = Math.round(Math.random() * 10000);
     transporter.sendMail({
         from: 'SkillUP <vintorezvs@gmail.com>',
-        to: email,
+        to: req.body.email,
         subject: 'Восстановление пароля',
         text: 'Код для смены пароля: ' + secretCode
-    }, function(err) {
+    }, function (err) {
         if (err) {
             console.log(err);
             res.end('error');
@@ -208,15 +183,13 @@ app.post('/restore', function(req, res) {
     });
 });
 
-app.post('/change_password', function(req, res) {
-    var email = req.body.email;
-    var password = req.body.password;
-
-    knex('users')
-        .where('email', '=', email)
-        .update('pswhash', bcrypt.hashSync(password))
-        .then(function(count) {
+app.post('/change_password', function (req, res) {
+    knex('users').where('email', '=', req.body.email.toLowerCase()).update('pswhash', bcrypt.hashSync(req.body.password))
+        .then(function () {
             controllers.users.login(req, res);
+        }).catch(function (err) {
+            console.log(err);
+            res.end();
         });
 });
 
@@ -239,8 +212,7 @@ app.post('/append_needs', function (req, res, next) {
         //Переделать!!!
         knex('users').where('id', '=', req.user.id).update({needs: req.body.needs}).then(function () {
             res.end('ok');
-        })
-        .catch(function (error) {
+        }).catch(function (error) {
             console.log(error);
             res.end();
         });
@@ -259,11 +231,9 @@ app.post('/register/step2', function (req, res, next) {
                 education: req.body.education,
                 work: req.body.work
             }
-        )
-        .then(function () {
+        ).then(function () {
             res.end('ok');
-        })
-        .catch(function (error) {
+        }).catch(function (error) {
             console.log(error);
             res.end();
         });
@@ -281,14 +251,17 @@ app.get('/auth/facebook', function (req, res, next) {
             'user_work_history',
             'user_about_me']
     })(req, res, next);
-}, function (req, res) { /* Never called */ });
+}, function (req, res) { /* Never called */
+});
 
 app.get('/auth/facebook/callback', function (req, res, next) {
     passport.authenticate('facebook', function (err, user, info) {
         if (err) return next(err);
         if (!user) return res.redirect('/main');
-        req.logIn(user, function(err) {
-            if (err) { return next(err); }
+        req.logIn(user, function (err) {
+            if (err) {
+                return next(err);
+            }
             if (info) {
                 return res.redirect('/registration/step2');
             }

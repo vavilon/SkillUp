@@ -124,15 +124,15 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
 
     return function (req, res, next) {
         if (req.isAuthenticated()) {
-            if (req.user.attributes.tasks_approved && req.user.attributes.tasks_approved.indexOf(req.body.task_id) !== -1
-                || req.user.attributes.tasks_created && req.user.attributes.tasks_created.indexOf(req.body.task_id) !== -1) {
+            if (req.user.tasks_approved && req.user.tasks_approved.indexOf(req.body.task_id) !== -1
+                || req.user.tasks_created && req.user.tasks_created.indexOf(req.body.task_id) !== -1) {
                 res.end();
             }
             else knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'skills', 'exp', 'author').then(function(tasks) {
                 if (tasks[0].is_approved !== null) {
                     res.end();
                 }
-                else if (!req.user.attributes.admin) {
+                else if (!req.user.admin) {
                     knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
                         .then(function(userSkills) {
                             if (!userHasSkills(userSkills, tasks[0].skills)) {

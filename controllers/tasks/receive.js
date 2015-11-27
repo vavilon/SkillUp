@@ -2,8 +2,8 @@
 module.exports = function(knex, updateArray) {
     return function(req, res, next) {
         if (req.isAuthenticated()) {
-            if (req.user.attributes.tasks_created && req.user.attributes.tasks_created.indexOf(req.body.task_id) !== -1
-                || req.user.attributes.tasks_done && req.user.attributes.tasks_done.indexOf(req.body.task_id) !== -1) {
+            if (req.user.tasks_created && req.user.tasks_created.indexOf(req.body.task_id) !== -1
+                || req.user.tasks_done && req.user.tasks_done.indexOf(req.body.task_id) !== -1) {
                 res.end();
             }
             else knex('tasks').where('id', '=', req.body.task_id).select('is_approved').then(function(tasks) {
