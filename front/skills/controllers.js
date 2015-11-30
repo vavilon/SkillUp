@@ -114,7 +114,7 @@ app.factory('extendedSkills', function () {
         };
 
         this.root = this.skills['38'];
-        this.skills['root'] = this.root;
+        //this.skills['root'] = this.root;
         this.root.level = 0;
         this.maxLevel = 0;
 
