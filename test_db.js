@@ -7,9 +7,15 @@ var knex = require('knex')(config.get('knex'));
 //var bookshelf = require('bookshelf')(knex);
 //var temp;
 
-knex('users').where('id', 14).update({pswhash: bcrypt.hashSync('1')}).returning('pswhash').then(function (pswhash) {
-    console.log(bcrypt.compareSync('1', pswhash[0]));
+knex('skills_progress').select('skill_id').where('user_id', '20').pluck('skill_id').then(function(sp) {
+ console.log(sp);
+}).catch(function (error) {
+ console.log(error);
 });
+
+/*knex('users').where('id', 14).update({pswhash: bcrypt.hashSync('1')}).returning('pswhash').then(function (pswhash) {
+    console.log(bcrypt.compareSync('1', pswhash[0]));
+});*/
 
 /*knex('approvements').returning('id').insert({task_id: 'cf133be1-3e14-4678-acce-821684098d79'})
  .then(function(id) {

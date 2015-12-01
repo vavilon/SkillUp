@@ -1,4 +1,5 @@
-app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, parseSkills, loadUsers, $rootScope) {
+app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $rootScope, getObjByID, parseSkills, loadUsers, isLoggedIn) {
+    if (!isLoggedIn()) $location.path('/main');
     $rootScope.ajaxCall.promise.then(function () {
         $scope.username = "";
         $scope.filteredUsers = [];
@@ -46,7 +47,8 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, getObjByID, pa
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, loadLoggedUser,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
-                                        setNotReceivable) {
+                                        setNotReceivable, isLoggedIn, $location) {
+    if (!isLoggedIn()) $location.path('/main');
 
     $scope.scrollWrap = $scope.scrollWrap || {
             loadFunc: loadTasks, callback: $scope.scrollCallback,
@@ -73,7 +75,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
         $scope.exs = $rootScope.exs;
 
 
-        var dbUsersOptions = {ids: [$routeParams.user_id]};
+        var dbUsersOptions = {id: $routeParams.user_id};
         $http.post('/db/users', dbUsersOptions).success(function (data) {
             if (!data || !data.length) return;
             $scope.user = data[0];

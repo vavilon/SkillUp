@@ -64,7 +64,8 @@ function applyAllFilters(scope) {
 }
 
 app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived, loadTasks,
-                                         $rootScope) {
+                                         $rootScope, $location, isLoggedIn) {
+    if (!isLoggedIn()) $location.path('/main');
     $rootScope.ajaxCall.promise.then(function () {
         $scope.getObjByID = getObjByID;
         $scope.chips = {};
@@ -142,7 +143,8 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 });
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived,
-                                        $rootScope) {
+                                        $rootScope, $location, isLoggedIn) {
+    if (!isLoggedIn()) $location.path('/main');
     $rootScope.ajaxCall.promise.then(function () {
         $scope.exs = $rootScope.exs;
 

@@ -1,7 +1,8 @@
 
 module.exports = function (knex, req, res, next) {
     var q = knex.select("solutions.*").from('solutions');
-    if (req.body.ids) q.whereIn('solutions.id', req.body.ids);
+    if (req.body.id) q.where('solutions.id', req.body.id);
+    else if (req.body.ids) q.whereIn('solutions.id', req.body.ids);
     q.leftJoin('tasks', 'solutions.task_id', '=', 'tasks.id').select('tasks.title as task_title', 'tasks.skills as task_skills',
         'tasks.exp as task_exp');
     q.leftJoin('users as u1', 'solutions.user_id', '=', 'u1.id').select('u1.name as user_name');

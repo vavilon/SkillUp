@@ -16,7 +16,7 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
 
                     count = tc + tic;
 
-                    if (count == GLOBAL.countToApprove) {
+                    if (count == GLOBAL.COUNT_TO_APPROVE) {
                         var sc = 0, sic = 0, dc = 0, dic = 0, lc = 0, lic = 0;
 
                         if (a.skills_correct) sc += a.skills_correct.length;
@@ -28,10 +28,10 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
                         if (a.links_correct) lc += a.links_correct.length;
                         if (a.links_incorrect) lic += a.links_incorrect.length;
 
-                        var tcCor = tc / count >= GLOBAL.correctConstant;
-                        var scCor = sc / count >= GLOBAL.correctConstant;
-                        var dcCor = dc / count >= GLOBAL.correctConstant;
-                        var lcCor = lc / count >= GLOBAL.correctConstant;
+                        var tcCor = tc / count >= GLOBAL.CORRECT_CONSTANT;
+                        var scCor = sc / count >= GLOBAL.CORRECT_CONSTANT;
+                        var dcCor = dc / count >= GLOBAL.CORRECT_CONSTANT;
+                        var lcCor = lc / count >= GLOBAL.CORRECT_CONSTANT;
 
                         var correct = tcCor && scCor && dcCor && lcCor;
 
@@ -42,8 +42,6 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
 
                         Если в задании некорректны ссылки на учебные материалы или название, то скиллы и експа начисляются по той же схеме.
                         Автору задания снимается експа за задание / 4 * количество неправильных пунктов.
-
-
                          */
 
                         knex('tasks').where('id', '=', req.body.task_id).update({is_approved: correct}).then(function() {
@@ -79,23 +77,23 @@ module.exports = function(knex, updateApprovement, userHasSkills) {
                                 arr[curArr[i]].skills += 1 / 4;
                             }
 
-                            var q = "UPDATE users SET exp = exp + CASE \n";
-                            q += "WHEN id = '" + task.author + "' THEN ";
-                            if (correct) q += task.exp * GLOBAL.correctTaskExpMultiplier;
-                            else q += -task.exp / GLOBAL.incorrectTaskExpDivider;
+                            var q = "UPDATE users SET exp = exp + CASE \n"
+                                + "WHEN id = '" + task.author + "' THEN ";
+                            if (correct) q += task.exp * GLOBAL.CORRECT_TASK_EXP_MULTIPLIER;
+                            else q += -task.exp / GLOBAL.INCORRECT_TASK_EXP_DIVIDER;
 
                             for (var id in arr) q += "\n WHEN id = '" + id + "' THEN " + arr[id].exp;
                             q += "\n ELSE 0 END;";
 
                             knex.raw(q).then(function() {
                                 var skillsRecord = knex.idsToRecord(task.skills);
-                                var q = "UPDATE skills_progress SET count = count + CASE \n";
-                                q += "WHEN user_id = '" + task.author + "' AND skill_id in " + skillsRecord + " THEN ";
+                                var q = "UPDATE skills_progress SET count = count + CASE \n"
+                                    + "WHEN user_id = '" + task.author + "' AND skill_id in " + skillsRecord + " THEN ";
                                 if (correct) q += 1;
                                 else q += 0;
 
                                 for (var id in arr) q += "\n WHEN user_id = '" + id + "' AND skill_id in "
-                                    + skillsRecord + " THEN " + (arr[id].skills * 0.5);
+                                    + skillsRecord + " THEN " + (arr[id].skills * GLOBAL.APPROVE_SKILLS_MULTIPLIER);
                                 q += "\n ELSE 0 END;";
                                 knex.raw(q).then(function (){
 

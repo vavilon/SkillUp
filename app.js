@@ -33,10 +33,13 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var FACEBOOK_APP_ID = "490483854451281";
 var FACEBOOK_APP_SECRET = "387964dc2fbee4a25aace154e3df1c1d";
 
-GLOBAL.countToApprove = 3;
-GLOBAL.correctConstant = 2 / 3;
-GLOBAL.correctTaskExpMultiplier = 3;
-GLOBAL.incorrectTaskExpDivider = 2;
+GLOBAL.COUNT_TO_APPROVE = 3;
+GLOBAL.COUNT_TO_CHECK = 3;
+GLOBAL.CORRECT_CONSTANT = 2 / 3;
+GLOBAL.CORRECT_TASK_EXP_MULTIPLIER = 3;
+GLOBAL.INCORRECT_TASK_EXP_DIVIDER = 2;
+GLOBAL.APPROVE_SKILLS_MULTIPLIER = 0.25;
+GLOBAL.CHECK_SKILLS_MULTIPLIER = 0.25;
 
 knex('skills').then(function (rows) {
     GLOBAL.exs = new exSkills(rows);

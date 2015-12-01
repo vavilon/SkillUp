@@ -217,6 +217,8 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
     });
 
     $rootScope.ajaxCall.promise.then(function () {
+        if (!isLoggedIn()) return;
+
         $scope.exs = $rootScope.exs;
 
         $scope.chips = {skillsTitles: [], skillsTitlesFiltered: [], selectedSkills: []};

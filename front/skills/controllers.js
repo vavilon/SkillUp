@@ -150,7 +150,8 @@ app.factory('extendedSkills', function () {
 });
 
 
-app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, extendedSkills) {
+app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $location, isLoggedIn) {
+    if (!isLoggedIn()) $location.path('/main');
     $rootScope.ajaxCall.promise.then(function () {
         $scope.user = $rootScope.loggedUser;
 
