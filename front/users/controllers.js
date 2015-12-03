@@ -219,14 +219,15 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         var err = {notequal: false};
         if (!$scope.reg.password) return err;
         if (!$scope.reg.rePassword) return err;
-        if ($scope.reg.password !== $scope.reg.rePassword) err.notequal = true;
+        if ($scope.getPasswordStrong().notstrong) return err;
+        err.notequal = $scope.reg.password !== $scope.reg.rePassword;
         return err;
     };
 
     $scope.getPasswordStrong = function () {
-        var err = {notstrong: true};
-        if (this.passwordStrong) err.notstrong = false;
-        console.log(this.passwordStrong);
+        var err = {notstrong: false};
+        if (!$scope.reg.password) return err;
+        err.notstrong = !$scope.passwordStrong;
         return err;
     };
 
@@ -276,7 +277,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
     $scope.$watch('reg.password', function(newVal) {
         if (newVal) {
             $scope.checkResult = zxcvbn(newVal, [$scope.reg.name, $scope.reg.nick, $scope.reg.email]);
-            $scope.passwordStrong = $scope.checkResult.score > 2;
+            $scope.passwordStrong = $scope.checkResult.score > 1;
         }
     });
 
@@ -288,6 +289,12 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         console.log('Check result: ' + $scope.checkRegInput());
 
         if ($scope.checkRegInput()) {
+            console.log({
+                nick: $scope.reg.nick,
+                name: $scope.reg.name,
+                email: $scope.reg.email,
+                password: $scope.reg.password
+            });
             $http.post('/register', {
                 nick: $scope.reg.nick,
                 name: $scope.reg.name,
@@ -296,7 +303,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             }).success(function () {
                 $scope.step = 2;
             }).error(function (err) {
-                $scope.showErrorToast(err.message);
+                $scope.showErrorToast(err.message || 'Введены некорректные данные!');
             });
         } else if($scope.checkResult.feedback.warning) {
             $scope.showErrorToast($scope.checkResult.feedback.warning);

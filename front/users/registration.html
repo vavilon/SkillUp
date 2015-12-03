@@ -46,13 +46,14 @@
                                 <md-input-container>
                                     <label>
                                         Пароль
-                                        <span style="color: #F44336" ng-if="checkResult.score < 2 && reg.password">слабый</span>
-                                        <span style="color: darkorange" ng-if="checkResult.score == 2">средний</span>
-                                        <span style="color: inherit;" ng-if="checkResult.score == 3">надежный</span>
-                                        <span style="color: green" ng-if="checkResult.score == 4">сверхнадежный</span>
+                                        <span style="color: #F44336" ng-show="checkResult.score < 2 && reg.password">слабый</span>
+                                        <span style="color: darkorange" ng-show="checkResult.score == 2 && reg.password">средний</span>
+                                        <span style="color: inherit;" ng-show="checkResult.score == 3 && reg.password">надежный</span>
+                                        <span style="color: green" ng-show="checkResult.score == 4 && reg.password">сверхнадежный</span>
                                     </label>
-                                    <input required type="password" ng-model="reg.password" name="passwordN">
+                                    <input required type="password" ng-model="reg.password" name="passwordN" md-maxlength="64">
                                     <div ng-messages="regForm.passwordN.$error">
+                                        <div ng-message="required">Обязательное поле</div>
                                         <div ng-messages="getPasswordStrong()">
                                             <div ng-message="notstrong">Пароль недостаточно сложный</div>
                                         </div>
@@ -63,7 +64,7 @@
                                 </md-input-container>
                                 <md-input-container>
                                     <label>Повторите пароль</label>
-                                    <input required type="password" ng-model="reg.rePassword" name="rePasswordN">
+                                    <input required type="password" ng-model="reg.rePassword" name="rePasswordN" md-maxlength="64">
                                     <div ng-messages="regForm.rePasswordN.$error">
                                         <div ng-message="required">Обязательное поле</div>
                                         <div ng-messages="passwordsEqual()">
