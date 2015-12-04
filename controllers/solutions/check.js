@@ -22,7 +22,7 @@ module.exports = function(knex, userHasSkills) {
         if (count === GLOBAL.COUNT_TO_CHECK) raw += ", is_correct = " + correct;
         raw += " WHERE id = '" + req.body.solution_id + "';";
 
-        knex.raw(raw).then(function(ans) {
+        knex.raw(raw).then(function() {
             //Добавим проверяющему в массив проверенных решений текущее решение
             knex.raw("UPDATE users SET solutions_checked = array_append(solutions_checked, '" + req.body.solution_id + "')"
                 + " WHERE id = '" + req.user.id + "';").then(function() {
