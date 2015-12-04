@@ -31,12 +31,12 @@ module.exports = function(knex, updateArray, userHasSkills){
 
     return function (req, res, next) {
         if (req.isAuthenticated()) {
+            //Рассчитываем экспу для задания
+            var exp = 0;
+            for (var i in req.body.skills) {
+                exp += GLOBAL.exs.skills[req.body.skills[i]].exp;
+            }
             if (!req.user.admin) {
-                //Рассчитываем экспу для задания
-                var exp = 0;
-                for (var i in req.body.skills) {
-                    exp += GLOBAL.exs.skills[req.body.skills[i]].exp;
-                }
                 //Проверяем, хватает ли у автора експы на случай некорректности задания
                 if (req.user.exp < exp / GLOBAL.INCORRECT_TASK_EXP_DIVIDER) res.end();
                 else knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')

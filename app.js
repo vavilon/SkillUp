@@ -45,7 +45,7 @@ knex('skills').then(function (rows) {
     GLOBAL.exs = new exSkills(rows);
     for (var i in exs.skills) {
         knex('skills').where('id', '=', exs.skills[i].id).update({exp: exs.skills[i].exp}).then(function () {
-        });
+        }).catch(function(err){console.log(err);});
     }
     console.log('Exp for all skills updated!');
 });

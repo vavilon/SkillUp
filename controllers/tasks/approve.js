@@ -2,7 +2,7 @@
 module.exports = function (knex, updateApprovement, userHasSkills) {
     function callback(task, req, res, next) {
         //Вызов этой функции добавляет в approvements данные подтверждения (title_correct, skills_correct etc.)
-        //и возвращает обновленную запись (appr[0])
+        //и возвращает обновленную запись (appr.rows[0], .returning('*') из knex не пашет)
         updateApprovement(req.body.task_id, req.body.data, req.user.id).then(function (appr) {
             //Добавим подтверждающему id задания в массив tasks_approved
             knex.raw("UPDATE users SET tasks_approved = array_append(tasks_approved, '" + req.body.task_id + "')"
@@ -10,7 +10,7 @@ module.exports = function (knex, updateApprovement, userHasSkills) {
 
                 res.end('ok');
 
-                var a = appr[0];
+                var a = appr.rows[0];
                 var count = 0, tc = 0, tic = 0;
                 //Используя title_correct + title_incorrect посчитаем количество подтвердивших
                 if (a.title_correct) tc += a.title_correct.length;
@@ -97,7 +97,7 @@ module.exports = function (knex, updateApprovement, userHasSkills) {
                             q += "\n ELSE 0 END;";
                             knex.raw(q).then(function () {
                                 //Если зашло сюда, то все ок
-                                console.log('Task with id ' + task.id + ' approved with result ' + correct);
+                                console.log('Task with id ' + req.body.task_id + ' approved with result ' + correct);
                             }).catch(function (error) {
                                 console.log(error);
                             });

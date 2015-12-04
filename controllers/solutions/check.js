@@ -4,8 +4,14 @@ module.exports = function(knex, userHasSkills) {
         var checked = req.body.is_correct ? 'checked_correct' : 'checked_incorrect';
         //Учитываем данные текущего проверяющего для того чтобы не делать UPDATE solutions два раза
         var count = 0, correctLength = 0, incorrectLength = 0;
-        if (solution.checked_correct) correctLength = solution.checked_correct.length + (req.body.is_correct ? 1 : 0);
-        if (solution.checked_incorrect) incorrectLength += solution.checked_incorrect.length + (req.body.is_correct ? 0 : 1);
+        solution.checked_correct = solution.checked_correct || [];
+        if (req.body.is_correct) solution.checked_correct.push(req.user.id);
+        correctLength = solution.checked_correct.length;
+
+        solution.checked_incorrect = solution.checked_incorrect || [];
+        if (!req.body.is_correct) solution.checked_incorrect.push(req.user.id);
+        incorrectLength = solution.checked_incorrect.length;
+
         count = correctLength + incorrectLength;
         //Корректно ли решение
         var correct = correctLength / count >= GLOBAL.CORRECT_CONSTANT;
@@ -52,7 +58,7 @@ module.exports = function(knex, userHasSkills) {
                                 knex('skills_progress').select('skill_id').where('user_id', solution.user_id).pluck('skill_id').then(function (sp) {
                                     //Отфильтруем только те скиллы, которых у решившего нет
                                     var newSkills = task.skills.filter(function (skillID) {
-                                        return sp.indexOf(task.skills[i]) === -1;
+                                        return sp.indexOf(skillID) === -1;
                                     });
                                     //Сформируем массив значений на вставку
                                     var values = [];
@@ -60,7 +66,7 @@ module.exports = function(knex, userHasSkills) {
                                         values.push({user_id: solution.user_id, skill_id: newSkills[i], count: 1});
                                     knex('skills_progress').insert(values).then(function(){
                                         //Если зашло сюда, то все ок
-                                        console.log('Solution with id ' + solution.id + ' checked with result ' + correct);
+                                        console.log('Solution with id ' + req.body.solution_id + ' checked with result ' + correct);
                                     }).catch(function (error) {
                                         console.log(error);
                                     });
