@@ -2,17 +2,18 @@
 module.exports = function(knex, updateArray) {
     return function(req, res, next) {
         if (req.isAuthenticated()) {
+            //Нельзя взять созданное тобой или уже решенное тобой
             if (req.user.tasks_created && req.user.tasks_created.indexOf(req.body.task_id) !== -1
                 || req.user.tasks_done && req.user.tasks_done.indexOf(req.body.task_id) !== -1) {
                 res.end();
             }
             else knex('tasks').where('id', '=', req.body.task_id).select('is_approved').then(function(tasks) {
-                if (!tasks[0].is_approved) {
+                if (!tasks[0].is_approved) { //Нельзя взять неподтвержденное или подтвержденное некорректное
                     res.end();
                 }
                 else knex('users').where('id', '=', req.user.id).andWhere('tasks_received', '@>', [req.body.task_id]).select('id')
                     .then(function (rows) {
-                        var operation = rows.length === 0 ? 'append' : 'remove';
+                        var operation = rows.length === 0 ? 'append' : 'remove'; //Повторное взятие убирает из взятых
                         updateArray('users', 'tasks_received', req.user.id, operation, req.body.task_id).then(function () {
                             updateArray('tasks', 'participants', req.body.task_id, operation, req.user.id).then(function () {
                                 res.end('ok');

@@ -7,8 +7,8 @@ var knex = require('knex')(config.get('knex'));
 //var bookshelf = require('bookshelf')(knex);
 //var temp;
 
-knex('skills_progress').select('skill_id').where('user_id', '20').pluck('skill_id').then(function(sp) {
- console.log(sp);
+knex('users').update({exp: 4000}).where('id', '103').returning('*').then(function(user) {
+ console.log(user);
 }).catch(function (error) {
  console.log(error);
 });

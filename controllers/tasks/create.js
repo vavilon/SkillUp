@@ -1,6 +1,7 @@
 
 module.exports = function(knex, updateArray, userHasSkills){
     function callback (exp, req, res, next) {
+        //Вставляем новое задание
         knex('tasks').returning('id').insert({
             title: req.body.title,
             description: req.body.description,
@@ -9,17 +10,19 @@ module.exports = function(knex, updateArray, userHasSkills){
             author: req.user.id,
             links: req.body.links
         }).then(function (taskID) {
+            //Добавляем запись в таблицу approvements для нового задания
             knex('approvements').insert({task_id: taskID[0]}).then(function() {
-                    updateArray('users', 'tasks_created', req.user.id, 'append', taskID[0]).then(function () {
-                        res.end('ok');
-                    }).catch(function (error) {
-                        console.log(error);
-                        res.end();
-                    });
+                //Добавляем автору id нового задания в массив tasks_created
+                updateArray('users', 'tasks_created', req.user.id, 'append', taskID[0]).then(function () {
+                    res.end('ok');
                 }).catch(function (error) {
                     console.log(error);
                     res.end();
                 });
+            }).catch(function (error) {
+                console.log(error);
+                res.end();
+            });
         }).catch(function (error) {
             console.log(error);
             res.end();
@@ -29,10 +32,12 @@ module.exports = function(knex, updateArray, userHasSkills){
     return function (req, res, next) {
         if (req.isAuthenticated()) {
             if (!req.user.admin) {
+                //Рассчитываем экспу для задания
                 var exp = 0;
                 for (var i in req.body.skills) {
                     exp += GLOBAL.exs.skills[req.body.skills[i]].exp;
                 }
+                //Проверяем, хватает ли у автора експы на случай некорректности задания
                 if (req.user.exp < exp / GLOBAL.INCORRECT_TASK_EXP_DIVIDER) res.end();
                 else knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
                     .then(function(userSkills) {

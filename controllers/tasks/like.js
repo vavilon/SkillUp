@@ -4,7 +4,7 @@ module.exports = function(knex, updateArray) {
         if (req.isAuthenticated()) {
             knex('users').where('id', '=', req.user.id).andWhere('tasks_liked', '@>', [req.body.task_id])
                 .then(function (rows) {
-                    var notLiked = rows.length === 0;
+                    var notLiked = rows.length === 0; //Чтобы лайк убирался при повторном лайке
                     updateArray('users', 'tasks_liked', req.user.id, notLiked ? 'append' : 'remove', req.body.task_id)
                         .then(function () {
                         knex('tasks').where('id', '=', req.body.task_id).increment('likes', notLiked ? 1 : -1).then(function () {
