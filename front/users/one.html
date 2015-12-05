@@ -58,15 +58,16 @@
     </div>
     <div layout="row" flex>
         <div layout="column" flex style="padding-left: 20px;">
-            <div layout="row" style="margin-bottom: 10px;">
-                <ul class="profile-categories">
-                    <li><a href ng-click="categoryNum = 0"
-                           ng-class="{'category-selected': categoryNum == 0}">Прогресс</a></li>
-                    <li class="category-divider">|</li>
-                    <li><a href ng-click="categoryNum = 1"
-                           ng-class="{'category-selected': categoryNum == 1}">Информация</a></li>
-                </ul>
-            </div>
+            <ul class="tabs">
+                <li>
+                    <input type="radio" name="tabs" id="tab1" ng-checked="categoryNum === 0"/>
+                    <label for="tab1" ng-click="categoryNum = 0">Прогресс</label>
+                </li>
+                <li>
+                    <input type="radio" name="tabs" id="tab2" ng-checked="categoryNum === 1"/>
+                    <label for="tab2" ng-click="categoryNum = 1">Информация</label>
+                </li>
+            </ul>
             <div ng-switch="categoryNum">
                 <div ng-switch-when="0" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);">
                     <md-tabs md-selected="tabSelected" ng-click="setScrollOptions(tabSelected)">

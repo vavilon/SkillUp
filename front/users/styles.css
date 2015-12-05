@@ -35,37 +35,51 @@
     margin-left: -29px;
 }
 
-ul.profile-categories {
+.tabs {
+    width: 650px;
+    float: none;
+    list-style: none;
+    position: relative;
+    text-align: left;
+    padding: 0;
     margin: 0;
-    padding: 4px;
-    cursor: default;
 }
-
-ul.profile-categories li {
-    font-size: 18px;
-    color: rgba(0, 0, 0, 0.54);
-    display: inline;
-    margin-right: 5px;
-    padding: 3px;
+.tabs li {
+    float: left;
+    display: block;
 }
-
-ul.profile-categories a {
-    outline: none;
-    text-decoration: none;
-    color: rgba(65, 131, 196, 0.87);
+.tabs input[type="radio"] {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
 }
-
-ul.profile-categories a:hover {
-    color: rgba(65, 131, 196, 0.56);
+.tabs label {
+    color: white;
+    display: block;
+    padding: 5px 10px;
+    border-radius: 4px 4px 0 0;
+    font-size: 14px;
+    font-weight: normal;
+    text-transform: uppercase;
+    background: #9FA8DA;
+    cursor: pointer;
+    position: relative;
+    top: 5px;
+    -moz-transition: all 0.1s ease-in-out;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
 }
-
-.category-selected {
-    color: #000 !important;
+.tabs label:hover {
+    background: #8C9EFF;
 }
-
-.category-divider {
-    color: rgba(0, 0, 0, 0.26) !important;
-    font-weight: 600;
+.tabs [id^="tab"]:checked + label {
+    top: 0;
+    padding-top: 10px;
+    background: #3F51B5;
+}
+.tabs [id^="tab"]:checked ~ [id^="tab-content"] {
+    display: block;
 }
 
 .info-list {
