@@ -18,6 +18,7 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
     $httpProvider.defaults.headers.common["Content-Type"] = "application/json";
 
     $routeProvider
+        .when('/admin', {templateUrl: '/front/users/admin.html', controller: 'adminCtrl'})
         .when('/main', {templateUrl: '/front/main.html', controller: 'mainPageCtrl'})
         .when('/users', {templateUrl: '/front/users/all.html', controller: 'usersListCtrl'})
         .when('/tasks', {templateUrl: '/front/tasks/all.html', controller: 'allTasksCtrl'})

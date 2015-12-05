@@ -599,3 +599,7 @@ app.controller('restoreCtrl', function ($scope, $http, $mdDialog, $location) {
         $location.path('/main');
     };
 });
+
+app.controller('adminCtrl', function ($scope, $http) {
+
+});
