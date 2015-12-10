@@ -57,6 +57,10 @@ a:hover .nickname.admin {
     color: #FFEB3B;
 }
 
+.admin-panel {
+    margin: 0 0 0 15px;
+}
+
 /* main.html */
 
 md-toolbar.demo-toolbar {

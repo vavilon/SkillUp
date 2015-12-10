@@ -72,6 +72,7 @@ app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgr
         else if ((new RegExp('/tasks')).test(newVal)) $rootScope.navbarSelectedIndex = 2;
         else if ((new RegExp('/users')).test(newVal)) $rootScope.navbarSelectedIndex = 3;
         else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
+        else if ((new RegExp('/admin')).test(newVal)) $rootScope.navbarSelectedIndex = -1;
     });
 
     loadLoggedUser(function(user) {

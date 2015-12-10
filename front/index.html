@@ -50,7 +50,7 @@
 <body layout="row">
 <div id="fb-root"></div>
 <div layout="column" layout-fill tabindex="-1" role="main">
-    <md-toolbar class="md-hue-2" style="box-shadow: 0 2px 5px rgba(0,0,0,0.54);" ng-controller="navbarCtrl" ng-if="showAdminPanel">
+    <md-toolbar class="md-hue-2" style="box-shadow: 0 2px 5px rgba(0,0,0,0.54);" ng-controller="navbarCtrl">
         <div layout="row" layout-align="space-between center">
             <div flex="50" flex-gt-md="15" layout="row">
                 <div class="md-toolbar-tools" flex="30" flex-md="25" hide-gt-md>
@@ -80,14 +80,18 @@
                 <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
                     <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
                         <img ng-if="loggedUser().avatar" alt="{{loggedUser().nick}}" class="avatar" ng-src="{{loggedUser().avatar}}"
-                             ng-class="{admin: loggedUser().role !== 'ползователь'}">
+                             ng-class="{admin: loggedUser().role !== 'пользователь'}">
                         <i class="mdi mdi-account-circle mdi-36" ng-if="!loggedUser().avatar"></i>
                         <div layout="column" layout-align="center center">
-                            <h6 class="nickname" ng-class="{admin: loggedUser().role !== 'ползователь'}">{{loggedUser().nick}}</h6>
-                            <span ng-if="loggedUser().role !== 'ползователь'" class="user-exp">exp:
-                                <span style="color: #E91E63;">{{loggedUser().exp}}</span></span>
-                            <span ng-if="loggedUser().role !== 'ползователь'" class="admin">АДМИН</span>
+                            <h6 class="nickname" ng-class="{admin: loggedUser().role !== 'пользователь'}">{{loggedUser().nick}}</h6>
+                            <span class="user-exp">exp:
+                                <span style="color: #E91E63;">{{loggedUser().exp}}</span>
+                            </span>
                         </div>
+                    </a>
+                    <a ng-if="loggedUser().role !== 'пользователь'" class="admin-panel" href="/admin">
+                        <md-tooltip>Админпанель</md-tooltip>
+                        <i class="mdi mdi-account-star mdi-24" ng-class="{'navbar-active': getSelectedIndex() == -1}"></i>
                     </a>
                     <md-button class="md-mini logout-button"
                                ng-click="logout()" aria-label="logout-btn">

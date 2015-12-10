@@ -120,6 +120,18 @@
                         <md-content style="overflow: visible;">
                         <md-list class="info-list">
                             <md-list-item layout="row" layout-align="start start" ng-mouseenter="r1 = true"
+                                          ng-mouseleave="r1 = false"  ng-if="user.role !== 'пользователь'">
+                                <div flex="30" class="info-header">Роль:</div>
+                                <div>{{user.role}}</div>
+                                <div flex></div>
+                                <md-button class="edit-button" ng-if="r1 && ownProfile" aria-label="LaLat">
+                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                                </md-button>
+                            </md-list-item>
+
+                            <md-divider></md-divider>
+
+                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r1 = true"
                                           ng-mouseleave="r1 = false">
                                 <div flex="30" class="info-header">День рождения:</div>
                                 <div ng-if="!info.editing.birthday" layout="row" flex>
