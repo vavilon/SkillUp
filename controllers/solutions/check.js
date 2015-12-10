@@ -103,19 +103,16 @@ module.exports = function(knex, userHasSkills) {
                         res.end();
                     }
                     else knex('tasks').where('id', '=', solutions[0].task_id).select('exp', 'skills').then(function(tasks) {
-                        if (!req.user.admin) {
-                            knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
-                                .then(function(userSkills) { //Есть ли у проверяющего скиллы для проверки
-                                    if (!userHasSkills(userSkills, tasks[0].skills)) {
-                                        res.end();
-                                    }
-                                    else callback(solutions[0], tasks[0], req, res, next);
-                                }).catch(function (error) {
-                                    console.log(error);
+                        knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
+                            .then(function(userSkills) { //Есть ли у проверяющего скиллы для проверки
+                                if (!userHasSkills(userSkills, tasks[0].skills)) {
                                     res.end();
-                                });
-                        }
-                        else callback(solutions[0], tasks[0], req, res, next);
+                                }
+                                else callback(solutions[0], tasks[0], req, res, next);
+                            }).catch(function (error) {
+                                console.log(error);
+                                res.end();
+                            });
                     }).catch(function (error) {
                         console.log(error);
                         res.end();

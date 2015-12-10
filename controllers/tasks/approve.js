@@ -130,7 +130,7 @@ module.exports = function (knex, updateApprovement, userHasSkills) {
                 if (tasks[0].is_approved !== null) {
                     res.end();
                 }
-                else if (!req.user.admin) {
+                else {
                     knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
                         .then(function (userSkills) {
                             //Есть ли у подтверждающего скиллы для подтверждения этого задания
@@ -139,11 +139,10 @@ module.exports = function (knex, updateApprovement, userHasSkills) {
                             }
                             else callback(tasks[0], req, res, next);
                         }).catch(function (error) {
-                            console.log(error);
-                            res.end();
-                        });
+                        console.log(error);
+                        res.end();
+                    });
                 }
-                else callback(tasks[0], req, res, next);
             }).catch(function (error) {
                 console.log(error);
                 res.end();
