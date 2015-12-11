@@ -121,12 +121,27 @@
                             <md-list-item layout="row" layout-align="start start" ng-mouseenter="r1 = true"
                                           ng-mouseleave="r1 = false">
                                 <div flex="30" class="info-header">День рождения:</div>
-                                <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
-                                <div class="info-empty" ng-if="!user.birthday">не указано</div>
-                                <div flex></div>
-                                <md-button class="edit-button" ng-if="r1 && ownProfile" aria-label="LaLat">
-                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
-                                </md-button>
+                                <div ng-if="!info.editing.birthday" layout="row" flex>
+                                    <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
+                                    <div class="info-empty" ng-if="!user.birthday">не указано</div>
+                                    <div flex></div>
+                                    <md-button class="edit-button" ng-if="r1 && ownProfile" aria-label="btnEditBirthday"
+                                            ng-click="editInfo('birthday')">
+                                        <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                                    </md-button>
+                                </div>
+                                <div ng-if="info.editing.birthday" layout="row" flex>
+                                    <input type="date" ng-model="info.birthday">
+                                    <div flex></div>
+                                    <md-button class="edit-button" aria-label="btnSaveBirthday"
+                                               ng-click="updateProfile('birthday')">
+                                        <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
+                                    </md-button>
+                                    <md-button class="edit-button" aria-label="btnCancelBirthday"
+                                               ng-click="cancelEdit('birthday')">
+                                        <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
+                                    </md-button>
+                                </div>
                             </md-list-item>
 
                             <md-divider></md-divider>
@@ -134,14 +149,31 @@
                             <md-list-item layout="row" layout-align="start start" ng-mouseenter="r2 = true"
                                           ng-mouseleave="r2 = false">
                                 <div flex="30" class="info-header">Место проживания:</div>
-                                <div ng-if="user.city || user.country">{{user.city}}<span
-                                        ng-if="user.city && user.country">, </span>{{user.country}}
+                                <div ng-if="!info.editing.location" layout="row" flex>
+                                    <div ng-if="user.city || user.country">{{user.city}}<span
+                                            ng-if="user.city && user.country">, </span>{{user.country}}
+                                    </div>
+                                    <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
+                                    <div flex></div>
+                                    <md-button class="edit-button" ng-if="r2 && ownProfile" aria-label="btnEditLocation"
+                                               ng-click="editInfo('location')">
+                                        <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                                    </md-button>
                                 </div>
-                                <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
-                                <div flex></div>
-                                <md-button class="edit-button" ng-if="r2 && ownProfile">
-                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
-                                </md-button>
+                                <div ng-if="info.editing.location" layout="row" flex>
+                                    <input type="text" ng-model="info.city" maxlength="32" placeholder="Город"
+                                           style="margin-right: 10px;">
+                                    <input type="text" ng-model="info.country" maxlength="32" placeholder="Страна">
+                                    <div flex></div>
+                                    <md-button class="edit-button" aria-label="btnSaveLocation"
+                                               ng-click="updateProfile('location')">
+                                        <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
+                                    </md-button>
+                                    <md-button class="edit-button" aria-label="btnCancelLocation"
+                                               ng-click="cancelEdit('location')">
+                                        <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
+                                    </md-button>
+                                </div>
                             </md-list-item>
 
                             <md-divider></md-divider>
@@ -157,7 +189,7 @@
                                     </div>
                                     <div class="info-empty" ng-if="!user.educationStr || user.educationStr.length == 0">не указано</div>
                                 </div>
-                                <md-button class="edit-button" ng-if="r3 && ownProfile">
+                                <md-button class="edit-button" ng-if="r3 && ownProfile" aria-label="btnEditEducation">
                                     <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>
@@ -175,7 +207,7 @@
                                     </div>
                                     <div class="info-empty" ng-if="!user.workStr || user.workStr.length == 0">не указано</div>
                                 </div>
-                                <md-button class="edit-button" ng-if="r4 && ownProfile">
+                                <md-button class="edit-button" ng-if="r4 && ownProfile" aria-label="btnEditWork">
                                     <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                 </md-button>
                             </md-list-item>

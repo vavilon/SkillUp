@@ -47,7 +47,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, loadLoggedUser,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
-                                        setNotReceivable, isLoggedIn, $location) {
+                                        setNotReceivable, isLoggedIn, $location, $filter) {
     if (!isLoggedIn()) $location.path('/main');
 
     $scope.scrollWrap = $scope.scrollWrap || {
@@ -74,7 +74,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
         $scope.exs = $rootScope.exs;
 
-
         var dbUsersOptions = {id: $routeParams.user_id};
         $http.post('/db/users', dbUsersOptions).success(function (data) {
             if (!data || !data.length) return;
@@ -90,6 +89,38 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             if ($scope.user.work) {
                 $scope.user.workStr = workStr(JSON.parse($scope.user.work));
             }
+
+            $scope.info = {editing: {}, birthday: new Date($scope.user.birthday), country: $scope.user.country,
+                city: $scope.user.city};
+
+            $scope.editInfo = function(param) {
+                $scope.info.editing[param] = true;
+            };
+
+            $scope.cancelEdit = function(param) {
+                $scope.info.editing[param] = false;
+            };
+
+            $scope.updateProfile = function(param) {
+                var updateData = {};
+                if (param === 'location') {
+                    updateData.country = $scope.info.country;
+                    updateData.city = $scope.info.city;
+                }
+                else updateData[param] = $scope.info[param];
+                $http.post('/update_profile', updateData).success(function(res) {
+                    if (!res) {
+                    }
+                    else {
+                        if (param === 'location') {
+                            $scope.user.country = $scope.info.country;
+                            $scope.user.city = $scope.info.city;
+                        }
+                        else $scope.user[param] = $scope.info[param];
+                        $scope.info.editing[param] = false;
+                    }
+                });
+            };
 
             if ($scope.user.tasks_done) {
                 var dbTasksDoneOptions = {ids: $scope.user.tasks_done};

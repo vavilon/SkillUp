@@ -7,8 +7,12 @@ var knex = require('knex')(config.get('knex'));
 //var bookshelf = require('bookshelf')(knex);
 //var temp;
 
-knex('users').update({exp: 4000}).where('id', '103').returning('*').then(function(user) {
- console.log(user);
+knex('users').update({birthday: new Date("1995-02-12T22:00:00.000Z")}).where('id', '103').returning('*').then(function(user) {
+ knex('users').select('birthday').where('id', '103').then(function(rows) {
+  console.log(rows[0].birthday);
+ }).catch(function (error) {
+  console.log(error);
+ });
 }).catch(function (error) {
  console.log(error);
 });

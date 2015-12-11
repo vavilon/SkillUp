@@ -297,6 +297,8 @@ app.get('/auth/facebook/callback', function (req, res, next) {
 app.post('/login', controllers.users.login);
 app.post('/register', controllers.users.register);
 app.get('/logout', controllers.users.logout);
+app.post('/update_profile', controllers.users.update(knex));
+
 app.use('/', function (req, res) {
     res.sendFile(__dirname + '/front/index.html');
 });
