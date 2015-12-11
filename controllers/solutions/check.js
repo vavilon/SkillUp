@@ -16,7 +16,7 @@ module.exports = function(knex, userHasSkills) {
         //Корректно ли решение
         var correct = correctLength / count >= GLOBAL.CORRECT_CONSTANT;
 
-        //Добавим в решение данные текущего проверяющего и заодно запишем, корректно ли задание
+        //Добавим в решение данные текущего проверяющего и заодно запишем, корректно ли решение
         var raw = "UPDATE solutions SET " + checked + " = array_append(" + checked + ", '" + req.user.id + "')";
         if (req.body.is_correct) raw += ", rating = rating + " + (req.body.rating || 1);
         if (count === GLOBAL.COUNT_TO_CHECK) raw += ", is_correct = " + correct;
