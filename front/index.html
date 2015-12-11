@@ -114,8 +114,49 @@
             </div>
         </div>
     </md-toolbar>
-    <md-content on-scroll-bottom="{event: 'indexPageScrolled', percent: 95}" ng-view md-scroll-y flex style="background-color: #FAFAFA;">
+    <!--SideNav админской панели-->
+    <div ng-controller="adminCtrl">
+        <md-sidenav class="admin-sidenav md-sidenav-left md-whiteframe-z2 md-closed ng-isolate-scope"
+                    md-component-id="left" layout="column" ng-class="{'md-locked-open': isLockedOpen()}">
+
+            <header class="nav-header">
+                <a role="button" class="link" href="#" ng-click="statistic()">
+                    <h1 class="admin-header md-heading">Админпанель</h1>
+                </a>
+            </header>
+
+            <md-divider></md-divider>
+
+            <md-content flex role="navigation">
+                <h4 id="db-name" layout="row" layout-margin layout-align="center center">{{database.name}}</h4>
+                <md-divider></md-divider>
+                <md-list class="sidenav-list">
+                    <span ng-repeat="table in database.tables">
+                        <md-list-item>
+                            <md-button class="sidenav-button" flex ng-click="expand(table)" aria-label="expand-table">
+                                <span>{{table.name}}</span>
+                                <i class="mdi mdi-chevron-down mdi-24 rotate-base"
+                                   ng-class="{'rotate-btn': table.expanded}"></i>
+                            </md-button>
+                        </md-list-item>
+                        <md-list class="animate-if" ng-if="table.expanded">
+                            <md-list-item class="column-item" ng-repeat="name in table.columnNames">
+                                <p>{{name}}</p>
+                                <md-button class="md-secondary" ng-click="columnInfo(table, name, $event)" aria-label="delete-column">
+                                    <i class="mdi mdi-information-outline mdi-24"></i>
+                                </md-button>
+                            </md-list-item>
+                        </md-list>
+                    </span>
+                </md-list>
+            </md-content>
+        </md-sidenav>
+    </div>
+    <!--SideNav админской панели-->
+    <md-content on-scroll-bottom="{event: 'indexPageScrolled', percent: 95}" ng-view md-scroll-y flex
+                style="background-color: #FAFAFA;">
     </md-content>
+
 </div>
 
 </body>

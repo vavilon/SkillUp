@@ -139,10 +139,13 @@ app.use('/db', function (req, res, next) {
         else if (req.path === '/solutions') {
             controllers.db.solutions(knex, req, res, next);
         }
-        else res.end();
+        else next();
     }
-    else res.end();
+    else next();
 });
+
+app.use('/db/:table/columns', controllers.db.columns(knex));
+
 app.use('/avatars', function (req, res) {
     if (req.isAuthenticated()) {
         try {

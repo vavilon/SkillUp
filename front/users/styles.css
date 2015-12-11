@@ -159,6 +159,103 @@
     height: 35px;
 }
 
+.admin-header {
+    color: white;
+    text-align: center;
+    font-weight: 400;
+    font-size: 26px;
+}
+
+.admin-sidenav {
+    background-color: rgb(63,81,181);
+    min-height: calc(100vh - 64px);
+}
+
+md-content[role="navigation"] {
+    background-color: rgb(63,81,181);
+    max-height: calc(100vh - 110px);;
+}
+
+#db-name {
+    color: rgba(255, 255, 255, 0.54);
+}
+
+.admin-sidenav md-divider {
+    background-color: rgb(40,53,147);
+}
+
+.sidenav-list {
+    padding: 0;
+}
+
+.sidenav-list md-list-item {
+    padding: inherit;
+}
+
+.sidenav-button {
+    margin: 0 !important;
+    background-color: rgb(63,81,181) !important;
+    color: white;
+    border-radius: 0 !important;
+    height: 48px !important;
+    border-bottom: solid 1px rgb(40,53,147);
+}
+
+.sidenav-button:hover,
+.sidenav-button:focus{
+    background-color: rgb(40,53,147) !important;
+}
+
+a[role="button"] {
+    text-decoration: none !important;
+}
+
+a[role="button"] h1:hover {
+    color: #c7d7db !important;
+}
+
+.sidenav-button span {
+    float: left;
+    height: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.sidenav-button i {
+    float: right;
+    height: auto;
+    padding-top: 11px;
+    padding-bottom: 11px;
+}
+
+.column-item {
+    border-bottom: solid 1px rgb(40,53,147);
+}
+
+.column-item p {
+    float: left;
+    height: auto;
+    color: white;
+    padding-left: 30px;
+}
+
+.column-item button {
+    margin: 0 20px 0 0 !important;
+    background-color: rgb(63,81,181) !important;
+    color: white;
+    border-radius: 10px !important;
+    height: 36px;
+    width: auto;
+    min-width: unset;
+    min-height: unset;
+    vertical-align: middle;
+    padding-top: 4px;
+    padding-bottom: 6px;
+}
+
+.column-item button:hover {
+    background-color: rgb(40,53,147) !important;
+}
 .edit-button-span {
     width: 30px;
     min-width: 30px;

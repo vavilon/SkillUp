@@ -600,6 +600,98 @@ app.controller('restoreCtrl', function ($scope, $http, $mdDialog, $location) {
     };
 });
 
-app.controller('adminCtrl', function ($scope, $http) {
+app.controller('adminCtrl', function ($scope, $http, $rootScope, $mdDialog, $location, getColunms, loadTasks, loadUsers, loadSolutions) {
+    //Для отображения sideNav только на этой странице
+    $scope.isLockedOpen = function () {
+        return $location.path() === '/admin';
+    };
 
+    //По нажатию на заголовок боковой панели показывает статистику
+    $scope.showStatistic = true;
+    $scope.statistic = function () {
+        $scope.showStatistic = true;
+    };
+
+    $rootScope.ajaxCall.promise.then(function () {
+        $scope.exs = $rootScope.exs;
+        $scope.lastExpandedTable = null;
+
+        $scope.database = {
+            name: 'skillup', tables: [
+                {name: 'skills', rows: null, columnNames: null},
+                {name: 'tasks', rows: null, columnNames: null},
+                {name: 'users', rows: null, columnNames: null},
+                {name: 'solutions', rows: null, columnNames: null}
+            ]
+        };
+
+        //Функция для загрузки данных при разворачивании списка колонок
+        $scope.expand = function (table) {
+            //Скрывает статистику, чтобы показать таблицу
+            $scope.showStatistic = false;
+            //Закрытие прошлой развернутой таблицы и сохранение текущей
+            if ($scope.lastExpandedTable && $scope.lastExpandedTable !== table) {
+                $scope.lastExpandedTable.expanded = false;
+                $scope.lastExpandedTable = table;
+            }
+            $scope.lastExpandedTable = table;
+            table.expanded = !table.expanded;
+
+            if (table.expanded && !table.columnNames) {
+                //Загрузка названий (типов и тд) колонок развернутой таблицы
+                getColunms(table);
+                //Загрузка строк развернутой таблицы
+                if (!table.rows) {
+                    if (table.name == 'skills') {
+                        table.rows = $scope.exs.skills;
+                    }
+                    else if (table.name == 'tasks') {
+                        loadTasks({}, function (data) {
+                            table.rows = data;
+                        });
+                    }
+                    else if (table.name == 'users') {
+                        loadUsers({}, function (data) {
+                            table.rows = data;
+                        });
+                    }
+                    else {
+                        loadSolutions({}, function (data) {
+                            table.rows = data;
+                        });
+                    }
+                }
+            }
+        };
+
+        //Показывает диалог в котором отображаются свойства колонки (columnName) в таблице (table)
+        $scope.columnInfo = function (table, columnName, event) {
+            $mdDialog.show({
+                parent: angular.element(document.body),
+                targetEvent: event,
+                templateUrl: '/front/templates/propertyDialog.html',
+                locals: {
+                    text: $scope.text,
+                    title: $scope.title
+                },
+                controller: DialogController
+            });
+
+            //Контроллер диалога
+            function DialogController($scope, $mdDialog) {
+                $scope.ok = function() {
+                    $mdDialog.hide();
+                };
+
+                //Построение текста который отображается в диалоге
+                $scope.title = columnName.toUpperCase();
+                $scope.text = '';
+                for (var property in table.columns[columnName]) {
+                    if (table.columns[columnName].hasOwnProperty(property)) {
+                        $scope.text += property.toUpperCase() + ': ' + table.columns[columnName][property] + '\n';
+                    }
+                }
+            }
+        };
+    });
 });

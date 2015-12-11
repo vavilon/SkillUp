@@ -208,6 +208,14 @@ app.factory('completedSkills', function ($rootScope) {
     };
 });
 
+app.factory('getColunms', function ($http) {
+    return function (table) {
+        $http.get('/db/' + table.name + '/columns').success(function (data) {
+            table.columns = data;
+            table.columnNames = Object.getOwnPropertyNames(data);
+        });
+    };
+});
 app.factory('addEducation', function (educationObjToArr) {
     return function (edObj) {
         if (!edObj.edName) return;
