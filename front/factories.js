@@ -53,9 +53,9 @@ app.factory('isImage', function($q) {
     };
 });
 
-app.factory('educationStr', function() {
+app.factory('educationObjToArr', function() {
     return function(education) {
-        var educationStr = [], s = '', buff = {};
+        var educationArr = [], s = '', buff = {};
         for (var i in education) {
             buff = education[i];
             s = buff.school.name;
@@ -63,15 +63,15 @@ app.factory('educationStr', function() {
             if (buff.concentration && buff.concentration[0] && buff.concentration[0].name) {
                 s += ', ' + buff.concentration[0].name;
             }
-            educationStr.push(s);
+            educationArr.push(s);
         }
-        return educationStr.reverse();
+        return educationArr.reverse();
     };
 });
 
-app.factory('workStr', function($filter) {
+app.factory('workObjToArr', function($filter) {
     return function(work) {
-        var workStr = [], s = '', buff = {};
+        var workArr = [], s = '', buff = {};
         for (var i in work) {
             buff = work[i];
             s = buff.employer.name;
@@ -83,9 +83,9 @@ app.factory('workStr', function($filter) {
                 s += ')'
             }
             if (buff.position && buff.position.name) s += ', ' + buff.position.name;
-            workStr.push(s);
+            workArr.push(s);
         }
-        return workStr.reverse();
+        return workArr.reverse();
     };
 });
 

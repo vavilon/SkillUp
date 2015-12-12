@@ -92,16 +92,12 @@
                                     <md-button class="task-button" style="margin-right: 25px;" ng-click="check(solution, true); s2 = {};" aria-label="correct"
                                                ng-mouseenter="!solution.isCorrect && (s2 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s2 = {}">
                                         <i class="mdi mdi-check mdi-24 mdi-hint" ng-class="{'checked-correct': solution.isCorrect}" ng-style="s2"></i>
-                                        <md-tooltip>
-                                            Правильно
-                                        </md-tooltip>
+                                        <md-tooltip>Правильно</md-tooltip>
                                     </md-button>
                                     <md-button class="task-button" ng-click="check(solution, false); s3 = {};" aria-label="incorrect"
                                                ng-mouseenter="solution.isCorrect !== false && (s3 = {color: 'rgba(0,0,0,0.54)'})" ng-mouseleave="s3 = {}">
                                         <i class="mdi mdi-close mdi-24 mdi-hint" ng-class="{'checked-incorrect': solution.isCorrect === false}" ng-style="s3"></i>
-                                        <md-tooltip>
-                                            Неправильно
-                                        </md-tooltip>
+                                        <md-tooltip>Неправильно</md-tooltip>
                                     </md-button>
                                 </div>
                             </div>

@@ -1,5 +1,5 @@
 app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $rootScope, getObjByID, parseSkills, loadUsers, isLoggedIn) {
-    if (!isLoggedIn()) $location.path('/main');
+    if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $scope.username = "";
         $scope.filteredUsers = [];
@@ -45,10 +45,10 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
     });
 });
 
-app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationStr, workStr, loadLoggedUser,
+app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationObjToArr, workObjToArr, loadLoggedUser,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
                                         setNotReceivable, isLoggedIn, $location, $filter) {
-    if (!isLoggedIn()) $location.path('/main');
+    if (!isLoggedIn()) { $location.path('/main'); return; }
 
     $scope.scrollWrap = $scope.scrollWrap || {
             loadFunc: loadTasks, callback: $scope.scrollCallback,
@@ -84,16 +84,33 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             $scope.user.skills = parseSkills($scope.user.skills);
 
             if ($scope.user.education) {
-                $scope.user.educationStr = educationStr(JSON.parse($scope.user.education));
+                $scope.user.education = JSON.parse($scope.user.education);
+                $scope.user.educationArr = educationObjToArr($scope.user.education);
             }
             if ($scope.user.work) {
-                $scope.user.workStr = workStr(JSON.parse($scope.user.work));
+                $scope.user.work = JSON.parse($scope.user.work);
+                $scope.user.workArr = workObjToArr($scope.user.work);
             }
 
-            $scope.info = {editing: {}, birthday: new Date($scope.user.birthday), country: $scope.user.country,
-                city: $scope.user.city};
+            $scope.info = {
+                editing: {},
+                birthday: new Date($scope.user.birthday),
+                country: $scope.user.country,
+                city: $scope.user.city,
+                education: angular.copy($scope.user.education),
+                educationArr: angular.copy($scope.user.educationArr)
+            };
 
             $scope.editInfo = function(param) {
+                if (param === 'birthday') $scope.info.birthday = new Date($scope.user.birthday);
+                else if (param === 'location') {
+                    $scope.info.country = $scope.user.country;
+                    $scope.info.city = $scope.user.city;
+                }
+                else if (param === 'education') {
+                    $scope.info.education = angular.copy($scope.user.education);
+                    $scope.info.educationArr = angular.copy($scope.user.educationArr)
+                }
                 $scope.info.editing[param] = true;
             };
 
@@ -103,23 +120,66 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
             $scope.updateProfile = function(param) {
                 var updateData = {};
-                if (param === 'location') {
+                if (param === 'birthday') updateData.birthday = $scope.info.birthday;
+                else if (param === 'location') {
                     updateData.country = $scope.info.country;
                     updateData.city = $scope.info.city;
                 }
-                else updateData[param] = $scope.info[param];
+                else if (param === 'education') {
+                    updateData.education = JSON.stringify($scope.info.education);
+                }
                 $http.post('/update_profile', updateData).success(function(res) {
                     if (!res) {
                     }
                     else {
-                        if (param === 'location') {
+                        if (param === 'birthday') $scope.user.birthday = $scope.info.birthday;
+                        else if (param === 'location') {
                             $scope.user.country = $scope.info.country;
                             $scope.user.city = $scope.info.city;
                         }
-                        else $scope.user[param] = $scope.info[param];
+                        else if (param === 'education') {
+                            $scope.user.education = $scope.info.education;
+                            $scope.user.educationArr = $scope.info.educationArr;
+                        }
                         $scope.info.editing[param] = false;
                     }
                 });
+            };
+
+            var maxYear = (new Date()).getFullYear();
+            $scope.range = [];
+            for (var i = maxYear; i > 1929; i--) {
+                $scope.range.push(i);
+            }
+
+            $scope.addEducation = function () {
+                if (!$scope.info.edName) return;
+                var e = {school: {name: $scope.info.edName}};
+                if ($scope.info.edConc) e.concentration = [{name: $scope.info.edConc}];
+                if ($scope.info.edYear) e.year = {name: $scope.info.edYear};
+
+                if ($scope.info.education && $scope.info.education.length && $scope.info.edYear) {
+                    var inserted = false;
+                    var j = 0;
+                    for (var i in $scope.info.education) {
+                        if ($scope.info.education[i].year && $scope.info.education[i].year.name - 0 > $scope.info.edYear) {
+                            $scope.info.education.splice(i, 0, e);
+                            inserted = true;
+                            break;
+                        } else j = i + 1;
+                    }
+                    if (!inserted) $scope.info.education.splice(j, 0, e);
+                }
+                else $scope.info.education.unshift(e);
+                $scope.info.educationArr = educationObjToArr($scope.info.education);
+                $scope.info.edName = null;
+                $scope.info.edConc = null;
+                $scope.info.edYear = null;
+            };
+
+            $scope.removeEducation = function (index) {
+                $scope.info.education.splice($scope.info.education.length - 1 - index, 1);
+                $scope.info.educationArr.splice(index, 1);
             };
 
             if ($scope.user.tasks_done) {
@@ -189,7 +249,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 });
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, loadLoggedUser, isImage, $mdToast,
-                                             $animate, $timeout, educationStr, workStr, loggedUser) {
+                                             $animate, $timeout, educationObjToArr, workObjToArr, loggedUser) {
     $scope.reg = {};
 
     $scope.step = 1;
@@ -206,9 +266,9 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             $scope.reg.city = user.city;
             $scope.reg.country = user.country;
             $scope.reg.education = JSON.parse(user.education);
-            $scope.reg.educationStr = educationStr($scope.reg.education);
+            $scope.reg.educationArr = educationObjToArr($scope.reg.education);
             $scope.reg.work = JSON.parse(user.work);
-            $scope.reg.workStr = workStr($scope.reg.work);
+            $scope.reg.workArr = workObjToArr($scope.reg.work);
         });
     }
     else {
@@ -320,12 +380,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         console.log('Check result: ' + $scope.checkRegInput());
 
         if ($scope.checkRegInput()) {
-            console.log({
-                nick: $scope.reg.nick,
-                name: $scope.reg.name,
-                email: $scope.reg.email,
-                password: $scope.reg.password
-            });
             $http.post('/register', {
                 nick: $scope.reg.nick,
                 name: $scope.reg.name,
@@ -390,12 +444,31 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         if ($scope.reg.edConc) e.concentration = [{name: $scope.reg.edConc}];
         if ($scope.reg.edYear) e.year = {name: $scope.reg.edYear};
 
-        $scope.reg.education.push(e);
-        $scope.reg.educationStr = educationStr($scope.reg.education);
+        if ($scope.reg.education && $scope.reg.education.length && $scope.reg.edYear) {
+            var inserted = false;
+            var j = 0;
+            for (var i in $scope.reg.education) {
+                if ($scope.reg.education[i].year && $scope.reg.education[i].year.name - 0 > $scope.reg.edYear) {
+                    $scope.reg.education.splice(i, 0, e);
+                    inserted = true;
+                    break;
+                } else j = i + 1;
+            }
+            if (!inserted) $scope.reg.education.splice(j, 0, e);
+        }
+        else $scope.reg.education.unshift(e);
+
+        $scope.reg.educationArr = educationObjToArr($scope.reg.education);
         $scope.reg.edName = null;
         $scope.reg.edConc = null;
         $scope.reg.edYear = null;
     };
+
+    $scope.removeEducation = function (index) {
+        $scope.reg.education.splice($scope.reg.education.length - 1 - index, 1);
+        $scope.reg.educationArr.splice(index, 1);
+    };
+
     $scope.addWork = function () {
         if (!$scope.reg.woName) return;
         var w = {employer: {name: $scope.reg.woName}};
@@ -404,20 +477,16 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         if ($scope.reg.woEndDate) w.end_date = $scope.reg.woEndDate;
 
         $scope.reg.work.push(w);
-        $scope.reg.workStr = workStr($scope.reg.work);
+        $scope.reg.workArr = workObjToArr($scope.reg.work);
         $scope.reg.woName = null;
         $scope.reg.woPosition = null;
         $scope.reg.woStartDate = null;
         $scope.reg.woEndDate = null;
     };
 
-    $scope.removeEducation = function (index) {
-        $scope.reg.education.splice(index, 1);
-        $scope.reg.educationStr.splice(index, 1);
-    };
     $scope.removeWork = function (index) {
         $scope.reg.work.splice(index, 1);
-        $scope.reg.workStr.splice(index, 1);
+        $scope.reg.workArr.splice(index, 1);
     };
 
     $scope.goToStep3 = function () {
@@ -432,6 +501,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         }).success(function(data) {
             if (data) {
                 loadLoggedUser(function(user) {
+                    user = user[0];
                     $http.get('db/skills').success(function(skills) {
                         $scope.skills = skills;
 

@@ -130,6 +130,7 @@
                     </form>
                 </div>
                 <div ng-switch-when="2" layout="column">
+                    <md-content style="overflow: visible;">
                     <form name="regForm2" layout="row">
                         <div flex="25" layout="column">
                             <div ng-if="reg.isImageRes" class="avatar-div">
@@ -183,13 +184,16 @@
                             <div layout="row" layout-align="start start">
                                 <div flex="25" style="margin: 15px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Образование:</div>
                                 <div layout="column" flex style="margin-top: 15px;">
-                                    <div layout="row" layout-align="center center" flex ng-repeat="ed in reg.educationStr" ng-class="{'not-last': !$last}">
-                                        <div flex><span ng-if="reg.educationStr.length > 1" class="info-header">•</span>
+                                    <div layout="row" layout-align="center center" flex ng-repeat="ed in reg.educationArr" ng-class="{'not-last': !$last}">
+                                        <div flex><span ng-if="reg.educationArr.length > 1" class="info-header">•</span>
                                             {{ed}}
                                         </div>
                                         <md-button class="expand-button" style="margin-left: 10px;"
-                                                   ng-click="removeEducation($index)" title="Удалить">
+                                                   ng-click="removeEducation($index)">
                                             <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
+                                            <md-tooltip>
+                                                Удалить
+                                            </md-tooltip>
                                         </md-button>
                                     </div>
                                 </div>
@@ -216,13 +220,14 @@
                             <div layout="row" layout-align="start start">
                                 <div flex="25" style="margin: 15px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Работа:</div>
                                 <div layout="column" flex style="margin-top: 15px;">
-                                    <div layout="row" layout-align="center center" flex ng-repeat="wo in reg.workStr" ng-class="{'not-last': !$last}">
-                                        <div flex><span ng-if="reg.workStr.length > 1" class="info-header">•</span>
+                                    <div layout="row" layout-align="center center" flex ng-repeat="wo in reg.workArr" ng-class="{'not-last': !$last}">
+                                        <div flex><span ng-if="reg.workArr.length > 1" class="info-header">•</span>
                                             {{wo}}
                                         </div>
                                         <md-button class="expand-button" style="margin-left: 10px;"
-                                                   ng-click="removeWork($index)" title="Удалить">
+                                                   ng-click="removeWork($index)">
                                             <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
+                                            <md-tooltip>Удалить</md-tooltip>
                                         </md-button>
                                     </div>
                                 </div>
@@ -255,6 +260,7 @@
                             </div>
                         </div>
                     </form>
+                    </md-content>
                 </div>
                 <div ng-switch-when="3">
                     <form>

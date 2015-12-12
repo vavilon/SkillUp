@@ -79,10 +79,10 @@ app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgr
                 if (data) {
                     $rootScope.exs = new extendedSkills(data);
                     appendProgressToExs();
-                    $rootScope.ajaxCall.resolve();
                 }
+                $rootScope.ajaxCall.resolve();
             });
-        }
+        } else $rootScope.ajaxCall.resolve();
     });
 
     /*    FB.init({
