@@ -47,7 +47,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationObjToArr, workObjToArr, loadLoggedUser,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
-                                        setNotReceivable, isLoggedIn, $location, $filter) {
+                                        setNotReceivable, isLoggedIn, $location, addEducation, removeEducation) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
 
     $scope.scrollWrap = $scope.scrollWrap || {
@@ -152,35 +152,9 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 $scope.range.push(i);
             }
 
-            $scope.addEducation = function () {
-                if (!$scope.info.edName) return;
-                var e = {school: {name: $scope.info.edName}};
-                if ($scope.info.edConc) e.concentration = [{name: $scope.info.edConc}];
-                if ($scope.info.edYear) e.year = {name: $scope.info.edYear};
+            $scope.addEducation = function () { addEducation($scope.info); };
 
-                if ($scope.info.education && $scope.info.education.length && $scope.info.edYear) {
-                    var inserted = false;
-                    var j = 0;
-                    for (var i in $scope.info.education) {
-                        if ($scope.info.education[i].year && $scope.info.education[i].year.name - 0 > $scope.info.edYear) {
-                            $scope.info.education.splice(i, 0, e);
-                            inserted = true;
-                            break;
-                        } else j = i + 1;
-                    }
-                    if (!inserted) $scope.info.education.splice(j, 0, e);
-                }
-                else $scope.info.education.unshift(e);
-                $scope.info.educationArr = educationObjToArr($scope.info.education);
-                $scope.info.edName = null;
-                $scope.info.edConc = null;
-                $scope.info.edYear = null;
-            };
-
-            $scope.removeEducation = function (index) {
-                $scope.info.education.splice($scope.info.education.length - 1 - index, 1);
-                $scope.info.educationArr.splice(index, 1);
-            };
+            $scope.removeEducation = function (index) { removeEducation($scope.info, index); };
 
             if ($scope.user.tasks_done) {
                 var dbTasksDoneOptions = {ids: $scope.user.tasks_done};
@@ -249,7 +223,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 });
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, loadLoggedUser, isImage, $mdToast,
-                                             $animate, $timeout, educationObjToArr, workObjToArr, loggedUser) {
+                                             $animate, $timeout, educationObjToArr, workObjToArr, addEducation, removeEducation) {
     $scope.reg = {};
 
     $scope.step = 1;
@@ -438,36 +412,9 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         angular.element(document.querySelector('#fileInput'))[0].click();
     };
 
-    $scope.addEducation = function () {
-        if (!$scope.reg.edName) return;
-        var e = {school: {name: $scope.reg.edName}};
-        if ($scope.reg.edConc) e.concentration = [{name: $scope.reg.edConc}];
-        if ($scope.reg.edYear) e.year = {name: $scope.reg.edYear};
+    $scope.addEducation = function() { addEducation($scope.reg); };
 
-        if ($scope.reg.education && $scope.reg.education.length && $scope.reg.edYear) {
-            var inserted = false;
-            var j = 0;
-            for (var i in $scope.reg.education) {
-                if ($scope.reg.education[i].year && $scope.reg.education[i].year.name - 0 > $scope.reg.edYear) {
-                    $scope.reg.education.splice(i, 0, e);
-                    inserted = true;
-                    break;
-                } else j = i + 1;
-            }
-            if (!inserted) $scope.reg.education.splice(j, 0, e);
-        }
-        else $scope.reg.education.unshift(e);
-
-        $scope.reg.educationArr = educationObjToArr($scope.reg.education);
-        $scope.reg.edName = null;
-        $scope.reg.edConc = null;
-        $scope.reg.edYear = null;
-    };
-
-    $scope.removeEducation = function (index) {
-        $scope.reg.education.splice($scope.reg.education.length - 1 - index, 1);
-        $scope.reg.educationArr.splice(index, 1);
-    };
+    $scope.removeEducation = function (index) { removeEducation($scope.reg, index); };
 
     $scope.addWork = function () {
         if (!$scope.reg.woName) return;

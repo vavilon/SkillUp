@@ -207,3 +207,37 @@ app.factory('completedSkills', function ($rootScope) {
         return res;
     };
 });
+
+app.factory('addEducation', function (educationObjToArr) {
+    return function (edObj) {
+        if (!edObj.edName) return;
+        var e = {school: {name: edObj.edName}};
+        if (edObj.edConc) e.concentration = [{name: edObj.edConc}];
+        if (edObj.edYear) e.year = {name: edObj.edYear};
+
+        if (edObj.education && edObj.education.length && edObj.edYear) {
+            var inserted = false;
+            var j = 0;
+            for (var i in edObj.education) {
+                if (edObj.education[i].year && edObj.education[i].year.name - 0 > edObj.edYear) {
+                    edObj.education.splice(i, 0, e);
+                    inserted = true;
+                    break;
+                } else j = i + 1;
+            }
+            if (!inserted) edObj.education.splice(j, 0, e);
+        }
+        else edObj.education.unshift(e);
+        edObj.educationArr = educationObjToArr(edObj.education);
+        edObj.edName = null;
+        edObj.edConc = null;
+        edObj.edYear = null;
+    };
+});
+
+app.factory('removeEducation', function () {
+    return function (edObj, index) {
+        edObj.education.splice(edObj.education.length - 1 - index, 1);
+        edObj.educationArr.splice(index, 1);
+    };
+});
