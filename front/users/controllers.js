@@ -47,7 +47,8 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationObjToArr, workObjToArr, loadLoggedUser,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
-                                        setNotReceivable, isLoggedIn, $location, addEducation, removeEducation) {
+                                        setNotReceivable, isLoggedIn, $location, addEducation, removeEducation,
+                                        addWork, removeWork) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
 
     $scope.scrollWrap = $scope.scrollWrap || {
@@ -98,7 +99,9 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 country: $scope.user.country,
                 city: $scope.user.city,
                 education: angular.copy($scope.user.education),
-                educationArr: angular.copy($scope.user.educationArr)
+                educationArr: angular.copy($scope.user.educationArr),
+                work: angular.copy($scope.user.work),
+                workArr: angular.copy($scope.user.workArr)
             };
 
             $scope.editInfo = function(param) {
@@ -110,6 +113,10 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 else if (param === 'education') {
                     $scope.info.education = angular.copy($scope.user.education);
                     $scope.info.educationArr = angular.copy($scope.user.educationArr)
+                }
+                else if (param === 'work') {
+                    $scope.info.work = angular.copy($scope.user.work);
+                    $scope.info.workArr = angular.copy($scope.user.workArr)
                 }
                 $scope.info.editing[param] = true;
             };
@@ -128,6 +135,9 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 else if (param === 'education') {
                     updateData.education = JSON.stringify($scope.info.education);
                 }
+                else if (param === 'work') {
+                    updateData.work = JSON.stringify($scope.info.work);
+                }
                 $http.post('/update_profile', updateData).success(function(res) {
                     if (!res) {
                     }
@@ -140,6 +150,10 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                         else if (param === 'education') {
                             $scope.user.education = $scope.info.education;
                             $scope.user.educationArr = $scope.info.educationArr;
+                        }
+                        else if (param === 'work') {
+                            $scope.user.work = $scope.info.work;
+                            $scope.user.workArr = $scope.info.workArr;
                         }
                         $scope.info.editing[param] = false;
                     }
@@ -155,6 +169,10 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             $scope.addEducation = function () { addEducation($scope.info); };
 
             $scope.removeEducation = function (index) { removeEducation($scope.info, index); };
+
+            $scope.addWork = function () { addWork($scope.info); };
+
+            $scope.removeWork = function (index) { removeWork($scope.info, index); };
 
             if ($scope.user.tasks_done) {
                 var dbTasksDoneOptions = {ids: $scope.user.tasks_done};
@@ -223,7 +241,8 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 });
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, loadLoggedUser, isImage, $mdToast,
-                                             $animate, $timeout, educationObjToArr, workObjToArr, addEducation, removeEducation) {
+                                             $animate, $timeout, educationObjToArr, workObjToArr, addEducation, removeEducation,
+                                             addWork, removeWork) {
     $scope.reg = {};
 
     $scope.step = 1;
@@ -416,25 +435,9 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
 
     $scope.removeEducation = function (index) { removeEducation($scope.reg, index); };
 
-    $scope.addWork = function () {
-        if (!$scope.reg.woName) return;
-        var w = {employer: {name: $scope.reg.woName}};
-        if ($scope.reg.woPosition) w.position = {name: $scope.reg.woPosition};
-        if ($scope.reg.woStartDate) w.start_date = $scope.reg.woStartDate;
-        if ($scope.reg.woEndDate) w.end_date = $scope.reg.woEndDate;
+    $scope.addWork = function () { addWork($scope.reg); };
 
-        $scope.reg.work.push(w);
-        $scope.reg.workArr = workObjToArr($scope.reg.work);
-        $scope.reg.woName = null;
-        $scope.reg.woPosition = null;
-        $scope.reg.woStartDate = null;
-        $scope.reg.woEndDate = null;
-    };
-
-    $scope.removeWork = function (index) {
-        $scope.reg.work.splice(index, 1);
-        $scope.reg.workArr.splice(index, 1);
-    };
+    $scope.removeWork = function (index) { removeWork($scope.reg, index); };
 
     $scope.goToStep3 = function () {
         $http.post('/register/step2', {

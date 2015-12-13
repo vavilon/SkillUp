@@ -241,3 +241,39 @@ app.factory('removeEducation', function () {
         edObj.educationArr.splice(index, 1);
     };
 });
+
+app.factory('addWork', function (workObjToArr) {
+    return function (workObj) {
+        if (!workObj.woName) return;
+        var w = {employer: {name: workObj.woName}};
+        if (workObj.woPosition) w.position = {name: workObj.woPosition};
+        if (workObj.woStartDate) w.start_date = workObj.woStartDate;
+        if (workObj.woEndDate) w.end_date = workObj.woEndDate;
+
+        if (workObj.work && workObj.work.length && workObj.woEndDate) {
+            var inserted = false;
+            var j = 0;
+            for (var i in workObj.work) {
+                if (workObj.work[i].end_date && (new Date(workObj.work[i].end_date)) > workObj.woEndDate) {
+                    workObj.work.splice(i, 0, w);
+                    inserted = true;
+                    break;
+                } else j = i + 1;
+            }
+            if (!inserted) workObj.work.splice(j, 0, w);
+        }
+        else workObj.work.unshift(w);
+        workObj.workArr = workObjToArr(workObj.work);
+        workObj.woName = null;
+        workObj.woPosition = null;
+        workObj.woStartDate = null;
+        workObj.woEndDate = null;
+    };
+});
+
+app.factory('removeWork', function () {
+    return function (workObj, index) {
+        workObj.work.splice(workObj.work.length - 1 - index, 1);
+        workObj.workArr.splice(index, 1);
+    };
+});

@@ -126,11 +126,12 @@
                                     <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
                                     <div class="info-empty" ng-if="!user.birthday">не указано</div>
                                     <div flex></div>
-                                    <md-button class="edit-button" ng-if="r1 && ownProfile" aria-label="btnEditBirthday"
+                                    <md-button class="edit-button" ng-show="r1 && ownProfile" aria-label="btnEditBirthday"
                                             ng-click="editInfo('birthday')">
                                         <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                         <md-tooltip>Редактировать</md-tooltip>
                                     </md-button>
+                                    <span ng-show="!(r1 && ownProfile)" class="edit-button-span"></span>
                                 </div>
                                 <div ng-if="info.editing.birthday" layout="row" flex>
                                     <input type="date" ng-model="info.birthday">
@@ -159,11 +160,12 @@
                                     </div>
                                     <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
                                     <div flex></div>
-                                    <md-button class="edit-button" ng-if="r2 && ownProfile" aria-label="btnEditLocation"
+                                    <md-button class="edit-button" ng-show="r2 && ownProfile" aria-label="btnEditLocation"
                                                ng-click="editInfo('location')">
                                         <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                         <md-tooltip>Редактировать</md-tooltip>
                                     </md-button>
+                                    <span ng-show="!(r2 && ownProfile)" class="edit-button-span"></span>
                                 </div>
                                 <div ng-if="info.editing.location" layout="row" flex>
                                     <input type="text" ng-model="info.city" maxlength="32" placeholder="Город"
@@ -190,7 +192,7 @@
                                 <div layout="column" flex>
                                     <div ng-if="!info.editing.education" layout="row" layout-align="start start" flex>
                                         <div layout="column" flex>
-                                            <div layout="row" layout-align="center center" flex ng-repeat="ed in user.educationArr"
+                                            <div layout="row" layout-align="start start" flex ng-repeat="ed in user.educationArr"
                                                  ng-class="{'not-last': !$last}">
                                                 <div flex><span ng-if="user.educationArr.length > 1" class="info-header">•</span>
                                                     {{ed}}
@@ -198,15 +200,16 @@
                                             </div>
                                             <div class="info-empty" ng-if="!user.educationArr || user.educationArr.length == 0">не указано</div>
                                         </div>
-                                        <md-button class="edit-button" ng-if="r3 && ownProfile"
+                                        <md-button class="edit-button" ng-show="r3 && ownProfile"
                                                    aria-label="btnEditEducation" ng-click="editInfo('education')">
                                             <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                                             <md-tooltip>Редактировать</md-tooltip>
                                         </md-button>
+                                        <span ng-show="!(r3 && ownProfile)" class="edit-button-span"></span>
                                     </div>
                                     <div ng-if="info.editing.education" layout="row" layout-align="start start" flex>
                                         <div layout="column" flex>
-                                            <div layout="row" layout-align="center center" flex ng-repeat="ed in info.educationArr"
+                                            <div layout="row" layout-align="start start" flex ng-repeat="ed in info.educationArr"
                                                  ng-class="{'not-last': !$last}">
                                                 <div flex><span ng-if="info.educationArr.length > 1" class="info-header">•</span>
                                                     {{ed}}
@@ -257,18 +260,71 @@
                             <md-list-item layout="row" layout-align="start start" ng-mouseenter="r4 = true"
                                           ng-mouseleave="r4 = false">
                                 <div flex="30" class="info-header">Работа:</div>
-                                <div flex layout="column">
-                                    <div ng-repeat="wo in user.workArr" ng-class="{'not-last': !$last}">
-                                        <div><span ng-if="user.workArr.length > 1" class="info-header">•</span>
-                                            {{wo}}
+                                <div ng-if="!info.editing.work" layout="row" layout-align="start start" flex>
+                                    <div flex layout="column">
+                                        <div ng-repeat="wo in user.workArr" ng-class="{'not-last': !$last}">
+                                            <div><span ng-if="user.workArr.length > 1" class="info-header">•</span>
+                                                {{wo}}
+                                            </div>
                                         </div>
+                                        <div class="info-empty" ng-if="!user.workArr || user.workArr.length == 0">не указано</div>
                                     </div>
-                                    <div class="info-empty" ng-if="!user.workArr || user.workArr.length == 0">не указано</div>
+                                    <md-button class="edit-button" ng-show="r4 && ownProfile" aria-label="btnEditWork"
+                                               ng-click="editInfo('work')">
+                                        <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                                        <md-tooltip>Редактировать</md-tooltip>
+                                    </md-button>
+                                    <span ng-show="!(r4 && ownProfile)" class="edit-button-span"></span>
                                 </div>
-                                <md-button class="edit-button" ng-if="r4 && ownProfile" aria-label="btnEditWork">
-                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
-                                    <md-tooltip>Редактировать</md-tooltip>
-                                </md-button>
+                                <div ng-if="info.editing.work" layout="column">
+                                    <div layout="row" layout-align="start start">
+                                        <div layout="column" flex>
+                                            <div layout="row" layout-align="start start" flex ng-repeat="wo in info.workArr" ng-class="{'not-last': !$last}">
+                                                <div flex><span ng-if="info.workArr.length > 1" class="info-header">•</span>
+                                                    {{wo}}
+                                                </div>
+                                                <md-button class="expand-button" style="margin-left: 10px;" aria-label="btnRemoveWork"
+                                                           ng-click="removeWork($index)">
+                                                    <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
+                                                    <md-tooltip>Удалить</md-tooltip>
+                                                </md-button>
+                                            </div>
+                                        </div>
+                                        <md-button class="edit-button" aria-label="btnSaveEducation"
+                                                   ng-click="updateProfile('work')">
+                                            <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
+                                            <md-tooltip>Сохранить</md-tooltip>
+                                        </md-button>
+                                        <md-button class="edit-button" aria-label="btnCancelEducation"
+                                                   ng-click="cancelEdit('work')">
+                                            <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
+                                            <md-tooltip>Отменить</md-tooltip>
+                                        </md-button>
+                                    </div>
+                                    <div layout="row">
+                                        <md-input-container flex style="padding-bottom: 5px; padding-left: 0px;">
+                                            <label>Место работы</label>
+                                            <input type="text" ng-model="info.woName">
+                                        </md-input-container>
+                                        <md-input-container flex style="padding-bottom: 5px;">
+                                            <label>Должность</label>
+                                            <input type="text" ng-model="info.woPosition">
+                                        </md-input-container>
+                                    </div>
+                                    <div layout="row">
+                                    <md-input-container flex style="padding-left: 0px;">
+                                        <label>С</label>
+                                        <input type="date" ng-model="info.woStartDate">
+                                    </md-input-container>
+                                    <md-input-container flex>
+                                        <label>По</label>
+                                        <input type="date" ng-model="info.woEndDate">
+                                    </md-input-container>
+                                    <div style="margin-top: 8px;">
+                                        <md-button class="md-raised" ng-click="addWork()">Добавить</md-button>
+                                    </div>
+                                </div>
+                                </div>
                             </md-list-item>
                         </md-list>
                         </md-content>

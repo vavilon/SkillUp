@@ -158,3 +158,10 @@
     width: 35px;
     height: 35px;
 }
+
+.edit-button-span {
+    width: 30px;
+    min-width: 30px;
+    height: 24px;
+    min-height: 24px;
+}
