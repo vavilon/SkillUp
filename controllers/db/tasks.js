@@ -1,9 +1,13 @@
 
 module.exports = function(knex, req, res, next) {
-    var q = knex.select("tasks.*").from('tasks');
-    if (req.body.id) q.where('tasks.id', req.body.id);
-    else if (req.body.ids) q.whereIn('tasks.id', req.body.ids);
-    if (req.body.skills) q.andWhere('tasks.skills', (req.body.filters && req.body.filters.for_approving) || req.body.completed_skills
+    var q = knex.select("tasks.*").from(function () {
+        this.select("tasks.*").from('tasks').leftJoin('task_skills', 'tasks.id', '=', 'task_skills.task_id')
+            .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id')
+            .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('tasks');
+        if (req.body.id) this.where('tasks.id', req.body.id);
+        else if (req.body.ids) this.whereIn('tasks.id', req.body.ids);
+    });
+    if (req.body.skills) q.andWhere('tasks.skills_ids', (req.body.filters && req.body.filters.for_approving) || req.body.completed_skills
         ? '<@' : '&&', req.body.skills);
     q.leftJoin('users', 'tasks.author', '=', 'users.id').select('users.name as author_name');
     if (req.body.filters) {
@@ -33,7 +37,6 @@ module.exports = function(knex, req, res, next) {
     q.then(function(rows) {
         if (!rows) res.end();
         else res.end(JSON.stringify(rows));
-
     }).catch(function (error) {
         console.log(error);
         res.end();

@@ -7,19 +7,71 @@ var knex = require('knex')(config.get('knex'));
 //var bookshelf = require('bookshelf')(knex);
 //var temp;
 
-knex('users').update({birthday: new Date("1995-02-12T22:00:00.000Z")}).where('id', '103').returning('*').then(function(user) {
+/*knex('users').update({birthday: new Date("1995-02-12T22:00:00.000Z")}).where('id', '103').returning('*').then(function(user) {
  knex('users').select('birthday').where('id', '103').then(function(rows) {
-  console.log(rows[0].birthday);
+ console.log(rows[0].birthday);
  }).catch(function (error) {
-  console.log(error);
- });
-}).catch(function (error) {
  console.log(error);
+ });
+ }).catch(function (error) {
+ console.log(error);
+ });*/
+
+/*knex('tasks').then(function (tasks) {
+ var max = 0.65, min = 0.1;
+ for (var i in tasks) {
+ var task = tasks[i];
+ for (var j in task.skills) {
+ knex('task_skills').insert({
+ task_id: task.id,
+ skill_id: task.skills[j],
+ count: (Math.random() * (max - min) + min).toFixed(2)
+ }).returning('*').then(function (rows) {
+ console.log('Task: ' + rows[0].task_id + ', skill: ' + rows[0].skill_id + ', count: ' + rows[0].count);
+ }).catch(function (error) {
+ console.log(error);
+ });
+ }
+ }
+ }).catch(function (error) {
+ console.log(error);
+ });*/
+
+/*knex.select("tasks.*").from(function () {
+ this.select("tasks.*").from('tasks').leftJoin('task_skills', 'tasks.id', '=', 'task_skills.task_id')
+ .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id')
+ .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('tasks');
+ }).where('tasks.skills_ids', '&&', [57]).then(function (rows) {
+ console.log(rows);
+ }).catch(function (error) {
+ console.log(error);
+ });*/
+
+var q = knex.select("solutions.*").from(function() {
+    this.select("solutions.*").from('solutions')
+        .leftJoin('tasks', 'solutions.task_id', '=', 'tasks.id').select('tasks.title as task_title', 'tasks.exp as task_exp')
+        .leftJoin('task_skills', 'solutions.task_id', '=', 'task_skills.task_id').as('tasks')
+        .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id', 'solutions.id')
+        .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('solutions');
+});
+q.leftJoin('users as u1', 'solutions.user_id', '=', 'u1.id').select('u1.name as user_name');
+q.andWhere('solutions.skills_ids', '&&', [54]);
+q.then(function (rows) {
+    console.log(rows);
+}).catch(function (error) {
+    console.log(error);
 });
 
+/*knex.select("users.*").from('users').leftJoin('skills_progress', 'id', '=', 'user_id').select(knex.raw("array_agg((skill_id, count)) AS skills"))
+ .groupBy('id').limit(1).offset(0).then(function(rows) {
+ console.log(rows[0]);
+ }).catch(function (error) {
+ console.log(error);
+ });*/
+
 /*knex('users').where('id', 14).update({pswhash: bcrypt.hashSync('1')}).returning('pswhash').then(function (pswhash) {
-    console.log(bcrypt.compareSync('1', pswhash[0]));
-});*/
+ console.log(bcrypt.compareSync('1', pswhash[0]));
+ });*/
 
 /*knex('approvements').returning('id').insert({task_id: 'cf133be1-3e14-4678-acce-821684098d79'})
  .then(function(id) {
