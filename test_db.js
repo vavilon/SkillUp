@@ -47,7 +47,7 @@ var knex = require('knex')(config.get('knex'));
  console.log(error);
  });*/
 
-var q = knex.select("solutions.*").from(function() {
+/*var q = knex.select("solutions.*").from(function() {
     this.select("solutions.*").from('solutions')
         .leftJoin('tasks', 'solutions.task_id', '=', 'tasks.id').select('tasks.title as task_title', 'tasks.exp as task_exp')
         .leftJoin('task_skills', 'solutions.task_id', '=', 'task_skills.task_id').as('tasks')
@@ -58,6 +58,96 @@ q.leftJoin('users as u1', 'solutions.user_id', '=', 'u1.id').select('u1.name as 
 q.andWhere('solutions.skills_ids', '&&', [54]);
 q.then(function (rows) {
     console.log(rows);
+}).catch(function (error) {
+    console.log(error);
+});*/
+
+Math.getRandomInt = function (min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; };
+
+//Добавить тестовых юзверей и заданий
+knex('skills').then(function(skills){
+    //Константы
+    var usersCount = 100000, tasksCount = 100000;
+    //Для большей производительности поставить все на false (особенно влияет hashPsw)
+    var appendNeeds = false, hashPsw = false, randomAuthorPerTask = false;
+
+    function insertTasks() {
+        var num = Math.getRandomInt(1, 1000000000);
+        knex('tasks').insert({
+            title: 'title_' + num,
+            description: 'desc_' + num,
+            exp: 123,
+            author: randomAuthorPerTask ? usersIds[Math.getRandomInt(0, usersIds.length - 1)] : author
+        }).then(function () {
+            console.log('Duplicate tasks: ' + duplicateTasks);
+            console.log('Task #' + inserted++ + ' inserted!');
+            if (inserted === tasksCount) {
+                console.log('\033[2A');
+                console.log('All tasks inserted!          ');
+                knex('users').then(function(rows_u) {
+                    console.log('\nUsers selected: ' + rows_u.length);
+                    knex('tasks').then(function(rows_t) {
+                        console.log('\nTasks selected: ' + rows_t.length);
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+            else {
+                console.log('\033[3A');
+                insertTasks();
+            }
+        }).catch(function () {
+            duplicateTasks++;
+            insertTasks();
+        });
+    }
+
+    var author = 0, inserted = 0, usersIds = [], duplicateUsers = 0, duplicateTasks = 0;
+    function insertUsers() {
+        var num = Math.getRandomInt(1, 1000000000);
+
+        var user = {
+            nick: 'nick_' + num,
+            name: 'name_' + num,
+            email: 'email_' + num + '@gmail.com',
+            pswhash: hashPsw ? bcrypt.hashSync('' + num, bcrypt.genSaltSync(4)) : '1',
+            exp: 1234
+        };
+
+        if (appendNeeds) {
+            var needsCount = Math.getRandomInt(1, 7);
+            var needs = [];
+            for (var j = 0; j < needsCount; j++) needs.push(skills[Math.getRandomInt(0, skills.length - 1)].id);
+            user.needs = needs;
+        }
+
+        knex('users').insert(user).returning('id').then(function(ids){
+            if (randomAuthorPerTask) usersIds.push(ids[0]);
+            console.log('Duplicate users: ' + duplicateUsers);
+            console.log('User #' + inserted++ + ' inserted!');
+            if (inserted === usersCount) {
+                author = ids[0];
+                inserted = 0;
+                console.log('\033[2A');
+                console.log('All users inserted!          ');
+                console.log('\nInserting tasks...           ');
+                insertTasks();
+            }
+            else {
+                console.log('\033[3A');
+                insertUsers();
+            }
+        }).catch(function () {
+            duplicateUsers++;
+            insertUsers();
+        });
+    }
+
+    console.log('Inserting users...');
+    insertUsers();
 }).catch(function (error) {
     console.log(error);
 });
