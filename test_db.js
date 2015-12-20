@@ -37,17 +37,21 @@ var knex = require('knex')(config.get('knex'));
  console.log(error);
  });*/
 
-/*knex.select("tasks.*").from(function () {
- this.select("tasks.*").from('tasks').leftJoin('task_skills', 'tasks.id', '=', 'task_skills.task_id')
- .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id')
- .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('tasks');
- }).where('tasks.skills_ids', '&&', [57]).then(function (rows) {
- console.log(rows);
- }).catch(function (error) {
- console.log(error);
- });*/
+var q = knex.select("tasks.*").from(function () {
+    this.select("tasks.*").from('tasks').leftJoin('task_skills', 'tasks.id', '=', 'task_skills.task_id')
+        .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id')
+        .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('tasks');
+}).andWhere('tasks.skills_ids', '&&', [57]).limit(20);
 
-var q = knex.select("solutions.*").from(function() {
+console.log(q.toString() + '\n');
+
+q.then(function (rows) {
+    console.log(rows);
+}).catch(function (error) {
+    console.log(error);
+});
+
+/*var q = knex.select("solutions.*").from(function() {
     this.select("solutions.*").from('solutions')
         .where('solutions.id', 599138)
         .leftJoin('tasks', 'solutions.task_id', '=', 'tasks.id').select('tasks.title as task_title', 'tasks.exp as task_exp')
@@ -66,7 +70,7 @@ q.then(function (rows) {
     console.log(rows);
 }).catch(function (error) {
     console.log(error);
-});
+});*/
 
 return;
 

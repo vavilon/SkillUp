@@ -25,7 +25,7 @@ module.exports = function (knex, req, res, next) {
         if (req.body.filters.for_checking || req.body.filters.not_own) q.andWhere('solutions.user_id', '!=', req.user.id);
 
         if (req.body.filters.liked === true) q.andWhere('liked', true);
-        else if (req.body.filters.liked === false) q.andWhere(function(){ this.where('liked', null).orWhere('liked', false); });
+        else if (req.body.filters.liked === false) q.whereNull('liked');
     }
     q.limit(20).offset(req.body.offset || 0);
 
