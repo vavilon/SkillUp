@@ -11,22 +11,21 @@ module.exports = function (knex, req, res, next) {
         else if (req.body.ids) this.whereIn('solutions.id', req.body.ids);
     });
     q.leftJoin('users as u1', 'solutions.user_id', '=', 'u1.id').select('u1.name as user_name');
+    q.leftJoin('solutions_meta as sm', {'solutions.id': 'sm.solution_id', 'sm.user_id': req.user.id}).select('checked_correct', 'liked');
     if (req.body.skills) q.andWhere('solutions.skills_ids', ((req.body.filters && req.body.filters.for_checking) || req.body.completed_skills)
         ? '<@' : '&&', req.body.skills);
     if (req.body.filters) {
         if (req.body.filters.for_checking || req.body.filters.is_correct === undefined) q.whereNull('solutions.is_correct');
-        else if (req.body.filters.is_correct === true) q.andWhere('solutions.is_correct', '=', true);
+        else if (req.body.filters.is_correct === true) q.andWhere('solutions.is_correct', true);
         // Не менять на просто else, чтобы можно было загружать все решения, указав в is_correct любое,
         // отличное от true, false или undefined значение
-        else if (req.body.filters.is_correct === false) q.andWhere('solutions.is_correct', '=', false);
+        else if (req.body.filters.is_correct === false) q.andWhere('solutions.is_correct', false);
 
-        if (req.user.solutions_checked && (req.body.filters.for_checking || req.body.filters.not_in_checked))
-            q.whereNotIn('solutions.id', req.user.solutions_checked);
+        if (req.body.filters.for_checking || req.body.filters.not_in_checked) q.whereNull('checked_correct');
         if (req.body.filters.for_checking || req.body.filters.not_own) q.andWhere('solutions.user_id', '!=', req.user.id);
 
-        if (req.body.filters.liked === true) q.whereIn('solutions.id', req.user.solutions_liked);
-        else if (req.user.solutions_liked && (req.body.filters.liked === false))
-            q.whereNotIn('solutions.id', req.user.solutions_liked);
+        if (req.body.filters.liked === true) q.andWhere('liked', true);
+        else if (req.body.filters.liked === false) q.andWhere(function(){ this.where('liked', null).orWhere('liked', false); });
     }
     q.limit(20).offset(req.body.offset || 0);
 

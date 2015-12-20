@@ -47,20 +47,28 @@ var knex = require('knex')(config.get('knex'));
  console.log(error);
  });*/
 
-/*var q = knex.select("solutions.*").from(function() {
+var q = knex.select("solutions.*").from(function() {
     this.select("solutions.*").from('solutions')
+        .where('solutions.id', 599138)
         .leftJoin('tasks', 'solutions.task_id', '=', 'tasks.id').select('tasks.title as task_title', 'tasks.exp as task_exp')
         .leftJoin('task_skills', 'solutions.task_id', '=', 'task_skills.task_id').as('tasks')
         .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id', 'solutions.id')
         .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('solutions');
 });
 q.leftJoin('users as u1', 'solutions.user_id', '=', 'u1.id').select('u1.name as user_name');
-q.andWhere('solutions.skills_ids', '&&', [54]);
+q.leftJoin('solutions_meta as sm', {'solutions.id': 'sm.solution_id', 'sm.user_id': 300358}).select('checked_correct', 'liked');
+q.whereNull('checked_correct');
+q.andWhere(function(){ this.where('liked', null).orWhere('liked', false); });
+
+console.log(q.toString() + '\n');
+
 q.then(function (rows) {
     console.log(rows);
 }).catch(function (error) {
     console.log(error);
-});*/
+});
+
+return;
 
 Math.getRandomInt = function (min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; };
 
