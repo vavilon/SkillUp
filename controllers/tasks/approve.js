@@ -130,8 +130,8 @@ module.exports = function (knex, updateApprovement, userHasSkills) {
                 if (tasks[0].is_approved !== null) {
                     res.end();
                 }
-                else if (!req.user.admin) {
-                    knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
+                else if (req.user.role !== 'администратор') {
+                    knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id', 'count')
                         .then(function (userSkills) {
                             //Есть ли у подтверждающего скиллы для подтверждения этого задания
                             if (!userHasSkills(userSkills, tasks[0].skills)) {

@@ -37,7 +37,7 @@ var knex = require('knex')(config.get('knex'));
  console.log(error);
  });*/
 
-var q = knex.select("tasks.*").from(function () {
+/*var q = knex.select("tasks.*").from(function () {
     this.select("tasks.*").from('tasks').leftJoin('task_skills', 'tasks.id', '=', 'task_skills.task_id')
         .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id')
         .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('tasks');
@@ -49,9 +49,10 @@ q.then(function (rows) {
     console.log(rows);
 }).catch(function (error) {
     console.log(error);
-});
+});*/
 
-/*var q = knex.select("solutions.*").from(function() {
+/*
+var q = knex.select("solutions.*").from(function() {
     this.select("solutions.*").from('solutions')
         .where('solutions.id', 599138)
         .leftJoin('tasks', 'solutions.task_id', '=', 'tasks.id').select('tasks.title as task_title', 'tasks.exp as task_exp')
@@ -60,7 +61,8 @@ q.then(function (rows) {
         .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('solutions');
 });
 q.leftJoin('users as u1', 'solutions.user_id', '=', 'u1.id').select('u1.name as user_name');
-q.leftJoin('solutions_meta as sm', {'solutions.id': 'sm.solution_id', 'sm.user_id': 300358}).select('checked_correct', 'liked');
+q.leftJoin('solutions_meta as sm', {'solutions.id': 'sm.solution_id', 'sm.user_id': 300359})
+    .select('checked_correct', 'liked', knex.raw('solution_id IS NOT NULL as meta_exists'));
 q.whereNull('checked_correct');
 q.andWhere(function(){ this.where('liked', null).orWhere('liked', false); });
 
@@ -70,7 +72,34 @@ q.then(function (rows) {
     console.log(rows);
 }).catch(function (error) {
     console.log(error);
-});*/
+});
+*/
+
+/*var correct = true, user_correct = true, rating = 3, count = 3;
+var raw = "UPDATE solutions SET rating = rating + " + (user_correct ? (3 || 5) : 1);
+if (count === 3) raw += ", is_correct = " + correct;
+raw += " WHERE id = " + 599138 + ";";
+knex.raw(raw).then(function() {console.log('done')});*/
+
+/*knex('solutions_meta').select('user_id', 'checked_correct').where('solution_id', 599138)
+    .whereNotNull('checked_correct').then(function (solution_checkers) {
+        console.log(solution_checkers);
+        console.log(typeof solution_checkers[0].user_id);
+        console.log(typeof solution_checkers[0].checked_correct);
+    }).catch(function (error) {
+        console.log(error);
+    });*/
+
+
+var rawTaskExpSkills = "SELECT exp, json_agg(r) as skills FROM tasks, " +
+    "(SELECT skill_id, count FROM task_skills WHERE task_id = " + 287624 + ") AS r " +
+    "WHERE id = " + 287624 + " GROUP BY id;";
+
+knex.raw(rawTaskExpSkills).then(function (rows) {
+    console.log(rows.rows[0]);
+}).catch(function (error) {
+    console.log(error);
+});
 
 return;
 

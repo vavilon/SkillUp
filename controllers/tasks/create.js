@@ -36,10 +36,10 @@ module.exports = function(knex, updateArray, userHasSkills){
             for (var i in req.body.skills) {
                 exp += GLOBAL.exs.skills[req.body.skills[i]].exp;
             }
-            if (!req.user.admin) {
+            if (req.user.role !== 'администратор') {
                 //Проверяем, хватает ли у автора експы на случай некорректности задания
                 if (req.user.exp < exp / GLOBAL.INCORRECT_TASK_EXP_DIVIDER) res.end();
-                else knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id as id', 'count')
+                else knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id', 'count')
                     .then(function(userSkills) {
                         if (!userHasSkills(userSkills, req.body.skills)) {
                             res.end();
