@@ -4,7 +4,8 @@ module.exports = function(knex, userHasSkills) {
         var rating = req.body.is_correct ? (req.body.rating || 5) : 1;
         var query = knex('solutions_meta'); //Запишем в таблицу solutions_meta результат проверки (req.body.is_correct)
         var meta = {checked_correct: req.body.is_correct, rating: rating};
-        if (solution.meta_exists) query.update(meta); //Если запись для текущего проверяющего есть - update
+        //Если запись для текущего проверяющего есть - update
+        if (solution.meta_exists) query.update(meta).where('solution_id', req.body.solution_id).andWhere('user_id', req.user.id);
         else { //иначе - insert
             meta.solution_id = req.body.solution_id;
             meta.user_id = req.user.id;

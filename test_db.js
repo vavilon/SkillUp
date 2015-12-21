@@ -91,7 +91,7 @@ knex.raw(raw).then(function() {console.log('done')});*/
     });*/
 
 
-var rawTaskExpSkills = "SELECT exp, json_agg(r) as skills FROM tasks, " +
+/*var rawTaskExpSkills = "SELECT exp, json_agg(r) as skills FROM tasks, " +
     "(SELECT skill_id, count FROM task_skills WHERE task_id = " + 287624 + ") AS r " +
     "WHERE id = " + 287624 + " GROUP BY id;";
 
@@ -99,6 +99,13 @@ knex.raw(rawTaskExpSkills).then(function (rows) {
     console.log(rows.rows[0]);
 }).catch(function (error) {
     console.log(error);
+});*/
+
+knex('solutions_meta').where('solution_id', 599138).andWhere('user_id', 300356).select('liked').then(function(rows) {
+    console.log(rows);
+}).catch(function (error) {
+    console.log(error);
+    res.end();
 });
 
 return;
