@@ -1,26 +1,23 @@
 
-module.exports = function(knex, updateArray) {
+module.exports = function(knex) {
     return function(req, res, next) {
         if (req.isAuthenticated()) {
-            //Нельзя взять созданное тобой или уже решенное тобой
-            if (req.user.tasks_created && req.user.tasks_created.indexOf(req.body.task_id) !== -1
-                || req.user.tasks_done && req.user.tasks_done.indexOf(req.body.task_id) !== -1) {
-                res.end();
-            }
-            else knex('tasks').where('id', '=', req.body.task_id).select('is_approved').then(function(tasks) {
-                if (!tasks[0].is_approved) { //Нельзя взять неподтвержденное или подтвержденное некорректное
-                    res.end();
-                }
-                else knex('users').where('id', '=', req.user.id).andWhere('tasks_received', '@>', [req.body.task_id]).select('id')
-                    .then(function (rows) {
-                        var operation = rows.length === 0 ? 'append' : 'remove'; //Повторное взятие убирает из взятых
-                        updateArray('users', 'tasks_received', req.user.id, operation, req.body.task_id).then(function () {
-                            updateArray('tasks', 'participants', req.body.task_id, operation, req.user.id).then(function () {
-                                res.end('ok');
-                            }).catch(function (error) {
-                                console.log(error);
-                                res.end();
-                            });
+            knex('tasks_meta').where('task_id', req.body.task_id).andWhere('user_id', req.user.id)
+                .select('received').then(function(rows) {
+                    var meta_exists = rows.length > 0;
+                    var received = meta_exists && rows[0].received;
+                    var value = {received: !received};
+
+                    var query = knex('tasks_meta');
+                    if (meta_exists) query.update(value).where('task_id', req.body.task_id).andWhere('user_id', req.user.id);
+                    else {
+                        value.task_id = req.body.task_id;
+                        value.user_id = req.user.id;
+                        query.insert(value);
+                    }
+                    query.then(function() {
+                        knex('tasks').where('id', req.body.task_id).increment('participants', received ? -1 : 1).then(function () {
+                            res.end('ok');
                         }).catch(function (error) {
                             console.log(error);
                             res.end();
@@ -29,10 +26,10 @@ module.exports = function(knex, updateArray) {
                         console.log(error);
                         res.end();
                     });
-            }).catch(function (error) {
-                console.log(error);
-                res.end();
-            });
+                }).catch(function (error) {
+                    console.log(error);
+                    res.end();
+                });
         } else res.end();
     };
 };

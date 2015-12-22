@@ -214,13 +214,13 @@ app.post('/change_password', function (req, res) {
         });
 });
 
-app.post('/create_task', controllers.tasks.create(knex, updateArray, userHasSkills));
+app.post('/create_task', controllers.tasks.create(knex, userHasSkills));
 
 app.post('/solve_task', controllers.tasks.solve(knex));
 
-app.post('/like_task', controllers.tasks.like(knex, updateArray));
+app.post('/like_task', controllers.tasks.like(knex));
 
-app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
+app.post('/receive_task', controllers.tasks.receive(knex));
 
 app.post('/approve_task', controllers.tasks.approve(knex, userHasSkills));
 

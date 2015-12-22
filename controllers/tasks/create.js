@@ -1,5 +1,5 @@
 
-module.exports = function(knex, updateArray, userHasSkills){
+module.exports = function(knex, userHasSkills){
     function callback (exp, req, res, next) {
         //Вставляем новое задание
         knex('tasks').returning('id').insert({
