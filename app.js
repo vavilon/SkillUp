@@ -43,24 +43,22 @@ GLOBAL.CHECK_SKILLS_MULTIPLIER = 0.25;
 
 knex('skills').then(function (rows) {
     GLOBAL.exs = new exSkills(rows);
-    var skillsCount = Object.keys(exs.skills).length;
-    var updatedSkillsCount = 0;
-    for (var i in exs.skills) {
-        knex('skills').where('id', '=', exs.skills[i].id).update({exp: exs.skills[i].exp}).then(function () {
-            updatedSkillsCount++;
+    var skillsKeys = Object.keys(exs.skills);
+    var skillsCount = skillsKeys.length, updatedSkillsCount = 0;
+
+    function updateSkill(skill) {
+        knex('skills').where('id', '=', skill.id).update({exp: skill.exp}).then(function () {
+            if (++updatedSkillsCount < skillsCount) {
+                console.log('Updating skills exp: ' + Math.floor(updatedSkillsCount / skillsCount * 100) + '%');
+                console.log('\033[2A'); //Сдвигает курсор на две строки вверх
+                updateSkill(exs.skills[skillsKeys[updatedSkillsCount]]);
+            }
+            else console.log('Exp for all skills updated!');
         }).catch(function (err) {
             console.log(err);
         });
     }
-    function checkIfSkillsUpdated() {
-        if (updatedSkillsCount < skillsCount) {
-            console.log('Updating skills exp: ' + Math.floor(updatedSkillsCount / skillsCount * 100) + '%');
-            console.log('\033[2A'); //Сдвигает курсор на две строки вверх
-            setTimeout(checkIfSkillsUpdated, 100);
-        }
-        else console.log('Exp for all skills updated!');
-    }
-    checkIfSkillsUpdated();
+    updateSkill(exs.skills[skillsKeys[updatedSkillsCount]]);
 });
 
 app.use(cookieParser());
