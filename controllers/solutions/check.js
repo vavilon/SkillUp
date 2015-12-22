@@ -36,42 +36,43 @@ module.exports = function(knex, userHasSkills) {
                         if (checkersCount === GLOBAL.COUNT_TO_CHECK) {
                             //Начислим експу всем проверившим. Автору решения експа не начисляется
                             var rawUpdateExp = "UPDATE users AS u SET exp = u.exp + map.exp FROM (VALUES \n";
-                            //Если оценка проверяющего совпадает с большинством - начислим ему експу
-                            for (var i in solutionCheckers) if (solutionCheckers[i].checked_correct === correct) {
-                                rawUpdateExp += "(" + solutionCheckers[i].user_id + "," + task.exp
-                                    + (i == solutionCheckers.length - 1 ? ")" : "),");
+
+                            var rawUpdateSkills = "UPDATE user_skills AS us SET count = us.count + map.count FROM (VALUES \n";
+                            if (correct) { //Обновим скиллы автору решения (которые у него уже есть)
+                                for (var j in task.skills) rawUpdateSkills += "(" + solution.user_id + ","
+                                    + task.skills[j].skill_id + "," + task.skills[j].count + "),";
                             }
+
+                            for (var i in solutionCheckers) {
+                                //Если оценка проверяющего совпадает с большинством - начислим ему експу и скиллы
+                                if (solutionCheckers[i].checked_correct === correct) {
+                                    rawUpdateExp += "(" + solutionCheckers[i].user_id + "," + task.exp
+                                        + (i == solutionCheckers.length - 1 ? ")" : "),");
+
+                                    for (var j in task.skills) rawUpdateSkills += "(" + solutionCheckers[i].user_id + ","
+                                        + task.skills[j].skill_id + "," + task.skills[j].count * GLOBAL.CHECK_SKILLS_MULTIPLIER
+                                        + (i == solutionCheckers.length - 1 ? ")" : "),");
+                                }
+                            }
+
                             rawUpdateExp += " ) AS map(id,exp) WHERE u.id = map.id;";
+                            rawUpdateSkills += " ) AS map(user_id,skill_id,count) WHERE us.user_id = map.user_id AND us.skill_id = map.skill_id;";
 
                             knex.raw(rawUpdateExp).then(function () {
-                                var rawUpdateSkills = "UPDATE skills_progress AS sp SET count = sp.count + map.count FROM (VALUES \n";
-                                if (correct) { //Обновим скиллы автору решения (которые у него уже есть)
-                                    for (var j in task.skills) rawUpdateSkills += "(" + solution.user_id + ","
-                                        + task.skills[j].skill_id + "," + task.skills[j].count + "),";
-                                }
-                                for (var i in solutionCheckers) { //Обновим скиллы всем проверившим
-                                    if (solutionCheckers[i].checked_correct === correct) {
-                                        for (var j in task.skills) rawUpdateSkills += "(" + solutionCheckers[i].user_id + ","
-                                            + task.skills[j].skill_id + "," + task.skills[j].count * GLOBAL.CHECK_SKILLS_MULTIPLIER
-                                            + (i == solutionCheckers.length - 1 ? ")" : "),");
-                                    }
-                                }
-                                rawUpdateSkills += " ) AS map(user_id,skill_id,count) WHERE sp.user_id = map.user_id AND sp.skill_id = map.skill_id;";
-
                                 knex.raw(rawUpdateSkills).then(function () {
                                     if (correct) {
                                         //Добавим скиллы автору решения (которые отсутствовали при обновлении)
-                                        knex('skills_progress').select('skill_id').where('user_id', solution.user_id).pluck('skill_id').then(function (sp) {
+                                        knex('user_skills').select('skill_id').where('user_id', solution.user_id).pluck('skill_id').then(function (us) {
                                             var newSkills = []; //Отфильтруем только те скиллы, которых у решившего нет
                                             for (var i in task.skills) {
-                                                if (sp.indexOf(task.skills[i].skill_id) === -1) newSkills.push({
+                                                if (us.indexOf(task.skills[i].skill_id) === -1) newSkills.push({
                                                     user_id: solution.user_id,
                                                     skill_id: task.skills[i].skill_id,
                                                     count: task.skills[i].count
                                                 });
                                             }
                                             if (newSkills.length) { //Если новые скиллы появились - вставляем
-                                                knex('skills_progress').insert(newSkills).then(function () {
+                                                knex('user_skills').insert(newSkills).then(function () {
                                                 }).catch(function (error) {
                                                     console.log(error);
                                                 });
@@ -114,12 +115,12 @@ module.exports = function(knex, userHasSkills) {
                     }
                     else { //Вытащим експу и скиллы задания
                         var rawTaskExpSkills = "SELECT exp, json_agg(r) as skills FROM tasks, " +
-                            "(SELECT skill_id, count FROM task_skills WHERE task_id = " + solution.task_id + ") AS r " +
-                            "WHERE id = " + solution.task_id + " GROUP BY id;";
+                            " (SELECT skill_id, count FROM task_skills WHERE task_id = " + solution.task_id + ") AS r " +
+                            " WHERE id = " + solution.task_id + " GROUP BY id;";
                         knex.raw(rawTaskExpSkills).then(function (task) {
                             task = task.rows[0];
                             if (req.user.role !== 'администратор') {
-                                knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id', 'count')
+                                knex('user_skills').where('user_id', '=', req.user.id).select('skill_id', 'count')
                                     .then(function (userSkills) { //Есть ли у проверяющего скиллы для проверки
                                         if (!userHasSkills(userSkills, task.skills)) {
                                             res.end();

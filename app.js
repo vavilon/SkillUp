@@ -37,7 +37,7 @@ GLOBAL.COUNT_TO_APPROVE = 3;
 GLOBAL.COUNT_TO_CHECK = 3;
 GLOBAL.CORRECT_CONSTANT = 2 / 3;
 GLOBAL.CORRECT_TASK_EXP_MULTIPLIER = 3;
-GLOBAL.INCORRECT_TASK_EXP_DIVIDER = 2;
+GLOBAL.INCORRECT_TASK_EXP_MULTIPLIER = 0.5;
 GLOBAL.APPROVE_SKILLS_MULTIPLIER = 0.25;
 GLOBAL.CHECK_SKILLS_MULTIPLIER = 0.25;
 
@@ -224,9 +224,9 @@ app.post('/like_task', controllers.tasks.like(knex, updateArray));
 
 app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
 
-app.post('/approve_task', controllers.tasks.approve(knex, updateApprovement, userHasSkills));
+app.post('/approve_task', controllers.tasks.approve(knex, userHasSkills));
 
-app.post('/like_solution', controllers.solutions.like(knex, updateArray));
+app.post('/like_solution', controllers.solutions.like(knex));
 
 app.post('/check_solution', controllers.solutions.check(knex, userHasSkills));
 

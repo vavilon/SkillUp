@@ -38,8 +38,8 @@ module.exports = function(knex, updateArray, userHasSkills){
             }
             if (req.user.role !== 'администратор') {
                 //Проверяем, хватает ли у автора експы на случай некорректности задания
-                if (req.user.exp < exp / GLOBAL.INCORRECT_TASK_EXP_DIVIDER) res.end();
-                else knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id', 'count')
+                if (req.user.exp < exp * GLOBAL.INCORRECT_TASK_EXP_MULTIPLIER) res.end();
+                else knex('user_skills').where('user_id', '=', req.user.id).select('skill_id', 'count')
                     .then(function(userSkills) {
                         if (!userHasSkills(userSkills, req.body.skills)) {
                             res.end();

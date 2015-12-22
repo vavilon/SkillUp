@@ -1,113 +1,106 @@
 
-module.exports = function (knex, updateApprovement, userHasSkills) {
+module.exports = function (knex, userHasSkills) {
     function callback(task, req, res, next) {
-        //Вызов этой функции добавляет в approvements данные подтверждения (title_correct, skills_correct etc.)
-        //и возвращает обновленную запись (appr.rows[0], .returning('*') из knex не пашет)
-        updateApprovement(req.body.task_id, req.body.data, req.user.id).then(function (appr) {
-            //Добавим подтверждающему id задания в массив tasks_approved
-            knex.raw("UPDATE users SET tasks_approved = array_append(tasks_approved, '" + req.body.task_id + "')"
-                + " WHERE id = '" + req.user.id + "';").then(function () {
-
+        req.body.user_id = req.user.id; //Вставим результаты текущего подтверждающего
+        knex('approvements').insert(req.body).then(function () {
+            var query = knex('tasks_meta'); //Запишем в tasks_meta.approved значение true для подтверждающего
+            var meta = {approved: true};
+            //Если запись для текущего проверяющего есть - update
+            if (task.meta_exists) query.update(meta).where('task_id', req.body.task_id).andWhere('user_id', req.user.id);
+            else { //иначе - insert
+                meta.task_id = req.body.task_id;
+                meta.user_id = req.user.id;
+                query.insert(meta);
+            }
+            query.then(function () {
                 res.end('ok');
+                //Для того чтобы проверить, можно ли вынести новому заданию приговор - вытащим для него все approvements
+                knex('approvements').where('task_id', req.body.task_id).then(function(approvers) {
+                    var count = approvers.length;
+                    //Если количество подвердивших достаточное - начинаем процесс подтверждения
+                    if (count == GLOBAL.COUNT_TO_APPROVE) {
+                        var tc = 0, tic = 0, sc = 0, sic = 0, dc = 0, dic = 0, lc = 0, lic = 0;
 
-                var a = appr.rows[0];
-                var count = 0, tc = 0, tic = 0;
-                //Используя title_correct + title_incorrect посчитаем количество подтвердивших
-                if (a.title_correct) tc += a.title_correct.length;
-                if (a.title_incorrect) tic += a.title_incorrect.length;
-                count = tc + tic;
-                //Если достаточно, начинаем процесс подтверждения
-                if (count == GLOBAL.COUNT_TO_APPROVE) {
-                    var sc = 0, sic = 0, dc = 0, dic = 0, lc = 0, lic = 0;
-
-                    if (a.skills_correct) sc += a.skills_correct.length;
-                    if (a.skills_incorrect) sic += a.skills_incorrect.length;
-
-                    if (a.desc_correct) dc += a.desc_correct.length;
-                    if (a.desc_incorrect) dic += a.desc_incorrect.length;
-
-                    if (a.links_correct) lc += a.links_correct.length;
-                    if (a.links_incorrect) lic += a.links_incorrect.length;
-                    //Проверим задание на корректность по каждому из критериев
-                    var tcCor = tc / count >= GLOBAL.CORRECT_CONSTANT;
-                    var scCor = sc / count >= GLOBAL.CORRECT_CONSTANT;
-                    var dcCor = dc / count >= GLOBAL.CORRECT_CONSTANT;
-                    var lcCor = lc / count >= GLOBAL.CORRECT_CONSTANT;
-                    //Задание корректно только если по всем критериям корректно
-                    var correct = tcCor && scCor && dcCor && lcCor;
-
-                    /*
-                     Если задание полностью корректно, то експа начисляется по 1/4 за каждый отмеченный корректно пункт * експу за задание,
-                     а скиллы начисляются +1 к каждому из указанных в задании только если большинство пунктов отмечено корректно.
-                     Автору задания дается больше експы и очков скилла. В случае некорректного задания с автора снимается експа.
-                     */
-
-                    knex('tasks').where('id', '=', req.body.task_id).update({is_approved: correct}).then(function () {
-                        var arr = {}, curArr;
-
-                        for (var i in a.title_correct) arr[a.title_correct[i]] = {exp: 0, skills: 0};
-                        for (var i in a.title_incorrect) arr[a.title_incorrect[i]] = {exp: 0, skills: 0};
-
-                        if (tcCor) curArr = a.title_correct;
-                        else curArr = a.title_incorrect;
-                        for (var i in curArr) {
-                            arr[curArr[i]] = {exp: task.exp / 4, skills: 1 / 4};
+                        for (var i in approvers) {
+                            if (approvers[i].title_correct) tc++;
+                            else tic++;
+                            if (approvers[i].skills_correct) sc++;
+                            else sic++;
+                            if (approvers[i].desc_correct) dc++;
+                            else dic++;
+                            if (approvers[i].links_correct) lc++;
+                            else lic++;
                         }
 
-                        if (scCor) curArr = a.skills_correct;
-                        else curArr = a.skills_incorrect;
-                        for (var i in curArr) {
-                            arr[curArr[i]].exp += task.exp / 4;
-                            arr[curArr[i]].skills += 1 / 4;
-                        }
+                        //Проверим задание на корректность по каждому из критериев
+                        var titleCorrect = tc / count >= GLOBAL.CORRECT_CONSTANT;
+                        var skillsCorrect = sc / count >= GLOBAL.CORRECT_CONSTANT;
+                        var descCorrect = dc / count >= GLOBAL.CORRECT_CONSTANT;
+                        var linksCorrect = lc / count >= GLOBAL.CORRECT_CONSTANT;
+                        //Задание корректно только если по всем критериям корректно
+                        var correct = titleCorrect && skillsCorrect && descCorrect && linksCorrect;
 
-                        if (dcCor) curArr = a.desc_correct;
-                        else curArr = a.desc_incorrect;
-                        for (var i in curArr) {
-                            arr[curArr[i]].exp += task.exp / 4;
-                            arr[curArr[i]].skills += 1 / 4;
-                        }
+                        /*
+                         Если задание полностью корректно, то експа начисляется по 1/4 за каждый отмеченный корректно пункт * експу за задание,
+                         а скиллы начисляются только если большинство пунктов отмечено корректно.
+                         Автору задания дается больше експы и очков скилла. В случае некорректного задания с автора снимается експа.
+                         */
+                        //Запишем в задание корректно ли оно
+                        knex('tasks').where('id', '=', req.body.task_id).update({is_approved: correct}).then(function () {
 
-                        if (lcCor) curArr = a.links_correct;
-                        else curArr = a.links_incorrect;
-                        for (var i in curArr) {
-                            arr[curArr[i]].exp += task.exp / 4;
-                            arr[curArr[i]].skills += 1 / 4;
-                        }
-                        //Начислим експу автору задания
-                        var q = "UPDATE users SET exp = exp + CASE \n"
-                            + "WHEN id = '" + task.author + "' THEN ";
-                        if (correct) q += task.exp * GLOBAL.CORRECT_TASK_EXP_MULTIPLIER;
-                        else q += -task.exp / GLOBAL.INCORRECT_TASK_EXP_DIVIDER;
-                        //Начислим експу подтвердившим
-                        for (var id in arr) q += "\n WHEN id = '" + id + "' THEN " + arr[id].exp;
-                        q += "\n ELSE 0 END;";
+                            var rawUpdateExp = "UPDATE users AS u SET exp = u.exp + map.exp FROM (VALUES \n";
+                            //Начислим експу автору задания
+                            rawUpdateExp += "(" + task.author + "," + (correct ? task.exp * GLOBAL.CORRECT_TASK_EXP_MULTIPLIER :
+                                -task.exp * GLOBAL.INCORRECT_TASK_EXP_MULTIPLIER) + "),";
 
-                        knex.raw(q).then(function () {
-                            //Преобразуем массив в sql record, чтобы можно было использовать в выражении skill_id IN skillsRecord
-                            var skillsRecord = knex.idsToRecord(task.skills);
-                            //Даем скиллы автору задания
-                            var q = "UPDATE skills_progress SET count = count + CASE \n"
-                                + "WHEN user_id = '" + task.author + "' AND skill_id IN " + skillsRecord + " THEN ";
-                            if (correct) q += 1;
-                            else q += 0;
-                            //Даем скиллы подтвердившим задание
-                            for (var id in arr) q += "\n WHEN user_id = '" + id + "' AND skill_id in "
-                                + skillsRecord + " THEN " + (arr[id].skills * GLOBAL.APPROVE_SKILLS_MULTIPLIER);
-                            q += "\n ELSE 0 END;";
-                            knex.raw(q).then(function () {
-                                //Если зашло сюда, то все ок
-                                console.log('Task with id ' + req.body.task_id + ' approved with result ' + correct);
+                            var rawUpdateSkills = "UPDATE user_skills AS us SET count = us.count + map.count FROM (VALUES \n";
+                            if (correct) { //Начислим скиллы автору решения
+                                for (var j in task.skills) rawUpdateSkills += "(" + task.author + ","
+                                    + task.skills[j].skill_id + "," + task.skills[j].count + "),";
+                            }
+
+                            for (var i in approvers) {
+                                var approver = approvers[i];
+                                approver.titleCorrect = approver.title_correct === titleCorrect;
+                                approver.skillsCorrect = approver.skills_correct === skillsCorrect;
+                                approver.descCorrect = approver.desc_correct === descCorrect;
+                                approver.linksCorrect = approver.links_correct === linksCorrect;
+
+                                //Начислим експу подтвердившим
+                                var exp = (approver.titleCorrect ? task.exp / 4 : 0) + (approver.skillsCorrect ? task.exp / 4 : 0)
+                                    + (approver.descCorrect ? task.exp / 4 : 0) + (approver.linksCorrect ? task.exp / 4 : 0);
+                                rawUpdateExp += "(" + approver.user_id + "," + exp
+                                    + (i == approvers.length - 1 ? ")" : "),");
+
+                                //Начислим скиллы подтвердившим
+                                for (var j in task.skills) {
+                                    var skill = task.skills[j];
+                                    var skillCount = (approver.titleCorrect ? skill.count / 4 : 0) + (approver.skillsCorrect ? skill.count / 4 : 0)
+                                        + (approver.descCorrect ? skill.count / 4 : 0) + (approver.linksCorrect ? skill.count / 4 : 0);
+                                    rawUpdateSkills += "(" + approver.user_id + "," + skill.skill_id + ","
+                                        + skillCount * GLOBAL.APPROVE_SKILLS_MULTIPLIER + (i == approvers.length - 1 ? ")" : "),");
+                                }
+                            }
+
+                            rawUpdateExp += " ) AS map(id,exp) WHERE u.id = map.id;";
+                            rawUpdateSkills += " ) AS map(user_id,skill_id,count) WHERE us.user_id = map.user_id AND us.skill_id = map.skill_id;";
+
+                            knex.raw(rawUpdateExp).then(function () {
+                                knex.raw(rawUpdateSkills).then(function () {
+                                    console.log('Task with id ' + req.body.task_id + ' approved with result ' + correct);
+                                }).catch(function (error) {
+                                    console.log(error);
+                                });
                             }).catch(function (error) {
                                 console.log(error);
                             });
                         }).catch(function (error) {
                             console.log(error);
                         });
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                }
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
             }).catch(function (error) {
                 console.log(error);
                 res.end();
@@ -120,30 +113,30 @@ module.exports = function (knex, updateApprovement, userHasSkills) {
 
     return function (req, res, next) {
         if (req.isAuthenticated()) {
-            //Нельзя подтвердить то, что уже подтверждал, и то, что сам создал
-            if (req.user.tasks_approved && req.user.tasks_approved.indexOf(req.body.task_id) !== -1
-                || req.user.tasks_created && req.user.tasks_created.indexOf(req.body.task_id) !== -1) {
-                res.end();
-            }
-            else knex('tasks').where('id', '=', req.body.task_id).select('is_approved', 'skills', 'exp', 'author').then(function (tasks) {
-                //Нельзя подтвердить уже подтвержденное задание
-                if (tasks[0].is_approved !== null) {
+            var rawTask = "SELECT exp, is_approved, author, json_agg(r) as skills, approved, created, user_id IS NOT NULL as meta_exists FROM " +
+                " (SELECT skill_id, count FROM task_skills WHERE task_id = " + req.body.task_id + ") AS r, tasks " +
+                " LEFT JOIN tasks_meta AS tm ON tasks.id = tm.task_id AND tm.user_id = " + req.user.id +
+                " WHERE id = " + req.body.task_id + " GROUP BY id, approved, created, meta_exists;";
+            knex.raw(rawTask).then(function (task) {
+                task = task.rows[0];
+                //Нельзя подтвердить уже подтвержденное задание, то, что уже подтверждал, и то, что сам создал
+                if (task.is_approved !== null || task.approved !== null || task.created !== null) {
                     res.end();
                 }
                 else if (req.user.role !== 'администратор') {
-                    knex('skills_progress').where('user_id', '=', req.user.id).select('skill_id', 'count')
+                    knex('user_skills').where('user_id', '=', req.user.id).select('skill_id', 'count')
                         .then(function (userSkills) {
                             //Есть ли у подтверждающего скиллы для подтверждения этого задания
-                            if (!userHasSkills(userSkills, tasks[0].skills)) {
+                            if (!userHasSkills(userSkills, task.skills)) {
                                 res.end();
                             }
-                            else callback(tasks[0], req, res, next);
+                            else callback(task[0], req, res, next);
                         }).catch(function (error) {
                             console.log(error);
                             res.end();
                         });
                 }
-                else callback(tasks[0], req, res, next);
+                else callback(task[0], req, res, next);
             }).catch(function (error) {
                 console.log(error);
                 res.end();

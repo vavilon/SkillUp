@@ -36,7 +36,7 @@ app.directive('tasksList', function() {
                 );
             };
 
-            $scope.apprData = {title: true, skills: true, desc: true, links: true};
+            $scope.apprData = {title_correct: true, skills_correct: true, desc_correct: true, links_correct: true};
             $scope.exs = $scope.exs || $rootScope.exs;
             if ($scope.showDifficulty === undefined) $scope.showDifficulty = true;
             if ($scope.showExpand === undefined) $scope.showExpand = true;
@@ -90,8 +90,9 @@ app.directive('tasksList', function() {
             };
 
             if ($scope.approve === undefined) $scope.approve = function (id) {
-                $http.post('/approve_task', {task_id: id, data: $scope.apprData})
-                    .success(function(data) { $scope.approveCallback(data, id); });
+                var data = angular.copy($scope.apprData);
+                data.task_id = id;
+                $http.post('/approve_task', data).success(function(data) { $scope.approveCallback(data, id); });
             };
 
             $scope.$watchCollection('tasks', function(newVal, oldVal) {

@@ -100,12 +100,17 @@ knex.raw(rawTaskExpSkills).then(function (rows) {
 }).catch(function (error) {
     console.log(error);
 });*/
+var rawTask = "SELECT exp, is_approved, author, json_agg(r) as skills, approved, created, user_id IS NOT NULL as meta_exists FROM " +
+    " (SELECT skill_id, count FROM task_skills WHERE task_id = " + 287624 + ") AS r, tasks " +
+    " LEFT JOIN tasks_meta AS tm ON tasks.id = tm.task_id AND tm.user_id = " + 300356 +
+    " WHERE id = " + 287624 + " GROUP BY id, approved, created, meta_exists;";
 
-knex('solutions_meta').where('solution_id', 599138).andWhere('user_id', 300356).select('liked').then(function(rows) {
-    console.log(rows);
+console.log(rawTask);
+
+knex.raw(rawTask).then(function (rows) {
+    console.log(rows.rows[0]);
 }).catch(function (error) {
     console.log(error);
-    res.end();
 });
 
 return;
@@ -200,7 +205,7 @@ knex('skills').then(function(skills){
     console.log(error);
 });
 
-/*knex.select("users.*").from('users').leftJoin('skills_progress', 'id', '=', 'user_id').select(knex.raw("array_agg((skill_id, count)) AS skills"))
+/*knex.select("users.*").from('users').leftJoin('user_skills', 'id', '=', 'user_id').select(knex.raw("array_agg((skill_id, count)) AS skills"))
  .groupBy('id').limit(1).offset(0).then(function(rows) {
  console.log(rows[0]);
  }).catch(function (error) {
@@ -240,7 +245,7 @@ knex('skills').then(function(skills){
 /*var a = 0;
 
  knex.select("users.nick", knex.raw("array_agg((skill_id, count)) AS skills")).from('users')
- .leftJoin('skills_progress', 'id', '=', 'user_id')
+ .leftJoin('user_skills', 'id', '=', 'user_id')
  .groupBy('id').then(function (rows) {
  console.log(a);
  clearInterval(id);
