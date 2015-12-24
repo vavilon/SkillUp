@@ -10,7 +10,7 @@ module.exports = function(knex, req, res, next) {
     if (req.body.skills) q.andWhere('tasks.skills_ids', (req.body.filters && req.body.filters.for_approving)
         ||req.body.completed_skills ? '<@' : '&&', req.body.skills);
     q.leftJoin('users', 'tasks.author', '=', 'users.id').select('users.name as author_name');
-    q.leftJoin('tasks_meta as tm', {'tasks.id': 'tm.task_id', 'tm.user_id': req.user.id}).select('done', 'approved', 'created', 'received', 'liked');
+    q.leftJoin('tasks_meta as tm', {'tasks.id': 'tm.task_id', 'tm.user_id': parseInt(req.user.id)}).select('done', 'approved', 'created', 'received', 'liked');
     if (req.body.filters) {
         if (req.body.filters.for_solving || req.body.filters.is_approved === true) q.andWhere('tasks.is_approved', true);
         else if (req.body.filters.is_approved === false) q.andWhere('tasks.is_approved', false);

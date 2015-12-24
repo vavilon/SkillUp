@@ -240,28 +240,6 @@ app.post('/append_needs', function (req, res, next) {
     } else res.end();
 });
 
-app.post('/register/step2', function (req, res, next) {
-    if (req.isAuthenticated()) {
-        knex('users').where('id', '=', req.user.id).update(
-            {
-                avatar: req.body.avatar,
-                birthday: req.body.birthday,
-                gender: req.body.gender,
-                city: req.body.city,
-                country: req.body.country,
-                education: req.body.education,
-                work: req.body.work
-            }
-        ).then(function () {
-            res.end('ok');
-        }).catch(function (error) {
-            console.log(error);
-            res.end();
-        });
-    }
-    else res.end();
-});
-
 app.get('/auth/facebook', function (req, res, next) {
     passport.authenticate('facebook', {
         scope: ['email',
@@ -272,8 +250,7 @@ app.get('/auth/facebook', function (req, res, next) {
             'user_work_history',
             'user_about_me']
     })(req, res, next);
-}, function (req, res) { /* Never called */
-});
+}, function (req, res) { /* Never called */ });
 
 app.get('/auth/facebook/callback', function (req, res, next) {
     passport.authenticate('facebook', function (err, user, info) {

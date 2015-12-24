@@ -440,7 +440,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
     $scope.removeWork = function (index) { removeWork($scope.reg, index); };
 
     $scope.goToStep3 = function () {
-        $http.post('/register/step2', {
+        $http.post('/update_profile', {
             avatar: $scope.reg.imgCropRes,
             birthday: $scope.reg.birthday,
             gender: $scope.reg.gender,

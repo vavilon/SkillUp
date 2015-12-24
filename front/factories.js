@@ -219,7 +219,7 @@ app.factory('addEducation', function (educationObjToArr) {
             var inserted = false;
             var j = 0;
             for (var i in edObj.education) {
-                if (edObj.education[i].year && edObj.education[i].year.name - 0 > edObj.edYear) {
+                if (edObj.education[i].year && parseInt(edObj.education[i].year.name) > edObj.edYear) {
                     edObj.education.splice(i, 0, e);
                     inserted = true;
                     break;
