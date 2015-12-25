@@ -10,6 +10,9 @@ var LocalStrategy = require('passport-local').Strategy;
 var config = require(__dirname + '/config');
 var exSkills = require(__dirname + '/lib/ex-skills');
 var knex = require('knex')(config.get('knex'));
+var types = require('pg').types;
+//Преобразование bigInt(которые возращает knex в результате некоторых функций в виде строк) в Int
+types.setTypeParser(20, 'text', parseInt);
 var bcrypt = require('bcryptjs');
 
 knex.idsToRecord = function (ids) {
@@ -144,7 +147,10 @@ app.use('/db', function (req, res, next) {
     else next();
 });
 
+//Получение информации о колонках в таблице (значение по умолчанию, тип, макс. длину, нулл?)
 app.use('/db/:table/columns', controllers.db.columns(knex));
+//Получение количества строк в таблице
+app.use('/db/:table/rows_count', controllers.db.rows_count(knex));
 
 app.use('/avatars', function (req, res) {
     if (req.isAuthenticated()) {
