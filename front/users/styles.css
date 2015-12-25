@@ -169,6 +169,7 @@
 .admin-sidenav {
     background-color: rgb(63,81,181);
     min-height: calc(100vh - 64px);
+    z-index: 0;
 }
 
 md-content[role="navigation"] {
@@ -208,6 +209,7 @@ md-content[role="navigation"] {
 
 a[role="button"] {
     text-decoration: none !important;
+    outline: none;
 }
 
 a[role="button"] h1:hover {
@@ -256,7 +258,259 @@ a[role="button"] h1:hover {
 .column-item button:hover {
     background-color: rgb(40,53,147) !important;
 }
-.edit-button-span {
+
+#tables {
+    padding: 0 16px;
+    max-width: 78%;
+    min-width: 78%;
+}
+
+#tables md-card {
+    min-width: 100%;
+    max-width: 100%;
+}
+
+#tables md-card > md-card-content {
+    overflow-x: auto;
+    min-width: 100%;
+    max-width: 100%;
+    padding: 0;
+}
+
+#tables md-card > md-card-content > table {
+    border-collapse: collapse;
+    min-width: 100%;
+}
+
+#tables md-card > md-card-content > table > thead {
+    color: rgba(0,0,0,0.54);
+    text-align: left;
+}
+
+#tables md-card > md-card-content > table > thead > tr > th {
+    border-bottom: solid 2px #EEEEEE;
+    height: 47px;
+    max-height: 47px;
+    padding: 4px 28px 4px 0;
+    font-weight: normal !important;
+    font-size: 15px;
+    white-space: nowrap;
+    outline: none;
+    cursor: pointer;
+}
+
+#tables md-card > md-card-content > table > thead > tr > th:hover {
+    color: rgba(0, 0, 0, 0.87);
+}
+
+#tables md-card > md-card-content > table > thead > tr > th:hover .sort-icon {
+    color: rgba(0, 0, 0, 0.26);
+}
+
+.sorted-column-text {
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.sorted-column-icon-color {
+    color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.sort-icon {
+    color: white;
+}
+
+#tables md-card > md-card-content > table > tbody > tr:hover {
+    background-color: #EEEEEE;
+}
+
+.selected-row {
+    background-color: #F5F5F5;
+}
+
+#tables md-card > md-card-content > table > tbody > tr > td {
+    border-bottom: solid 2px #EEEEEE;
+    height: 38px;
+    padding: 4px 28px 4px 28px;
+}
+
+#tables md-card > md-card-content > table > tbody > tr > td > div {
+    white-space: nowrap;
+    max-height: 38px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#tables md-card > md-card-header {
+    max-height: 64px;
+    height: 64px;
+    position: relative;
+    overflow: hidden;
+}
+
+.table-header > h2 {
+    vertical-align: middle;
+    margin: 0;
+}
+
+.table-header-modified > div {
+    vertical-align: middle;
+    margin: 0;
+    color: rgba(66, 133, 244, 255);
+}
+
+.table-header-modified > span,
+.table-header > span {
+    vertical-align: middle;
+    width: auto;
+    padding-right: 12px;
+}
+
+.header-input {
+    padding: 0 24px 0 0;
+}
+
+.header-input > input:focus::-webkit-input-placeholder {
+    color:transparent;
+}
+
+.header-select {
+    padding-right: 12px;
+}
+
+.table-header,
+.table-header-modified {
+    position: absolute;
+    width: 100%;
+    height: 64px;
+    background-color: rgba(232, 240, 254, 255);
+    padding-left: 32px;
+}
+
+.table-header-modified.ng-enter {
+    -webkit-animation: modified_enter_sequence 0.5s cubic-bezier(0.25, 0.5, 0.5, 1); /* Safari/Chrome */
+    animation: modified_enter_sequence 0.5s cubic-bezier(0.25, 0.5, 0.5, 1); /* IE10+ and Future Browsers */
+}
+
+@-webkit-keyframes modified_enter_sequence {
+    from { top: 64px; }
+    to { top: 0; }
+}
+@keyframes modified_enter_sequence {
+    from { top: 64px; }
+    to { top: 0; }
+}
+
+.table-header-modified.ng-leave {
+    -webkit-animation: modified_leave_sequence 0.5s cubic-bezier(0.25, 0.5, 0.5, 1); /* Safari/Chrome */
+    animation: modified_leave_sequence 0.5s cubic-bezier(0.25, 0.5, 0.5, 1); /* IE10+ and Future Browsers */
+}
+
+@-webkit-keyframes modified_leave_sequence {
+    from { top: 0; }
+    to { top: 64px; }
+}
+@keyframes modified_leave_sequence {
+    from { top: 0; }
+    to { top: 64px; }
+}
+
+.table-header.ng-leave {
+    -webkit-animation: leave_sequence 0.5s cubic-bezier(0.25, 0.5, 0.5, 1); /* Safari/Chrome */
+    animation: leave_sequence 0.5s cubic-bezier(0.25, 0.5, 0.5, 1); /* IE10+ and Future Browsers */
+}
+
+@-webkit-keyframes leave_sequence {
+    from { bottom: 0; }
+    to { bottom: 64px; }
+}
+@keyframes leave_sequence {
+    from { bottom: 0; }
+    to { bottom: 64px; }
+}
+
+.table-header.ng-enter {
+    -webkit-animation: enter_sequence 0.5s cubic-bezier(0.25, 0.5, 0.5, 1); /* Safari/Chrome */
+    animation: enter_sequence 0.5s cubic-bezier(0.25, 0.5, 0.5, 1); /* IE10+ and Future Browsers */
+}
+
+@-webkit-keyframes enter_sequence {
+    from { bottom: 64px; }
+    to { bottom: 0; }
+}
+@keyframes enter_sequence {
+    from { bottom: 64px; }
+    to { bottom: 0; }
+}
+
+#tables md-card > md-card-footer {
+    height: 56px;
+    padding: 0;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 15px;
+}
+
+.db-table-select {
+    height: 17px;
+    margin: 0;
+}
+
+.db-table-select:focus .md-select-label {
+    padding: 0;
+    color: inherit !important;
+    border: none;
+}
+
+.db-table-select > md-select-label,
+.db-table-select.md-default-theme:not([disabled]):focus .md-select-label {
+    padding: 0;
+    border: none;
+    text-align: right;
+}
+
+.db-table-select > md-select-label .md-select-icon {
+    width: 15px;
+}
+
+#tables img {
+    width: 48px;
+    height: 48px;
+}
+
+.cell-for-padding {
+    min-width: 32px;
+    padding: 0 !important;
+}
+
+.table-checkbox {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.table-checkbox-container {
+    padding: 0 !important;
+}
+
+.header-button {
+    border-radius: 10px !important;
+    height: 36px;
+    width: auto;
+    min-width: unset;
+    min-height: unset;
+    margin: 0 6px 0 6px;
+    padding: 4px 6px 6px 6px;
+    vertical-align: middle;
+}
+
+.counter {
+    padding-left: 32px;
+    padding-right: 20px;
+}
+
+.table-img {
+    max-height: 38px;
+    max-width: 38px;
+}.edit-button-span {
     width: 30px;
     min-width: 30px;
     height: 24px;

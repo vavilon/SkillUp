@@ -1,5 +1,9 @@
 /* index.html */
 
+body {
+    font-family: Roboto, RobotoDraft, 'Helvetica Neue', sans-serif;
+}
+
 .header-logo {
     font-size: 30px;
     font-weight: bold;
