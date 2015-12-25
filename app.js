@@ -40,30 +40,28 @@ GLOBAL.COUNT_TO_APPROVE = 3;
 GLOBAL.COUNT_TO_CHECK = 3;
 GLOBAL.CORRECT_CONSTANT = 2 / 3;
 GLOBAL.CORRECT_TASK_EXP_MULTIPLIER = 3;
-GLOBAL.INCORRECT_TASK_EXP_DIVIDER = 2;
+GLOBAL.INCORRECT_TASK_EXP_MULTIPLIER = 0.5;
 GLOBAL.APPROVE_SKILLS_MULTIPLIER = 0.25;
 GLOBAL.CHECK_SKILLS_MULTIPLIER = 0.25;
 
 knex('skills').then(function (rows) {
     GLOBAL.exs = new exSkills(rows);
-    var skillsCount = Object.keys(exs.skills).length;
-    var updatedSkillsCount = 0;
-    for (var i in exs.skills) {
-        knex('skills').where('id', '=', exs.skills[i].id).update({exp: exs.skills[i].exp}).then(function () {
-            updatedSkillsCount++;
+    var skillsKeys = Object.keys(exs.skills);
+    var skillsCount = skillsKeys.length, updatedSkillsCount = 0;
+
+    function updateSkill(skill) {
+        knex('skills').where('id', '=', skill.id).update({exp: skill.exp}).then(function () {
+            if (++updatedSkillsCount < skillsCount) {
+                console.log('Updating skills exp: ' + Math.floor(updatedSkillsCount / skillsCount * 100) + '%');
+                console.log('\033[2A'); //Сдвигает курсор на две строки вверх
+                updateSkill(exs.skills[skillsKeys[updatedSkillsCount]]);
+            }
+            else console.log('Exp for all skills updated!');
         }).catch(function (err) {
             console.log(err);
         });
     }
-    function checkIfSkillsUpdated() {
-        if (updatedSkillsCount < skillsCount) {
-            console.log('Updating skills exp: ' + Math.floor(updatedSkillsCount / skillsCount * 100) + '%');
-            console.log('\033[2A'); //Сдвигает курсор на две строки вверх
-            setTimeout(checkIfSkillsUpdated, 100);
-        }
-        else console.log('Exp for all skills updated!');
-    }
-    checkIfSkillsUpdated();
+    updateSkill(exs.skills[skillsKeys[updatedSkillsCount]]);
 });
 
 app.use(cookieParser());
@@ -225,17 +223,17 @@ app.post('/change_password', function (req, res) {
         });
 });
 
-app.post('/create_task', controllers.tasks.create(knex, updateArray, userHasSkills));
+app.post('/create_task', controllers.tasks.create(knex, userHasSkills));
 
 app.post('/solve_task', controllers.tasks.solve(knex));
 
-app.post('/like_task', controllers.tasks.like(knex, updateArray));
+app.post('/like_task', controllers.tasks.like(knex));
 
-app.post('/receive_task', controllers.tasks.receive(knex, updateArray));
+app.post('/receive_task', controllers.tasks.receive(knex));
 
-app.post('/approve_task', controllers.tasks.approve(knex, updateApprovement, userHasSkills));
+app.post('/approve_task', controllers.tasks.approve(knex, userHasSkills));
 
-app.post('/like_solution', controllers.solutions.like(knex, updateArray));
+app.post('/like_solution', controllers.solutions.like(knex));
 
 app.post('/check_solution', controllers.solutions.check(knex, userHasSkills));
 
@@ -251,28 +249,6 @@ app.post('/append_needs', function (req, res, next) {
     } else res.end();
 });
 
-app.post('/register/step2', function (req, res, next) {
-    if (req.isAuthenticated()) {
-        knex('users').where('id', '=', req.user.id).update(
-            {
-                avatar: req.body.avatar,
-                birthday: req.body.birthday,
-                gender: req.body.gender,
-                city: req.body.city,
-                country: req.body.country,
-                education: req.body.education,
-                work: req.body.work
-            }
-        ).then(function () {
-            res.end('ok');
-        }).catch(function (error) {
-            console.log(error);
-            res.end();
-        });
-    }
-    else res.end();
-});
-
 app.get('/auth/facebook', function (req, res, next) {
     passport.authenticate('facebook', {
         scope: ['email',
@@ -283,8 +259,7 @@ app.get('/auth/facebook', function (req, res, next) {
             'user_work_history',
             'user_about_me']
     })(req, res, next);
-}, function (req, res) { /* Never called */
-});
+}, function (req, res) { /* Never called */ });
 
 app.get('/auth/facebook/callback', function (req, res, next) {
     passport.authenticate('facebook', function (err, user, info) {

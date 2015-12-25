@@ -79,25 +79,25 @@
                     <md-card ng-if="approvable" class="task-description-card">
                         <md-card-content>
                             <h2 class="md-title task-description-word">Подтверждение</h2>
-                            <md-checkbox ng-model="apprData.title" class="md-primary">
+                            <md-checkbox ng-model="apprData.title_correct" class="md-primary">
                                 Название:
-                            <span ng-class="{'checked-correct': apprData.title, 'checked-incorrect': !apprData.title}">
-                                {{apprData.title ? 'правильно' : 'неправильно'}}</span>
+                            <span ng-class="{'checked-correct': apprData.title_correct, 'checked-incorrect': !apprData.title_correct}">
+                                {{apprData.title_correct ? 'правильно' : 'неправильно'}}</span>
                             </md-checkbox>
-                            <md-checkbox ng-model="apprData.skills" class="md-primary">
+                            <md-checkbox ng-model="apprData.skills_correct" class="md-primary">
                                 Умения:
-                            <span ng-class="{'checked-correct': apprData.skills, 'checked-incorrect': !apprData.skills}">
-                                {{apprData.skills ? 'правильно' : 'неправильно'}}</span>
+                            <span ng-class="{'checked-correct': apprData.skills_correct, 'checked-incorrect': !apprData.skills_correct}">
+                                {{apprData.skills_correct ? 'правильно' : 'неправильно'}}</span>
                             </md-checkbox>
-                            <md-checkbox ng-model="apprData.desc" class="md-primary">
+                            <md-checkbox ng-model="apprData.desc_correct" class="md-primary">
                                 Условие:
-                            <span ng-class="{'checked-correct': apprData.desc, 'checked-incorrect': !apprData.desc}">
-                                {{apprData.desc ? 'правильно' : 'неправильно'}}</span>
+                            <span ng-class="{'checked-correct': apprData.desc_correct, 'checked-incorrect': !apprData.desc_correct}">
+                                {{apprData.desc_correct ? 'правильно' : 'неправильно'}}</span>
                             </md-checkbox>
-                            <md-checkbox ng-model="apprData.links" class="md-primary">
+                            <md-checkbox ng-model="apprData.links_correct" class="md-primary">
                                 Ссылки на учебные материалы:
-                            <span ng-class="{'checked-correct': apprData.links, 'checked-incorrect': !apprData.links}">
-                                {{apprData.links ? 'правильно' : 'неправильно'}}</span>
+                            <span ng-class="{'checked-correct': apprData.links_correct, 'checked-incorrect': !apprData.links_correct}">
+                                {{apprData.links_correct ? 'правильно' : 'неправильно'}}</span>
                             </md-checkbox>
                             <md-button class="md-raised md-primary" style="float: right; "
                                        ng-click="approve(task.id)">Отправить

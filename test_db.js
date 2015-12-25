@@ -7,19 +7,214 @@ var knex = require('knex')(config.get('knex'));
 //var bookshelf = require('bookshelf')(knex);
 //var temp;
 
-knex('users').update({birthday: new Date("1995-02-12T22:00:00.000Z")}).where('id', '103').returning('*').then(function(user) {
+/*knex('users').update({birthday: new Date("1995-02-12T22:00:00.000Z")}).where('id', '103').returning('*').then(function(user) {
  knex('users').select('birthday').where('id', '103').then(function(rows) {
-  console.log(rows[0].birthday);
+ console.log(rows[0].birthday);
  }).catch(function (error) {
-  console.log(error);
- });
-}).catch(function (error) {
  console.log(error);
+ });
+ }).catch(function (error) {
+ console.log(error);
+ });*/
+
+/*knex('tasks').then(function (tasks) {
+ var max = 0.65, min = 0.1;
+ for (var i in tasks) {
+ var task = tasks[i];
+ for (var j in task.skills) {
+ knex('task_skills').insert({
+ task_id: task.id,
+ skill_id: task.skills[j],
+ count: (Math.random() * (max - min) + min).toFixed(2)
+ }).returning('*').then(function (rows) {
+ console.log('Task: ' + rows[0].task_id + ', skill: ' + rows[0].skill_id + ', count: ' + rows[0].count);
+ }).catch(function (error) {
+ console.log(error);
+ });
+ }
+ }
+ }).catch(function (error) {
+ console.log(error);
+ });*/
+
+/*var q = knex.select("tasks.*").from(function () {
+    this.select("tasks.*").from('tasks').leftJoin('task_skills', 'tasks.id', '=', 'task_skills.task_id')
+        .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id')
+        .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('tasks');
+}).andWhere('tasks.skills_ids', '&&', [57]).limit(20);
+
+console.log(q.toString() + '\n');
+
+q.then(function (rows) {
+    console.log(rows);
+}).catch(function (error) {
+    console.log(error);
+});*/
+
+/*
+var q = knex.select("solutions.*").from(function() {
+    this.select("solutions.*").from('solutions')
+        .where('solutions.id', 599138)
+        .leftJoin('tasks', 'solutions.task_id', '=', 'tasks.id').select('tasks.title as task_title', 'tasks.exp as task_exp')
+        .leftJoin('task_skills', 'solutions.task_id', '=', 'task_skills.task_id').as('tasks')
+        .select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id', 'solutions.id')
+        .select(knex.raw("array_agg(skill_id) AS skills_ids")).as('solutions');
+});
+q.leftJoin('users as u1', 'solutions.user_id', '=', 'u1.id').select('u1.name as user_name');
+q.leftJoin('solutions_meta as sm', {'solutions.id': 'sm.solution_id', 'sm.user_id': 300359})
+    .select('checked_correct', 'liked', knex.raw('solution_id IS NOT NULL as meta_exists'));
+q.whereNull('checked_correct');
+q.andWhere(function(){ this.where('liked', null).orWhere('liked', false); });
+
+console.log(q.toString() + '\n');
+
+q.then(function (rows) {
+    console.log(rows);
+}).catch(function (error) {
+    console.log(error);
+});
+*/
+
+/*var correct = true, user_correct = true, rating = 3, count = 3;
+var raw = "UPDATE solutions SET rating = rating + " + (user_correct ? (3 || 5) : 1);
+if (count === 3) raw += ", is_correct = " + correct;
+raw += " WHERE id = " + 599138 + ";";
+knex.raw(raw).then(function() {console.log('done')});*/
+
+/*knex('solutions_meta').select('user_id', 'checked_correct').where('solution_id', 599138)
+    .whereNotNull('checked_correct').then(function (solution_checkers) {
+        console.log(solution_checkers);
+        console.log(typeof solution_checkers[0].user_id);
+        console.log(typeof solution_checkers[0].checked_correct);
+    }).catch(function (error) {
+        console.log(error);
+    });*/
+
+
+/*var rawTaskExpSkills = "SELECT exp, json_agg(r) as skills FROM tasks, " +
+    "(SELECT skill_id, count FROM task_skills WHERE task_id = " + 287624 + ") AS r " +
+    "WHERE id = " + 287624 + " GROUP BY id;";
+
+knex.raw(rawTaskExpSkills).then(function (rows) {
+    console.log(rows.rows[0]);
+}).catch(function (error) {
+    console.log(error);
+});*/
+var rawTask = "SELECT exp, is_approved, author, json_agg(r) as skills, approved, created, user_id IS NOT NULL as meta_exists FROM " +
+    " (SELECT skill_id, count FROM task_skills WHERE task_id = " + 287624 + ") AS r, tasks " +
+    " LEFT JOIN tasks_meta AS tm ON tasks.id = tm.task_id AND tm.user_id = " + 300356 +
+    " WHERE id = " + 287624 + " GROUP BY id, approved, created, meta_exists;";
+
+console.log(rawTask);
+
+knex.raw(rawTask).then(function (rows) {
+    console.log(rows.rows[0]);
+}).catch(function (error) {
+    console.log(error);
 });
 
+return;
+
+Math.getRandomInt = function (min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; };
+
+//Добавить тестовых юзверей и заданий
+knex('skills').then(function(skills){
+    //Константы
+    var usersCount = 100000, tasksCount = 100000;
+    //Для большей производительности поставить все на false (особенно влияет hashPsw)
+    var appendNeeds = false, hashPsw = false, randomAuthorPerTask = false;
+
+    function insertTasks() {
+        var num = Math.getRandomInt(1, 1000000000);
+        knex('tasks').insert({
+            title: 'title_' + num,
+            description: 'desc_' + num,
+            exp: 123,
+            author: randomAuthorPerTask ? usersIds[Math.getRandomInt(0, usersIds.length - 1)] : author
+        }).then(function () {
+            console.log('Duplicate tasks: ' + duplicateTasks);
+            console.log('Task #' + inserted++ + ' inserted!');
+            if (inserted === tasksCount) {
+                console.log('\033[2A');
+                console.log('All tasks inserted!          ');
+                knex('users').then(function(rows_u) {
+                    console.log('\nUsers selected: ' + rows_u.length);
+                    knex('tasks').then(function(rows_t) {
+                        console.log('\nTasks selected: ' + rows_t.length);
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+            else {
+                console.log('\033[3A');
+                insertTasks();
+            }
+        }).catch(function () {
+            duplicateTasks++;
+            insertTasks();
+        });
+    }
+
+    var author = 0, inserted = 0, usersIds = [], duplicateUsers = 0, duplicateTasks = 0;
+    function insertUsers() {
+        var num = Math.getRandomInt(1, 1000000000);
+
+        var user = {
+            nick: 'nick_' + num,
+            name: 'name_' + num,
+            email: 'email_' + num + '@gmail.com',
+            pswhash: hashPsw ? bcrypt.hashSync('' + num, bcrypt.genSaltSync(4)) : '1',
+            exp: 1234
+        };
+
+        if (appendNeeds) {
+            var needsCount = Math.getRandomInt(1, 7);
+            var needs = [];
+            for (var j = 0; j < needsCount; j++) needs.push(skills[Math.getRandomInt(0, skills.length - 1)].id);
+            user.needs = needs;
+        }
+
+        knex('users').insert(user).returning('id').then(function(ids){
+            if (randomAuthorPerTask) usersIds.push(ids[0]);
+            console.log('Duplicate users: ' + duplicateUsers);
+            console.log('User #' + inserted++ + ' inserted!');
+            if (inserted === usersCount) {
+                author = ids[0];
+                inserted = 0;
+                console.log('\033[2A');
+                console.log('All users inserted!          ');
+                console.log('\nInserting tasks...           ');
+                insertTasks();
+            }
+            else {
+                console.log('\033[3A');
+                insertUsers();
+            }
+        }).catch(function () {
+            duplicateUsers++;
+            insertUsers();
+        });
+    }
+
+    console.log('Inserting users...');
+    insertUsers();
+}).catch(function (error) {
+    console.log(error);
+});
+
+/*knex.select("users.*").from('users').leftJoin('user_skills', 'id', '=', 'user_id').select(knex.raw("array_agg((skill_id, count)) AS skills"))
+ .groupBy('id').limit(1).offset(0).then(function(rows) {
+ console.log(rows[0]);
+ }).catch(function (error) {
+ console.log(error);
+ });*/
+
 /*knex('users').where('id', 14).update({pswhash: bcrypt.hashSync('1')}).returning('pswhash').then(function (pswhash) {
-    console.log(bcrypt.compareSync('1', pswhash[0]));
-});*/
+ console.log(bcrypt.compareSync('1', pswhash[0]));
+ });*/
 
 /*knex('approvements').returning('id').insert({task_id: 'cf133be1-3e14-4678-acce-821684098d79'})
  .then(function(id) {
@@ -50,7 +245,7 @@ knex('users').update({birthday: new Date("1995-02-12T22:00:00.000Z")}).where('id
 /*var a = 0;
 
  knex.select("users.nick", knex.raw("array_agg((skill_id, count)) AS skills")).from('users')
- .leftJoin('skills_progress', 'id', '=', 'user_id')
+ .leftJoin('user_skills', 'id', '=', 'user_id')
  .groupBy('id').then(function (rows) {
  console.log(a);
  clearInterval(id);

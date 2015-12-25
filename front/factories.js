@@ -242,7 +242,9 @@ app.factory('getRowsOnPage', function () {
         if (to > rowsCount) to = rowsCount;
         return rows.slice(rowsPerPage * pageNumber, to);
     }
-});app.factory('addEducation', function (educationObjToArr) {
+});
+
+app.factory('addEducation', function (educationObjToArr) {
     return function (edObj) {
         if (!edObj.edName) return;
         var e = {school: {name: edObj.edName}};
@@ -253,7 +255,7 @@ app.factory('getRowsOnPage', function () {
             var inserted = false;
             var j = 0;
             for (var i in edObj.education) {
-                if (edObj.education[i].year && edObj.education[i].year.name - 0 > edObj.edYear) {
+                if (edObj.education[i].year && parseInt(edObj.education[i].year.name) > edObj.edYear) {
                     edObj.education.splice(i, 0, e);
                     inserted = true;
                     break;
