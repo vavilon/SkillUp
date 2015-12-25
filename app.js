@@ -224,30 +224,13 @@ app.post('/change_password', function (req, res) {
 });
 
 app.post('/create_task', controllers.tasks.create(knex, userHasSkills));
-
 app.post('/solve_task', controllers.tasks.solve(knex));
-
 app.post('/like_task', controllers.tasks.like(knex));
-
 app.post('/receive_task', controllers.tasks.receive(knex));
-
 app.post('/approve_task', controllers.tasks.approve(knex, userHasSkills));
 
 app.post('/like_solution', controllers.solutions.like(knex));
-
 app.post('/check_solution', controllers.solutions.check(knex, userHasSkills));
-
-app.post('/append_needs', function (req, res, next) {
-    if (req.isAuthenticated()) {
-        //Переделать!!!
-        knex('users').where('id', '=', req.user.id).update({needs: req.body.needs}).then(function () {
-            res.end('ok');
-        }).catch(function (error) {
-            console.log(error);
-            res.end();
-        });
-    } else res.end();
-});
 
 app.get('/auth/facebook', function (req, res, next) {
     passport.authenticate('facebook', {
@@ -282,6 +265,7 @@ app.post('/login', controllers.users.login);
 app.post('/register', controllers.users.register);
 app.get('/logout', controllers.users.logout);
 app.post('/update_profile', controllers.users.update(knex));
+app.post('/needs', controllers.users.needs(knex));
 
 app.use('/', function (req, res) {
     res.sendFile(__dirname + '/front/index.html');
