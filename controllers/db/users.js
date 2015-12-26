@@ -6,11 +6,9 @@ module.exports = function (knex, req, res, next) {
     q.leftJoin('user_skills', 'id', '=', 'user_id').select(knex.raw("array_agg((skill_id, count, need)) AS skills"))
         .groupBy('id').limit(20).offset(req.body.offset || 0);
 
-    console.log(q.toString());
-
     q.then(function(rows) {
-            if (!rows) res.end();
-            else res.end(JSON.stringify(rows));
+        if (!rows) res.end();
+        else res.end(JSON.stringify(rows));
     }).catch(function (error) {
         console.log(error);
         res.end();

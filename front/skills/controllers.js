@@ -47,7 +47,6 @@ app.factory('extendedSkills', function () {
             this.skills[id].allLeaves = [];
             this.skills[id].id = id;
             this.skills[id].exp = skills[id].exp;
-            this.skills[id].count_to_get = skills[id].count_to_get;
             this.skills[id].is_leaf = skills[id].is_leaf;
 
             for (var i = 0; i < skills[id].parents.length; i++) {

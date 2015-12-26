@@ -89,17 +89,21 @@ app.factory('workObjToArr', function($filter) {
     };
 });
 
+//{"(39,0.387448,t)","(89,1.98737,f)","(44,0.514484,t)"} - example
 app.factory('parseSkills', function() {
     return function(skills) {
         if (!skills) return;
-        skills = skills.replace(/{/g, '[');
-        skills = skills.replace(/}/g, ']');
-        skills = skills.replace(/"\(/g, '{"id": "');
-        skills = skills.replace(/\)"/g, '}');
-        skills = skills.replace(/},{/g, '} , {');
-        skills = skills.replace(/(\S),/g, '$1", "count": ');
+        var re = /"\((\d+),(\d+\.?\d*),?(.)?\)"/g;
+        var m;
+        var result = [];
         try {
-            return JSON.parse(skills);
+            while ((m = re.exec(skills)) !== null) {
+                if (m.index === re.lastIndex) {
+                    re.lastIndex++;
+                }
+                result.push({id: parseInt(m[1]), count: parseFloat(m[2]), need: m[3] === 't'});
+            }
+            return result;
         }
         catch (e) { }
     };
@@ -135,18 +139,6 @@ app.factory('setPropertyFuzzy', function (setPropertyComparingArrays, setPropert
     return function(newPropName, setArray, compArray, multiple, compPropName, condition) {
         if (multiple) setPropertyComparingArrays(compPropName || 'id', newPropName, true, setArray, compArray, condition);
         else setPropertyComparingObjArr(compPropName || 'id', newPropName, true, setArray, compArray, condition);
-    };
-});
-
-app.factory('setLiked', function(setPropertyFuzzy) {
-    return function(setArray, compArray, multiple, compPropName) {
-        setPropertyFuzzy('liked', setArray, compArray, multiple, compPropName);
-    };
-});
-
-app.factory('setReceived', function(setPropertyFuzzy) {
-    return function(setArray, compArray, multiple, compPropName) {
-        setPropertyFuzzy('received', setArray, compArray, multiple, compPropName);
     };
 });
 
@@ -197,11 +189,11 @@ app.factory('loadSolutions', function(loadFunc) {
     };
 });
 
-app.factory('completedSkills', function ($rootScope) {
+app.factory('completedSkills', function () {
     return function (skillsProgress) {
         var res = [];
         for (var i in skillsProgress) {
-            if (skillsProgress[i].count >= $rootScope.exs.skills[skillsProgress[i].id].count_to_get)
+            if (skillsProgress[i].count >= 1)
                 res.push(skillsProgress[i].id);
         }
         return res;

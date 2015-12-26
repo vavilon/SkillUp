@@ -129,7 +129,7 @@
                                 </md-button>
                             </md-list-item>
 
-                            <md-divider></md-divider>
+                            <md-divider ng-if="user.role !== 'пользователь'"></md-divider>
 
                             <md-list-item layout="row" layout-align="start start" ng-mouseenter="r1 = true"
                                           ng-mouseleave="r1 = false">

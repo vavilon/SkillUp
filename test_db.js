@@ -118,7 +118,7 @@ knex.raw(rawTask).then(function (rows) {
     console.log(error);
 });*/
 
-knex('skills').select('id').pluck('id').then(function (skills) {
+/*knex('skills').select('id').pluck('id').then(function (skills) {
     knex('users').select('id').pluck('id').then(function (users) {
         var insertCount = 80000, inserted = 0;
 
@@ -153,7 +153,7 @@ knex('skills').select('id').pluck('id').then(function (skills) {
     });
 }).catch(function (error) {
     console.log(error);
-});
+});*/
 
 return;
 
@@ -206,7 +206,7 @@ knex('skills').then(function(skills){
             nick: 'nick_' + num,
             name: 'name_' + num,
             email: 'email_' + num + '@gmail.com',
-            pswhash: hashPsw ? bcrypt.hashSync('' + num, bcrypt.genSaltSync(4)) : '1',
+            pswhash: hashPsw ? bcrypt.hashSync('' + num, bcrypt.genSaltSync(4)) : '$2a$04$cWI7zFjUcC62UYTb3rj60.l4Ag4eGCkUrQVe6xJvNv//xa4cG2kVG',
             exp: 1234
         };
 
