@@ -76,7 +76,7 @@
                         <tr>
                             <th class="cell-for-padding"></th>
                             <th class="table-checkbox-container">
-                                <md-checkbox class="table-checkbox" ng-model="selection.allSelected"
+                                <md-checkbox class="table-checkbox no-ink-ripple" ng-model="selection.allSelected"
                                              ng-click="selectAllRows(lastExpandedTable)"
                                              aria-label="select-all-rows">
                                 </md-checkbox>
@@ -127,7 +127,6 @@
                     <md-option value="20" ng-if="lastExpandedTable.rowsCount >= 20">20</md-option>
                     <md-option value="50" ng-if="lastExpandedTable.rowsCount >= 50">50</md-option>
                     <md-option value="100" ng-if="lastExpandedTable.rowsCount >= 100">100</md-option>
-                    <md-option value="100" ng-if="lastExpandedTable.rowsCount >= 1000">1000</md-option>
                 </md-select>
                 <span class="counter">
                     {{pageNumber * lastExpandedTable.rowsPerPage + 1}}

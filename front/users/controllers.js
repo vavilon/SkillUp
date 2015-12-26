@@ -682,7 +682,7 @@ app.controller('adminCtrl', function ($scope, $http, $rootScope, $mdDialog, getC
                                 $scope.lastExpandedTable.rowsCount);
 
                             //Сохраняем исходную таблицу
-                            $scope.savedTable = angular.copy($scope.lastExpandedTable);
+                            //$scope.savedTable = angular.copy($scope.lastExpandedTable);
                         }).error(function (error) {
                             console.log(error);
                         });
@@ -751,7 +751,7 @@ app.controller('adminCtrl', function ($scope, $http, $rootScope, $mdDialog, getC
         };
 
         //Пометить строки таблицы на текущей странице выбраными или снять метки, при нажатии на checkbox в заголовке таблицы
-        $scope.selectAllRows = function (table) {
+        $scope.selectAllRows = function () {
             if (!$scope.selection.allSelected) {
                 for (var obj in $scope.rowsOnPage) {
                     if ($scope.rowsOnPage.hasOwnProperty(obj))
@@ -772,13 +772,30 @@ app.controller('adminCtrl', function ($scope, $http, $rootScope, $mdDialog, getC
         //Переход на страницу вправо и подгрузка данных, если необходимо
         $scope.rightPage = function () {
             $scope.pageNumber += 1;
-            $scope.reset();
+
+            //Подгрузка
+            if ($scope.lastExpandedTable.rows.length <= $scope.lastExpandedTable.rowsPerPage * ($scope.pageNumber + 1)) {
+                $http.post('/db/' + $scope.lastExpandedTable.name,
+                    {limit: $scope.lastExpandedTable.rowsPerPage, offset: $scope.lastExpandedTable.rows.length}
+                ).success(function (data) {
+                    $scope.lastExpandedTable.rows = $scope.lastExpandedTable.rows.concat(data);
+                    //Сохраняем исходную таблицу
+                    //$scope.savedTable = angular.copy($scope.lastExpandedTable);
+
+                    $scope.reset();
+                }).error(function (error) {
+                    console.log(error);
+                });
+            } else {
+                $scope.reset();
+            }
         };
 
         //Обнуляем выделение и обновляем строки отображаемые на текущей странице при смене страницы
         $scope.reset = function () {
             $scope.selection.indexes = [];
             $scope.selection.allSelected = false;
+
             //Получаем строки отображаемые на текущей странице
             $scope.rowsOnPage = getRowsOnPage($scope.lastExpandedTable.rows,
                 $scope.lastExpandedTable.rowsPerPage,
@@ -788,16 +805,34 @@ app.controller('adminCtrl', function ($scope, $http, $rootScope, $mdDialog, getC
 
         //Если изменяется кол-во строк на странице надо пересчитать номер страницы и догрузить данные при надобности
         $scope.$watch('footer.rowsPerPage', function (newValue) {
-            if($scope.lastExpandedTable) {
-                if ($scope.lastExpandedTable.rows && newValue * $scope.pageNumber >= $scope.lastExpandedTable.rowsCount)
-                    $scope.pageNumber = Math.floor(($scope.lastExpandedTable.rowsCount - newValue) / newValue);
-
+            if($scope.lastExpandedTable && $scope.lastExpandedTable.rows) {
+                $scope.pageNumber = 0;
                 $scope.lastExpandedTable.rowsPerPage = newValue;
-                //Получаем строки отображаемые на текущей странице
-                $scope.rowsOnPage = getRowsOnPage($scope.lastExpandedTable.rows,
-                    $scope.lastExpandedTable.rowsPerPage,
-                    $scope.pageNumber,
-                    $scope.lastExpandedTable.rowsCount);
+
+                //Подгрузка
+                if ($scope.lastExpandedTable.rows.length <= $scope.lastExpandedTable.rowsPerPage) {
+                    $http.post('/db/' + $scope.lastExpandedTable.name,
+                        {limit: $scope.lastExpandedTable.rowsPerPage, offset: $scope.lastExpandedTable.rows.length}
+                    ).success(function (data) {
+                        $scope.lastExpandedTable.rows = $scope.lastExpandedTable.rows.concat(data);
+                        //Сохраняем исходную таблицу
+                        //$scope.savedTable = angular.copy($scope.lastExpandedTable);
+
+                        //Получаем строки отображаемые на текущей странице
+                        $scope.rowsOnPage = getRowsOnPage($scope.lastExpandedTable.rows,
+                            $scope.lastExpandedTable.rowsPerPage,
+                            $scope.pageNumber,
+                            $scope.lastExpandedTable.rowsCount);
+                    }).error(function (error) {
+                        console.log(error);
+                    });
+                } else {
+                    //Получаем строки отображаемые на текущей странице
+                    $scope.rowsOnPage = getRowsOnPage($scope.lastExpandedTable.rows,
+                        $scope.lastExpandedTable.rowsPerPage,
+                        $scope.pageNumber,
+                        $scope.lastExpandedTable.rowsCount);
+                }
             }
         });
 

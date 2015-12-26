@@ -90,7 +90,7 @@
                             </span>
                         </div>
                     </a>
-                    <a ng-if="loggedUser().role !== 'пользователь'" class="admin-panel" href="/admin">
+                    <a ng-if="loggedUser().role !== 'пользователь'" class="admin-panel" href="/admin" hide>
                         <md-tooltip>Админпанель</md-tooltip>
                         <i class="mdi mdi-account-star mdi-24" ng-class="{'navbar-active': getSelectedIndex() == -1}"></i>
                     </a>
