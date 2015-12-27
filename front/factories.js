@@ -254,6 +254,7 @@ app.factory('getRowsOnPage', function () {
 app.factory('addEducation', function (educationObjToArr) {
     return function (edObj) {
         if (!edObj.edName) return;
+        edObj.education = edObj.education || [];
         var e = {school: {name: edObj.edName}};
         if (edObj.edConc) e.concentration = [{name: edObj.edConc}];
         if (edObj.edYear) e.year = {name: edObj.edYear};
@@ -288,6 +289,7 @@ app.factory('removeEducation', function () {
 app.factory('addWork', function (workObjToArr) {
     return function (workObj) {
         if (!workObj.woName) return;
+        workObj.work = workObj.work || [];
         var w = {employer: {name: workObj.woName}};
         if (workObj.woPosition) w.position = {name: workObj.woPosition};
         if (workObj.woStartDate) w.start_date = workObj.woStartDate;
