@@ -18,18 +18,18 @@
  *                      id          (string)  id скилла
  *
  */
-
-function arrToObj(skillArr) {
-    skillArr = angular.copy(skillArr);
-    var res = {};
-    for (var i = 0; i < skillArr.length; i++) {
-        res[skillArr[i].id] = skillArr[i];
-        delete res[skillArr[i].id].id;
-    }
-    return res;
-}
-
 app.factory('extendedSkills', function () {
+
+    function arrToObj(skillArr) {
+        skillArr = angular.copy(skillArr);
+        var res = {};
+        for (var i = 0; i < skillArr.length; i++) {
+            res[skillArr[i].id] = skillArr[i];
+            delete res[skillArr[i].id].id;
+        }
+        return res;
+    }
+
     return function (skills) {
         if (!skills) return;
         skills = arrToObj(skills);
@@ -47,7 +47,6 @@ app.factory('extendedSkills', function () {
             this.skills[id].allLeaves = [];
             this.skills[id].id = id;
             this.skills[id].exp = skills[id].exp;
-            this.skills[id].count_to_get = skills[id].count_to_get;
             this.skills[id].is_leaf = skills[id].is_leaf;
 
             for (var i = 0; i < skills[id].parents.length; i++) {
@@ -175,26 +174,10 @@ app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $loca
             skill.expanded = !skill.expanded;
         };
 
-        $scope.isInUserSkills = function (skill) {
-            for (var i in $scope.user.skills) {
-                if (skill.id === $scope.user.skills[i].id) return true;
-            }
-            return false;
-        };
-
-        $scope.isInUserNeeds = function (skill) {
-            return _.includes($scope.user.needs, skill.id);
-        };
-
         $scope.getSkillType = function (skill) {
-            if (skill.isInUserSkills) return $scope.highlightSkills ? 'skill' : null;
-            else if (skill.isInUserNeeds) return $scope.highlightNeeds? 'need' : null;
+            if (skill.need) return $scope.highlightNeeds ? 'need' : null;
+            if (skill.count) return $scope.highlightSkills ? 'skill' : null;
         };
-
-        for (var i in $scope.exs.skills) {
-            $scope.exs.skills[i].isInUserSkills = $scope.isInUserSkills($scope.exs.skills[i]);
-            $scope.exs.skills[i].isInUserNeeds = $scope.isInUserNeeds($scope.exs.skills[i]);
-        }
 
         $scope.$watch('skillTitle', function (newval, oldval) {
             if ($scope.skillTitle && $scope.filteredSkills)

@@ -79,7 +79,7 @@ function applyAllFilters(tasks, skills, users, getObjByID, chips) {
     return filteredTasks;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, setLiked, setReceived, loadTasks,
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills, loadTasks,
                                          $rootScope, $location, isLoggedIn) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
@@ -123,10 +123,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 
         var dbTasksOptions = {filters: {for_solving: true}};
         $http.post('/db/tasks', dbTasksOptions).success(function (tasks) {
-            var user = loggedUser();
-
-            setLiked(tasks, user.tasks_liked, true);
-            setReceived(tasks, user.tasks_received, true);
+            for (var i in tasks) parseSkills(tasks[i]);
 
             $scope.tasks = tasks;
             dbTasksOptions.offset = $scope.tasks.length;
@@ -158,22 +155,21 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
     });
 });
 
-app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, setLiked, setReceived,
+app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, parseSkills,
                                         $rootScope, $location, isLoggedIn) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $scope.exs = $rootScope.exs;
 
-        $http.get('db/tasks').success(function (tasks) {
-            $scope.tasks = tasks;
-            $scope.task = getObjByID($routeParams.task_id, tasks);
+        $http.post('db/tasks', {id: $routeParams.task_id}).success(function (task) {
+            task = task[0];
+            parseSkills(task);
+            $scope.task = task;
 
-            var user = loggedUser();
-            setLiked($scope.task, user.tasks_liked);
-            setReceived($scope.task, user.tasks_received);
-
-            $http.post('db/users', {ids: [$scope.task.author]}).success(function (users) {
-                $scope.author = users[0];
+            $http.post('db/users', {id: $scope.task.author}).success(function (user) {
+                user = user[0];
+                parseSkills(user, true);
+                $scope.author = user;
             });
         });
 

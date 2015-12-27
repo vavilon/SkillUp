@@ -27,7 +27,7 @@
                             <span class="task-skills-word">Умения: </span>
                         </div>
                         <div layout="row" layout-wrap flex>
-                            <skill-button ng-repeat="skillID in solution.task_skills" id="skillID" type="skill"></skill-button>
+                            <skill-button ng-repeat="skill in solution.skills" id="skill.id" type="skill" count="skill.count"></skill-button>
                         </div>
                     </div>
                     <div layout="row" layout-align="start start" flex ng-if="showExpand">

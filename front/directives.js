@@ -335,11 +335,9 @@ app.directive('scrollLoader', function() {
             events: '=',
             loadFunc: '=',
             options: '=',
-            setLiked: '=?',
-            setReceived: '=?',
             callback: '=?'
         },
-        controller: function($rootScope, $scope, loggedUser, setLiked, setReceived) {
+        controller: function($rootScope, $scope, loggedUser) {
 
             $scope.options = $scope.options || {};
             $scope.options.offset = $scope.options.offset || 0;
@@ -350,8 +348,6 @@ app.directive('scrollLoader', function() {
                     $scope.loadFunc($scope.options, function(data) {
                         if (data.length) {
                             $scope.options.offset += data.length;
-                            if ($scope.setLiked) setLiked(data, loggedUser().tasks_liked, true);
-                            if ($scope.setReceived) setReceived(data, loggedUser().tasks_received, true);
                             if ($scope.callback) $scope.callback(data);
                         }
                         else endOfData = true;
@@ -377,12 +373,12 @@ app.directive('skillButton', function($rootScope) {
             type: '@?',
             id: '=',
             exs: '=?',
-            progress: '=?'
+            count: '=?'
         },
         link: function (scope, element, attrs) {
             scope.exs = scope.exs || $rootScope.exs;
-            if (angular.isNumber(scope.progress)) {
-                var percent = Math.round(100 - (scope.progress / scope.exs.skills[scope.id].count_to_get * 100));
+            if (angular.isNumber(scope.count)) {
+                var percent = Math.floor(100 - scope.count * 100);
                 if (percent > 100) percent = 100;
                 else if (percent < 0) percent = 0;
                 element[0].children[0].style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '

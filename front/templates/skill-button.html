@@ -1,4 +1,5 @@
-<md-button class="md-raised skill-button" aria-label="skillBtn"
+<md-button class="md-raised skill-button" aria-label="skillBtn" ng-mouseenter="showCount = true" ng-mouseleave="showCount = false"
            ng-class="{'root': type === 'root', 'md-primary': type === 'skill', 'md-accent': type === 'need'}">
-    {{exs.skills[id].title}}
+    <div>{{exs.skills[id].title}}</div>
+    <div ng-if="count" class="skill-count" ng-show="showCount" layout="row" layout-align="center center">{{count | number: 2}}</div>
 </md-button>

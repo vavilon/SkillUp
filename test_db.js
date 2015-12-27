@@ -4,6 +4,10 @@
 var bcrypt = require('bcryptjs');
 var config = require(__dirname + '/config');
 var knex = require('knex')(config.get('knex'));
+
+Math.getRandomInt = function (min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; };
+Math.getRandomFloat = function (min, max) { return Math.random() * (max - min) + min; };
+
 //var bookshelf = require('bookshelf')(knex);
 //var temp;
 
@@ -100,7 +104,8 @@ knex.raw(rawTaskExpSkills).then(function (rows) {
 }).catch(function (error) {
     console.log(error);
 });*/
-var rawTask = "SELECT exp, is_approved, author, json_agg(r) as skills, approved, created, user_id IS NOT NULL as meta_exists FROM " +
+
+/*var rawTask = "SELECT exp, is_approved, author, json_agg(r) as skills, approved, created, user_id IS NOT NULL as meta_exists FROM " +
     " (SELECT skill_id, count FROM task_skills WHERE task_id = " + 287624 + ") AS r, tasks " +
     " LEFT JOIN tasks_meta AS tm ON tasks.id = tm.task_id AND tm.user_id = " + 300356 +
     " WHERE id = " + 287624 + " GROUP BY id, approved, created, meta_exists;";
@@ -111,11 +116,46 @@ knex.raw(rawTask).then(function (rows) {
     console.log(rows.rows[0]);
 }).catch(function (error) {
     console.log(error);
-});
+});*/
+
+/*knex('skills').select('id').pluck('id').then(function (skills) {
+    knex('users').select('id').pluck('id').then(function (users) {
+        var insertCount = 80000, inserted = 0;
+
+        var prevProgress = -1;
+        function insertUserSkill() {
+            var userSkill = {
+                user_id: users[Math.getRandomInt(0, users.length - 1)],
+                skill_id: skills[Math.getRandomInt(0, skills.length - 1)],
+                need: Math.getRandomInt(0, 1) === 0
+            };
+            userSkill.count = Math.getRandomFloat(0, userSkill.need ? 0.7 : 2);
+            knex('user_skills').insert(userSkill).then(function () {
+                var progress = Math.floor(inserted * 100 / insertCount);
+                if (++inserted < insertCount) {
+                    if (progress !== prevProgress) { //Оптимизация вывода
+                        console.log('User skills inserted: ' + progress + '%');
+                        console.log('\033[2A');
+                        prevProgress = progress;
+                    }
+                    insertUserSkill();
+                }
+                else console.log('All user skills inserted!')
+            }).catch(function (error) {
+                insertUserSkill();
+            });
+        }
+        console.log('Inserting user skills...');
+        insertUserSkill();
+
+    }).catch(function (error) {
+        console.log(error);
+    });
+}).catch(function (error) {
+    console.log(error);
+});*/
 
 return;
-
-Math.getRandomInt = function (min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; };
 
 //Добавить тестовых юзверей и заданий
 knex('skills').then(function(skills){
@@ -166,7 +206,7 @@ knex('skills').then(function(skills){
             nick: 'nick_' + num,
             name: 'name_' + num,
             email: 'email_' + num + '@gmail.com',
-            pswhash: hashPsw ? bcrypt.hashSync('' + num, bcrypt.genSaltSync(4)) : '1',
+            pswhash: hashPsw ? bcrypt.hashSync('' + num, bcrypt.genSaltSync(4)) : '$2a$04$cWI7zFjUcC62UYTb3rj60.l4Ag4eGCkUrQVe6xJvNv//xa4cG2kVG',
             exp: 1234
         };
 

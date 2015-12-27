@@ -6,7 +6,7 @@
             <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
         </md-button>
         <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
-        <skill-button id="skill.id" type="{{getSkillType(skill)}}" progress="skill.count || 100"></skill-button>
+        <skill-button id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"></skill-button>
     </div>
     <ul class="animate-if-skill" ng-if="skill.children && skill.expanded">
         <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">
@@ -67,7 +67,7 @@
                                 <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
                             </md-button>
                             <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
-                            <skill-button id="skill.id" type="getSkillType(skill)" progress="skill.count || 100"></skill-button>
+                            <skill-button id="skill.id" type="getSkillType(skill)" count="skill.count"></skill-button>
                         </div>
                         <ul class="animate-if-skill" ng-if="skill.expanded">
                             <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">

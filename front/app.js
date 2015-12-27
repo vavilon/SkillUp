@@ -184,8 +184,8 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 }
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
-                                         $mdToast, $rootScope, loadLoggedUser, getObjByID, setLiked, completedSkills,
-                                         setReceived, skillsProgressToIDs) {
+                                         $mdToast, $rootScope, loadLoggedUser, getObjByID, completedSkills,
+                                         skillsProgressToIDs) {
     $scope.isLoggedIn = isLoggedIn;
     $scope.registrationPath = "/registration/";
     $scope.reg = {email: '', password: ''};
@@ -266,8 +266,8 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                 count = 0;
                 for (var j in tasks[i].skills) {
                     for (var k in user.skills) {
-                        if (tasks[i].skills[j] === user.skills[k].id) {
-                            count += user.skills[k].count / $scope.exs.skills[user.skills[k].id].count_to_get;
+                        if (tasks[i].skills[j].id === user.skills[k].id) {
+                            count += user.skills[k].count < 1 ? user.skills[k].count : 1;
                             break;
                         }
                     }
@@ -309,10 +309,10 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         $scope.tasksForApproving = [];
 
         $http.post('/db/tasks', {filters: {for_solving: true, received: true}}).success(function (data) {
+            for (var i in data) parseSkills(data[i]);
             $scope.tasksReceived = data;
             $scope.calculateDifficulty(data, user);
             for (var i in $scope.tasksReceived) $scope.tasksReceived[i].received = true;
-            setLiked($scope.tasksReceived, user.tasks_liked, true);
         });
 
         $http.post('/db/tasks', {
@@ -320,23 +320,24 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             skills: skillsProgressToIDs(user.skills)
         })
             .success(function (data) {
+                for (var i in data) parseSkills(data[i]);
                 $scope.tasksRecommended = data;
                 $scope.calculateDifficulty(data, user);
-                setLiked($scope.tasksRecommended, user.tasks_liked, true);
             });
 
         $http.post('/db/solutions', {
             filters: {for_checking: true},
             skills: completedSkills(user.skills)
         }).success(function (data) {
+            for (var i in data) parseSkills(data[i]);
             $scope.solutionsForChecking = data;
-            setLiked($scope.solutionsForChecking, user.solutions_liked, true);
         });
 
         $http.post('/db/tasks', {
             filters: {for_approving: true},
             skills: completedSkills(user.skills)
         }).success(function (data) {
+            for (var i in data) parseSkills(data[i]);
             $scope.tasksForApproving = data;
         });
 

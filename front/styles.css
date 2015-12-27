@@ -300,13 +300,24 @@ pre {
     white-space: normal !important;
     padding: 1px 3px 2px 3px;
     margin: 0 0 5px 5px;
-    min-width: 0;
+    min-width: 35px;
     min-height: 0;
     line-height: normal;
 }
 
 .skill-button.root {
     background-color: #FFEB3B !important;
+}
+
+.skill-count {
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-radius: 2px;
+    color: white;
+    padding: 0 3px 0 3px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.86);
 }
 
 .expand-button {

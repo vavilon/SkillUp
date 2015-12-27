@@ -10,7 +10,7 @@ app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
     return function(callback) {
         $http.get('/logged_user').success(function (data) {
             $rootScope.loggedUser = data[0];
-            if (data) $rootScope.loggedUser.skills = parseSkills($rootScope.loggedUser.skills);
+            if (data) parseSkills($rootScope.loggedUser, true);
             callback && callback(data);
         });
     };
@@ -18,9 +18,14 @@ app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
 
 app.factory('appendProgressToExs', function($rootScope) {
     return function () {
-        var progress = $rootScope.loggedUser.skills, skills = $rootScope.exs.skills;
-        for (var i in progress) {
-            skills[progress[i].id].count = progress[i].count;
+        var userSkills = $rootScope.loggedUser.skills, userNeeds = $rootScope.loggedUser.needs;
+        var skills = $rootScope.exs.skills;
+        for (var i in userSkills) {
+            skills[userSkills[i].id].count = userSkills[i].count;
+        }
+        for (var i in userNeeds) {
+            skills[userNeeds[i].id].count = userNeeds[i].count;
+            skills[userNeeds[i].id].need = true;
         }
     };
 });
@@ -89,17 +94,31 @@ app.factory('workObjToArr', function($filter) {
     };
 });
 
+/**
+ *  Принимает объект, содержащий поле skills и модифицирует этот объект, превращая строку skills в массив объектов
+ *  типа {id: int, count: float}, и добавляет needs, если второй параметр true.
+ *  Пример строки skills: {"(39,0.387448,t)","(89,1,f)","(44,0.514484,t)","(49,0,)"}
+ *
+ * @param {object}  obj            Объект, содержащий поле skills
+ * @param {boolean} withNeeds      Создавать ли в obj поле needs
+ */
 app.factory('parseSkills', function() {
-    return function(skills) {
-        if (!skills) return;
-        skills = skills.replace(/{/g, '[');
-        skills = skills.replace(/}/g, ']');
-        skills = skills.replace(/"\(/g, '{"id": "');
-        skills = skills.replace(/\)"/g, '}');
-        skills = skills.replace(/},{/g, '} , {');
-        skills = skills.replace(/(\S),/g, '$1", "count": ');
+    return function(obj, withNeeds) {
+        if (!obj.skills) return;
+        var re = /"\((\d+),(\d+\.?\d*),?(.)?\)"/g;
+        var m;
+        var skills = [], needs = [];
         try {
-            return JSON.parse(skills);
+            while ((m = re.exec(obj.skills)) !== null) {
+                if (m.index === re.lastIndex) {
+                    re.lastIndex++;
+                }
+                var skill = {id: parseInt(m[1]), count: parseFloat(m[2])};
+                if (withNeeds && m[3] === 't') needs.push(skill);
+                else skills.push(skill);
+            }
+            obj.skills = skills;
+            if (withNeeds) obj.needs = needs;
         }
         catch (e) { }
     };
@@ -135,18 +154,6 @@ app.factory('setPropertyFuzzy', function (setPropertyComparingArrays, setPropert
     return function(newPropName, setArray, compArray, multiple, compPropName, condition) {
         if (multiple) setPropertyComparingArrays(compPropName || 'id', newPropName, true, setArray, compArray, condition);
         else setPropertyComparingObjArr(compPropName || 'id', newPropName, true, setArray, compArray, condition);
-    };
-});
-
-app.factory('setLiked', function(setPropertyFuzzy) {
-    return function(setArray, compArray, multiple, compPropName) {
-        setPropertyFuzzy('liked', setArray, compArray, multiple, compPropName);
-    };
-});
-
-app.factory('setReceived', function(setPropertyFuzzy) {
-    return function(setArray, compArray, multiple, compPropName) {
-        setPropertyFuzzy('received', setArray, compArray, multiple, compPropName);
     };
 });
 
@@ -197,11 +204,11 @@ app.factory('loadSolutions', function(loadFunc) {
     };
 });
 
-app.factory('completedSkills', function ($rootScope) {
+app.factory('completedSkills', function () {
     return function (skillsProgress) {
         var res = [];
         for (var i in skillsProgress) {
-            if (skillsProgress[i].count >= $rootScope.exs.skills[skillsProgress[i].id].count_to_get)
+            if (skillsProgress[i].count >= 1)
                 res.push(skillsProgress[i].id);
         }
         return res;

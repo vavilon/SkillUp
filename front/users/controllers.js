@@ -16,7 +16,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
             $scope.lastExpandedUser = $scope.users[0];
 
             for (var i in $scope.users) {
-                $scope.users[i].skills = parseSkills($scope.users[i].skills);
+                parseSkills($scope.users[i], true);
             }
         });
 
@@ -38,7 +38,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 
         $scope.scrollCallback = function (data) {
             for (var i in data) {
-                data[i].skills = parseSkills(data[i].skills);
+                parseSkills(data[i], true);
             }
             $scope.users = $scope.users.concat(data);
         };
@@ -46,7 +46,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationObjToArr, workObjToArr, loadLoggedUser,
-                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, setLiked, setReceived,
+                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope,
                                         setNotReceivable, isLoggedIn, $location, addEducation, removeEducation,
                                         addWork, removeWork) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
@@ -76,13 +76,15 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
         $scope.exs = $rootScope.exs;
 
         var dbUsersOptions = {id: $routeParams.user_id};
-        $http.post('/db/users', dbUsersOptions).success(function (data) {
-            if (!data || !data.length) return;
-            $scope.user = data[0];
 
+        $scope.loadProfile = function (data) {
+            if (!data) $scope.user = loggedUser();
+            else {
+                parseSkills(data[0], true);
+                $scope.user = data[0];
+            }
+            console.log($scope.user.skills);
             $scope.ownProfile = (loggedUser().id === $scope.user.id);
-
-            $scope.user.skills = parseSkills($scope.user.skills);
 
             if ($scope.user.education) {
                 $scope.user.education = JSON.parse($scope.user.education);
@@ -178,8 +180,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 var dbTasksDoneOptions = {ids: $scope.user.tasks_done};
                 $http.post('/db/tasks', dbTasksDoneOptions).success(function (tasksDone) {
                     $scope.tasksDone = tasksDone;
-                    setLiked($scope.tasksDone, loggedUser().tasks_liked, true);
-                    setReceived($scope.tasksDone, loggedUser().tasks_received, true);
                     if ($scope.ownProfile) for (var i in $scope.tasksDone) $scope.tasksDone[i].notReceivable = true;
                     else {
                         setNotReceivable($scope.tasksDone, loggedUser().tasks_created, true);
@@ -198,7 +198,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 var dbSolutionsCheckedOptions = {ids: $scope.user.solutions_checked};
                 $http.post('/db/solutions', dbSolutionsCheckedOptions).success(function (solutionsChecked) {
                     $scope.solutionsChecked = solutionsChecked;
-                    setLiked($scope.solutionsChecked, loggedUser().solutions_liked, true);
                 });
             }
 
@@ -206,8 +205,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 var dbTasksApprovedOptions = {ids: $scope.user.tasks_approved};
                 $http.post('/db/tasks', dbTasksApprovedOptions).success(function (tasksApproved) {
                     $scope.tasksApproved = tasksApproved;
-                    setLiked($scope.tasksApproved, loggedUser().tasks_liked, true);
-                    setReceived($scope.tasksApproved, loggedUser().tasks_received, true);
                     for (var i in $scope.tasksApproved) {
                         if (!$scope.tasksApproved[i].is_approved) {
                             $scope.tasksApproved[i].notReceivable = true;
@@ -228,15 +225,18 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 var dbTasksCreatedOptions = {ids: $scope.user.tasks_created};
                 $http.post('/db/tasks', dbTasksCreatedOptions).success(function (tasksCreated) {
                     $scope.tasksCreated = tasksCreated;
-                    setLiked($scope.tasksCreated, $scope.user.tasks_liked, true);
                     if (!$scope.ownProfile) {
-                        setReceived($scope.tasksCreated, $scope.user.tasks_received, true);
                         setNotReceivable($scope.tasksCreated, loggedUser().tasks_done, true);
                     }
                     else for (var i in $scope.tasksCreated) $scope.tasksCreated[i].notReceivable = true;
                 });
             }
-        });
+        };
+
+        if (!loggedUser()) return;
+        if (loggedUser().id != $routeParams.user_id)
+            $http.post('/db/users', dbUsersOptions).success($scope.loadProfile);
+        else $scope.loadProfile();
     });
 });
 
@@ -505,7 +505,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                                     }
                                 }
                             }
-                            $http.post('/append_needs', dataNeeds).success(function () {
+                            $http.post('/needs', dataNeeds).success(function () {
                                 $location.path('/users/' + user.id);
                             });
                         };
