@@ -16,7 +16,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
             $scope.lastExpandedUser = $scope.users[0];
 
             for (var i in $scope.users) {
-                $scope.users[i].skills = parseSkills($scope.users[i].skills);
+                parseSkills($scope.users[i], true);
             }
         });
 
@@ -38,7 +38,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 
         $scope.scrollCallback = function (data) {
             for (var i in data) {
-                data[i].skills = parseSkills(data[i].skills);
+                parseSkills(data[i], true);
             }
             $scope.users = $scope.users.concat(data);
         };
@@ -80,10 +80,10 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
         $scope.loadProfile = function (data) {
             if (!data) $scope.user = loggedUser();
             else {
-                data[0].skills = parseSkills(data[0].skills);
+                parseSkills(data[0], true);
                 $scope.user = data[0];
             }
-
+            console.log($scope.user.skills);
             $scope.ownProfile = (loggedUser().id === $scope.user.id);
 
             if ($scope.user.education) {

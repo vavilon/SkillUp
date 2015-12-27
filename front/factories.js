@@ -10,7 +10,7 @@ app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
     return function(callback) {
         $http.get('/logged_user').success(function (data) {
             $rootScope.loggedUser = data[0];
-            if (data) $rootScope.loggedUser.skills = parseSkills($rootScope.loggedUser.skills);
+            if (data) parseSkills($rootScope.loggedUser, true);
             callback && callback(data);
         });
     };
@@ -18,9 +18,14 @@ app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
 
 app.factory('appendProgressToExs', function($rootScope) {
     return function () {
-        var progress = $rootScope.loggedUser.skills, skills = $rootScope.exs.skills;
-        for (var i in progress) {
-            skills[progress[i].id].count = progress[i].count;
+        var userSkills = $rootScope.loggedUser.skills, userNeeds = $rootScope.loggedUser.needs;
+        var skills = $rootScope.exs.skills;
+        for (var i in userSkills) {
+            skills[userSkills[i].id].count = userSkills[i].count;
+        }
+        for (var i in userNeeds) {
+            skills[userNeeds[i].id].count = userNeeds[i].count;
+            skills[userNeeds[i].id].need = true;
         }
     };
 });
@@ -89,21 +94,31 @@ app.factory('workObjToArr', function($filter) {
     };
 });
 
-//{"(39,0.387448,t)","(89,1.98737,f)","(44,0.514484,t)"} - example
+/**
+ *  Принимает объект, содержащий поле skills и модифицирует этот объект, превращая строку skills в массив объектов
+ *  типа {id: int, count: float}, и добавляет needs, если второй параметр true.
+ *  Пример строки skills: {"(39,0.387448,t)","(89,1,f)","(44,0.514484,t)","(49,0,)"}
+ *
+ * @param {object}  obj            Объект, содержащий поле skills
+ * @param {boolean} withNeeds      Создавать ли в obj поле needs
+ */
 app.factory('parseSkills', function() {
-    return function(skills) {
-        if (!skills) return;
+    return function(obj, withNeeds) {
+        if (!obj.skills) return;
         var re = /"\((\d+),(\d+\.?\d*),?(.)?\)"/g;
         var m;
-        var result = [];
+        var skills = [], needs = [];
         try {
-            while ((m = re.exec(skills)) !== null) {
+            while ((m = re.exec(obj.skills)) !== null) {
                 if (m.index === re.lastIndex) {
                     re.lastIndex++;
                 }
-                result.push({id: parseInt(m[1]), count: parseFloat(m[2]), need: m[3] === 't'});
+                var skill = {id: parseInt(m[1]), count: parseFloat(m[2])};
+                if (withNeeds && m[3] === 't') needs.push(skill);
+                else skills.push(skill);
             }
-            return result;
+            obj.skills = skills;
+            if (withNeeds) obj.needs = needs;
         }
         catch (e) { }
     };

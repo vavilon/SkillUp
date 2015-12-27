@@ -123,7 +123,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 
         var dbTasksOptions = {filters: {for_solving: true}};
         $http.post('/db/tasks', dbTasksOptions).success(function (tasks) {
-            for (var i in tasks) tasks[i].skills = parseSkills(tasks[i].skills);
+            for (var i in tasks) parseSkills(tasks[i]);
 
             $scope.tasks = tasks;
             dbTasksOptions.offset = $scope.tasks.length;
@@ -163,12 +163,12 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
 
         $http.post('db/tasks', {id: $routeParams.task_id}).success(function (task) {
             task = task[0];
-            task.skills = parseSkills(task.skills);
+            parseSkills(task);
             $scope.task = task;
 
             $http.post('db/users', {id: $scope.task.author}).success(function (user) {
                 user = user[0];
-                user.skills = parseSkills(user.skills);
+                parseSkills(user, true);
                 $scope.author = user;
             });
         });

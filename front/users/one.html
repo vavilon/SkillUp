@@ -39,8 +39,8 @@
                     <h4 style="margin: 0px; margin-bottom: 5px;">Умею</h4>
                 </div>
                 <div>
-                    <skill-button ng-repeat="skillProgress in user.skills" id="skillProgress.id" type="skill"
-                            progress="skillProgress.count"></skill-button>
+                    <skill-button ng-repeat="skill in user.skills" id="skill.id" type="skill"
+                            count="skill.count"></skill-button>
                 </div>
             </div>
 
@@ -50,7 +50,8 @@
                     <h4 style="margin: 0px; margin-bottom: 5px;">Хочу</h4>
                 </div>
                 <div>
-                    <skill-button ng-repeat="need in user.needs" id="need" type="need"></skill-button>
+                    <skill-button ng-repeat="need in user.needs" id="need.id" type="need"
+                                  count="need.count"></skill-button>
                 </div>
             </div>
 

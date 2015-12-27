@@ -309,7 +309,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         $scope.tasksForApproving = [];
 
         $http.post('/db/tasks', {filters: {for_solving: true, received: true}}).success(function (data) {
-            for (var i in data) data[i].skills = parseSkills(data[i].skills);
+            for (var i in data) parseSkills(data[i]);
             $scope.tasksReceived = data;
             $scope.calculateDifficulty(data, user);
             for (var i in $scope.tasksReceived) $scope.tasksReceived[i].received = true;
@@ -320,7 +320,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             skills: skillsProgressToIDs(user.skills)
         })
             .success(function (data) {
-                for (var i in data) data[i].skills = parseSkills(data[i].skills);
+                for (var i in data) parseSkills(data[i]);
                 $scope.tasksRecommended = data;
                 $scope.calculateDifficulty(data, user);
             });
@@ -329,7 +329,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             filters: {for_checking: true},
             skills: completedSkills(user.skills)
         }).success(function (data) {
-            for (var i in data) data[i].skills = parseSkills(data[i].skills);
+            for (var i in data) parseSkills(data[i]);
             $scope.solutionsForChecking = data;
         });
 
@@ -337,7 +337,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             filters: {for_approving: true},
             skills: completedSkills(user.skills)
         }).success(function (data) {
-            for (var i in data) data[i].skills = parseSkills(data[i].skills);
+            for (var i in data) parseSkills(data[i]);
             $scope.tasksForApproving = data;
         });
 
