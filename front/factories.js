@@ -115,7 +115,7 @@ app.factory('parseSkills', function() {
                 }
                 var skill = {id: parseInt(m[1]), count: parseFloat(m[2])};
                 if (withNeeds && m[3] === 't') needs.push(skill);
-                else skills.push(skill);
+                else if (skill.count > 0) skills.push(skill);
             }
             obj.skills = skills;
             if (withNeeds) obj.needs = needs;
