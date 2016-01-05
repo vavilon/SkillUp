@@ -69,8 +69,7 @@ module.exports = function (knex, userHasSkills) {
                                 //Начислим експу подтвердившим
                                 var exp = (approver.titleCorrect ? task.exp / 4 : 0) + (approver.skillsCorrect ? task.exp / 4 : 0)
                                     + (approver.descCorrect ? task.exp / 4 : 0) + (approver.linksCorrect ? task.exp / 4 : 0);
-                                rawUpdateExp += "(" + approver.user_id + "," + exp
-                                    + (i == approvers.length - 1 ? ")" : "),");
+                                rawUpdateExp += "(" + approver.user_id + "," + exp + "),";
 
                                 //Начислим скиллы подтвердившим
                                 for (var j in task.skills) {
@@ -78,10 +77,12 @@ module.exports = function (knex, userHasSkills) {
                                     var skillCount = (approver.titleCorrect ? skill.count / 4 : 0) + (approver.skillsCorrect ? skill.count / 4 : 0)
                                         + (approver.descCorrect ? skill.count / 4 : 0) + (approver.linksCorrect ? skill.count / 4 : 0);
                                     rawUpdateSkills += "(" + approver.user_id + "," + skill.skill_id + ","
-                                        + skillCount * GLOBAL.APPROVE_SKILLS_MULTIPLIER + (i == approvers.length - 1 ? ")" : "),");
+                                        + skillCount * GLOBAL.APPROVE_SKILLS_MULTIPLIER + "),";
                                 }
                             }
 
+                            rawUpdateExp = rawUpdateExp.slice(0, -1); //удаляем последнюю запятую
+                            rawUpdateSkills = rawUpdateSkills.slice(0, -1); //удаляем последнюю запятую
                             rawUpdateExp += " ) AS map(id,exp) WHERE u.id = map.id;";
                             rawUpdateSkills += " ) AS map(user_id,skill_id,count) WHERE us.user_id = map.user_id AND us.skill_id = map.skill_id;";
 

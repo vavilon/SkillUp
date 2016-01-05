@@ -46,15 +46,15 @@ module.exports = function(knex, userHasSkills) {
                             for (var i in solutionCheckers) {
                                 //Если оценка проверяющего совпадает с большинством - начислим ему експу и скиллы
                                 if (solutionCheckers[i].checked_correct === correct) {
-                                    rawUpdateExp += "(" + solutionCheckers[i].user_id + "," + task.exp
-                                        + (i == solutionCheckers.length - 1 ? ")" : "),");
+                                    rawUpdateExp += "(" + solutionCheckers[i].user_id + "," + task.exp + "),";
 
                                     for (var j in task.skills) rawUpdateSkills += "(" + solutionCheckers[i].user_id + ","
-                                        + task.skills[j].skill_id + "," + task.skills[j].count * GLOBAL.CHECK_SKILLS_MULTIPLIER
-                                        + (i == solutionCheckers.length - 1 ? ")" : "),");
+                                        + task.skills[j].skill_id + "," + task.skills[j].count * GLOBAL.CHECK_SKILLS_MULTIPLIER + "),";
                                 }
                             }
 
+                            rawUpdateExp = rawUpdateExp.slice(0, -1); //удаляем последнюю запятую
+                            rawUpdateSkills = rawUpdateSkills.slice(0, -1); //удаляем последнюю запятую
                             rawUpdateExp += " ) AS map(id,exp) WHERE u.id = map.id;";
                             rawUpdateSkills += " ) AS map(user_id,skill_id,count) WHERE us.user_id = map.user_id AND us.skill_id = map.skill_id;";
 
@@ -104,7 +104,7 @@ module.exports = function(knex, userHasSkills) {
 
     return function (req, res, next) {
         if (req.isAuthenticated()) {
-            knex('solutions').where('id', '=', req.body.solution_id).select('is_correct', 'task_id', 'user_id')
+            knex('solutions').where('id', '=', req.body.solution_id).select('is_correct', 'solutions.task_id', 'solutions.user_id')
                 .leftJoin('solutions_meta as sm', {'solutions.id': 'sm.solution_id', 'sm.user_id': req.user.id})
                 .select('checked_correct', knex.raw('solution_id IS NOT NULL as meta_exists'))
                 .then(function(solution) {
