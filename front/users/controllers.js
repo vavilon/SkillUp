@@ -83,7 +83,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 parseSkills(data[0], true);
                 $scope.user = data[0];
             }
-            console.log($scope.user.skills);
             $scope.ownProfile = (loggedUser().id === $scope.user.id);
 
             if ($scope.user.education) {

@@ -300,7 +300,7 @@ pre {
     white-space: normal !important;
     padding: 1px 3px 2px 3px;
     margin: 0 0 5px 5px;
-    min-width: 35px;
+    min-width: 50px;
     min-height: 0;
     line-height: normal;
 }
@@ -310,14 +310,30 @@ pre {
 }
 
 .skill-count {
-    position: absolute;
     right: 0;
     top: 0;
     border-radius: 2px;
-    color: white;
     padding: 0 3px 0 3px;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.86);
+}
+
+.skill-count.ng-enter, .skill-count.ng-leave {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.3s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.3s;
+}
+
+.skill-count.ng-enter,
+.skill-count.ng-leave.ng-leave-active {
+    height: auto;
+    max-height: 0;
+    opacity: 0;
+}
+
+.skill-count.ng-leave,
+.skill-count.ng-enter.ng-enter-active {
+    display: block !important;
+    max-height: 20px;
+    overflow: hidden;
+    opacity: 1;
 }
 
 .expand-button {
