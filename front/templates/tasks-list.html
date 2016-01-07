@@ -115,7 +115,7 @@
                         <like-button ng-if="showLike" type="task" id="task.id" likes="task.likes"
                                      liked="task.liked"
                                      style="margin-right: 25px;"></like-button>
-                        <receive-button ng-if="showReceive" id="task.id" count="task.participants.length"
+                        <receive-button ng-if="showReceive" id="task.id" count="task.participants"
                                         received="task.received" disabled="task.notReceivable"
                                         callback="receiveCallback"></receive-button>
                     </div>

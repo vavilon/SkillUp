@@ -2,7 +2,6 @@
 module.exports = function(knex, userHasSkills){
     function callback (exp, req, res, next) {
         //Вставляем новое задание
-        console.log(req.body);
         knex('tasks').returning('id').insert({
             title: req.body.title,
             description: req.body.description,
