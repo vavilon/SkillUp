@@ -148,8 +148,9 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
             $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
         });
 
-        $scope.scrollCallback = function (data) {
-            $scope.tasks = $scope.tasks.concat(data);
+        $scope.scrollCallback = function (newTasks) {
+            for (var i in newTasks) parseSkills(newTasks[i]);
+            $scope.tasks = $scope.tasks.concat(newTasks);
             $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
         };
     });

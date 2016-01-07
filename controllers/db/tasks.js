@@ -28,7 +28,7 @@ module.exports = function(knex, req, res, next) {
         if (req.body.filters.liked === true) q.andWhere('liked', true);
         else if (req.body.filters.liked === false) q.whereNull('liked');
     }
-    q.limit(req.body.limit > 100 ? 20 : req.body.limit).offset(req.body.offset || 0);
+    q.limit(req.body.limit > 100 ? 20 : req.body.limit || 20).offset(req.body.offset || 0);
 
     q.then(function(rows) {
         if (!rows) res.end();

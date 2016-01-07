@@ -2,7 +2,7 @@
 <div layout="row" flex style="min-height: calc(100vh - 64px);">
 
     <scroll-loader events="'allTasksScrolled'" load-func="scrollWrap.loadFunc" options="scrollWrap.options"
-                   set-liked="true" set-received="true" callback="scrollWrap.callback"></scroll-loader>
+                   callback="scrollWrap.callback"></scroll-loader>
 
     <div class="md-whiteframe-z2" flex="20" style="padding: 16px; z-index: 1; background-color: #FAFAFA;">
         <md-chips ng-model="chips.selectedTasks" md-autocomplete-snap md-require-match>

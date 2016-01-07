@@ -131,7 +131,7 @@ module.exports = function (knex, userHasSkills) {
                             if (!userHasSkills(userSkills, task.skills)) {
                                 res.end();
                             }
-                            else callback(task[0], req, res, next);
+                            else callback(task, req, res, next);
                         }).catch(function (error) {
                         console.log(error);
                         res.end();
