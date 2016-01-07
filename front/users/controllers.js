@@ -499,7 +499,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                             for (var i in $scope.chips.selectedSkills) {
                                 for (var j in $scope.skills) {
                                     if ($scope.chips.selectedSkills[i] === $scope.skills[j].title) {
-                                        dataNeeds.needs.push($scope.skills[j].id);
+                                        dataNeeds.needs.push($scope.skills[j].skill_id);
                                         break;
                                     }
                                 }

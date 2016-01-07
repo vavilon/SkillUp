@@ -50,7 +50,7 @@
                  md-swipe-left="next()"
                  md-swipe-right="previous()">
                 <md-content style="padding: 20px; width: 100%">
-                    <skill-button ng-repeat="skill in task.skills" id="skill.id" type="skill"></skill-button>
+                    <skill-button ng-repeat="skill in task.skills" id="skill.skill_id" type="skill"></skill-button>
                 </md-content>
                 <div class="tab-content"></div>
             </div>
@@ -77,7 +77,7 @@
                     </div>
                     <div ng-if="author.skills.length">
                         <h5 style="margin-bottom: 10px;">Умею: </h5>
-                        <skill-button ng-repeat="skill in author.skills" id="skill.id" type="skill"></skill-button>
+                        <skill-button ng-repeat="skill in author.skills" id="skill.skill_id" type="skill"></skill-button>
                     </div>
                     <div layout="row">
                         <div ng-if="author.tasks_received.length" flex>

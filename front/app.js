@@ -185,7 +185,7 @@ function LoginDialogController($scope, $mdDialog, $rootScope) {
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
                                          $mdToast, $rootScope, loadLoggedUser, getObjByID, completedSkills,
-                                         skillsProgressToIDs) {
+                                         skillsToIDs, $mdSidenav) {
     $scope.isLoggedIn = isLoggedIn;
     $scope.registrationPath = "/registration/";
     $scope.reg = {email: '', password: ''};
@@ -223,42 +223,6 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
         $scope.exs = $rootScope.exs;
 
-        $scope.chips = {skillsTitles: [], skillsTitlesFiltered: [], selectedSkills: []};
-
-        $scope.chips.filteredSkills = function () {
-            var str = angular.lowercase($scope.chips.searchTextSkills);
-            var arr = [];
-            for (var i in $scope.chips.skillsTitlesFiltered) {
-                if (angular.lowercase($scope.chips.skillsTitlesFiltered[i]).indexOf(str) !== -1)
-                    arr.push($scope.chips.skillsTitlesFiltered[i]);
-            }
-            return arr;
-        };
-
-        $scope.skillsTitles = [];
-
-        for (var i in $scope.exs.skills) {
-            $scope.chips.skillsTitles.push($scope.exs.skills[i].title);
-        }
-
-        $scope.$watchCollection('chips.selectedSkills', function (newVal) {
-            if (newVal.length === 0) {
-                $scope.chips.skillsTitlesFiltered = $scope.chips.skillsTitles;
-                return;
-            }
-            $scope.chips.skillsTitlesFiltered = [];
-            var finded = false;
-            for (var i in $scope.chips.skillsTitles) {
-                finded = false;
-                for (var j in newVal) {
-                    if (newVal[j] === $scope.chips.skillsTitles[i]) {
-                        finded = true;
-                        break;
-                    }
-                }
-                if (!finded) $scope.chips.skillsTitlesFiltered.push($scope.chips.skillsTitles[i]);
-            }
-        });
 
         $scope.calculateDifficulty = function (tasks, user) {
             var count = 0;
@@ -266,7 +230,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                 count = 0;
                 for (var j in tasks[i].skills) {
                     for (var k in user.skills) {
-                        if (tasks[i].skills[j].id === user.skills[k].id) {
+                        if (tasks[i].skills[j].skill_id === user.skills[k].skill_id) {
                             count += user.skills[k].count < 1 ? user.skills[k].count : 1;
                             break;
                         }
@@ -289,9 +253,9 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             var el = arr.splice(index, 1)[0];
             el.expanded = false;
             if (arrOther === $scope.tasksRecommended) {
-                for (var i in user.skills) {
+                for (var i in $scope.user.skills) {
                     for (var j in el.skills) {
-                        if (user.skills[i].id === el.skills[j]) {
+                        if ($scope.user.skills[i].skill_id === el.skills[j]) {
                             arrOther.push(el);
                             return;
                         }
@@ -301,7 +265,8 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             else arrOther.push(el);
         };
 
-        var user = loggedUser();
+        $scope.user = loggedUser();
+        $scope.user.completedSkills = completedSkills($scope.user.skills);
 
         $scope.tasksReceived = [];
         $scope.tasksRecommended = [];
@@ -311,23 +276,23 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         $http.post('/db/tasks', {filters: {for_solving: true, received: true}}).success(function (data) {
             for (var i in data) parseSkills(data[i]);
             $scope.tasksReceived = data;
-            $scope.calculateDifficulty(data, user);
+            $scope.calculateDifficulty(data, $scope.user);
             for (var i in $scope.tasksReceived) $scope.tasksReceived[i].received = true;
         });
 
         $http.post('/db/tasks', {
             filters: {for_solving: true, received: false},
-            skills: skillsProgressToIDs(user.skills)
+            skills: skillsToIDs($scope.user.skills)
         })
             .success(function (data) {
                 for (var i in data) parseSkills(data[i]);
                 $scope.tasksRecommended = data;
-                $scope.calculateDifficulty(data, user);
+                $scope.calculateDifficulty(data, $scope.user);
             });
 
         $http.post('/db/solutions', {
             filters: {for_checking: true},
-            skills: completedSkills(user.skills)
+            skills: skillsToIDs($scope.user.completedSkills)
         }).success(function (data) {
             for (var i in data) parseSkills(data[i]);
             $scope.solutionsForChecking = data;
@@ -335,7 +300,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
         $http.post('/db/tasks', {
             filters: {for_approving: true},
-            skills: completedSkills(user.skills)
+            skills: skillsToIDs($scope.user.completedSkills)
         }).success(function (data) {
             for (var i in data) parseSkills(data[i]);
             $scope.tasksForApproving = data;
@@ -347,13 +312,13 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         $scope.selectedTab = 0;
 
         $scope.next = function () {
-            $scope.data.selectedIndex = Math.min($scope.data.selectedIndex + 1, $scope.tooltips.length - 1);
+            if ($scope.selectedTab < 3) $scope.selectedTab++;
         };
         $scope.previous = function () {
-            $scope.data.selectedIndex = Math.max($scope.data.selectedIndex - 1, 0);
+            if ($scope.selectedTab > 0) $scope.selectedTab--;
         };
 
-        $scope.sendTask = {name: '', description: '', links: [], link: ''};
+        $scope.sendTask = {title: '', description: '', links: [], link: '', skills: []};
 
         $scope.addLink = function () {
             if (!$scope.sendTask.link) {
@@ -372,45 +337,48 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             $scope.sendTask.links.splice(index, 1);
         };
 
+        $scope.addSkill = function(skill) {
+            var s = {skill_id: skill.skill_id, count: 0.5};
+            $scope.sendTask.skills.push(s);
+            $scope.user.completedSkills.splice($scope.user.completedSkills.indexOf(skill), 1);
+        };
+
+        $scope.removeSkill = function(skill_id, count) {
+            for (var i in $scope.sendTask.skills)
+                if ($scope.sendTask.skills[i].skill_id == skill_id) {
+                    $scope.sendTask.skills.splice(i, 1);
+                    break;
+                }
+            $scope.user.completedSkills.push({skill_id: skill_id, title: $rootScope.exs.skills[skill_id].title});
+        };
+
+        $scope.showSidenavSkills = function()
+        {
+            $mdSidenav('right').toggle()
+                .then(function () {
+
+                });
+        };
+
         $scope.createTask = function () {
-            if ($scope.sendTask.name.length < 10) return;
+            if ($scope.sendTask.title.length < 10) return;
             if ($scope.sendTask.description.length < 30) return;
-            if ($scope.chips.selectedSkills.length === 0) {
+            if (!$scope.sendTask.skills.length) {
                 $scope.showToast('Прикрепите умения к заданию!');
                 return;
             }
-            if ($scope.sendTask.links.length === 0) {
+            if (!$scope.sendTask.links.length) {
                 $scope.showToast('Добавьте ссылки на учебные материалы!');
                 return;
             }
-            for (var i in $scope.tasksObj) {
-                if ($scope.sendTask.name === $scope.tasksObj[i].title) {
-                    $scope.showToast('Задание с таким названием уже существует!');
-                    return;
-                }
-            }
-            var obj = {
-                title: $scope.sendTask.name, description: $scope.sendTask.description, links: $scope.sendTask.links,
-                skills: []
-            };
-            for (var i in $scope.chips.selectedSkills) {
-                for (var j in $scope.exs.skills) {
-                    if ($scope.chips.selectedSkills[i] === $scope.exs.skills[j].title) {
-                        obj.skills.push(j);
-                        break;
-                    }
-                }
-            }
-            $http.post('/create_task', obj).success(function (data) {
+            $http.post('/create_task', $scope.sendTask).success(function (data) {
                 if (!data) {
-                    $scope.showToast('Ваших умений недостаточно, чтобы создать такое задание!');
+                    $scope.showToast('Ошибка при создании задания! Попробуйте еще раз...');
                     return;
                 }
 
                 $scope.showToast('Задание успешно создано!', '#toastSuccess');
-                $scope.sendTask = {name: '', description: '', links: [], link: ''};
-                $scope.chips.skillsTitlesFiltered = [];
-                $scope.chips.selectedSkills = [];
+                $scope.sendTask = {title: '', description: '', links: [], link: '', skills: []};
 
                 loadLoggedUser();
             });

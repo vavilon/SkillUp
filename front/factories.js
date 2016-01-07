@@ -21,11 +21,11 @@ app.factory('appendProgressToExs', function($rootScope) {
         var userSkills = $rootScope.loggedUser.skills, userNeeds = $rootScope.loggedUser.needs;
         var skills = $rootScope.exs.skills;
         for (var i in userSkills) {
-            skills[userSkills[i].id].count = userSkills[i].count;
+            skills[userSkills[i].skill_id].count = userSkills[i].count;
         }
         for (var i in userNeeds) {
-            skills[userNeeds[i].id].count = userNeeds[i].count;
-            skills[userNeeds[i].id].need = true;
+            skills[userNeeds[i].skill_id].count = userNeeds[i].count;
+            skills[userNeeds[i].skill_id].need = true;
         }
     };
 });
@@ -96,7 +96,7 @@ app.factory('workObjToArr', function($filter) {
 
 /**
  *  Принимает объект, содержащий поле skills и модифицирует этот объект, превращая строку skills в массив объектов
- *  типа {id: int, count: float}, и добавляет needs, если второй параметр true.
+ *  типа {skill_id: int, count: float}, и добавляет needs, если второй параметр true.
  *  Пример строки skills: {"(39,0.387448,t)","(89,1,f)","(44,0.514484,t)","(49,0,)"}
  *
  * @param {object}  obj            Объект, содержащий поле skills
@@ -113,7 +113,7 @@ app.factory('parseSkills', function() {
                 if (m.index === re.lastIndex) {
                     re.lastIndex++;
                 }
-                var skill = {id: parseInt(m[1]), count: parseFloat(m[2])};
+                var skill = {skill_id: parseInt(m[1]), count: parseFloat(m[2])};
                 if (withNeeds && m[3] === 't') needs.push(skill);
                 else if (skill.count > 0) skills.push(skill);
             }
@@ -163,11 +163,11 @@ app.factory('setNotReceivable', function(setPropertyFuzzy) {
     };
 });
 
-app.factory('skillsProgressToIDs', function () {
+app.factory('skillsToIDs', function () {
     return function(skillsProgress) {
         var res = [];
         for (var i in skillsProgress) {
-            res.push(skillsProgress[i].id);
+            res.push(skillsProgress[i].skill_id);
         }
         return res;
     };
@@ -204,12 +204,13 @@ app.factory('loadSolutions', function(loadFunc) {
     };
 });
 
-app.factory('completedSkills', function () {
+app.factory('completedSkills', function ($rootScope) {
     return function (skillsProgress) {
         var res = [];
         for (var i in skillsProgress) {
             if (skillsProgress[i].count >= 1)
-                res.push(skillsProgress[i].id);
+                res.push({skill_id: skillsProgress[i].skill_id, title: $rootScope.exs.skills[skillsProgress[i].skill_id].title,
+                    count: skillsProgress[i].count});
         }
         return res;
     };

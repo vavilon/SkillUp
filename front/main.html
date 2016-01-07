@@ -22,7 +22,7 @@
                 </md-tab>
             </md-tabs>
 
-            <md-content style="max-height: calc(100vh - 175px);">
+            <md-content style="max-height: calc(100vh - 175px); overflow-x: hidden;">
                 <ng-switch on="selectedTab">
                     <div role="tabpanel"
                          aria-labelledby="tab1"
@@ -67,8 +67,8 @@
                             <form name="createTaskForm">
                                 <md-input-container flex>
                                     <label>Название задания</label>
-                                    <input ng-model="sendTask.name" name="taskName" md-maxlength="100" required minlength="10">
-                                    <div ng-messages="createTaskForm.taskName.$error">
+                                    <input ng-model="sendTask.title" name="taskTitle" md-maxlength="100" required minlength="10">
+                                    <div ng-messages="createTaskForm.taskTitle.$error">
                                         <div ng-message="minlength">Название должно содержать как минимум 10 символов</div>
                                     </div>
                                 </md-input-container>
@@ -79,17 +79,15 @@
                                         <div ng-message="minlength">Описание должно содержать как минимум 30 символов</div>
                                     </div>
                                 </md-input-container>
-                                <md-chips ng-model="chips.selectedSkills" name="taskSkills" md-autocomplete-snap md-require-match>
-                                    <md-autocomplete
-                                            md-no-cache="true"
-                                            md-selected-item="chips.selectedSkill"
-                                            md-search-text="chips.searchTextSkills"
-                                            md-items="skill in chips.filteredSkills()"
-                                            md-item-text="skill"
-                                            placeholder="Добавьте умения">
-                                        <span md-highlight-text="chips.searchTextSkills">{{skill}}</span>
-                                    </md-autocomplete>
-                                </md-chips>
+                                <div layout="row" layout-align="start start">
+                                    <div style="margin: 0 0 0 3px; color: rgba(0, 0, 0, 0.54);">Добавьте умения:</div>
+                                    <skill-button ng-repeat="skill in sendTask.skills" id="skill.skill_id" type="skill"
+                                                  with-arrows="true" count="skill.count" count-visible="true"
+                                                  with-remove="true" on-remove="removeSkill"></skill-button>
+                                    <md-button class="md-accent md-mini expand-skill" ng-click="showSidenavSkills()" aria-label="showSidenav">
+                                        <i class="mdi mdi-plus"></i>
+                                    </md-button>
+                                </div>
                                 <div layout="row" layout-align="start start">
                                     <div flex="30" style="margin: 25px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Ссылки на учебные материалы:</div>
                                     <div layout="column" flex style="margin-top: 20px;">
@@ -118,6 +116,15 @@
                                            style="float: right; margin-top: 20px;">Создать</md-button>
                             </form>
                         </md-content>
+                        <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+                            <md-toolbar class="md-theme-light">
+                                <h1 class="md-toolbar-tools">Ваши умения</h1>
+                            </md-toolbar>
+                            <md-content layout="column" layout-padding>
+                                <skill-button ng-repeat="skill in user.completedSkills | orderBy: 'title'" id="skill.skill_id" type="skill"
+                                              with-add="true" ng-click="addSkill(skill)"></skill-button>
+                            </md-content>
+                        </md-sidenav>
                     </div>
                 </ng-switch>
             </md-content>

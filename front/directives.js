@@ -373,18 +373,38 @@ app.directive('skillButton', function($rootScope) {
             type: '@?',
             id: '=',
             exs: '=?',
-            count: '=?'
+            count: '=?',
+            withArrows: '=?',
+            countVisible: '=?',
+            withRemove: '=?',
+            onRemove: '=?',
+            withAdd: '=?',
+            onAdd: '=?'
         },
         link: function (scope, element, attrs) {
             scope.exs = scope.exs || $rootScope.exs;
-            if (angular.isNumber(scope.count)) {
-                var percent = Math.floor(100 - scope.count * 100);
-                if (percent > 100) percent = 100;
-                else if (percent < 0) percent = 0;
-                element[0].children[0].style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '
-                + percent + '%, transparent ' + percent + '%)';
-                element[0].children[0].style['background-color'] = '';
-            }
+            scope.$watch('count', function() {
+                if (angular.isNumber(scope.count)) {
+                    var percent = Math.floor(100 - scope.count * 100);
+                    if (percent > 100) percent = 100;
+                    else if (percent < 0) percent = 0;
+                    element[0].children[0].style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '
+                    + percent + '%, transparent ' + percent + '%)';
+                    element[0].children[0].style['background-color'] = '';
+                }
+            });
+        },
+        controller: function($scope) {
+            $scope.addCount = function () {
+                $scope.count += 0.1;
+                $scope.count = +$scope.count.toFixed(1);
+                if ($scope.count > 1) $scope.count = 1;
+            };
+            $scope.subCount = function() {
+                $scope.count -= 0.1;
+                $scope.count = +$scope.count.toFixed(1);
+                if ($scope.count < 0.1) $scope.count = 0.1;
+            };
         }
     }
 });

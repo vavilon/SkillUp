@@ -1,10 +1,28 @@
-<md-button class="md-raised skill-button" aria-label="skillBtn" ng-mouseenter="showCount = true" ng-mouseleave="showCount = false"
+<md-button class="md-raised skill-button" aria-label="skillBtn" ng-mouseenter="showCount = true"
+           ng-mouseleave="showCount = false"
            ng-class="{'root': type === 'root', 'md-primary': type === 'skill', 'md-accent': type === 'need'}">
-
-    <div>{{exs.skills[id].title}}</div>
-    <div ng-if="count && showCount" class="skill-count">
-        <md-divider style="background-color: white; margin-top: 3px;"></md-divider>
-        {{count | number: 2}}
+    <div layout="row" layout-align="center center">
+        <div style="width: 100%;">
+            <div>{{exs.skills[id].title}}</div>
+            <div ng-if="count && (showCount || countVisible)" class="skill-count">
+                <md-divider style="background-color: white; margin-top: 3px;"></md-divider>
+                <div ng-if="withArrows" layout="row" layout-align="space-between center">
+                    <md-button class="md-mini expand-skill" ng-click="subCount()" aria-label="arrow-left">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </md-button>
+                    <span>{{count | number: 1}}</span>
+                    <md-button class="md-mini expand-skill" ng-click="addCount()" aria-label="arrow-right">
+                        <i class="mdi mdi-chevron-right"></i>
+                    </md-button>
+                </div>
+                <span ng-if="!withArrows">{{count | number: 2}}</span>
+            </div>
+        </div>
+        <md-button ng-if="withRemove" class="md-mini expand-skill" ng-click="onRemove(id, count)" aria-label="remove">
+            <i class="mdi mdi-close"></i>
+        </md-button>
+        <md-button ng-if="withAdd" class="md-mini expand-skill" ng-click="onAdd(id, count)" aria-label="remove">
+            <i class="mdi mdi-plus"></i>
+        </md-button>
     </div>
-
 </md-button>

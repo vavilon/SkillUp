@@ -2,6 +2,7 @@
 module.exports = function(knex, userHasSkills){
     function callback (exp, req, res, next) {
         //Вставляем новое задание
+        console.log(req.body);
         knex('tasks').returning('id').insert({
             title: req.body.title,
             description: req.body.description,
@@ -34,7 +35,7 @@ module.exports = function(knex, userHasSkills){
             //Рассчитываем экспу для задания
             var exp = 0;
             for (var i in req.body.skills) {
-                exp += GLOBAL.exs.skills[req.body.skills[i]].exp;
+                exp += GLOBAL.exs.skills[req.body.skills[i].skill_id].exp;
             }
             //Проверяем, хватает ли у автора експы на случай некорректности задания
             if (req.user.exp < exp * GLOBAL.INCORRECT_TASK_EXP_MULTIPLIER) res.end();

@@ -102,7 +102,7 @@
                                     <div layout="row" style="padding-bottom: 10px;" ng-if="user.skills.length > 0">
                                         <div layout="row" class="ican" flex="10">Умею:</div>
                                         <div layout="row" layout-wrap flex>
-                                            <skill-button ng-repeat="skill in user.skills" id="skill.id" type="skill"
+                                            <skill-button ng-repeat="skill in user.skills" id="skill.skill_id" type="skill"
                                                           count="skill.count"></skill-button>
                                         </div>
                                     </div>
@@ -110,7 +110,7 @@
                                     <div layout="row" style="padding-bottom: 15px;" ng-if="user.needs.length > 0">
                                         <div layout="row" class="ican" flex="10">Хочу:</div>
                                         <div layout="row" layout-wrap flex>
-                                            <skill-button ng-repeat="need in user.needs" id="need.id" type="need"
+                                            <skill-button ng-repeat="need in user.needs" id="need.skill_id" type="need"
                                                           count="need.count"></skill-button>
                                         </div>
                                     </div>

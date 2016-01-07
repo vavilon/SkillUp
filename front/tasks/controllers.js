@@ -50,8 +50,8 @@ function applyAllFilters(tasks, skills, users, getObjByID, chips) {
             var title = chips.selectedSkills[titleID];
             for (var taskID in tasks) {
                 var task = tasks[taskID];
-                for (var idS in task.skills) {
-                    var skillID = task.skills[idS];
+                for (var i in task.skills) {
+                    var skillID = task.skills[i].skill_id;
                     if (skills[skillID].title === title) {
                         filteredBySkills.push(task);
                         break;
