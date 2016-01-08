@@ -152,7 +152,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
     $scope.logout = function () {
         $http.get('/logout').success(function (data) {
             loadLoggedUser(function () {
-                $location.path(data);
+                $location.path('/main');
             });
         });
     };

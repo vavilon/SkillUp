@@ -15,5 +15,9 @@
       "user": "vintorezvs@gmail.com",
       "pass": "11111994sergey"
     }
+  },
+  "crypto-wrap": {
+    "algorithm": "aes-256-ctr",
+    "password": "l0Acn29K"
   }
 }

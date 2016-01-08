@@ -33,7 +33,7 @@
             </div>
 
 
-            <div ng-if="user.skills">
+            <div ng-if="user.skills.length">
                 <md-divider style="margin-top: 10px; margin-bottom: 10px;"></md-divider>
                 <div layout="column" layout-align="center center">
                     <h4 style="margin: 0px; margin-bottom: 5px;">Умею</h4>
@@ -44,7 +44,7 @@
                 </div>
             </div>
 
-            <div ng-if="user.needs">
+            <div ng-if="user.needs.length">
                 <md-divider style="margin-top: 10px; margin-bottom: 10px;"></md-divider>
                 <div layout="column" layout-align="center center">
                     <h4 style="margin: 0px; margin-bottom: 5px;">Хочу</h4>

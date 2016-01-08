@@ -247,26 +247,28 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
     $scope.step = 1;
 
     if ($location.path() === '/registration/step2') {
-        $http.get('/logged_user').success(function(user) {
+        loadLoggedUser(function(user) {
             if (!user) return;
-            user = user[0];
             $scope.step = 2;
-            $scope.reg.birthday = new Date(user.birthday);
-            $scope.reg.isImageRes = true;
-            $scope.reg.imgSrcRes = user.avatar;
-            $scope.reg.gender = user.gender;
-            $scope.reg.city = user.city;
-            $scope.reg.country = user.country;
-            $scope.reg.education = JSON.parse(user.education);
-            $scope.reg.educationArr = educationObjToArr($scope.reg.education);
-            $scope.reg.work = JSON.parse(user.work);
-            $scope.reg.workArr = workObjToArr($scope.reg.work);
+            if (user.birthday) $scope.reg.birthday = new Date(user.birthday);
+            if (user.avatar) {
+                $scope.reg.isImageRes = true;
+                $scope.reg.imgSrcRes = user.avatar;
+            }
+            $scope.reg.gender = user.gender || 'мужской';
+            if (user.city) $scope.reg.city = user.city;
+            if (user.country) $scope.reg.country = user.country;
+            $scope.reg.education = [];
+            if (user.education) {
+                $scope.reg.education = JSON.parse(user.education);
+                $scope.reg.educationArr = educationObjToArr($scope.reg.education);
+            }
+            $scope.reg.work = [];
+            if (user.work) {
+                $scope.reg.work = JSON.parse(user.work);
+                $scope.reg.workArr = workObjToArr($scope.reg.work);
+            }
         });
-    }
-    else {
-        $scope.reg.gender = 'мужской';
-        $scope.reg.education = [];
-        $scope.reg.work = [];
     }
 
     var maxYear = (new Date()).getFullYear();
@@ -369,8 +371,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
     };
 
     $scope.register = function () {
-        console.log('Check result: ' + $scope.checkRegInput());
-
         if ($scope.checkRegInput()) {
             $http.post('/register', {
                 nick: $scope.reg.nick,
@@ -378,7 +378,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 email: $scope.reg.email,
                 password: $scope.reg.password
             }).success(function () {
-                $scope.step = 2;
+                $scope.regDataSent = true;
             }).error(function (err) {
                 $scope.showErrorToast(err.message || 'Введены некорректные данные!');
             });
@@ -450,7 +450,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         }).success(function(data) {
             if (data) {
                 loadLoggedUser(function(user) {
-                    user = user[0];
                     $http.get('db/skills').success(function(skills) {
                         $scope.skills = skills;
 

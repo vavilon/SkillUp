@@ -9,6 +9,8 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var config = require(__dirname + '/config');
 var exSkills = require(__dirname + '/lib/ex-skills');
+var cryptoWrap = require(__dirname + '/lib/crypto-wrap')(config.get('crypto-wrap'));
+var randomstring = require('randomstring');
 var knex = require('knex')(config.get('knex'));
 var types = require('pg').types;
 //Преобразование bigInt(которые возращает knex в результате некоторых функций в виде строк) в Int
@@ -262,7 +264,8 @@ app.get('/auth/facebook/callback', function (req, res, next) {
 
 //Привяжем запросы к соответствующим контроллерам
 app.post('/login', controllers.users.login);
-app.post('/register', controllers.users.register);
+app.post('/register', controllers.users.register(cryptoWrap, transporter, randomstring));
+app.get('/confirm', controllers.users.confirm(cryptoWrap, knex));
 app.get('/logout', controllers.users.logout);
 app.post('/update_profile', controllers.users.update(knex));
 app.post('/needs', controllers.users.needs(knex));
