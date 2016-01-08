@@ -241,7 +241,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, loadLoggedUser, isImage, $mdToast,
                                              $animate, $timeout, educationObjToArr, workObjToArr, addEducation, removeEducation,
-                                             addWork, removeWork) {
+                                             addWork, removeWork, getObjByID, $rootScope) {
     $scope.reg = {};
 
     $scope.step = 1;
@@ -450,66 +450,70 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
         }).success(function(data) {
             if (data) {
                 loadLoggedUser(function(user) {
-                    $http.get('db/skills').success(function(skills) {
-                        $scope.skills = skills;
 
-                        $scope.chips = {skillsTitles: [], skillsTitlesFiltered: [], selectedSkills: []};
+                    $scope.currentSkill = $rootScope.exs.root;
+                    $scope.skills = $rootScope.exs.skills;
+                    //Объект в котором сохраняются id скиллов, которые надо добавить в needs
+                    $scope.dataNeeds = {needs: []};
+                    //Объект для поиска скилла по названию
+                    $scope.query = {};
 
-                        $scope.skillsTitles = [];
-                        for (var i in $scope.skills) {
-                            $scope.chips.skillsTitles.push($scope.skills[i].title);
+                    //Функция для поиска совпадений в названиях скиллов с введенным текстом
+                    //Возвращает массив подходящих скиллов
+                    $scope.query.search = function (text) {
+                        var lowercaseQuery = angular.lowercase(text);
+                        var filteredSkills = [];
+                        for (var id in $scope.skills) {
+                            if ($scope.skills.hasOwnProperty(id)) {
+                                if ($scope.skills[id].title.toLowerCase().indexOf(lowercaseQuery) !== -1) {
+                                    filteredSkills.push($scope.skills[id]);
+                                }
+                            }
                         }
+                        return filteredSkills;
+                    };
 
-                        $scope.chips.filteredSkills = function() {
-                            var str = angular.lowercase($scope.chips.searchTextSkills);
-                            var arr = [];
-                            for (var i in $scope.chips.skillsTitlesFiltered) {
-                                if (angular.lowercase($scope.chips.skillsTitlesFiltered[i]).indexOf(str) !== -1)
-                                    arr.push($scope.chips.skillsTitlesFiltered[i]);
-                            }
-                            return arr;
-                        };
+                    //Делает выбраный в autocomplete скилл текущим
+                    $scope.query.selectedItemChanged = function (skill) {
+                        if (skill) $scope.currentSkill = skill;
+                    };
 
-                        $scope.$watchCollection('chips.selectedSkills', function (newVal) {
-                            if (newVal.length === 0) {
-                                $scope.chips.skillsTitlesFiltered = $scope.chips.skillsTitles;
-                                return;
+                    //Делает выбраный скилл текущим (по нажатию на скилл)
+                    $scope.setToCurrent = function (skill) {
+                        $scope.currentSkill = skill;
+                    };
+
+                    //Добавляет id скилла в needs и убирает плюсик с него
+                    $scope.addNeed = function (id) {
+                        if ($scope.dataNeeds.needs.indexOf(id) == -1) {
+                            $scope.dataNeeds.needs.push(id);
+                            if($scope.currentSkill = $scope.skills[id]) {
+                                $scope.currentSkill.added = true;
+                                $scope.skills[id].added = true;
+                            } else {
+                                $scope.skills[id].added = true;
                             }
-                            $scope.chips.skillsTitlesFiltered = [];
-                            var found = false;
-                            for (var i in $scope.chips.skillsTitles) {
-                                found = false;
-                                for (var j in newVal) {
-                                    if (newVal[j] === $scope.chips.skillsTitles[i]) {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (!found) $scope.chips.skillsTitlesFiltered.push($scope.chips.skillsTitles[i]);
-                            }
+                        }
+                    };
+
+                    //Убирает id скилла из нидсов
+                    $scope.removeNeed = function (id) {
+                        $scope.dataNeeds.needs.splice($scope.dataNeeds.needs.indexOf(id), 1);
+                        $scope.skills[id].added = false;
+                    };
+
+                    $scope.erase = function () {
+                        $scope.dataNeeds.needs = [];
+                    };
+
+                    //По нажатию "Готово" отправляет выбраные нидсы на сервер для записи в БД
+                    $scope.done = function () {
+                        $http.post('/needs', $scope.dataNeeds).success(function () {
+                            $location.path('/users/' + user.id);
                         });
+                    };
 
-                        $scope.done = function () {
-                            if ($scope.chips.selectedSkills.length === 0) {
-                                $location.path('/users/' + user.id);
-                                return;
-                            }
-                            var dataNeeds = {needs: []};
-                            for (var i in $scope.chips.selectedSkills) {
-                                for (var j in $scope.skills) {
-                                    if ($scope.chips.selectedSkills[i] === $scope.skills[j].title) {
-                                        dataNeeds.needs.push($scope.skills[j].skill_id);
-                                        break;
-                                    }
-                                }
-                            }
-                            $http.post('/needs', dataNeeds).success(function () {
-                                $location.path('/users/' + user.id);
-                            });
-                        };
-
-                        $scope.step = 3;
-                    });
+                    $scope.step = 3;
                 });
             }
         });

@@ -150,16 +150,17 @@
                                     <input type="text" ng-model="reg.imgSrc">
                                 </md-input-container>
                                 <div>
-                                <md-button class="expand-button" ng-click="loadImage()" style="margin-top: 35px;">
-                                    <i class="mdi mdi-upload mdi-24 mdi-secondary"></i>
-                                </md-button></div>
+                                    <md-button class="expand-button" ng-click="loadImage()" style="margin-top: 35px;" aria-label="load-image">
+                                        <i class="mdi mdi-upload mdi-24 mdi-secondary"></i>
+                                    </md-button>
+                                </div>
                             </div>
                             <div layout="column" layout-align="center center">
                                 <span style="padding-bottom: 5px; color: rgba(0,0,0,0.54);">или</span>
                             </div>
                             <input type="file" id="fileInput" style="display: none;"
                                    onchange="angular.element(this).scope().handleFileSelect(this)">
-                            <md-button class="md-raised" ng-click="selectImage()">Выберите изображение</md-button>
+                            <md-button class="md-raised" ng-click="selectImage()" aria-label="select-image">Выберите изображение</md-button>
                         </div>
                         <div layout="column" flex style="padding-left: 15px;">
                             <div layout="row" layout-align="start center">
@@ -192,7 +193,7 @@
                                             {{ed}}
                                         </div>
                                         <md-button class="expand-button" style="margin-left: 10px;"
-                                                   ng-click="removeEducation($index)">
+                                                   ng-click="removeEducation($index)" aria-label="remove-education">
                                             <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
                                             <md-tooltip>
                                                 Удалить
@@ -216,7 +217,7 @@
                                     <md-option ng-repeat="i in range" value="{{i}}">{{i}}</md-option>
                                 </md-select>
                                 <div style="margin-top: 8px;">
-                                    <md-button class="md-raised" ng-click="addEducation()">Добавить</md-button>
+                                    <md-button class="md-raised" ng-click="addEducation()" aria-label="add-education">Добавить</md-button>
                                 </div>
                             </div>
 
@@ -228,7 +229,7 @@
                                             {{wo}}
                                         </div>
                                         <md-button class="expand-button" style="margin-left: 10px;"
-                                                   ng-click="removeWork($index)">
+                                                   ng-click="removeWork($index)" aria-label="remove-work">
                                             <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
                                             <md-tooltip>Удалить</md-tooltip>
                                         </md-button>
@@ -267,18 +268,65 @@
                 </div>
                 <div ng-switch-when="3">
                     <form>
-                        <h3>Выбирете навыки, которые вы хотите получить:</h3>
-                        <md-chips ng-model="chips.selectedSkills" name="taskSkills" md-autocomplete-snap md-require-match>
-                            <md-autocomplete
-                                    md-no-cache="true"
-                                    md-selected-item="chips.selectedSkill"
-                                    md-search-text="chips.searchTextSkills"
-                                    md-items="skill in chips.filteredSkills()"
-                                    md-item-text="skill"
-                                    placeholder="Добавьте умения">
-                                <span md-highlight-text="chips.searchTextSkills">{{skill}}</span>
-                            </md-autocomplete>
-                        </md-chips>
+                        <div class="md-whiteframe-z1">
+                            <md-toolbar>
+                                <div class="md-toolbar-tools" layout="row" layout-align="space-between center" layout-padding>
+                                    <span>Выбирете навыки, которые вы хотите получить</span>
+                                    <span>
+                                        <md-autocomplete
+                                                md-no-cache="true"
+                                                md-selected-item="query.selectedItem"
+                                                md-search-text="query.searchText"
+                                                md-items="skill in query.search(query.searchText)"
+                                                md-selected-item-change="query.selectedItemChanged(skill)"
+                                                md-item-text="skill.title"
+                                                md-min-length="0"
+                                                placeholder="Поиск навыков...">
+                                            <md-item-template>
+                                                <span md-highlight-text="query.searchText" md-highlight-flags="^i">{{skill.title}}</span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No matches found for "{{query.searchText}}".
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                    </span>
+                                </div>
+                            </md-toolbar>
+
+                            <div layout="column" layout-align="center center" ng-if="currentSkill">
+                                <div class="parents" layout="row" layout-align="space-around start"
+                                     ng-if="currentSkill.parents" layout-padding>
+                                    <skill-button ng-repeat="skill in currentSkill.parents" id="skill.id" type="need"
+                                                  with-add="!skill.added" on-add="addNeed" ng-click="setToCurrent(skill)"></skill-button>
+                                </div>
+                                <div class="current" layout="row" layout-align="center center">
+                                    <skill-button id="currentSkill.id" type="root" with-add="!currentSkill.added" ng-click="addNeed(currentSkill.id)">
+                                    </skill-button>
+                                </div>
+                                <div class="children" layout="row" layout-align="space-around start"
+                                     ng-if="currentSkill.children" layout-padding>
+                                    <skill-button ng-repeat="skill in currentSkill.children" id="skill.id" type="need"
+                                                  with-add="!skill.added" on-add="addNeed" ng-click="setToCurrent(skill)"></skill-button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="md-whiteframe-z1" layout="column" style="margin-top: 20px;" ng-if="dataNeeds.needs.length">
+                            <md-toolbar layout="row" layout-align="space-between center">
+                                <h3 class="md-toolbar-tools">Выбранные навыки</h3>
+                                <md-button class="header-button" style="margin-right: 10px" ng-click="erase()" aria-label="erase-needs-list">
+                                    <i class="mdi mdi-delete mdi-24"></i>
+                                    <md-tooltip>Очистить список выбраных навыков</md-tooltip>
+                                </md-button>
+                            </md-toolbar>
+                            <div layout="column">
+                                <div class="selected-needs" layout="row">
+                                    <skill-button ng-repeat="id in dataNeeds.needs" id="id" type="need"
+                                                  with-remove="true" ng-click="removeNeed(id)" layout-margin></skill-button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div layout="row" layout-align="center center" style="margin-top: 30px;">
                             <md-button class="md-raised md-primary" ng-click="done()">Готово</md-button>
                         </div>

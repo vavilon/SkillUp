@@ -510,9 +510,29 @@ a[role="button"] h1:hover {
 .table-img {
     max-height: 38px;
     max-width: 38px;
-}.edit-button-span {
+}
+
+.edit-button-span {
     width: 30px;
     min-width: 30px;
     height: 24px;
     min-height: 24px;
+}
+
+.parents {
+    display: block;
+}
+
+.current {
+    margin: 32px;
+}
+
+.children {
+    display: block;
+}
+
+.selected-needs {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
