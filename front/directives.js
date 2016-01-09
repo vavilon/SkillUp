@@ -365,7 +365,7 @@ app.directive('scrollLoader', function() {
     };
 });
 
-app.directive('skillButton', function($rootScope) {
+app.directive('skillButton', function($rootScope, $timeout) {
     return {
         restrict: 'E',
         templateUrl: '/front/templates/skill-button.html',
@@ -379,20 +379,44 @@ app.directive('skillButton', function($rootScope) {
             withRemove: '=?',
             onRemove: '=?',
             withAdd: '=?',
-            onAdd: '=?'
+            onAdd: '=?',
+            hideAdd: '=?',
+            hideRemove: '=?',
+            tooltipAdd: '@?',
+            tooltipRemove: '@?'
         },
         link: function (scope, element, attrs) {
-            scope.exs = scope.exs || $rootScope.exs;
-            scope.$watch('count', function() {
-                if (angular.isNumber(scope.count)) {
-                    var percent = Math.floor(100 - scope.count * 100);
-                    if (percent > 100) percent = 100;
-                    else if (percent < 0) percent = 0;
-                    element[0].children[0].style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '
-                    + percent + '%, transparent ' + percent + '%)';
-                    element[0].children[0].style['background-color'] = '';
+            $timeout(function() {
+                scope.exs = scope.exs || $rootScope.exs;
+                if (attrs.countVisible === "") scope.countVisible = true;
+                if (attrs.withArrows === "") scope.withArrows = true;
+                if (attrs.withRemove === "") scope.withRemove = true;
+                if (attrs.withAdd === "") scope.withAdd = true;
+                if (attrs.hideAdd === "") scope.hideAdd = true;
+                if (attrs.hideRemove === "") scope.hideRemove = true;
+                var el = element[0].children[0];
+                var par = element[0].parentNode;
+                scope.$watch('count', function () {
+                    if (angular.isNumber(scope.count)) {
+                        var percent = Math.floor(100 - scope.count * 100);
+                        if (percent > 100) percent = 100;
+                        else if (percent < 0) percent = 0;
+                        el.style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '
+                            + percent + '%, transparent ' + percent + '%)';
+                        el.style['background-color'] = '';
+                    }
+                });
+                var parWidth = par.offsetWidth;
+                if (par.id == 'kostyl') {
+                    scope.$watch('mouseOn', function (val) {
+                        if (val) {
+                            if (scope.withArrows && !scope.countVisible) par.style.width = par.offsetWidth + 40 + 'px';
+                            if (scope.withRemove && scope.hideRemove) par.style.width = par.offsetWidth + 20 + 'px';
+                            if (scope.withAdd && scope.hideAdd) par.style.width = par.offsetWidth + 20 + 'px';
+                        } else par.style.width = parWidth + 'px';
+                    });
                 }
-            });
+            }, 0);
         },
         controller: function($scope) {
             $scope.addCount = function () {
