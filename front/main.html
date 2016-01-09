@@ -82,8 +82,8 @@
                                 <div layout="row" layout-align="start start">
                                     <div style="margin: 0 0 0 3px; color: rgba(0, 0, 0, 0.54);">Добавьте умения:</div>
                                     <skill-button ng-repeat="skill in sendTask.skills" id="skill.skill_id" type="skill"
-                                                  with-arrows="true" count="skill.count" count-visible="true"
-                                                  with-remove="true" on-remove="removeSkill"></skill-button>
+                                                  with-arrows count="skill.count" count-visible
+                                                  with-remove on-remove="removeSkill"></skill-button>
                                     <md-button class="md-accent md-mini expand-skill" ng-click="showSidenavSkills()" aria-label="showSidenav">
                                         <i class="mdi mdi-plus"></i>
                                     </md-button>
@@ -121,8 +121,8 @@
                                 <h1 class="md-toolbar-tools">Ваши умения</h1>
                             </md-toolbar>
                             <md-content layout="column" layout-padding>
-                                <skill-button ng-repeat="skill in user.completedSkills | orderBy: 'title'" id="skill.skill_id" type="skill"
-                                              with-add="true" ng-click="addSkill(skill)"></skill-button>
+                                <skill-button ng-repeat="skill in user.completedSkills | orderBy: 'title'" id="skill.skill_id"
+                                              type="skill" with-add ng-click="addSkill(skill)"></skill-button>
                             </md-content>
                         </md-sidenav>
                     </div>

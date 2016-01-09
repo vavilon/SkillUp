@@ -1,10 +1,10 @@
-<md-button class="md-raised skill-button" aria-label="skillBtn" ng-mouseenter="showCount = true"
-           ng-mouseleave="showCount = false"
+<md-button class="md-raised skill-button" aria-label="skillBtn" ng-mouseenter="mouseOn = true"
+           ng-mouseleave="mouseOn = false"
            ng-class="{'root': type === 'root', 'md-primary': type === 'skill', 'md-accent': type === 'need'}">
     <div layout="row" layout-align="center center">
         <div style="width: 100%;">
             <div>{{exs.skills[id].title}}</div>
-            <div ng-if="count && (showCount || countVisible)" class="skill-count">
+            <div ng-if="count && (mouseOn || countVisible)" class="skill-count">
                 <md-divider style="background-color: white; margin-top: 3px;"></md-divider>
                 <div ng-if="withArrows" layout="row" layout-align="space-between center">
                     <md-button class="md-mini expand-skill" ng-click="subCount()" aria-label="arrow-left">
@@ -18,11 +18,13 @@
                 <span ng-if="!withArrows">{{count | number: 2}}</span>
             </div>
         </div>
-        <md-button ng-if="withRemove" class="md-mini expand-skill" ng-click="onRemove(id, count)" aria-label="remove">
+        <md-button ng-if="withRemove" ng-hide="!mouseOn && hideRemove" class="md-mini expand-skill" ng-click="onRemove(id, count)" aria-label="remove">
             <i class="mdi mdi-close"></i>
+            <md-tooltip ng-if="tooltipRemove">{{tooltipRemove}}</md-tooltip>
         </md-button>
-        <md-button ng-if="withAdd" class="md-mini expand-skill" ng-click="onAdd(id, count)" aria-label="add">
+        <md-button ng-if="withAdd" ng-hide="!mouseOn && hideAdd" class="md-mini expand-skill" ng-click="onAdd(id, count)" aria-label="add">
             <i class="mdi mdi-plus"></i>
+            <md-tooltip ng-if="tooltipAdd">{{tooltipAdd}}</md-tooltip>
         </md-button>
     </div>
 </md-button>
