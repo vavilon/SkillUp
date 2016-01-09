@@ -245,307 +245,296 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
     $scope.reg = {};
 
     $scope.step = 1;
-
-    if ($location.path() === '/registration/step2') {
-        loadLoggedUser(function(user) {
-            if (!user) return;
-            $scope.step = 2;
-            if (user.birthday) $scope.reg.birthday = new Date(user.birthday);
-            if (user.avatar) {
-                $scope.reg.isImageRes = true;
-                $scope.reg.imgSrcRes = user.avatar;
-            }
-            $scope.reg.gender = user.gender || 'мужской';
-            if (user.city) $scope.reg.city = user.city;
-            if (user.country) $scope.reg.country = user.country;
-            $scope.reg.education = [];
-            if (user.education) {
-                $scope.reg.education = JSON.parse(user.education);
-                $scope.reg.educationArr = educationObjToArr($scope.reg.education);
-            }
-            $scope.reg.work = [];
-            if (user.work) {
-                $scope.reg.work = JSON.parse(user.work);
-                $scope.reg.workArr = workObjToArr($scope.reg.work);
-            }
-        });
-    }
-
-    var maxYear = (new Date()).getFullYear();
-    $scope.range = [];
-    for (var i = maxYear; i > 1929; i--) {
-        $scope.range.push(i);
-    }
-
-    $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
-    $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
-    $scope.reg.password = $routeParams.password === '0' ? '' : $routeParams.password;
-    $scope.passwordStrong = false;
-
-    $scope.showSuccessToast = function () {
-        $mdToast.show(
-            $mdToast.simple()
-                .content('Вы успешно зарегистрированы!')
-                .position('top left')
-                .hideDelay(3000)
-        );
-    };
-
-    $scope.showErrorToast = function (msg) {
-        $mdToast.show(
-            $mdToast.simple()
-                .content(msg)
-                .position('top left')
-                .hideDelay(3000)
-        );
-    };
-
-    $scope.passwordsEqual = function () {
-        var err = {notequal: false};
-        if (!$scope.reg.password) return err;
-        if (!$scope.reg.rePassword) return err;
-        if ($scope.getPasswordStrong().notstrong) return err;
-        err.notequal = $scope.reg.password !== $scope.reg.rePassword;
-        return err;
-    };
-
-    $scope.getPasswordStrong = function () {
-        var err = {notstrong: false};
-        if (!$scope.reg.password) return err;
-        err.notstrong = !$scope.passwordStrong;
-        return err;
-    };
-
-    $scope.vRegex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-    $scope.validateEmail = function () {
-        return $scope.vRegex.test($scope.reg.email);
-    };
-    $scope.validatePasswords = function () {
-        return $scope.reg.password === $scope.reg.rePassword;
-    };
-
-    $scope.exists = {nick: false, email: false, emailnotvalid: false};
-    $scope.checkNick = function () {
-        $http.post('/check_nick', {nick: $scope.reg.nick}).success(function (data) {
-            $scope.exists.nick = data ? false : true;
-        });
-    };
-    $scope.checkEmail = function () {
-        $http.post('/check_email', {email: $scope.reg.email}).success(function (data) {
-            $scope.exists.email = data ? false : true;
-        });
-    };
-
-    $scope.$watch('reg.nick', function (newVal) {
-        if (newVal) {
-            $scope.checkNick();
-        }
-        else $scope.exists.nick = false;
-    });
-
-    $scope.$watch('reg.email', function (newVal) {
-        if (newVal) {
-            if (!$scope.validateEmail()) {
-                $scope.exists.emailnotvalid = true;
-                return;
-            }
-            $scope.exists.emailnotvalid = false;
-            $scope.checkEmail();
-        }
-        else {
-            $scope.exists.emailnotvalid = false;
-            $scope.exists.email = false;
-        }
-    });
-
-    //Проверка сложности пароля от 1 до 4, если больше 1 - норм
-    $scope.$watch('reg.password', function(newVal) {
-        if (newVal) {
-            $scope.checkResult = zxcvbn(newVal, [$scope.reg.name, $scope.reg.nick, $scope.reg.email]);
-            $scope.passwordStrong = $scope.checkResult.score > 1;
-        }
-    });
-
-    $scope.checkRegInput = function () {
-        return $scope.validateEmail() && $scope.validatePasswords() && !$scope.exists.nick && !$scope.exists.email && $scope.passwordStrong;
-    };
-
-    $scope.register = function () {
-        if ($scope.checkRegInput()) {
-            $http.post('/register', {
-                nick: $scope.reg.nick,
-                name: $scope.reg.name,
-                email: $scope.reg.email,
-                password: $scope.reg.password
-            }).success(function () {
-                $scope.regDataSent = true;
-            }).error(function (err) {
-                $scope.showErrorToast(err.message || 'Введены некорректные данные!');
+    $rootScope.ajaxCall.promise.then(function () {
+        if ($location.path() === '/registration/step2') {
+            loadLoggedUser(function (user) {
+                if (!user) return;
+                $scope.step = 2;
+                if (user.birthday) $scope.reg.birthday = new Date(user.birthday);
+                if (user.avatar) {
+                    $scope.reg.isImageRes = true;
+                    $scope.reg.imgSrcRes = user.avatar;
+                }
+                $scope.reg.gender = user.gender || 'мужской';
+                if (user.city) $scope.reg.city = user.city;
+                if (user.country) $scope.reg.country = user.country;
+                $scope.reg.education = [];
+                if (user.education) {
+                    $scope.reg.education = JSON.parse(user.education);
+                    $scope.reg.educationArr = educationObjToArr($scope.reg.education);
+                }
+                $scope.reg.work = [];
+                if (user.work) {
+                    $scope.reg.work = JSON.parse(user.work);
+                    $scope.reg.workArr = workObjToArr($scope.reg.work);
+                }
             });
-        } else if($scope.checkResult.feedback.warning) {
-            $scope.showErrorToast($scope.checkResult.feedback.warning);
-        } else {
-            $scope.showErrorToast('Введены некорректные данные!');
         }
-    };
 
-    $scope.showErrorImgToast = function () {
-        $mdToast.show(
-            $mdToast.simple()
-                .content('Не удалось загрузить фотографию...')
-                .position('bottom left')
-                .hideDelay(3000)
-                .parent(angular.element(document.querySelector('#toastElem')))
-        );
-    };
+        var maxYear = (new Date()).getFullYear();
+        $scope.range = [];
+        for (var i = maxYear; i > 1929; i--) {
+            $scope.range.push(i);
+        }
 
-    $scope.reg.imgSrc = '';
-    $scope.reg.imgCropRes = '';
-    $scope.reg.isImageRes = false;
-    $scope.loadImage = function () {
-        isImage($scope.reg.imgSrc).then(function (result) {
-            if (!result) {
-                $scope.showErrorImgToast();
-                return;
-            }
-            $scope.reg.isImageRes = result;
-            $scope.reg.imgSrcRes = $scope.reg.imgSrc;
-        });
-    };
+        $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
+        $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
+        $scope.reg.password = $routeParams.password === '0' ? '' : $routeParams.password;
+        $scope.passwordStrong = false;
 
-    $scope.handleFileSelect = function (element) {
-        var file = element.files[0];
-        var reader = new FileReader();
-        reader.onload = function (evt) {
-            $scope.$apply(function ($scope) {
-                $scope.reg.isImageRes = true;
-                console.log(evt.target.result);
-                $scope.reg.imgSrcRes = evt.target.result;
+        $scope.showSuccessToast = function () {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content('Вы успешно зарегистрированы!')
+                    .position('top left')
+                    .hideDelay(3000)
+            );
+        };
+
+        $scope.showErrorToast = function (msg) {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content(msg)
+                    .position('top left')
+                    .hideDelay(3000)
+            );
+        };
+
+        $scope.passwordsEqual = function () {
+            var err = {notequal: false};
+            if (!$scope.reg.password) return err;
+            if (!$scope.reg.rePassword) return err;
+            if ($scope.getPasswordStrong().notstrong) return err;
+            err.notequal = $scope.reg.password !== $scope.reg.rePassword;
+            return err;
+        };
+
+        $scope.getPasswordStrong = function () {
+            var err = {notstrong: false};
+            if (!$scope.reg.password) return err;
+            err.notstrong = !$scope.passwordStrong;
+            return err;
+        };
+
+        $scope.vRegex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        $scope.validateEmail = function () {
+            return $scope.vRegex.test($scope.reg.email);
+        };
+        $scope.validatePasswords = function () {
+            return $scope.reg.password === $scope.reg.rePassword;
+        };
+
+        $scope.exists = {nick: false, email: false, emailnotvalid: false};
+        $scope.checkNick = function () {
+            $http.post('/check_nick', {nick: $scope.reg.nick}).success(function (data) {
+                $scope.exists.nick = data ? false : true;
             });
         };
-        reader.readAsDataURL(file);
-    };
+        $scope.checkEmail = function () {
+            $http.post('/check_email', {email: $scope.reg.email}).success(function (data) {
+                $scope.exists.email = data ? false : true;
+            });
+        };
 
-    $scope.selectImage = function () {
-        angular.element(document.querySelector('#fileInput'))[0].click();
-    };
+        $scope.$watch('reg.nick', function (newVal) {
+            if (newVal) {
+                $scope.checkNick();
+            }
+            else $scope.exists.nick = false;
+        });
 
-    $scope.addEducation = function() { addEducation($scope.reg); };
-
-    $scope.removeEducation = function (index) { removeEducation($scope.reg, index); };
-
-    $scope.addWork = function () { addWork($scope.reg); };
-
-    $scope.removeWork = function (index) { removeWork($scope.reg, index); };
-
-    $scope.goToStep3 = function () {
-        $http.post('/update_profile', {
-            avatar: $scope.reg.imgCropRes,
-            birthday: $scope.reg.birthday,
-            gender: $scope.reg.gender,
-            city: $scope.reg.city,
-            country: $scope.reg.country,
-            education: JSON.stringify($scope.reg.education),
-            work: JSON.stringify($scope.reg.work)
-        }).success(function(data) {
-            if (data) {
-                loadLoggedUser(function(user) {
-
-                    $scope.currentSkill = $rootScope.exs.root;
-                    $scope.skills = $rootScope.exs.skills;
-                    //Объект в котором сохраняются id скиллов, которые надо добавить в needs
-                    $scope.dataNeeds = {needs: []};
-                    //Объект для поиска скилла по названию
-                    $scope.query = {};
-
-                    //Функция для поиска совпадений в названиях скиллов с введенным текстом
-                    //Возвращает массив подходящих скиллов
-                    $scope.query.search = function (text) {
-                        var lowercaseQuery = angular.lowercase(text);
-                        var filteredSkills = [];
-                        for (var id in $scope.skills) {
-                            if ($scope.skills.hasOwnProperty(id)) {
-                                if ($scope.skills[id].title.toLowerCase().indexOf(lowercaseQuery) !== -1) {
-                                    filteredSkills.push($scope.skills[id]);
-                                }
-                            }
-                        }
-                        return filteredSkills;
-                    };
-
-                    //Делает выбраный в autocomplete скилл текущим
-                    $scope.query.selectedItemChanged = function (skill) {
-                        if (skill) $scope.currentSkill = skill;
-                    };
-
-                    //Делает выбраный скилл текущим (по нажатию на скилл)
-                    $scope.setToCurrent = function (skill) {
-                        $scope.currentSkill = skill;
-                    };
-
-                    //Добавляет id скилла в needs и убирает плюсик с него
-                    $scope.addNeed = function (id) {
-                        if ($scope.dataNeeds.needs.indexOf(id) == -1) {
-                            $scope.dataNeeds.needs.push(id);
-                            if($scope.currentSkill = $scope.skills[id]) {
-                                $scope.currentSkill.added = true;
-                                $scope.skills[id].added = true;
-                            } else {
-                                $scope.skills[id].added = true;
-                            }
-                        }
-                    };
-
-                    //Убирает id скилла из нидсов
-                    $scope.removeNeed = function (id) {
-                        $scope.dataNeeds.needs.splice($scope.dataNeeds.needs.indexOf(id), 1);
-                        $scope.skills[id].added = false;
-                    };
-
-                    $scope.erase = function () {
-                        $scope.dataNeeds.needs = [];
-                    };
-
-                    //По нажатию "Готово" отправляет выбраные нидсы на сервер для записи в БД
-                    $scope.done = function () {
-                        $http.post('/needs', $scope.dataNeeds).success(function () {
-                            $location.path('/users/' + user.id);
-                        });
-                    };
-
-                    $scope.step = 3;
-                });
+        $scope.$watch('reg.email', function (newVal) {
+            if (newVal) {
+                if (!$scope.validateEmail()) {
+                    $scope.exists.emailnotvalid = true;
+                    return;
+                }
+                $scope.exists.emailnotvalid = false;
+                $scope.checkEmail();
+            }
+            else {
+                $scope.exists.emailnotvalid = false;
+                $scope.exists.email = false;
             }
         });
-    };
 
+        //Проверка сложности пароля от 1 до 4, если больше 1 - норм
+        $scope.$watch('reg.password', function (newVal) {
+            if (newVal) {
+                $scope.checkResult = zxcvbn(newVal, [$scope.reg.name, $scope.reg.nick, $scope.reg.email]);
+                $scope.passwordStrong = $scope.checkResult.score > 1;
+            }
+        });
 
-    /*        $scope.loginWithFacebook = function() {
+        $scope.checkRegInput = function () {
+            return $scope.validateEmail() && $scope.validatePasswords() && !$scope.exists.nick && !$scope.exists.email && $scope.passwordStrong;
+        };
 
-     FB.getLoginStatus(function(response) {
-     if (response.status === 'connected') {
-     var uid = response.authResponse.userID;
-     var accessToken = response.authResponse.accessToken;
-     FB.api('/me', function(response) {
-     console.log(response);
-     });
-     } else if (response.status === 'not_authorized') {
-     FB.login(function(response) {
-     if (response.authResponse) {
-     console.log('Welcome!  Fetching your information.... ');
-     FB.api('/me', function(response) {
-     console.log(response);
-     });
-     } else {
-     console.log('User cancelled login or did not fully authorize.');
-     }
-     });
-     } else {
-     // the user isn't logged in to Facebook.
-     }
-     });
+        $scope.register = function () {
+            if ($scope.checkRegInput()) {
+                $http.post('/register', {
+                    nick: $scope.reg.nick,
+                    name: $scope.reg.name,
+                    email: $scope.reg.email,
+                    password: $scope.reg.password
+                }).success(function () {
+                    $scope.regDataSent = true;
+                }).error(function (err) {
+                    $scope.showErrorToast(err.message || 'Введены некорректные данные!');
+                });
+            } else if ($scope.checkResult.feedback.warning) {
+                $scope.showErrorToast($scope.checkResult.feedback.warning);
+            } else {
+                $scope.showErrorToast('Введены некорректные данные!');
+            }
+        };
 
-     };*/
+        $scope.showErrorImgToast = function () {
+            $mdToast.show(
+                $mdToast.simple()
+                    .content('Не удалось загрузить фотографию...')
+                    .position('bottom left')
+                    .hideDelay(3000)
+                    .parent(angular.element(document.querySelector('#toastElem')))
+            );
+        };
+
+        $scope.reg.imgSrc = '';
+        $scope.reg.imgCropRes = '';
+        $scope.reg.isImageRes = false;
+        $scope.loadImage = function () {
+            isImage($scope.reg.imgSrc).then(function (result) {
+                if (!result) {
+                    $scope.showErrorImgToast();
+                    return;
+                }
+                $scope.reg.isImageRes = result;
+                $scope.reg.imgSrcRes = $scope.reg.imgSrc;
+            });
+        };
+
+        $scope.handleFileSelect = function (element) {
+            var file = element.files[0];
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                $scope.$apply(function ($scope) {
+                    $scope.reg.isImageRes = true;
+                    console.log(evt.target.result);
+                    $scope.reg.imgSrcRes = evt.target.result;
+                });
+            };
+            reader.readAsDataURL(file);
+        };
+
+        $scope.selectImage = function () {
+            angular.element(document.querySelector('#fileInput'))[0].click();
+        };
+
+        $scope.addEducation = function () {
+            addEducation($scope.reg);
+        };
+
+        $scope.removeEducation = function (index) {
+            removeEducation($scope.reg, index);
+        };
+
+        $scope.addWork = function () {
+            addWork($scope.reg);
+        };
+
+        $scope.removeWork = function (index) {
+            removeWork($scope.reg, index);
+        };
+
+        $scope.goToStep3 = function () {
+            $http.post('/update_profile', {
+                avatar: $scope.reg.imgCropRes,
+                birthday: $scope.reg.birthday,
+                gender: $scope.reg.gender,
+                city: $scope.reg.city,
+                country: $scope.reg.country,
+                education: JSON.stringify($scope.reg.education),
+                work: JSON.stringify($scope.reg.work)
+            }).success(function (data) {
+                if (data) {
+                    $scope.initStep3();
+                }
+            });
+        };
+        $scope.initStep3 = function () {
+            loadLoggedUser(function (user) {
+
+                $scope.currentSkill = $rootScope.exs.root;
+                $scope.skills = $rootScope.exs.skills;
+                //Объект в котором сохраняются id скиллов, которые надо добавить в needs
+                $scope.dataNeeds = {needs: []};
+                //Объект для поиска скилла по названию
+                $scope.query = {};
+
+                //Функция для поиска совпадений в названиях скиллов с введенным текстом
+                //Возвращает массив подходящих скиллов
+                $scope.query.search = function (text) {
+                    var lowercaseQuery = angular.lowercase(text);
+                    var filteredSkills = [];
+                    for (var id in $scope.skills) {
+                        if ($scope.skills.hasOwnProperty(id)) {
+                            if ($scope.skills[id].title.toLowerCase().indexOf(lowercaseQuery) !== -1) {
+                                filteredSkills.push($scope.skills[id]);
+                            }
+                        }
+                    }
+                    return filteredSkills;
+                };
+
+                //Делает выбраный в autocomplete скилл текущим
+                $scope.query.selectedItemChanged = function (skill) {
+                    if (skill) $scope.currentSkill = skill;
+                };
+
+                //Делает выбраный скилл текущим (по нажатию на скилл)
+                $scope.setToCurrent = function (skill) {
+                    if ($scope.addClicked) $scope.addClicked = false;
+                    else $scope.currentSkill = skill;
+                };
+
+                $scope.addClicked = false;
+                //Добавляет id скилла в needs и убирает плюсик с него
+                $scope.addNeed = function (id) {
+                    $scope.addClicked = true;
+                    if ($scope.dataNeeds.needs.indexOf(id) == -1) {
+                        $scope.dataNeeds.needs.push(id);
+                        if ($scope.currentSkill == $scope.skills[id]) {
+                            $scope.currentSkill.added = true;
+                            $scope.skills[id].added = true;
+                        } else {
+                            $scope.skills[id].added = true;
+                        }
+                    }
+                };
+
+                //Убирает id скилла из нидсов
+                $scope.removeNeed = function (id) {
+                    $scope.dataNeeds.needs.splice($scope.dataNeeds.needs.indexOf(id), 1);
+                    $scope.skills[id].added = false;
+                };
+
+                $scope.erase = function () {
+                    $scope.dataNeeds.needs = [];
+                };
+
+                //По нажатию "Готово" отправляет выбраные нидсы на сервер для записи в БД
+                $scope.done = function () {
+                    $http.post('/needs', $scope.dataNeeds).success(function () {
+                        loadLoggedUser(function () {
+                            $location.path('/users/' + user.id);
+                        });
+                    });
+                };
+
+                $scope.step = 3;
+            });
+        };
+    });
 });
 
 app.controller('restoreCtrl', function ($scope, $http, $mdDialog, $location) {

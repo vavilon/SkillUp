@@ -252,12 +252,12 @@
                                                 <input type="text" ng-model="info.edName">
                                             </md-input-container>
                                         </div>
-                                        <div layout="row">
+                                        <div layout="row" layout-align="start start">
                                             <md-input-container flex style="padding-left: 0px;">
                                                 <label>Что изучали</label>
                                                 <input type="text" ng-model="info.edConc">
                                             </md-input-container>
-                                            <md-select style="margin-top: 7px;" placeholder="Год окончания" ng-model="info.edYear">
+                                            <md-select placeholder="Год окончания" ng-model="info.edYear">
                                                 <md-option ng-repeat="i in range" value="{{i}}">{{i}}</md-option>
                                             </md-select>
                                             <div style="margin-top: 8px;">

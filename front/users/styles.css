@@ -519,16 +519,8 @@ a[role="button"] h1:hover {
     min-height: 24px;
 }
 
-.parents {
-    display: block;
-}
-
 .current {
     margin: 32px;
-}
-
-.children {
-    display: block;
 }
 
 .selected-needs {
