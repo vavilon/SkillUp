@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/front/tasks/styles.css">
     <link rel="stylesheet" href="/front/skills/styles.css">
     <link href="/front/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet" type="text/css">
 
     <!--<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>-->
     <script src="/bower_components/angular/angular.js"></script>
@@ -51,72 +51,117 @@
 <body layout="row">
 <div id="fb-root"></div>
 <div layout="column" layout-fill tabindex="-1" role="main">
-    <md-toolbar class="md-hue-2 md-whiteframe-z3" ng-controller="navbarCtrl">
-        <div layout="row" layout-align="space-between center">
-            <div flex="50" flex-gt-md="15" layout="row">
-                <div class="md-toolbar-tools" flex="30" flex-md="25" hide-gt-md>
-                    <md-button class="md-raised" aria-label="menuButton">
-                        <i class="mdi mdi-menu"></i>
-                    </md-button>
-                </div>
-                <div hide show-gt-lg flex="15"></div>
-                <div class="md-toolbar-tools" flex flex-gt-md="90">
+    <div ng-controller="navbarCtrl">
+        <md-toolbar class="md-hue-2 md-whiteframe-z1 toolbar-main" style="z-index: 3;">
+            <div class="md-toolbar-tools">
+                <md-button class="md-icon-button" aria-label="Settings" ng-if="isLoggedIn()" ng-click="toggleSidenav()">
+                    <i class="mdi mdi-menu mdi-24"></i>
+                </md-button>
+                <h2>
                     <a href="/main" class="header-logo">skill<span style="color: #E91E63;">up</span></a>
-                </div>
-            </div>
-            <div class="md-toolbar-tools" hide show-gt-md flex="65" flex-gt-lg="60"  ng-if="isLoggedIn()">
-                <a href="/main"><h5 ng-class="{'navbar-active': getSelectedIndex() == 0}">
-                    Главная</h5></a>
-                    <a href="/skills"><h5 ng-class="{'navbar-active': getSelectedIndex() == 1}">Дерево
-                        умений</h5></a>
-                    <a href="/tasks"><h5 ng-class="{'navbar-active': getSelectedIndex() == 2}">
-                        Задания</h5></a>
-                    <a href="/users"><h5 ng-class="{'navbar-active': getSelectedIndex() == 3}">
-                        Пользователи</h5></a>
-<!--                    <a ng-if="isLoggedIn()" href="/competences"><h5 style="margin-right: 0px;"
-                                                                    ng-class="{'navbar-active': getSelectedIndex() == 4}">
-                        Компетенции</h5></a>-->
-            </div>
-            <div class="md-toolbar-tools" layout="row" layout-align="end center" flex>
-                <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
-                    <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
-                        <img ng-if="loggedUser().avatar" alt="{{loggedUser().nick}}" class="avatar" ng-src="{{loggedUser().avatar}}"
-                             ng-class="{admin: loggedUser().role !== 'пользователь'}">
-                        <i class="mdi mdi-account-circle mdi-36" ng-if="!loggedUser().avatar"></i>
-                        <div layout="column" layout-align="center center">
-                            <h6 class="nickname" ng-class="{admin: loggedUser().role !== 'пользователь'}">{{loggedUser().nick}}</h6>
+                </h2>
+                <md-divider class="horizontal-divider" ng-if="isLoggedIn()"></md-divider>
+                <h2 ng-if="isLoggedIn()" style="font-weight: 500;">
+                    {{pageTitle}}
+                </h2>
+                <div flex></div>
+                <div style="padding-right: 30px;">
+                    <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
+                        <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
+                            <img ng-if="loggedUser().avatar" alt="{{loggedUser().nick}}" class="avatar" ng-src="{{loggedUser().avatar}}"
+                                 ng-class="{admin: loggedUser().role !== 'пользователь'}">
+                            <i class="mdi mdi-account-circle mdi-36" ng-if="!loggedUser().avatar"></i>
+                            <div layout="column" layout-align="center center">
+                                <h6 class="nickname" ng-class="{admin: loggedUser().role !== 'пользователь'}">{{loggedUser().nick}}</h6>
                             <span class="user-exp">exp:
                                 <span style="color: #E91E63;">{{loggedUser().exp}}</span>
                             </span>
-                        </div>
-                    </a>
-                    <a ng-if="loggedUser().role !== 'пользователь'" class="admin-panel" href="/admin" hide>
-                        <md-tooltip>Админпанель</md-tooltip>
-                        <i class="mdi mdi-account-star mdi-24" ng-class="{'navbar-active': getSelectedIndex() == -1}"></i>
-                    </a>
-                    <md-button class="md-mini logout-button"
-                               ng-click="logout()" aria-label="logout-btn">
-                        <md-tooltip>Выйти</md-tooltip>
-                        <i class="mdi mdi-exit-to-app mdi-24"></i>
-                    </md-button>
+                            </div>
+                        </a>
+                        <a ng-if="loggedUser().role !== 'пользователь'" class="admin-panel" href="/admin" hide>
+                            <md-tooltip>Админпанель</md-tooltip>
+                            <i class="mdi mdi-account-star mdi-24" ng-class="{'navbar-active': getSelectedIndex() == -1}"></i>
+                        </a>
+                        <md-button class="md-mini logout-button"
+                                   ng-click="logout()" aria-label="logout-btn">
+                            <md-tooltip>Выйти</md-tooltip>
+                            <i class="mdi mdi-exit-to-app mdi-24"></i>
+                        </md-button>
+                    </div>
+                    <div ng-if="!isLoggedIn()" flex layout="row" layout-align="end center">
+                        <md-button class="md-raised md-primary md-hue-1"
+                                   ng-href="/registration" aria-label="logout-btn">
+                            Регистрация
+                        </md-button>
+                        <md-button class="md-raised" style="color: rgba(0, 0, 0, 0.54); font-weight: 600;"
+                                   ng-click="showLoginDialog($event)" aria-label="logout-btn">
+                            Войти
+                        </md-button>
+                    </div>
                 </div>
-                <div ng-if="!isLoggedIn()" layout="row" layout-align="end center" flex>
-                    <md-button class="md-raised md-primary md-hue-1"
-                               ng-href="/registration" aria-label="logout-btn">
-                        Регистрация
-                    </md-button>
-                    <md-button class="md-raised"
-                               style="color: rgba(0, 0, 0, 0.54); font-weight: 600"
-                               ng-click="showLoginDialog($event)" aria-label="logout-btn">
-                        Войти
-                    </md-button>
-                </div>
-                <div hide show-gt-lg flex="15"></div>
             </div>
+            <md-tabs class="md-hue-2 navtabs-animation" id="navtabs" md-selected="selectedNavTab" ng-show="isLoggedIn()">
+                <md-tab label="Решить"></md-tab>
+                <md-tab label="Проверить"></md-tab>
+                <md-tab label="Подтвердить"></md-tab>
+            </md-tabs>
+        </md-toolbar>
+        <div class="sidenav-main" layout="column" layout-align="space-between start" ng-if="isLoggedIn() && sidenavVisible">
+            <md-list>
+                <md-list-item>
+                    <a flex href="/main" layout="row" layout-align="start center"
+                       ng-class="{'selected-page': getSelectedPageNum() === 0}">
+                        <i class="mdi mdi-home mdi-24"></i>
+                        <span>Главная</span>
+                    </a>
+                </md-list-item>
+                <md-list-item>
+                    <a flex href="/skills" layout="row" layout-align="start center"
+                       ng-class="{'selected-page': getSelectedPageNum() === 1}">
+                        <i class="mdi mdi-source-fork mdi-24"></i>
+                        <span>Умения</span>
+                    </a>
+                </md-list-item>
+                <md-list-item>
+                    <a flex href="/tasks" layout="row" layout-align="start center"
+                       ng-class="{'selected-page': getSelectedPageNum() === 2}">
+                        <i class="mdi mdi-library-books mdi-24"></i>
+                        <span>Задания</span>
+                    </a>
+                </md-list-item>
+                <md-list-item>
+                    <a flex href="/users" layout="row" layout-align="start center"
+                       ng-class="{'selected-page': getSelectedPageNum() === 3}">
+                        <i class="mdi mdi-account-multiple mdi-24"></i>
+                        <span>Пользователи</span>
+                    </a>
+                </md-list-item>
+                <md-divider></md-divider>
+                <md-list-item>
+                    <a flex ng-href="/users/{{loggedUser().id}}" layout="row" layout-align="start center"
+                       ng-class="{'selected-page': getSelectedPageNum() === 4}">
+                        <i class="mdi mdi-account-circle mdi-24"></i>
+                        <span>Профиль</span>
+                    </a>
+                </md-list-item>
+                <md-list-item>
+                    <a flex ng-click="logout()" layout="row" layout-align="start center">
+                        <i class="mdi mdi-exit-to-app mdi-24"></i>
+                        <span>Выйти</span>
+                    </a>
+                </md-list-item>
+            </md-list>
+            <footer>
+                <div layout="row" layout-align="start start" style="margin-bottom: 7px;">
+                    <a href="https://github.com/alexeychikk">Zinkevych Alexey</a>
+                    <a href="https://github.com/VintorezVS">Chernyshenko Sergey</a>
+                </div>
+                <span>© {{date.getFullYear()}} SkillUp, Inc.</span>
+            </footer>
         </div>
-    </md-toolbar>
+    </div>
     <md-content on-scroll-bottom="{event: 'indexPageScrolled', percent: 95}" ng-view md-scroll-y flex
-                style="background-color: #FAFAFA;">
+                style="background-color: #FAFAFA;" ng-class="{'sidenav-margin': isLoggedIn() && sidenavVisible}">
     </md-content>
 
 </div>

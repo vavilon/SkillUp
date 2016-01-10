@@ -83,6 +83,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
                                          $rootScope, $location, isLoggedIn) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
+        $rootScope.pageTitle = 'Задания';
         $scope.getObjByID = getObjByID;
         $scope.chips = {};
         $scope.chips.tasksNames = [];
@@ -164,6 +165,7 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
 
         $http.post('db/tasks', {id: $routeParams.task_id}).success(function (task) {
             task = task[0];
+            $rootScope.pageTitle = task.title;
             parseSkills(task);
             $scope.task = task;
 

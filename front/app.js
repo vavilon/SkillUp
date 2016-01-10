@@ -62,18 +62,10 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
     });
 });
 
-app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgressToExs, $q) {
+app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgressToExs, $q, isLoggedIn, $location) {
     $rootScope.ajaxCall = $q.defer();
-
-    $rootScope.navbarSelectedIndex = 0;
-    $rootScope.$on('$locationChangeSuccess', function (obj, newVal, oldVal) {
-        if ((new RegExp('/main')).test(newVal)) $rootScope.navbarSelectedIndex = 0;
-        else if ((new RegExp('/skills')).test(newVal)) $rootScope.navbarSelectedIndex = 1;
-        else if ((new RegExp('/tasks')).test(newVal)) $rootScope.navbarSelectedIndex = 2;
-        else if ((new RegExp('/users')).test(newVal)) $rootScope.navbarSelectedIndex = 3;
-        else if ((new RegExp('/competences')).test(newVal)) $rootScope.navbarSelectedIndex = 4;
-        else if ((new RegExp('/admin')).test(newVal)) $rootScope.navbarSelectedIndex = -1;
-    });
+    $rootScope.isLoggedIn = isLoggedIn;
+    $rootScope.sidenavVisible = true;
 
     loadLoggedUser(function(user) {
         if (user) {
@@ -87,24 +79,59 @@ app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgr
         } else $rootScope.ajaxCall.resolve();
     });
 
-    /*    FB.init({
-     appId      : '490483854451281',
-     status     : true,
-     xfbml      : true,
-     version    : 'v2.3'
-     });*/
+    function setPageNum(obj, newVal, oldVal) {
+        if ((new RegExp('/main')).test(newVal)) $rootScope.selectedPageNum = 0;
+        else if ((new RegExp('/skills')).test(newVal)) $rootScope.selectedPageNum = 1;
+        else if ((new RegExp('/tasks')).test(newVal)) $rootScope.selectedPageNum = 2;
+        else if ((new RegExp('/users')).test(newVal)) {
+            if (newVal.split('/').pop() == $rootScope.loggedUser.id) $rootScope.selectedPageNum = 4;
+            else $rootScope.selectedPageNum = 3;
+        }
+        else if ((new RegExp('/competences')).test(newVal)) $rootScope.selectedPageNum = 5;
+        else if ((new RegExp('/admin')).test(newVal)) $rootScope.selectedPageNum = -1;
+    }
 
+    $rootScope.ajaxCall.promise.then(function () {
+        setPageNum(null, $location.path());
+        $rootScope.$on('$locationChangeSuccess', setPageNum);
+    });
 });
 
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout, extendedSkills,
-                                       isLoggedIn, loadLoggedUser, $mdDialog, $mdToast, loggedUser, appendProgressToExs) {
+                                       loadLoggedUser, $mdDialog, $mdToast, loggedUser, appendProgressToExs) {
+
+    //!!! ОСТОРОЖНО !!!
+    //ДАЛЬНЕЙШИЙ КОД МОЖЕТ НАНЕСТИ ВАШЕЙ ПСИХИКЕ НЕПОПРАВИМЫЙ УЩЕРБ
+    setTimeout(function setTabsMargin(){
+        var el = document.getElementById('navtabs');
+        if (el && el.children[0] && el.children[0].children[1] && el.children[0].children[1].children[0]){
+            var navtabs = el.children[0].children[1].children[0];
+            if (navtabs.offsetWidth > window.innerWidth || navtabs.offsetWidth < 30) setTimeout(setTabsMargin, 10);
+            else {
+                navtabs.style.marginLeft = 'calc((100vw - ' + navtabs.offsetWidth + 'px) / 2)';
+                document.getElementById('navtabs').style.opacity = 1;
+            }
+        }
+    }, 10);
+    $rootScope.$watch('selectedNavTab', function (newValue, oldValue) {
+        if (newValue != undefined) $scope.selectedNavTab = newValue;
+    });
+    $scope.$watch('selectedNavTab', function (newValue, oldValue) {
+        if (newValue != undefined) $rootScope.selectedNavTab = newValue;
+    });
+    //СДЕСЬ МОЖЕТЕ СНОВА ОТКРЫТЬ ГЛАЗА
+
+    $scope.date = new Date();
+
     $scope.loginErr = {loginerr: false};
 
-    $scope.getSelectedIndex = function () {
-        return $rootScope.navbarSelectedIndex;
+    $scope.toggleSidenav = function() {
+        $rootScope.sidenavVisible = !$rootScope.sidenavVisible;
     };
 
-    $scope.isLoggedIn = isLoggedIn;
+    $scope.getSelectedPageNum = function () {
+        return $rootScope.selectedPageNum;
+    };
 
     $scope.loggedUser = loggedUser;
 
@@ -157,36 +184,34 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
         });
     };
 
+    function LoginDialogController($scope, $mdDialog, $rootScope) {
+        $scope.log = {};
+
+        $scope.hide = function () {
+            $scope.log.email = 'loh';
+            $scope.log.password = 'loh';
+            $mdDialog.hide();
+        };
+        $scope.cancel = function () {
+            $scope.log.email = 'loh';
+            $scope.log.password = 'loh';
+            $mdDialog.hide();
+        };
+        $scope.answer = function () {
+            if (!$scope.log.email || !$scope.log.password) return;
+            $rootScope.loginData = {email: $scope.log.email, password: $scope.log.password};
+        };
+
+        $scope.getLoginErr = function () {
+            return $rootScope.loginErr;
+        };
+    }
 });
-
-function LoginDialogController($scope, $mdDialog, $rootScope) {
-    $scope.log = {};
-
-    $scope.hide = function () {
-        $scope.log.email = 'loh';
-        $scope.log.password = 'loh';
-        $mdDialog.hide();
-    };
-    $scope.cancel = function () {
-        $scope.log.email = 'loh';
-        $scope.log.password = 'loh';
-        $mdDialog.hide();
-    };
-    $scope.answer = function () {
-        if (!$scope.log.email || !$scope.log.password) return;
-        $rootScope.loginData = {email: $scope.log.email, password: $scope.log.password};
-    };
-
-    $scope.getLoginErr = function () {
-        return $rootScope.loginErr;
-    };
-
-}
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
                                          $mdToast, $rootScope, loadLoggedUser, getObjByID, completedSkills,
                                          skillsToIDs, $mdSidenav) {
-    $scope.isLoggedIn = isLoggedIn;
+    $rootScope.pageTitle = 'Главная';
     $scope.registrationPath = "/registration/";
     $scope.reg = {email: '', password: ''};
 
@@ -217,6 +242,25 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             count++;
         }
     });
+
+    $rootScope.$watch('selectedNavTab', function (newValue, oldValue) {
+        if (newValue !== undefined) $scope.selectedNavTab = newValue;
+    });
+
+    $scope.selectedNavTab = 0;
+
+    $scope.next = function () {
+        if ($scope.selectedNavTab < 2) {
+            $scope.selectedNavTab++;
+            $rootScope.selectedNavTab = $scope.selectedNavTab;
+        }
+    };
+    $scope.previous = function () {
+        if ($scope.selectedNavTab > 0) {
+            $scope.selectedNavTab--;
+            $rootScope.selectedNavTab = $scope.selectedNavTab;
+        }
+    };
 
     $rootScope.ajaxCall.promise.then(function () {
         if (!isLoggedIn()) return;
@@ -308,15 +352,6 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
 
 
         $scope.temp = {}; //связывает ng-model элемента input директивы tasks-list и temp.solution
-
-        $scope.selectedTab = 0;
-
-        $scope.next = function () {
-            if ($scope.selectedTab < 3) $scope.selectedTab++;
-        };
-        $scope.previous = function () {
-            if ($scope.selectedTab > 0) $scope.selectedTab--;
-        };
 
         $scope.sendTask = {title: '', description: '', links: [], link: '', skills: []};
 

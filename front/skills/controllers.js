@@ -152,6 +152,7 @@ app.factory('extendedSkills', function () {
 app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $location, isLoggedIn) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
+        $rootScope.pageTitle = 'Умения';
         $scope.user = $rootScope.loggedUser;
 
         $scope.skillTitle = "";

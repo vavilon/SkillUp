@@ -1,6 +1,7 @@
 app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $rootScope, getObjByID, parseSkills, loadUsers, isLoggedIn) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
+        $rootScope.pageTitle = 'Пользователи';
         $scope.username = "";
         $scope.filteredUsers = [];
 
@@ -83,6 +84,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 parseSkills(data[0], true);
                 $scope.user = data[0];
             }
+            $rootScope.pageTitle = $scope.user.name;
             $scope.ownProfile = (loggedUser().id === $scope.user.id);
 
             if ($scope.user.education) {
@@ -270,7 +272,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 }
             });
         }
-
+        $rootScope.pageTitle = 'Регистрация';
         var maxYear = (new Date()).getFullYear();
         $scope.range = [];
         for (var i = maxYear; i > 1929; i--) {

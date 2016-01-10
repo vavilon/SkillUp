@@ -22,22 +22,6 @@ a:hover.header-logo span {
     color: #F06292 !important;
 }
 
-.md-toolbar-tools a:hover h5 {
-    color: #FFFFFF;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.54);
-}
-
-.md-toolbar-tools a:hover h5.navbar-active {
-    color: #E91E63;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.54);
-}
-
-.md-toolbar-tools a h5 {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-right: 30px;
-}
-
 .navbar-active {
     color: #E91E63;
 }
@@ -68,17 +52,17 @@ a:hover .nickname.admin {
 /* main.html */
 
 md-toolbar.demo-toolbar {
-    background: rgba(0, 0, 0, 0.12) !important;
-    color: rgba(0, 0, 0, 0.54);
+    background: rgba(0, 0, 0, .12) !important;
+    color: rgba(0, 0, 0, .54);
 }
 
 .item-animate.ng-enter,
 .item-animate.ng-leave {
-    -webkit-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    -moz-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    -ms-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    -o-transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
-    transition: 500ms cubic-bezier(0.250, 0.750, 0.750, 0.250) all;
+    -webkit-transition: 500ms cubic-bezier(.250, .750, .750, .250) all;
+    -moz-transition: 500ms cubic-bezier(.250, .750, .750, .250) all;
+    -ms-transition: 500ms cubic-bezier(.250, .750, .750, .250) all;
+    -o-transition: 500ms cubic-bezier(.250, .750, .750, .250) all;
+    transition: 500ms cubic-bezier(.250, .750, .750, .250) all;
     position: relative;
     display: block;
     overflow: hidden;
@@ -101,8 +85,8 @@ md-toolbar.demo-toolbar {
 
 .show-hide.ng-hide-add,
 .show-hide.ng-hide-remove {
-    -webkit-transition: 400ms cubic-bezier(0.25, 0.8, 0.25, 1) all;
-    transition: 400ms cubic-bezier(0.25, 0.8, 0.25, 1) all;
+    -webkit-transition: 400ms cubic-bezier(.25, .8, .25, 1) all;
+    transition: 400ms cubic-bezier(.25, .8, .25, 1) all;
 
     /* remember to add this */
     display: block !important;
@@ -136,17 +120,17 @@ md-toolbar.demo-toolbar {
 
 .my-subheader {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, .54);
 }
 
 code {
     white-space: pre-wrap !important;
     background-color: rgba(0, 0, 0, 0) !important;
-    padding: 0px !important;
+    padding:0 !important;
 }
 
 pre {
-    margin: 0px !important;
+    margin:0 !important;
 }
 
 .logout-button {
@@ -174,7 +158,7 @@ pre {
     padding-top: 14px;
     padding-bottom: 14px;
     margin-bottom: 10px;
-    border-radius: 0px 0px 3px 3px;
+    border-radius:00 3px 3px;
     border: 1px solid #BDBDBD;
 }
 
@@ -184,7 +168,7 @@ pre {
     padding: 10px;
     padding-top: 6px;
     padding-bottom: 6px;
-    border-radius: 3px 3px 0px 0px;
+    border-radius: 3px 3px00;
     border: 1px solid #BDBDBD;
     border-bottom: none;
 }*/
@@ -196,7 +180,7 @@ pre {
     border-radius: 4px;
     padding: 1px 3px 1px 3px;
     margin-right: 10px;
-    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, .5);
 }
 
 .diff-label.easy {
@@ -236,7 +220,7 @@ pre {
 
 .task-skills-word {
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, .54);
 }
 
 .task-body {
@@ -261,7 +245,7 @@ pre {
 
 .task-date, .task-author {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, .54);
 }
 
 .task-author {
@@ -269,7 +253,7 @@ pre {
 }
 
 .task-author a{
-    color: rgba(65, 131, 196, 0.87);
+    color: rgba(65, 131, 196, .87);
     text-decoration: none;
 }
 
@@ -286,7 +270,7 @@ pre {
 }
 
 .task-button md-icon {
-    color: rgba(0,0,0,0.26);
+    color: rgba(0,0,0,.26);
     width: 19px;
     height: 19px;
 }
@@ -317,8 +301,8 @@ pre {
 }
 
 .skill-count.ng-enter, .skill-count.ng-leave {
-    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.3s;
-    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.3s;
+    -webkit-transition:all cubic-bezier(.250, .460, .450, .940) .3s;
+    transition:all cubic-bezier(.250, .460, .450, .940) .3s;
 }
 
 .skill-count.ng-enter,
@@ -345,8 +329,8 @@ pre {
 }
 
 .animate-if.ng-enter, .animate-if.ng-leave {
-    -webkit-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-    transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    -webkit-transition: all cubic-bezier(.250, .460, .450, .940) .5s;
+    transition: all cubic-bezier(.250, .460, .450, .940) .5s;
 }
 
 .animate-if.ng-enter,
@@ -365,7 +349,7 @@ pre {
 }
 
 .menu-tabs {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid rgba(0, 0, 0, .12);
 }
 
 .slogan-header {
@@ -387,8 +371,8 @@ pre {
 }
 
 .rotate-base {
-    -webkit-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.3s;
-    transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.3s;
+    -webkit-transition: all cubic-bezier(.250, .460, .450, .940) .3s;
+    transition: all cubic-bezier(.250, .460, .450, .940) .3s;
 }
 
 .rotate-base.rotate-btn {
@@ -397,15 +381,15 @@ pre {
 
 .site-footer {
     width: 90%;
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    border-top: 1px solid rgba(0, 0, 0, .12);
     margin: 60px 0 0 5%;
     padding: 30px 0 0 0;
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, .54);
 }
 
 .site-footer a {
-     color: rgba(65, 131, 196, 0.87);
+     color: rgba(65, 131, 196, .87);
      text-decoration: none;
  }
 
@@ -443,13 +427,13 @@ pre {
 
 
 .list-empty {
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, .54);
     font-weight: normal;
 }
 
 .learning-links {
     font-size: 12px;
-    color: rgba(65, 131, 196, 0.87);
+    color: rgba(65, 131, 196, .87);
     text-decoration: none;
 }
 
@@ -486,9 +470,99 @@ pre {
 }
 
 .mdi-hint {
-    color: rgba(0, 0, 0, 0.26);
+    color: rgba(0, 0, 0, .26);
 }
 
 .mdi-secondary {
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, .54);
+}
+
+.horizontal-divider {
+    width: 1px;
+    height: 50%;
+    background-color: rgba(255, 255, 255, .12);
+    margin: 0 24px;
+}
+
+.sidenav-main {
+    position: fixed;
+    z-index: 2;
+    width: 210px;
+    height: calc(100% - 64px);
+    background-color: #FAFAFA;
+}
+
+.sidenav-main md-list {
+    padding: 16px 0 0 0;
+    width: 100%;
+}
+
+.sidenav-main md-list md-list-item {
+    padding: 0;
+}
+
+.sidenav-main md-list md-list-item a {
+    outline: none;
+    cursor: pointer;
+    padding: 0 12px 0 20px;
+    color: rgba(0,0,0,0.70);
+    font-size: 14px;
+    height: 48px;
+    font-weight: 600 !important;
+    opacity: .85;
+    line-height: 50px;
+    overflow: hidden;
+    transition: background-color .3s cubic-bezier(0,0,0.2,1);
+    text-decoration: none;
+}
+
+.sidenav-main md-list md-list-item a:hover {
+    background-color: rgba(0, 0, 0, .12);
+}
+
+.sidenav-main md-list md-list-item a:after {
+    clear: both;
+    content: ' ';
+}
+
+.sidenav-main md-list md-list-item a i {
+    padding-right: 22px;
+    color: #757575;
+}
+
+.sidenav-main md-list md-divider {
+    margin: 8px 0;
+}
+
+.sidenav-main footer {
+    font-size: 12px;
+    line-height: 16px;
+    margin: 5px 0 24px 24px;
+    color: #aaa;
+}
+
+.sidenav-main footer a {
+    color: #aaa;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.sidenav-margin {
+    margin-left: 210px;
+}
+
+.sidenav-main .selected-page {
+    color: rgba(0, 0, 0, .87);
+    background-color: rgba(0, 0, 0, .12);
+}
+
+.navtabs-animation {
+    opacity: 0;
+    height: 48px;
+    transition: all 0.5s ease-in-out;
+}
+
+.navtabs-animation.ng-hide {
+    height: 0;
+    opacity: 0;
 }
