@@ -48,7 +48,7 @@
 
 </head>
 
-<body layout="row">
+<body layout="row" style="background-color: #FAFAFA;">
 <div id="fb-root"></div>
 <div layout="column" layout-fill tabindex="-1" role="main">
     <div ng-controller="navbarCtrl">
@@ -160,8 +160,8 @@
             </footer>
         </div>
     </div>
-    <md-content on-scroll-bottom="{event: 'indexPageScrolled', percent: 95}" ng-view md-scroll-y flex
-                style="background-color: #FAFAFA;" ng-class="{'sidenav-margin': isLoggedIn() && sidenavVisible}">
+    <md-content on-scroll-bottom="{event: 'indexPageScrolled', percent: 95}" ng-view md-scroll-y flex class="content-main"
+                ng-class="{'sidenav-margin': isLoggedIn() && sidenavVisible}">
     </md-content>
 
 </div>
