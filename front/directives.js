@@ -396,16 +396,22 @@ app.directive('skillButton', function($rootScope, $timeout) {
                 if (attrs.hideRemove === "") scope.hideRemove = true;
                 var el = element[0].children[0];
                 var par = element[0].parentNode;
-                scope.$watch('count', function () {
-                    if (angular.isNumber(scope.count)) {
-                        var percent = Math.floor(100 - scope.count * 100);
-                        if (percent > 100) percent = 100;
-                        else if (percent < 0) percent = 0;
-                        el.style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '
-                            + percent + '%, transparent ' + percent + '%)';
-                        el.style['background-color'] = '';
-                    }
-                });
+                    scope.$watch('count', function () {
+                        var percent;
+                        if (scope.count === undefined || scope.count === null) {
+                            percent = 0;
+                            el.style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '
+                                + percent + '%, transparent ' + percent + '%)';
+                            el.style['background-color'] = '';
+                        } else if (angular.isNumber(scope.count)) {
+                            percent = Math.floor(100 - scope.count * 100);
+                            if (percent > 100) percent = 100;
+                            else if (percent < 0) percent = 0;
+                            el.style.background = 'linear-gradient(to left, rgba(255, 255, 255, 0.5) '
+                                + percent + '%, transparent ' + percent + '%)';
+                            el.style['background-color'] = '';
+                        }
+                    });
                 var parWidth = par.offsetWidth;
                 if (par.id == 'kostyl') {
                     scope.$watch('mouseOn', function (val) {
