@@ -153,6 +153,7 @@ app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $loca
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Умения';
+        $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
         $scope.user = $rootScope.loggedUser;
 
         $scope.skillTitle = "";

@@ -2,6 +2,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Пользователи';
+        $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
         $scope.username = "";
         $scope.filteredUsers = [];
 
@@ -47,7 +48,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationObjToArr, workObjToArr, loadLoggedUser,
-                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope,
+                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, bindToNavtabs,
                                         setNotReceivable, isLoggedIn, $location, addEducation, removeEducation,
                                         addWork, removeWork) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
@@ -67,7 +68,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
     };
 
     $rootScope.ajaxCall.promise.then(function () {
-        $scope.categoryNum = 0;
         $scope.tabSelected = 0;
 
         $scope.findSkill = function (id) {
@@ -85,6 +85,8 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 $scope.user = data[0];
             }
             $rootScope.pageTitle = $scope.user.name;
+            $scope.navtabs = {selected: 0, tabs: ['Прогресс', 'Информация']};
+            bindToNavtabs($scope, 'navtabs');
             $scope.ownProfile = (loggedUser().id === $scope.user.id);
 
             if ($scope.user.education) {

@@ -100,10 +100,8 @@
                     </div>
                 </div>
             </div>
-            <md-tabs class="md-hue-2 navtabs-animation" id="navtabs" md-selected="selectedNavTab" ng-show="isLoggedIn()">
-                <md-tab label="Решить"></md-tab>
-                <md-tab label="Проверить"></md-tab>
-                <md-tab label="Подтвердить"></md-tab>
+            <md-tabs class="md-hue-2 navtabs-animation" id="navtabs" md-selected="navtabs.selected" ng-show="isLoggedIn() && navtabs.tabs.length">
+                <md-tab ng-repeat="tab in navtabs.tabs" label="{{tab}}" class="navtab"></md-tab>
             </md-tabs>
         </md-toolbar>
         <div class="sidenav-main" layout="column" layout-align="space-between start" ng-if="isLoggedIn() && sidenavVisible">

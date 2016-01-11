@@ -84,6 +84,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Задания';
+        $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
         $scope.getObjByID = getObjByID;
         $scope.chips = {};
         $scope.chips.tasksNames = [];
@@ -162,7 +163,7 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $scope.exs = $rootScope.exs;
-
+        $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
         $http.post('db/tasks', {id: $routeParams.task_id}).success(function (task) {
             task = task[0];
             $rootScope.pageTitle = task.title;

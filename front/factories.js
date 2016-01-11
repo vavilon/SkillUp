@@ -323,3 +323,17 @@ app.factory('removeWork', function () {
         workObj.workArr.splice(index, 1);
     };
 });
+
+app.factory('bindToNavtabs', function ($rootScope) {
+    return function(scope, bindObjName) {
+        $rootScope.navtabs = scope[bindObjName];
+
+        $rootScope.$watch('navtabs.selected', function (newValue, oldValue) {
+            if (newValue !== undefined) scope[bindObjName].selected = newValue;
+        });
+
+        scope.$watch(bindObjName + '.selected', function (newValue, oldValue) {
+            if (newValue !== undefined) $rootScope.navtabs.selected = newValue;
+        });
+    };
+});

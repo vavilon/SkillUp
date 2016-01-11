@@ -66,6 +66,7 @@ app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgr
     $rootScope.ajaxCall = $q.defer();
     $rootScope.isLoggedIn = isLoggedIn;
     $rootScope.sidenavVisible = true;
+    $rootScope.navtabs = {selected: 0, tabs: []};
 
     loadLoggedUser(function(user) {
         if (user) {
@@ -98,27 +99,33 @@ app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgr
 });
 
 app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $rootScope, $timeout, extendedSkills,
-                                       loadLoggedUser, $mdDialog, $mdToast, loggedUser, appendProgressToExs) {
+                                       loadLoggedUser, $mdDialog, $mdToast, loggedUser, appendProgressToExs, bindToNavtabs) {
 
     //!!! ОСТОРОЖНО !!!
     //ДАЛЬНЕЙШИЙ КОД МОЖЕТ НАНЕСТИ ВАШЕЙ ПСИХИКЕ НЕПОПРАВИМЫЙ УЩЕРБ
-    setTimeout(function setTabsMargin(){
+    function setTabsMargin(){
         var el = document.getElementById('navtabs');
         if (el && el.children[0] && el.children[0].children[1] && el.children[0].children[1].children[0]){
             var navtabs = el.children[0].children[1].children[0];
-            if (navtabs.offsetWidth > window.innerWidth || navtabs.offsetWidth < 30) setTimeout(setTabsMargin, 10);
+            if (navtabs.offsetWidth > window.innerWidth || navtabs.offsetWidth < 30) $timeout(setTabsMargin, 10);
             else {
                 navtabs.style.marginLeft = 'calc((100vw - ' + navtabs.offsetWidth + 'px) / 2)';
                 document.getElementById('navtabs').style.opacity = 1;
             }
         }
-    }, 10);
-    $rootScope.$watch('selectedNavTab', function (newValue, oldValue) {
-        if (newValue != undefined) $scope.selectedNavTab = newValue;
+    }
+    $timeout(setTabsMargin, 10);
+    $scope.navtabs = {selected: 0, tabs: []};
+    $rootScope.$watch('navtabs', function (newValue, oldValue) {
+        var el = document.getElementById('navtabs');
+        el.style.opacity = 0;
+        $timeout(function() {
+            $scope.navtabs = newValue;
+            el.style.opacity = 1;
+            $timeout(setTabsMargin, 10);
+        }, 200);
     });
-    $scope.$watch('selectedNavTab', function (newValue, oldValue) {
-        if (newValue != undefined) $rootScope.selectedNavTab = newValue;
-    });
+    bindToNavtabs($scope, 'navtabs');
     //СДЕСЬ МОЖЕТЕ СНОВА ОТКРЫТЬ ГЛАЗА
 
     $scope.date = new Date();
@@ -210,7 +217,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
                                          $mdToast, $rootScope, loadLoggedUser, getObjByID, completedSkills,
-                                         skillsToIDs, $mdSidenav) {
+                                         skillsToIDs, $mdSidenav, bindToNavtabs) {
     $rootScope.pageTitle = 'Главная';
     $scope.registrationPath = "/registration/";
     $scope.reg = {email: '', password: ''};
@@ -243,30 +250,24 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }
     });
 
-    $rootScope.$watch('selectedNavTab', function (newValue, oldValue) {
-        if (newValue !== undefined) $scope.selectedNavTab = newValue;
-    });
-
-    $scope.selectedNavTab = 0;
-
-    $scope.next = function () {
-        if ($scope.selectedNavTab < 2) {
-            $scope.selectedNavTab++;
-            $rootScope.selectedNavTab = $scope.selectedNavTab;
-        }
-    };
-    $scope.previous = function () {
-        if ($scope.selectedNavTab > 0) {
-            $scope.selectedNavTab--;
-            $rootScope.selectedNavTab = $scope.selectedNavTab;
-        }
-    };
-
     $rootScope.ajaxCall.promise.then(function () {
         if (!isLoggedIn()) return;
-
         $scope.exs = $rootScope.exs;
 
+        $scope.navtabs = {selected: 0, tabs: ['Решить', 'Проверить', 'Подтвердить']};
+
+        bindToNavtabs($scope, 'navtabs');
+
+        $scope.next = function () {
+            if ($scope.navtabs.selected < 2) {
+                $scope.navtabs.selected++;
+            }
+        };
+        $scope.previous = function () {
+            if ($scope.navtabs.selected > 0) {
+                $scope.navtabs.selected--;
+            }
+        };
 
         $scope.calculateDifficulty = function (tasks, user) {
             var count = 0;
