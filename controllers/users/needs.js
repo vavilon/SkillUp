@@ -4,7 +4,7 @@ module.exports = function (knex) {
         if (!req.isAuthenticated()) return res.end();
         if (req.body.remove) { //Если нужно убрать скилы из needs
             knex('user_skills').update('need', false).where('user_id', req.user.id).whereIn('skill_id', req.body.needs).then(function () {
-                res.end('ok');
+                res.end('removed');
             }).catch(function (err) {
                 console.log(err);
                 res.end();
@@ -18,7 +18,7 @@ module.exports = function (knex) {
                 for (var i in req.body.needs) {
                     var tempSkill = null;
                     for (var j in skills) {
-                        if (req.body.needs[i] === skills[j].skill_id) {
+                        if (req.body.needs[i] == skills[j].skill_id) {
                             tempSkill = skills[j];
                             break;
                         }
@@ -33,7 +33,7 @@ module.exports = function (knex) {
                 }
                 knex('user_skills').update('need', true).where('user_id', req.user.id).whereIn('skill_id', updateSkills).then(function () {
                     knex('user_skills').insert(insertSkills).then(function () {
-                        res.end('ok')
+                        res.end('added')
                     }).catch(function (err) {
                         console.log(err);
                         res.end();
