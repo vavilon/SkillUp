@@ -145,48 +145,142 @@ app.factory('extendedSkills', function () {
                 calculateReverseLevels(this.skills[i]);
             }
         }
+
+
     };
 });
 
 
-app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $location, isLoggedIn) {
+app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $location, isLoggedIn, loadLoggedUser, appendProgressToExs, $timeout,
+                                       $document) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Умения';
         $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
-        $scope.user = $rootScope.loggedUser;
 
-        $scope.skillTitle = "";
-        $scope.filteredSkills = [];
+        //Определяеться в каком виде выводятся скиллы (графа или дерева), используется в md-tooltip
+        //Не испавлять на 'граф'
+        $scope.viewLike = 'дерева';
+        $scope.skillsLoadCounter = 0;
 
-        $scope.highlightSkills = true;
-        $scope.highlightNeeds = true;
+        $scope.currentSkill = $rootScope.exs.root;
+        $scope.skills = $rootScope.exs.skills;
+        //Объект в котором сохраняются id скиллов, которые надо добавить в needs
+        $scope.dataNeeds = {needs: []};
+        //Объект для поиска скилла по названию
+        $scope.query = {};
 
-        $scope.exs = $rootScope.exs;
-
-        $scope.toogleExpandedForAll = function (expand) {
-            for (var skill in $scope.exs.skills) {
-                $scope.exs.skills[skill].expanded = expand;
+        //Функция для поиска совпадений в названиях скиллов с введенным текстом
+        //Возвращает массив подходящих скиллов
+        $scope.query.search = function (text) {
+            var lowercaseQuery = angular.lowercase(text);
+            var filteredSkills = [];
+            for (var id in $scope.skills) {
+                if ($scope.skills[id].title.toLowerCase().indexOf(lowercaseQuery) !== -1) {
+                    filteredSkills.push($scope.skills[id]);
+                }
             }
+            return filteredSkills;
         };
 
-        $scope.toogleExpandedForAll(true);
+        //Делает выбраный в autocomplete скилл текущим в виде графа или прокручивает до скила в виде дерева
+        $scope.query.selectedItemChanged = function (skill) {
+            if (skill)
+                if ($scope.viewLike !== 'графа') {
+                    $scope.currentSkill = skill;
+                } else {
+                    document.getElementById(skill.id).scrollIntoView(true);
+                }
+        };
+
+        //Делает выбраный скилл текущим (по нажатию на скилл)
+        $scope.setToCurrent = function (skill) {
+            if ($scope.addClicked) $scope.addClicked = false;
+            else $scope.currentSkill = skill;
+        };
+
+        //Чтобы при нажатии на плюс или крест не устанавливался currentSkill
+        $scope.addClicked = false;
+
+        //Добавляе нидс
+        $scope.addNeed = function (id) {
+            $scope.addClicked = true;
+            $scope.editNeed(id, false);
+        };
+
+        //Убираем нидс
+        $scope.removeNeed = function (id) {
+            $scope.addClicked = true;
+            $scope.editNeed(id, true);
+        };
+
+        //Добавить или убрать из нидсов
+        $scope.editNeed = function (id, remove) {
+            $http.post('/needs', {remove: remove, needs: [id]}).success(function (data) {
+                console.log(data || 'Нет данных в ответе');
+                loadLoggedUser(function() {
+                    appendProgressToExs();
+                    $scope.skills = $rootScope.exs.skills;
+                    if(remove && $rootScope.exs.skills[id].count === 0) delete $rootScope.exs.skills[id].need;
+                    else if (remove) $rootScope.exs.skills[id].need = false;
+                    $scope.currentSkill = $scope.skills[$scope.currentSkill.id];
+                });
+                //TODO: Оповещать пользователя про добавление ему в нидсы скила
+            });
+        };
+
+        $scope.expandAll = {};
+        $scope.expandAll.visible = false;
+        $scope.expandAll.disabled = true;
+
+        $scope.highlight = {};
+        $scope.highlight.skills = true;
+        $scope.highlight.needs = true;
+
+        $rootScope.exs.root.expanded = true;
+
+        $scope.setExpandedAllDisabled = function () {
+            if (!$rootScope.exs.root.expanded) {
+                $scope.expandAll.disabled = true;
+                return;
+            }
+            for (var skill in $rootScope.exs.root.children) {
+                if ($rootScope.exs.root.children[skill].expanded) {
+                    $scope.expandAll.disabled = false;
+                    return;
+                }
+            }
+            $scope.expandAll.disabled = true;
+        };
+
+        $scope.collapseTree = function () {
+            for (var skill in $scope.skills) {
+                $scope.skills[skill].expanded = false;
+            }
+            $rootScope.exs.root.expanded = true;
+            $scope.expandAll.disabled = true;
+        };
 
         $scope.expand = function (skill) {
             skill.expanded = !skill.expanded;
+            if (!skill.expanded) $scope.setExpandedAllDisabled();
+            else $scope.expandAll.disabled = false;
         };
 
         $scope.getSkillType = function (skill) {
-            if (skill.need) return $scope.highlightNeeds ? 'need' : null;
-            if (skill.count) return $scope.highlightSkills ? 'skill' : null;
+            if (skill.need) return $scope.highlight.needs ? 'need' : null;
+            if (skill.count) return $scope.highlight.skills ? 'skill' : null;
         };
 
-        $scope.$watch('skillTitle', function (newval, oldval) {
-            if ($scope.skillTitle && $scope.filteredSkills)
-                $scope.filteredSkills = $filter('objectByKeyValFilterArr')($scope.exs.skills, 'title', newval);
-            for (var skill in $scope.filteredSkills) {
-                $scope.filteredSkills[skill].expanded = false;
-            }
+        $scope.changeView = function () {
+            if($scope.viewLike === 'графа') $scope.viewLike = 'дерева';
+            else $scope.viewLike = 'графа';
+            $scope.expandAll.visible = !$scope.expandAll.visible;
+        };
+
+        //TODO: Сделать в директиве
+        $timeout(function () {
+            document.getElementById('secondary-toolbar-actions').style.opacity = 1;
         });
     });
 });
