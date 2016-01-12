@@ -493,7 +493,7 @@ pre {
 }
 
 .sidenav-main.ng-enter, .sidenav-main.ng-leave {
-    transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.3s;
 }
 
 .sidenav-main.ng-enter,
@@ -583,10 +583,14 @@ pre {
     opacity: 0;
 }
 
+.navtabs-animation span {
+    font-weight: 600 !important;
+}
+
 .content-main {
     top: 0;
     background-color: #FAFAFA;
-    transition: all 0.5s cubic-bezier(0,0,0.2,1);
+    transition: all 0.3s cubic-bezier(0,0,0.2,1);
 }
 
 .content-main.ng-leave, .content-main.ng-leave-active {
@@ -606,3 +610,9 @@ pre {
 .content-main.ng-enter.ng-enter-active {
     opacity: 1;
 }
+
+.search-main { font-size: 16px; color:rgba(255, 255, 255, .87) !important;}
+.search-main::-webkit-input-placeholder {color:rgba(255, 255, 255, .87);}
+.search-main::-moz-placeholder          {color:rgba(255, 255, 255, .87);}/* Firefox 19+ */
+.search-main:-moz-placeholder           {color:rgba(255, 255, 255, .87);}/* Firefox 18- */
+.search-main:-ms-input-placeholder      {color:rgba(255, 255, 255, .87);}

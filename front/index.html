@@ -64,7 +64,15 @@
                 <h2 ng-if="isLoggedIn()" style="font-weight: 500;">
                     {{pageTitle}}
                 </h2>
-                <div flex></div>
+                <div flex="5"></div>
+                <div flex layout="row" layout-align="center center"
+                     style="border-radius: 3px; background-color: rgba(255, 255, 255, .15); padding: 6px 0;">
+                    <i class="mdi mdi-magnify mdi-24" style="margin-left: 8px;"></i>
+                    <md-input-container md-no-float style="margin: 0 20px 0 0;" flex layout="row" layout-align="center center">
+                        <input type="text" placeholder="Поиск" style="border: none;" class="search-main">
+                    </md-input-container>
+                </div>
+                <div flex="5"></div>
                 <div style="padding-right: 30px;">
                     <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
                         <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
