@@ -90,11 +90,15 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             $scope.ownProfile = (loggedUser().id === $scope.user.id);
 
             if ($scope.user.education) {
-                $scope.user.education = JSON.parse($scope.user.education);
+                try {
+                    if (angular.isString($scope.user.education)) $scope.user.education = JSON.parse($scope.user.education);
+                } catch (e) {}
                 $scope.user.educationArr = educationObjToArr($scope.user.education);
             }
             if ($scope.user.work) {
-                $scope.user.work = JSON.parse($scope.user.work);
+                try {
+                    if (angular.isString($scope.user.work)) $scope.user.work = JSON.parse($scope.user.work);
+                } catch (e) {}
                 $scope.user.workArr = workObjToArr($scope.user.work);
             }
 
@@ -264,12 +268,16 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 if (user.country) $scope.reg.country = user.country;
                 $scope.reg.education = [];
                 if (user.education) {
-                    $scope.reg.education = JSON.parse(user.education);
+                    try {
+                        $scope.reg.education = JSON.parse(user.education);
+                    } catch (e) {}
                     $scope.reg.educationArr = educationObjToArr($scope.reg.education);
                 }
                 $scope.reg.work = [];
                 if (user.work) {
-                    $scope.reg.work = JSON.parse(user.work);
+                    try {
+                        $scope.reg.work = JSON.parse(user.work);
+                    } catch (e) {}
                     $scope.reg.workArr = workObjToArr($scope.reg.work);
                 }
             });

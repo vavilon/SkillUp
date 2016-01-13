@@ -10,7 +10,15 @@ app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
     return function(callback) {
         $http.get('/logged_user').success(function (data) {
             $rootScope.loggedUser = data[0];
-            if (data) parseSkills($rootScope.loggedUser, true);
+            if (data) {
+                parseSkills($rootScope.loggedUser, true);
+                try {
+                    $rootScope.loggedUser.education = JSON.parse($rootScope.loggedUser.education);
+                } catch (e) {}
+                try {
+                    $rootScope.loggedUser.work = JSON.parse($rootScope.loggedUser.work);
+                } catch (e) {}
+            }
             callback && callback($rootScope.loggedUser);
         });
     };
