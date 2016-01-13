@@ -2,151 +2,149 @@
 <div style="position: absolute; height: 92%; width: 100%;" id="toastError"></div>
 <div style="position: absolute; height: 50%; width: 50%; margin-left: calc(50% - 150px);" id="toastSuccess"></div>
 
-<div layout="column">
-    <div layout="row" ng-class="{'promo-area': !isLoggedIn()}">
-        <div flex="10" flex-md="5" hide-sm></div>
-        <div ng-if="isLoggedIn()" flex layout="column"
-             style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
+<div layout="row" ng-class="{'promo-area': !isLoggedIn()}">
+    <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
+    <div ng-if="isLoggedIn()" flex layout="column"
+         style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
 
-            <md-content style="max-height: calc(100vh - 175px); overflow-x: hidden;">
-                <ng-switch on="navtabs.selected">
-                    <div role="tabpanel"
-                         aria-labelledby="tab1"
-                         ng-switch-when="0"
-                         md-swipe-left="next()"
-                         md-swipe-right="previous()">
-                        <tasks-list tasks="tasksReceived" solution="temp.solution" exp-style="-"
-                                    subheader="Полученные задания" receive-callback="receiveCallback"></tasks-list>
-                        <tasks-list tasks="tasksRecommended" solution="temp.solution" exp-style="-"
-                                    subheader="Рекомендованные задания" receive-callback="receiveCallback"></tasks-list>
-                        <div ng-if="!tasksReceived.length && !tasksRecommended.length" flex layout="column" layout-align="center center" class="md-tile-content">
-                            <h3 class="list-empty">Нет заданий для решения</h3>
-                        </div>
+        <md-content style="max-height: calc(100vh - 175px); overflow-x: hidden;">
+            <ng-switch on="navtabs.selected">
+                <div role="tabpanel"
+                     aria-labelledby="tab1"
+                     ng-switch-when="0"
+                     md-swipe-left="next()"
+                     md-swipe-right="previous()">
+                    <tasks-list tasks="tasksReceived" solution="temp.solution" exp-style="-"
+                                subheader="Полученные задания" receive-callback="receiveCallback"></tasks-list>
+                    <tasks-list tasks="tasksRecommended" solution="temp.solution" exp-style="-"
+                                subheader="Рекомендованные задания" receive-callback="receiveCallback"></tasks-list>
+                    <div ng-if="!tasksReceived.length && !tasksRecommended.length" flex layout="column" layout-align="center center" class="md-tile-content">
+                        <h3 class="list-empty">Нет заданий для решения</h3>
                     </div>
-                    <div role="tabpanel"
-                         aria-labelledby="tab2"
-                         ng-switch-when="1"
-                         md-swipe-left="next()"
-                         md-swipe-right="previous()">
-                        <solutions-list solutions="solutionsForChecking" exp-style="+"></solutions-list>
-                        <div ng-if="!solutionsForChecking.length" flex layout="column" layout-align="center center" class="md-tile-content">
-                            <h3 class="list-empty">Нет решений для проверки</h3>
-                        </div>
+                </div>
+                <div role="tabpanel"
+                     aria-labelledby="tab2"
+                     ng-switch-when="1"
+                     md-swipe-left="next()"
+                     md-swipe-right="previous()">
+                    <solutions-list solutions="solutionsForChecking" exp-style="+"></solutions-list>
+                    <div ng-if="!solutionsForChecking.length" flex layout="column" layout-align="center center" class="md-tile-content">
+                        <h3 class="list-empty">Нет решений для проверки</h3>
                     </div>
-                    <div role="tabpanel"
-                         aria-labelledby="tab3"
-                         ng-switch-when="2"
-                         md-swipe-left="next()"
-                         md-swipe-right="previous()">
-                        <tasks-list tasks="tasksForApproving" show-difficulty="false" show-receive="false"
-                                    solvable="false" approvable="true" exp-style="+"></tasks-list>
-                        <div ng-if="!tasksForApproving.length" flex layout="column" layout-align="center center" class="md-tile-content">
-                            <h3 class="list-empty">Нет заданий для подтверждения</h3>
-                        </div>
+                </div>
+                <div role="tabpanel"
+                     aria-labelledby="tab3"
+                     ng-switch-when="2"
+                     md-swipe-left="next()"
+                     md-swipe-right="previous()">
+                    <tasks-list tasks="tasksForApproving" show-difficulty="false" show-receive="false"
+                                solvable="false" approvable="true" exp-style="+"></tasks-list>
+                    <div ng-if="!tasksForApproving.length" flex layout="column" layout-align="center center" class="md-tile-content">
+                        <h3 class="list-empty">Нет заданий для подтверждения</h3>
                     </div>
-                    <div role="tabpanel"
-                         aria-labelledby="tab4"
-                         ng-switch-when="3"
-                         md-swipe-left="next()"
-                         md-swipe-right="previous()">
-                        <md-content class="md-padding">
-                            <form name="createTaskForm">
-                                <md-input-container class="md-block">
-                                    <label>Название задания</label>
-                                    <input ng-model="sendTask.title" name="taskTitle" md-maxlength="100" required minlength="10">
-                                    <div ng-messages="createTaskForm.taskTitle.$error">
-                                        <div ng-message="minlength">Название должно содержать как минимум 10 символов</div>
-                                    </div>
-                                </md-input-container>
-                                <md-input-container class="md-block">
-                                    <label>Текст задания</label>
-                                    <textarea ng-model="sendTask.description" name="taskDescription" columns="1" required minlength="30"></textarea>
-                                    <div ng-messages="createTaskForm.taskDescription.$error">
-                                        <div ng-message="minlength">Описание должно содержать как минимум 30 символов</div>
-                                    </div>
-                                </md-input-container>
-                                <div layout="row" layout-align="start start">
-                                    <div style="margin: 0 0 0 3px; color: rgba(0, 0, 0, 0.54);">Добавьте умения:</div>
-                                    <skill-button ng-repeat="skill in sendTask.skills" id="skill.skill_id" type="skill"
-                                                  with-arrows count="skill.count" count-visible
-                                                  with-remove on-remove="removeSkill"></skill-button>
-                                    <md-button class="md-accent md-mini expand-skill" ng-click="showSidenavSkills()" aria-label="showSidenav">
-                                        <i class="mdi mdi-plus"></i>
-                                    </md-button>
+                </div>
+                <div role="tabpanel"
+                     aria-labelledby="tab4"
+                     ng-switch-when="3"
+                     md-swipe-left="next()"
+                     md-swipe-right="previous()">
+                    <md-content class="md-padding">
+                        <form name="createTaskForm">
+                            <md-input-container class="md-block">
+                                <label>Название задания</label>
+                                <input ng-model="sendTask.title" name="taskTitle" md-maxlength="100" required minlength="10">
+                                <div ng-messages="createTaskForm.taskTitle.$error">
+                                    <div ng-message="minlength">Название должно содержать как минимум 10 символов</div>
                                 </div>
-                                <div layout="row" layout-align="start start">
-                                    <div flex="30" style="margin: 25px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Ссылки на учебные материалы:</div>
-                                    <div layout="column" flex style="margin-top: 20px;">
-                                        <div layout="row" layout-align="center center" flex ng-repeat="li in sendTask.links" ng-class="{'not-last': !$last}">
-                                            <div flex><span ng-if="sendTask.links.length > 1" class="info-header">•</span>
-                                                {{li}}
-                                            </div>
-                                            <md-button class="expand-button" style="margin-left: 10px;"
-                                                       ng-click="removeLink($index)">
-                                                <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
-                                                <md-tooltip>Удалить</md-tooltip>
-                                            </md-button>
+                            </md-input-container>
+                            <md-input-container class="md-block">
+                                <label>Текст задания</label>
+                                <textarea ng-model="sendTask.description" name="taskDescription" columns="1" required minlength="30"></textarea>
+                                <div ng-messages="createTaskForm.taskDescription.$error">
+                                    <div ng-message="minlength">Описание должно содержать как минимум 30 символов</div>
+                                </div>
+                            </md-input-container>
+                            <div layout="row" layout-align="start start">
+                                <div style="margin: 0 0 0 3px; color: rgba(0, 0, 0, 0.54);">Добавьте умения:</div>
+                                <skill-button ng-repeat="skill in sendTask.skills" id="skill.skill_id" type="skill"
+                                              with-arrows count="skill.count" count-visible
+                                              with-remove on-remove="removeSkill"></skill-button>
+                                <md-button class="md-accent md-mini expand-skill" ng-click="showSidenavSkills()" aria-label="showSidenav">
+                                    <i class="mdi mdi-plus"></i>
+                                </md-button>
+                            </div>
+                            <div layout="row" layout-align="start start">
+                                <div flex="30" style="margin: 25px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Ссылки на учебные материалы:</div>
+                                <div layout="column" flex style="margin-top: 20px;">
+                                    <div layout="row" layout-align="center center" flex ng-repeat="li in sendTask.links" ng-class="{'not-last': !$last}">
+                                        <div flex><span ng-if="sendTask.links.length > 1" class="info-header">•</span>
+                                            {{li}}
                                         </div>
+                                        <md-button class="expand-button" style="margin-left: 10px;"
+                                                   ng-click="removeLink($index)">
+                                            <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
+                                            <md-tooltip>Удалить</md-tooltip>
+                                        </md-button>
                                     </div>
                                 </div>
-                                <div layout="row">
-                                    <md-input-container flex>
-                                        <label>Вставьте ссылку</label>
-                                        <input type="text" name="taskLinks" ng-model="sendTask.link">
-                                    </md-input-container>
-                                    <div style="margin-top: 8px;">
-                                        <md-button class="md-raised" ng-click="addLink()">Добавить</md-button>
-                                    </div>
+                            </div>
+                            <div layout="row">
+                                <md-input-container flex>
+                                    <label>Вставьте ссылку</label>
+                                    <input type="text" name="taskLinks" ng-model="sendTask.link">
+                                </md-input-container>
+                                <div style="margin-top: 8px;">
+                                    <md-button class="md-raised" ng-click="addLink()">Добавить</md-button>
                                 </div>
-                                <md-button class="md-raised md-warn" ng-click="createTask()"
-                                           style="float: right; margin-top: 20px;">Создать</md-button>
-                            </form>
+                            </div>
+                            <md-button class="md-raised md-warn" ng-click="createTask()"
+                                       style="float: right; margin-top: 20px;">Создать</md-button>
+                        </form>
+                    </md-content>
+                    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+                        <md-toolbar class="md-theme-light">
+                            <h1 class="md-toolbar-tools">Ваши умения</h1>
+                        </md-toolbar>
+                        <md-content layout="column" layout-padding>
+                            <skill-button ng-repeat="skill in user.completedSkills | orderBy: 'title'" id="skill.skill_id"
+                                          type="skill" with-add ng-click="addSkill(skill)"></skill-button>
                         </md-content>
-                        <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-                            <md-toolbar class="md-theme-light">
-                                <h1 class="md-toolbar-tools">Ваши умения</h1>
-                            </md-toolbar>
-                            <md-content layout="column" layout-padding>
-                                <skill-button ng-repeat="skill in user.completedSkills | orderBy: 'title'" id="skill.skill_id"
-                                              type="skill" with-add ng-click="addSkill(skill)"></skill-button>
-                            </md-content>
-                        </md-sidenav>
-                    </div>
-                </ng-switch>
-            </md-content>
-        </div>
-        <div ng-if="!isLoggedIn()" flex layout="row">
-            <div layout="column" layout-align="center center" flex="60">
-                <h1 class="slogan-header">Прокачай свои навыки.</h1>
-                <h3 class="slogan-subheader">Решай задания, проверяй решения, знакомся с новыми людьми и получай профессиональные знания!</h3>
-            </div>
-            <div layout="column" flex="40" class="register-area">
-                <md-card>
-                    <md-card-content>
-                        <div layout="column">
-                <form>
-                    <md-input-container>
-                        <label>Никнейм</label>
-                        <input ng-model="reg.nick">
-                    </md-input-container>
-                    <md-input-container>
-                        <label>E-mail</label>
-                        <input ng-model="reg.email">
-                    </md-input-container>
-                    <md-input-container>
-                        <label>Пароль</label>
-                        <input type="password" ng-model="reg.password">
-                    </md-input-container>
-                </form>
-                <md-button class="md-raised md-primary md-hue-2 register-button"
-                           ng-click="register()" aria-label="logout-btn">
-                    Зарегистрироваться
-                </md-button>
-                        </div>
-                    </md-card-content>
-                </md-card>
-            </div>
-        </div>
-        <div flex="10" flex-md="5" hide-sm></div>
+                    </md-sidenav>
+                </div>
+            </ng-switch>
+        </md-content>
     </div>
+    <div ng-if="!isLoggedIn()" flex layout="row">
+        <div layout="column" layout-align="center center" flex="60">
+            <h1 class="slogan-header">Прокачай свои навыки.</h1>
+            <h3 class="slogan-subheader">Решай задания, проверяй решения, знакомся с новыми людьми и получай профессиональные знания!</h3>
+        </div>
+        <div layout="column" flex="40" class="register-area">
+            <md-card>
+                <md-card-content>
+                    <div layout="column">
+                        <form>
+                            <md-input-container>
+                                <label>Никнейм</label>
+                                <input ng-model="reg.nick">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>E-mail</label>
+                                <input ng-model="reg.email">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Пароль</label>
+                                <input type="password" ng-model="reg.password">
+                            </md-input-container>
+                        </form>
+                        <md-button class="md-raised md-primary md-hue-2 register-button"
+                                   ng-click="register()" aria-label="logout-btn">
+                            Зарегистрироваться
+                        </md-button>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+    </div>
+    <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
 </div>

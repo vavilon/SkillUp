@@ -616,3 +616,7 @@ pre {
 .search-main::-moz-placeholder          {color:rgba(255, 255, 255, .87);}/* Firefox 19+ */
 .search-main:-moz-placeholder           {color:rgba(255, 255, 255, .87);}/* Firefox 18- */
 .search-main:-ms-input-placeholder      {color:rgba(255, 255, 255, .87);}
+
+.content-main-side {
+    transition: all 0.3s cubic-bezier(0,0,0.2,1)
+}

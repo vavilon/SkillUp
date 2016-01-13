@@ -18,9 +18,9 @@
 </script>
 
 <div layout="row" layout-fill id="tree-container">
-    <div flex="10"></div>
+    <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
 
-    <div class="md-whiteframe-z1" layout="column" layout-fill>
+    <div class="md-whiteframe-z1" layout="column" flex>
         <md-toolbar class="secondary-toolbar">
             <div class="md-toolbar-tools">
                 <md-autocomplete
@@ -115,5 +115,5 @@
         </div>
     </div>
 
-    <div flex="10"></div>
+    <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
 </div>
