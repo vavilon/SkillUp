@@ -151,8 +151,7 @@ app.factory('extendedSkills', function () {
 });
 
 
-app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $location, isLoggedIn, loadLoggedUser, appendProgressToExs, $timeout,
-                                       $document) {
+app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $location, isLoggedIn, loadLoggedUser, appendProgressToExs, $timeout) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Умения';
@@ -223,17 +222,23 @@ app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $loca
             $scope.editNeed(id, true);
         };
 
-        //Добавить или убрать из нидсов
+        //Добавить или убрать скилл из нидсов текущего юзера
         $scope.editNeed = function (id, remove) {
             $http.post('/needs', {remove: remove, needs: [id]}).success(function (data) {
-                console.log(data || 'Нет данных в ответе');
-                loadLoggedUser(function() {
-                    appendProgressToExs();
-                    $scope.skills = $rootScope.exs.skills;
-                    if(remove && $rootScope.exs.skills[id].count === 0) delete $rootScope.exs.skills[id].need;
-                    else if (remove) $rootScope.exs.skills[id].need = false;
-                    $scope.currentSkill = $scope.skills[$scope.currentSkill.id];
-                });
+                var userNeeds = $rootScope.loggedUser.needs;
+                if (data == 'added') {
+                    $rootScope.exs.skills[id].need = true;
+                    if ($rootScope.exs.skills[id].count === undefined) $rootScope.exs.skills[id].count = 0;
+                    userNeeds.push({skill_id: +id, count: $rootScope.exs.skills[id].count})
+                }
+                else if (data == 'removed') {
+                    $rootScope.exs.skills[id].need = false;
+                    if ($rootScope.exs.skills[id].count === 0) delete $rootScope.exs.skills[id].count;
+                    userNeeds.splice(userNeeds.findIndex(function (el) {
+                        return el.skill_id == id;
+                    }), 1);
+                }
+                console.log($rootScope.loggedUser.needs);
                 //TODO: Оповещать пользователя про добавление ему в нидсы скила
             });
         };
