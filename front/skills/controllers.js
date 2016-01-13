@@ -183,13 +183,22 @@ app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $loca
             return filteredSkills;
         };
 
+        $scope.expandParents = function (skill) {
+            if (skill.parents.length) skill.parents[0].expanded = true;
+            else return;
+            $scope.expandParents(skill.parents[0]);
+        };
+
         //Делает выбраный в autocomplete скилл текущим в виде графа или прокручивает до скила в виде дерева
         $scope.query.selectedItemChanged = function (skill) {
             if (skill)
                 if ($scope.viewLike !== 'графа') {
                     $scope.currentSkill = skill;
                 } else {
-                    document.getElementById(skill.id).scrollIntoView(true);
+                    $scope.collapseTree();
+                    $scope.expandAll.disabled = false;
+                    $scope.expandParents($scope.skills[skill.id]);
+                    $scope.highlightedSkillID = skill.id;
                 }
         };
 

@@ -6,11 +6,11 @@
             <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
         </md-button>
         <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
-        <skill-button id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"
-                      with-add="(!skill.need && skill.count < 1) || skill.count === undefined"
-                      on-add="addNeed" tooltip-add="Добавить в 'Хочу'"
-                      with-remove="skill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'"></skill-button>
-    </div>
+            <skill-button highlight-skill="{{highlightedSkillID}}"
+                          id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"
+                          with-add="(!skill.need && skill.count < 1) || skill.count === undefined"
+                          on-add="addNeed" tooltip-add="Добавить в 'Хочу'"
+                          with-remove="skill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'"></skill-button></div>
     <ul class="animate-if-skill" ng-if="skill.children && skill.expanded">
         <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">
         </li>

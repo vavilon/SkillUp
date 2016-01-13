@@ -60,6 +60,15 @@ h4 {
     opacity:1;
 }
 
+.highlighted-skill-animation {
+    transition: background-color ease-out 0.7s;
+}
+
+.highlighted-skill {
+    background-color: #FFEB3B !important;
+}
+
+
 .secondary-toolbar {
     z-index: 3;
 }
