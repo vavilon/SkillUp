@@ -461,6 +461,10 @@ pre {
     font-size: 48px !important;;
 }
 
+.mdi-120 {
+    font-size: 120px !important;
+}
+
 .mdi-200 {
     font-size: 200px !important;
 }
@@ -470,11 +474,18 @@ pre {
 }
 
 .mdi-hint {
-    color: rgba(0, 0, 0, .26);
+    color: rgba(0, 0, 0, .38);
 }
 
 .mdi-secondary {
     color: rgba(0, 0, 0, .54);
+}
+
+.hint-title {
+    margin-top: 32px;
+    font-size: 24px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, .38);
 }
 
 .horizontal-divider {
@@ -489,7 +500,7 @@ pre {
     z-index: 2;
     width: 210px;
     height: calc(100% - 64px);
-    background-color: #FAFAFA;
+    background-color: inherit;
 }
 
 .sidenav-main.ng-enter, .sidenav-main.ng-leave {
@@ -589,7 +600,7 @@ pre {
 
 .content-main {
     top: 0;
-    background-color: #FAFAFA;
+    background-color: inherit;
     transition: all 0.3s cubic-bezier(0,0,0.2,1);
 }
 
@@ -611,7 +622,7 @@ pre {
     opacity: 1;
 }
 
-.search-main { font-size: 16px; color:rgba(255, 255, 255, .87) !important;}
+.search-main { border: none !important; font-size: 16px; color:rgba(255, 255, 255, .87) !important;}
 .search-main::-webkit-input-placeholder {color:rgba(255, 255, 255, .87);}
 .search-main::-moz-placeholder          {color:rgba(255, 255, 255, .87);}/* Firefox 19+ */
 .search-main:-moz-placeholder           {color:rgba(255, 255, 255, .87);}/* Firefox 18- */

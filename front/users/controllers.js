@@ -89,17 +89,31 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             bindToNavtabs($scope, 'navtabs');
             $scope.ownProfile = (loggedUser().id === $scope.user.id);
 
+            if ($scope.user.birthday) $scope.user.birthday = new Date($scope.user.birthday);
+
             if ($scope.user.education) {
                 try {
                     if (angular.isString($scope.user.education)) $scope.user.education = JSON.parse($scope.user.education);
                 } catch (e) {}
-                $scope.user.educationArr = educationObjToArr($scope.user.education);
             }
             if ($scope.user.work) {
                 try {
                     if (angular.isString($scope.user.work)) $scope.user.work = JSON.parse($scope.user.work);
                 } catch (e) {}
-                $scope.user.workArr = workObjToArr($scope.user.work);
+            }
+
+            for (var i in $scope.user.education) {
+                if ($scope.user.education[i].startYear)
+                    $scope.user.education[i].startYear = +$scope.user.education[i].startYear;
+                if ($scope.user.education[i].endYear)
+                    $scope.user.education[i].endYear = +$scope.user.education[i].endYear;
+            }
+
+            for (var i in $scope.user.work) {
+                if (typeof $scope.user.work[i].startDate == "string")
+                    $scope.user.work[i].startDate = new Date($scope.user.work[i].startDate);
+                if (typeof $scope.user.work[i].endDate == "string")
+                    $scope.user.work[i].endDate = new Date($scope.user.work[i].endDate);
             }
 
             $scope.info = {
@@ -108,24 +122,23 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 country: $scope.user.country,
                 city: $scope.user.city,
                 education: angular.copy($scope.user.education),
-                educationArr: angular.copy($scope.user.educationArr),
-                work: angular.copy($scope.user.work),
-                workArr: angular.copy($scope.user.workArr)
+                work: angular.copy($scope.user.work)
             };
 
             $scope.editInfo = function(param) {
-                if (param === 'birthday') $scope.info.birthday = new Date($scope.user.birthday);
+                if (param === 'general') {
+                    $scope.info.gender = $scope.user.gender;
+                    $scope.info.birthday = new Date($scope.user.birthday);
+                }
                 else if (param === 'location') {
                     $scope.info.country = $scope.user.country;
                     $scope.info.city = $scope.user.city;
                 }
                 else if (param === 'education') {
                     $scope.info.education = angular.copy($scope.user.education);
-                    $scope.info.educationArr = angular.copy($scope.user.educationArr)
                 }
                 else if (param === 'work') {
                     $scope.info.work = angular.copy($scope.user.work);
-                    $scope.info.workArr = angular.copy($scope.user.workArr)
                 }
                 $scope.info.editing[param] = true;
             };
@@ -136,52 +149,74 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 
             $scope.updateProfile = function(param) {
                 var updateData = {};
-                if (param === 'birthday') updateData.birthday = $scope.info.birthday;
+                if (param === 'general') {
+                    if ($scope.user.birthday.getTime() != $scope.info.birthday.getTime())
+                        updateData.birthday = $scope.info.birthday;
+                    if ($scope.user.gender != $scope.info.gender) updateData.gender = $scope.info.gender;
+                }
                 else if (param === 'location') {
-                    updateData.country = $scope.info.country;
-                    updateData.city = $scope.info.city;
+                    if ($scope.user.country != $scope.info.country) updateData.country = $scope.info.country;
+                    if ($scope.user.city != $scope.info.city) updateData.city = $scope.info.city;
                 }
                 else if (param === 'education') {
-                    updateData.education = JSON.stringify($scope.info.education);
+                    for (var i in $scope.info.education) {
+                        if (!$scope.info.education[i].name) $scope.info.education.splice(i, 1);
+                    }
+                    if (!angular.equals($scope.user.education, $scope.info.education))
+                        updateData.education = JSON.stringify($scope.info.education);
                 }
                 else if (param === 'work') {
-                    updateData.work = JSON.stringify($scope.info.work);
+                    for (var i in $scope.info.work) {
+                        if (!$scope.info.work[i].company) $scope.info.work.splice(i, 1);
+                    }
+                    if (!angular.equals($scope.user.work, $scope.info.work))
+                        updateData.work = JSON.stringify($scope.info.work);
+                }
+                if (!Object.keys(updateData).length) {
+                    $scope.info.editing[param] = false;
+                    return;
                 }
                 $http.post('/update_profile', updateData).success(function(res) {
                     if (!res) {
                     }
                     else {
-                        if (param === 'birthday') $scope.user.birthday = $scope.info.birthday;
+                        if (param === 'general') {
+                            $scope.user.birthday = $scope.info.birthday;
+                            $scope.user.gender = $scope.info.gender;
+                        }
                         else if (param === 'location') {
                             $scope.user.country = $scope.info.country;
                             $scope.user.city = $scope.info.city;
                         }
                         else if (param === 'education') {
                             $scope.user.education = $scope.info.education;
-                            $scope.user.educationArr = $scope.info.educationArr;
                         }
                         else if (param === 'work') {
                             $scope.user.work = $scope.info.work;
-                            $scope.user.workArr = $scope.info.workArr;
                         }
                         $scope.info.editing[param] = false;
                     }
                 });
             };
 
-            var maxYear = (new Date()).getFullYear();
-            $scope.range = [];
-            for (var i = maxYear; i > 1929; i--) {
-                $scope.range.push(i);
-            }
+            $scope.maxYear = (new Date()).getFullYear();
+            $scope.minYear = $scope.maxYear - 100;
 
-            $scope.addEducation = function () { addEducation($scope.info); };
+            $scope.addEducation = function () {
+                $scope.info.education.unshift({});
+            };
 
-            $scope.removeEducation = function (index) { removeEducation($scope.info, index); };
+            $scope.removeEducation = function (index) {
+                $scope.info.education.splice(index, 1);
+            };
 
-            $scope.addWork = function () { addWork($scope.info); };
+            $scope.addWork = function () {
+                $scope.info.work.unshift({});
+            };
 
-            $scope.removeWork = function (index) { removeWork($scope.info, index); };
+            $scope.removeWork = function (index) {
+                $scope.info.work.splice(index, 1);
+            };
 
             if ($scope.user.tasks_done) {
                 var dbTasksDoneOptions = {ids: $scope.user.tasks_done};

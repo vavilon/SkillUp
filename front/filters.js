@@ -41,3 +41,9 @@ app.filter('thousand', function () {
         return arr;
     };
 });
+
+app.filter('gender', function () {
+    return function (input) {
+        return input == 'male' ? 'Мужской': 'Женский';
+    };
+});

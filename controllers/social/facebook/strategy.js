@@ -9,7 +9,7 @@ module.exports = function (token, refreshToken, profile, done) {
         return Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date.getTime());
     }
     /***
-     * @return { [{name: String, speciality: String, endDate: Date}] }
+     * @return { [{name: String, speciality: String, endYear: Number}] }
      */
     function parseEducation(education) {
         try {
@@ -20,10 +20,7 @@ module.exports = function (token, refreshToken, profile, done) {
                     var ed = {name: edi.school.name};
                     if (edi.concentration && edi.concentration.length && edi.concentration[0].name)
                         ed.speciality = edi.concentration[0].name;
-                    if (edi.year && edi.year.name) {
-                        var d = new Date(edi.year.name);
-                        if (isValidDate(d)) ed.endDate = d;
-                    }
+                    if (edi.year && edi.year.name) ed.endYear = +edi.year.name;
                     res.push(ed);
                 }
             }

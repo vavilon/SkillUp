@@ -4,6 +4,134 @@
     border-radius: 50%;
 }
 
+.info-card {
+    background-color: #FAFAFA;
+    margin-top: 0;
+    margin-left: 0;
+    transition: all 0.3s ease-in-out;
+    padding-bottom: 8px;
+}
+
+.info-card.editing {
+    background-color: #FFF;
+}
+
+.info-card .md-title {
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.info-card .md-icon-button {
+    margin: 0;
+    padding: 0;
+}
+
+.info-card md-card-avatar {
+    margin: 0 !important;
+}
+
+.info-card md-card-header {
+    padding-bottom: 0;
+}
+
+.info-card md-card-content {
+    margin-left: 10px;
+    padding-top: 0;
+}
+
+.info-card md-card-content .md-subhead {
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: 16px;
+    color: rgba(0, 0, 0, .54);
+}
+
+.info-card md-card-content .list-item {
+    margin-top: 16px;
+}
+
+.info-card md-card-content .list-item .secondary {
+    font-weight: 500;
+    font-size: 14px;
+    color: rgba(0, 0, 0, .54);
+}
+
+.info-card.main {
+    height: 280px;
+    margin-top: 30px;
+}
+
+.info-card.main .background {
+    height: 140px;
+    width: 100%;
+    background: #3F51B5;
+    background: linear-gradient(#1A237E, #3F51B5);
+}
+
+.info-card.main .avatar {
+    background-color: #fff;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    height: 120px;
+    margin-top: -62px;
+    width: 120px;
+    cursor: pointer;
+    position: relative;
+}
+
+.info-card.main .avatar i {
+    max-width: none !important;
+    font-size: 130px !important;
+}
+
+.info-card.main .name {
+    font-size: 24px;
+    overflow: hidden;
+    padding-top: 16px;
+    text-overflow: ellipsis;
+}
+
+.info-card.main .nick {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 16px;
+    margin: 0 16px;
+    overflow: hidden;
+    padding-top: 8px;
+    text-overflow: ellipsis;
+}
+
+.add-info {
+    font-weight: 600;
+    color: #3D5AFE;
+}
+
+.small-input {
+    margin: 0;
+    padding: 0;
+    height: 24px;
+}
+
+.no-margin-top {
+    margin-top: 0;
+}
+
+.no-margin-bottom {
+    margin-bottom: 0;
+}
+
+.edit-date {
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, .20);
+    outline: none;
+}
+
+.edit-date:focus {
+    border-width: 2px;
+    border-color: #106CC8;
+    outline: none;
+}
+
 .ican {
     color: rgba(0, 0, 0, 0.54);
     font-weight: 600;
@@ -44,15 +172,18 @@
     padding: 0;
     margin: 0;
 }
+
 .tabs li {
     float: left;
     display: block;
 }
+
 .tabs input[type="radio"] {
     position: absolute;
     top: -9999px;
     left: -9999px;
 }
+
 .tabs label {
     color: white;
     display: block;
@@ -70,14 +201,17 @@
     -webkit-transition: all 0.1s ease-in-out;
     transition: all 0.1s ease-in-out;
 }
+
 .tabs label:hover {
     background: #8C9EFF;
 }
+
 .tabs [id^="tab"]:checked + label {
     top: 0;
     padding-top: 10px;
     background: #3F51B5;
 }
+
 .tabs [id^="tab"]:checked ~ [id^="tab-content"] {
     display: block;
 }
@@ -167,13 +301,13 @@
 }
 
 .admin-sidenav {
-    background-color: rgb(63,81,181);
+    background-color: rgb(63, 81, 181);
     min-height: calc(100vh - 64px);
     z-index: 0;
 }
 
 md-content[role="navigation"] {
-    background-color: rgb(63,81,181);
+    background-color: rgb(63, 81, 181);
     max-height: calc(100vh - 110px);;
 }
 
@@ -182,7 +316,7 @@ md-content[role="navigation"] {
 }
 
 .admin-sidenav md-divider {
-    background-color: rgb(40,53,147);
+    background-color: rgb(40, 53, 147);
 }
 
 .sidenav-list {
@@ -195,16 +329,16 @@ md-content[role="navigation"] {
 
 .sidenav-button {
     margin: 0 !important;
-    background-color: rgb(63,81,181) !important;
+    background-color: rgb(63, 81, 181) !important;
     color: white;
     border-radius: 0 !important;
     height: 48px !important;
-    border-bottom: solid 1px rgb(40,53,147);
+    border-bottom: solid 1px rgb(40, 53, 147);
 }
 
 .sidenav-button:hover,
-.sidenav-button:focus{
-    background-color: rgb(40,53,147) !important;
+.sidenav-button:focus {
+    background-color: rgb(40, 53, 147) !important;
 }
 
 a[role="button"] {
@@ -231,7 +365,7 @@ a[role="button"] h1:hover {
 }
 
 .column-item {
-    border-bottom: solid 1px rgb(40,53,147);
+    border-bottom: solid 1px rgb(40, 53, 147);
 }
 
 .column-item p {
@@ -243,7 +377,7 @@ a[role="button"] h1:hover {
 
 .column-item button {
     margin: 0 20px 0 0 !important;
-    background-color: rgb(63,81,181) !important;
+    background-color: rgb(63, 81, 181) !important;
     color: white;
     border-radius: 10px !important;
     height: 36px;
@@ -256,7 +390,7 @@ a[role="button"] h1:hover {
 }
 
 .column-item button:hover {
-    background-color: rgb(40,53,147) !important;
+    background-color: rgb(40, 53, 147) !important;
 }
 
 #tables {
@@ -283,7 +417,7 @@ a[role="button"] h1:hover {
 }
 
 #tables md-card > md-card-content > table > thead {
-    color: rgba(0,0,0,0.54);
+    color: rgba(0, 0, 0, 0.54);
     text-align: left;
 }
 
@@ -371,7 +505,7 @@ a[role="button"] h1:hover {
 }
 
 .header-input > input:focus::-webkit-input-placeholder {
-    color:transparent;
+    color: transparent;
 }
 
 .header-select {
@@ -393,12 +527,21 @@ a[role="button"] h1:hover {
 }
 
 @-webkit-keyframes modified_enter_sequence {
-    from { top: 64px; }
-    to { top: 0; }
+    from {
+        top: 64px;
+    }
+    to {
+        top: 0;
+    }
 }
+
 @keyframes modified_enter_sequence {
-    from { top: 64px; }
-    to { top: 0; }
+    from {
+        top: 64px;
+    }
+    to {
+        top: 0;
+    }
 }
 
 .table-header-modified.ng-leave {
@@ -407,12 +550,21 @@ a[role="button"] h1:hover {
 }
 
 @-webkit-keyframes modified_leave_sequence {
-    from { top: 0; }
-    to { top: 64px; }
+    from {
+        top: 0;
+    }
+    to {
+        top: 64px;
+    }
 }
+
 @keyframes modified_leave_sequence {
-    from { top: 0; }
-    to { top: 64px; }
+    from {
+        top: 0;
+    }
+    to {
+        top: 64px;
+    }
 }
 
 .table-header.ng-leave {
@@ -421,12 +573,21 @@ a[role="button"] h1:hover {
 }
 
 @-webkit-keyframes leave_sequence {
-    from { bottom: 0; }
-    to { bottom: 64px; }
+    from {
+        bottom: 0;
+    }
+    to {
+        bottom: 64px;
+    }
 }
+
 @keyframes leave_sequence {
-    from { bottom: 0; }
-    to { bottom: 64px; }
+    from {
+        bottom: 0;
+    }
+    to {
+        bottom: 64px;
+    }
 }
 
 .table-header.ng-enter {
@@ -435,12 +596,21 @@ a[role="button"] h1:hover {
 }
 
 @-webkit-keyframes enter_sequence {
-    from { bottom: 64px; }
-    to { bottom: 0; }
+    from {
+        bottom: 64px;
+    }
+    to {
+        bottom: 0;
+    }
 }
+
 @keyframes enter_sequence {
-    from { bottom: 64px; }
-    to { bottom: 0; }
+    from {
+        bottom: 64px;
+    }
+    to {
+        bottom: 0;
+    }
 }
 
 #tables md-card > md-card-footer {

@@ -1,341 +1,297 @@
 
-<div layout="row" style="padding-top: 30px; padding-bottom: 30px;">
+<div layout="row" style="padding-bottom: 30px;">
 
     <scroll-loader events="['tasksDoneScrolled', 'tasksCheckedScrolled', 'tasksApprovedScrolled', 'tasksCreatedScrolled']"
                    load-func="scrollWrap.loadFunc" options="scrollWrap.loadOptions"
                    callback="scrollWrap.callback"></scroll-loader>
 
-    <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
-    <div layout="row" style="min-width: 225px; max-width: 225px;">
-        <div layout="column" flex>
-            <div layout="row" layout-align="center center" style="overflow: hidden; width: 225px; height: 225px;
-             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.54); background-color: #FAFAFA;">
-                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='{{user.avatar}}'
-                     style="width: 100%; height: 100%;">
-                <i ng-if="!user.avatar" class="mdi mdi-account mdi-200 mdi-secondary"></i>
-            </div>
-            <div style="padding-left: 2px;">
-                <h3 style="margin-bottom: 0px; margin-top: 10px;">{{user.name}}</h3>
-                <h4 style="margin: 0 0 5px 0; color: rgba(0,0,0,0.54);">{{user.nick}}</h4>
-                <h4 style="margin-top: 5px; margin-bottom: 0px; color: rgba(0,0,0,0.54); font-weight: normal;">exp:
-                    {{user.exp || 0 | thousand}}</h4>
-            </div>
-
-            <md-divider style="margin-top: 10px; margin-bottom: 10px;"></md-divider>
-
-            <div layout="row" layout-align="space-around center">
-                <h4 style="margin-bottom: 0px; margin-top: 0px; color: #3F51B5;">{{user.skills.length || 0}}</h4>
-                <h4 style="margin-bottom: 0px; margin-top: 0px; color: #E91E63;">{{user.needs.length || 0}}</h4>
-            </div>
-            <div layout="row" layout-align="space-around center">
-                <h5 style="margin-bottom: 0px; margin-top: 0px; color: rgba(0,0,0,0.54);">Умею</h5>
-                <h5 style="margin-bottom: 0px; margin-top: 0px; color: rgba(0,0,0,0.54);">Хочу</h5>
-            </div>
-
-
-            <div ng-if="user.skills.length">
-                <md-divider style="margin-top: 10px; margin-bottom: 10px;"></md-divider>
-                <div layout="column" layout-align="center center">
-                    <h4 style="margin: 0px; margin-bottom: 5px;">Умею</h4>
-                </div>
-                <div id="kostyl">
-                    <skill-button ng-repeat="skill in user.skills" id="skill.skill_id" type="skill" hide-add
-                                  count="skill.count" with-add="ownProfile && skill.count < 1" tooltip-add="Добавить в 'Хочу'"></skill-button>
-                </div>
-            </div>
-
-            <div ng-if="user.needs.length">
-                <md-divider style="margin-top: 10px; margin-bottom: 10px;"></md-divider>
-                <div layout="column" layout-align="center center">
-                    <h4 style="margin: 0px; margin-bottom: 5px;">Хочу</h4>
-                </div>
-                <div id="kostyl">
-                    <skill-button ng-repeat="need in user.needs" id="need.skill_id" type="need" hide-remove
-                                  count="need.count" with-remove="ownProfile" tooltip-remove="Убрать из 'Хочу'"></skill-button>
-                </div>
-            </div>
+    <div flex="{{sidenavVisible ? (navtabs.selected != 1 ? 10 : 15) : (navtabs.selected != 1 ? 15 : 20)}}"
+         flex-md="5" hide-sm class="content-main-side"></div>
+    <div ng-switch="navtabs.selected" flex>
+        <div ng-switch-when="0">
 
         </div>
-    </div>
-    <div layout="row" flex>
-        <div layout="column" flex style="padding-left: 20px;">
-
-            <div ng-switch="navtabs.selected">
-                <div ng-switch-when="0" style="box-shadow: 0 1px 2px rgba(0,0,0,0.26);">
-                    <md-tabs md-selected="tabSelected" ng-click="setScrollOptions(tabSelected)">
-                        <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length || 0}}</span></md-tab>
-                        <md-tab>Проверено: <span style="font-weight: bold;">{{user.solutions_checked.length || 0}}</span>
-                        </md-tab>
-                        <md-tab>Подтверждено: <span
-                                style="font-weight: bold;">{{user.tasks_approved.length || 0}}</span></md-tab>
-                        <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length || 0}}</span>
-                        </md-tab>
-                    </md-tabs>
-                    <md-content flex style="max-height: calc(100vh - 215px); overflow-y: scroll;"
-                                on-scroll-bottom="scrollWrap.scrollOptions">
-                        <md-list>
-                            <ng-switch on="tabSelected">
-                                <div ng-switch-when="0">
-                                    <tasks-list tasks="tasksDone" show-expand="false"></tasks-list>
-                                    <div ng-if="!tasksDone" class="md-tile-content"
-                                         layout="column" layout-align="center center" flex>
-                                        <h3 class="list-empty">Пользователь не решил ни одного задания</h3>
-                                    </div>
-                                </div>
-                                <div ng-switch-when="1">
-                                    <solutions-list solutions="solutionsChecked" show-expand="false"></solutions-list>
-                                    <div ng-if="!solutionsChecked" class="md-tile-content"
-                                         layout="column" layout-align="center center" flex>
-                                        <h3 class="list-empty">Пользователь не проверил ни одного решения</h3>
-                                    </div>
-                                </div>
-                                <div ng-switch-when="2">
-                                    <tasks-list tasks="tasksApproved" show-expand="false" show-difficulty="false"></tasks-list>
-                                    <div ng-if="!tasksApproved" class="md-tile-content"
-                                         layout="column" layout-align="center center" flex>
-                                        <h3 class="list-empty">Пользователь не подтвердил ни одного задания</h3>
-                                    </div>
-                                </div>
-                                <div ng-switch-when="3">
-                                    <tasks-list tasks="tasksCreated" show-expand="false" show-difficulty="false"></tasks-list>
-                                    <div ng-if="!tasksCreated" class="md-tile-content"
-                                         layout="column" layout-align="center center" flex>
-                                        <h3 class="list-empty">Пользователь не создал ни одного задания</h3>
-                                    </div>
-                                </div>
-                            </ng-switch>
-                        </md-list>
-                    </md-content>
+        <div ng-switch-when="1" layout="column">
+            <!--  AVATAR BLOCK  -->
+            <md-card layout="column" layout-align="start center" class="info-card main">
+                <div class="background"></div>
+                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='{{user.avatar}}' class="avatar">
+                <div ng-if="!user.avatar" class="avatar" layout="row" layout-align="center center">
+                    <i class="mdi mdi-account-circle mdi-secondary"></i>
                 </div>
-                <md-card ng-switch-when="1" style="margin: 0;">
-                    <md-card-content style="padding-top: 0; padding-bottom: 0;">
-                        <md-content style="overflow: visible;">
-                        <md-list class="info-list">
-                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r1 = true"
-                                          ng-mouseleave="r1 = false"  ng-if="user.role !== 'пользователь'">
-                                <div flex="30" class="info-header">Роль:</div>
-                                <div>{{user.role}}</div>
-                                <div flex></div>
-                                <md-button class="edit-button" ng-if="r1 && ownProfile" aria-label="LaLat">
-                                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                <div class="name">{{user.name}}</div>
+                <div class="nick">{{user.nick}}</div>
+            </md-card>
+            <div layout="row">
+                <div layout="column" flex="50">
+                    <!--  GENERAL INFO  -->
+                    <md-card class="info-card" ng-if="user.gender || user.birthday" ng-class="{'editing': info.editing.general}">
+                        <md-card-header>
+                            <md-card-avatar layout="row" layout-align="center center">
+                                <i class="mdi mdi-account-box-outline mdi-24px mdi-hint"></i>
+                            </md-card-avatar>
+                            <md-card-header-text layout="row" layout-align="start center">
+                                <span class="md-title">Общие сведения</span>
+                            </md-card-header-text>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="editInfo" ng-if="ownProfile && !info.editing.general" ng-click="editInfo('general')">
+                                <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Редактировать</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="updateInfo" ng-if="info.editing.general" ng-click="updateProfile('general')">
+                                <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Сохранить</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="cancel" ng-if="info.editing.general" ng-click="cancelEdit('general')">
+                                <i class="mdi mdi-arrow-right-bold mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Отменить</md-tooltip>
+                            </md-button>
+                        </md-card-header>
+                        <md-card-content ng-if="!info.editing.general">
+                            <div ng-if="user.gender" class="md-subhead">Пол</div>
+                            <div ng-if="user.gender">
+                                <i ng-if="user.gender == 'male'" class="mdi mdi-gender-male mdi-hint"></i>
+                                <i ng-if="user.gender == 'female'" class="mdi mdi-gender-female mdi-hint"></i>
+                                <span>{{user.gender | gender}}</span>
+                            </div>
+                            <div ng-if="user.birthday" class="md-subhead">День рождения</div>
+                            <div ng-if="user.birthday">
+                                <i class="mdi mdi-cake-variant mdi-hint"></i>
+                                <span>{{user.birthday | date: 'dd MMMM yyyy'}} г.</span>
+                            </div>
+                        </md-card-content>
+                        <md-card-content ng-if="info.editing.general">
+                            <div class="md-subhead">Пол</div>
+                            <div layout="row" layout-align="start center">
+                                <i ng-if="info.gender == 'male'" class="mdi mdi-gender-male mdi-hint"></i>
+                                <i ng-if="info.gender == 'female'" class="mdi mdi-gender-female mdi-hint"></i>
+                                <md-radio-group ng-model="info.gender" style="margin-left: 8px;">
+                                    <div layout="row" layout-align="center center">
+                                        <md-radio-button style="margin: 0;" value="male" class="md-primary">Мужчина</md-radio-button>
+                                        <md-radio-button style="margin: 0 0 0 10px;" value="female" class="md-accent">Женщина</md-radio-button>
+                                    </div>
+                                </md-radio-group>
+                            </div>
+                            <div class="md-subhead">День рождения</div>
+                            <div layout="row" layout-align="start center">
+                                <i class="mdi mdi-cake-variant mdi-hint"></i>
+                                <input type="date" ng-model="info.birthday" class="edit-date" style="margin-left: 8px;">
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                    <!--  EDUCATION INFO  -->
+                    <md-card class="info-card" ng-if="user.education && user.education.length" ng-class="{'editing': info.editing.education}">
+                        <md-card-header>
+                            <md-card-avatar layout="row" layout-align="center center">
+                                <i class="mdi mdi-school mdi-24px mdi-hint"></i>
+                            </md-card-avatar>
+                            <md-card-header-text layout="row" layout-align="start center">
+                                <span class="md-title">Образование</span>
+                            </md-card-header-text>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="editInfo" ng-if="ownProfile && !info.editing.education" ng-click="editInfo('education')">
+                                <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Редактировать</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="updateInfo" ng-if="info.editing.education" ng-click="updateProfile('education')">
+                                <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Сохранить</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="cancel" ng-if="info.editing.education" ng-click="cancelEdit('education')">
+                                <i class="mdi mdi-arrow-right-bold mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Отменить</md-tooltip>
+                            </md-button>
+                        </md-card-header>
+                        <md-card-content ng-if="!info.editing.education">
+                            <div ng-repeat="ed in user.education" class="list-item">
+                                <div>{{ed.name}}</div>
+                                <div class="secondary">{{ed.speciality}}<span ng-if="ed.speciality && (ed.startYear || ed.endYear)">,</span>
+                                    <span ng-if="ed.startYear"><span ng-if="!ed.endYear">с </span>{{ed.startYear}}</span>
+                                    <span ng-if="ed.startYear && ed.endYear">-</span>
+                                    <span ng-if="ed.endYear"><span ng-if="!ed.startYear">по </span>{{ed.endYear}}</span>
+                                </div>
+                            </div>
+                        </md-card-content>
+                        <md-card-content ng-if="info.editing.education">
+                            <div layout="row" layout-align="space-between center" style="margin: 16px 0;">
+                                <span class="add-info" style="margin-left: 3px;">Учебное заведение</span>
+                                <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                           aria-label="addEducation" ng-click="addEducation()">
+                                    <i class="mdi mdi-plus mdi-24 md-hue-1 add-info"></i>
+                                    <md-tooltip>Добавить</md-tooltip>
                                 </md-button>
-                            </md-list-item>
-
-                            <md-divider ng-if="user.role !== 'пользователь'"></md-divider>
-
-                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r1 = true"
-                                          ng-mouseleave="r1 = false">
-                                <div flex="30" class="info-header">День рождения:</div>
-                                <div ng-if="!info.editing.birthday" layout="row" flex>
-                                    <div ng-if="user.birthday">{{user.birthday | date: 'dd MMMM yyyy'}} г.</div>
-                                    <div class="info-empty" ng-if="!user.birthday">не указано</div>
-                                    <div flex></div>
-                                    <md-button class="edit-button" ng-show="r1 && ownProfile" aria-label="btnEditBirthday"
-                                            ng-click="editInfo('birthday')">
-                                        <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
-                                        <md-tooltip>Редактировать</md-tooltip>
-                                    </md-button>
-                                    <span ng-show="!(r1 && ownProfile)" class="edit-button-span"></span>
-                                </div>
-                                <div ng-if="info.editing.birthday" layout="row" flex>
-                                    <input type="date" ng-model="info.birthday">
-                                    <div flex></div>
-                                    <md-button class="edit-button" aria-label="btnSaveBirthday"
-                                               ng-click="updateProfile('birthday')">
-                                        <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
-                                        <md-tooltip>Сохранить</md-tooltip>
-                                    </md-button>
-                                    <md-button class="edit-button" aria-label="btnCancelBirthday"
-                                               ng-click="cancelEdit('birthday')">
-                                        <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
-                                        <md-tooltip>Отменить</md-tooltip>
-                                    </md-button>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r2 = true"
-                                          ng-mouseleave="r2 = false">
-                                <div flex="30" class="info-header">Место проживания:</div>
-                                <div ng-if="!info.editing.location" layout="row" flex>
-                                    <div ng-if="user.city || user.country">{{user.city}}<span
-                                            ng-if="user.city && user.country">, </span>{{user.country}}
-                                    </div>
-                                    <div class="info-empty" ng-if="!(user.city || user.country)">не указано</div>
-                                    <div flex></div>
-                                    <md-button class="edit-button" ng-show="r2 && ownProfile" aria-label="btnEditLocation"
-                                               ng-click="editInfo('location')">
-                                        <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
-                                        <md-tooltip>Редактировать</md-tooltip>
-                                    </md-button>
-                                    <span ng-show="!(r2 && ownProfile)" class="edit-button-span"></span>
-                                </div>
-                                <div ng-if="info.editing.location" layout="row" flex>
-                                    <input type="text" ng-model="info.city" maxlength="32" placeholder="Город"
-                                           style="margin-right: 10px;">
-                                    <input type="text" ng-model="info.country" maxlength="32" placeholder="Страна">
-                                    <div flex></div>
-                                    <md-button class="edit-button" aria-label="btnSaveLocation"
-                                               ng-click="updateProfile('location')">
-                                        <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
-                                        <md-tooltip>Сохранить</md-tooltip>
-                                    </md-button>
-                                    <md-button class="edit-button" aria-label="btnCancelLocation"
-                                               ng-click="cancelEdit('location')">
-                                        <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
-                                        <md-tooltip>Отменить</md-tooltip>
-                                    </md-button>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r3 = true" ng-mouseleave="r3 = false">
-                                <div flex="30" class="info-header">Образование:</div>
-                                <div layout="column" flex>
-                                    <div ng-if="!info.editing.education" layout="row" layout-align="start start" flex>
-                                        <div layout="column" flex>
-                                            <div layout="row" layout-align="start start" flex ng-repeat="ed in user.educationArr"
-                                                 ng-class="{'not-last': !$last}">
-                                                <div flex><span ng-if="user.educationArr.length > 1" class="info-header">•</span>
-                                                    {{ed}}
-                                                </div>
-                                            </div>
-                                            <div class="info-empty" ng-if="!user.educationArr || user.educationArr.length == 0">не указано</div>
-                                        </div>
-                                        <md-button class="edit-button" ng-show="r3 && ownProfile"
-                                                   aria-label="btnEditEducation" ng-click="editInfo('education')">
-                                            <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
-                                            <md-tooltip>Редактировать</md-tooltip>
-                                        </md-button>
-                                        <span ng-show="!(r3 && ownProfile)" class="edit-button-span"></span>
-                                    </div>
-                                    <div ng-if="info.editing.education" layout="row" layout-align="start start" flex>
-                                        <div layout="column" flex>
-                                            <div layout="row" layout-align="start start" flex ng-repeat="ed in info.educationArr"
-                                                 ng-class="{'not-last': !$last}">
-                                                <div flex><span ng-if="info.educationArr.length > 1" class="info-header">•</span>
-                                                    {{ed}}
-                                                </div>
-                                                <md-button class="expand-button" style="margin-left: 10px;" aria-label="btnRemoveEducation"
-                                                           ng-click="removeEducation($index)">
-                                                    <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
-                                                    <md-tooltip>Удалить</md-tooltip>
-                                                </md-button>
-                                            </div>
-                                        </div>
-                                        <md-button class="edit-button" aria-label="btnSaveEducation"
-                                                   ng-click="updateProfile('education')">
-                                            <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
-                                            <md-tooltip>Сохранить</md-tooltip>
-                                        </md-button>
-                                        <md-button class="edit-button" aria-label="btnCancelEducation"
-                                                   ng-click="cancelEdit('education')">
-                                            <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
-                                            <md-tooltip>Отменить</md-tooltip>
-                                        </md-button>
-                                    </div>
-                                    <div ng-if="info.editing.education">
-                                        <div layout="row">
-                                            <md-input-container flex style="padding-bottom: 5px; padding-left: 0px;">
-                                                <label>Название учебного заведения</label>
-                                                <input type="text" ng-model="info.edName">
-                                            </md-input-container>
-                                        </div>
-                                        <div layout="row" layout-align="start start">
-                                            <md-input-container flex style="padding-left: 0px;">
-                                                <label>Что изучали</label>
-                                                <input type="text" ng-model="info.edConc">
-                                            </md-input-container>
-                                            <md-select placeholder="Год окончания" ng-model="info.edYear">
-                                                <md-option ng-repeat="i in range" value="{{i}}">{{i}}</md-option>
-                                            </md-select>
-                                            <div style="margin-top: 8px;">
-                                                <md-button class="md-raised" ng-click="addEducation()">Добавить</md-button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item layout="row" layout-align="start start" ng-mouseenter="r4 = true"
-                                          ng-mouseleave="r4 = false">
-                                <div flex="30" class="info-header">Работа:</div>
-                                <div ng-if="!info.editing.work" layout="row" layout-align="start start" flex>
-                                    <div flex layout="column">
-                                        <div ng-repeat="wo in user.workArr" ng-class="{'not-last': !$last}">
-                                            <div><span ng-if="user.workArr.length > 1" class="info-header">•</span>
-                                                {{wo}}
-                                            </div>
-                                        </div>
-                                        <div class="info-empty" ng-if="!user.workArr || user.workArr.length == 0">не указано</div>
-                                    </div>
-                                    <md-button class="edit-button" ng-show="r4 && ownProfile" aria-label="btnEditWork"
-                                               ng-click="editInfo('work')">
-                                        <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
-                                        <md-tooltip>Редактировать</md-tooltip>
-                                    </md-button>
-                                    <span ng-show="!(r4 && ownProfile)" class="edit-button-span"></span>
-                                </div>
-                                <div ng-if="info.editing.work" layout="column">
-                                    <div layout="row" layout-align="start start">
-                                        <div layout="column" flex>
-                                            <div layout="row" layout-align="start start" flex ng-repeat="wo in info.workArr" ng-class="{'not-last': !$last}">
-                                                <div flex><span ng-if="info.workArr.length > 1" class="info-header">•</span>
-                                                    {{wo}}
-                                                </div>
-                                                <md-button class="expand-button" style="margin-left: 10px;" aria-label="btnRemoveWork"
-                                                           ng-click="removeWork($index)">
-                                                    <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
-                                                    <md-tooltip>Удалить</md-tooltip>
-                                                </md-button>
-                                            </div>
-                                        </div>
-                                        <md-button class="edit-button" aria-label="btnSaveEducation"
-                                                   ng-click="updateProfile('work')">
-                                            <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
-                                            <md-tooltip>Сохранить</md-tooltip>
-                                        </md-button>
-                                        <md-button class="edit-button" aria-label="btnCancelEducation"
-                                                   ng-click="cancelEdit('work')">
-                                            <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
-                                            <md-tooltip>Отменить</md-tooltip>
-                                        </md-button>
-                                    </div>
-                                    <div layout="row">
-                                        <md-input-container flex style="padding-bottom: 5px; padding-left: 0px;">
-                                            <label>Место работы</label>
-                                            <input type="text" ng-model="info.woName">
+                            </div>
+                            <div ng-repeat="ed in info.education" class="list-item">
+                                <div layout="row">
+                                    <div flex>
+                                        <md-input-container md-no-float class="md-block no-margin-bottom">
+                                            <label>Название учебного заведения</label>
+                                            <input ng-model="ed.name">
                                         </md-input-container>
-                                        <md-input-container flex style="padding-bottom: 5px;">
+                                        <md-input-container md-no-float class="md-block no-margin-bottom no-margin-top">
+                                            <label>Специальность</label>
+                                            <input ng-model="ed.speciality">
+                                        </md-input-container>
+                                        <div layout="row" layout-align="start center">
+                                            <md-input-container md-no-float class="no-margin-top no-margin-bottom" flex>
+                                                <label>Год начала</label>
+                                                <input type="number" ng-model="ed.startYear" max="{{maxYear}}" min="{{minYear}}" step="1">
+                                            </md-input-container>
+                                            <md-input-container md-no-float class="no-margin-top no-margin-bottom" style="margin-left: 20px;" flex>
+                                                <label>Год окончания</label>
+                                                <input type="number" ng-model="ed.endYear" max="{{maxYear}}" min="{{minYear}}" step="1">
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                               aria-label="removeEducation" ng-click="removeEducation($index)">
+                                        <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
+                                        <md-tooltip>Убрать</md-tooltip>
+                                    </md-button>
+                                </div>
+                                <md-divider style="background-color: #3D5AFE" ng-if="!$last"></md-divider>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+                <div layout="column" flex="50">
+                    <!--  LOCATION INFO  -->
+                    <md-card class="info-card" ng-if="user.city || user.country" ng-class="{'editing': info.editing.location}">
+                        <md-card-header>
+                            <md-card-avatar layout="row" layout-align="center center">
+                                <i class="mdi mdi-map-marker mdi-24px mdi-hint"></i>
+                            </md-card-avatar>
+                            <md-card-header-text layout="row" layout-align="start center">
+                                <span class="md-title">Место проживания</span>
+                            </md-card-header-text>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="editInfo" ng-if="ownProfile && !info.editing.location" ng-click="editInfo('location')">
+                                <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Редактировать</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="updateInfo" ng-if="info.editing.location" ng-click="updateProfile('location')">
+                                <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Сохранить</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="cancel" ng-if="info.editing.location" ng-click="cancelEdit('location')">
+                                <i class="mdi mdi-arrow-right-bold mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Отменить</md-tooltip>
+                            </md-button>
+                        </md-card-header>
+                        <md-card-content ng-if="!info.editing.location">
+                            <div ng-if="user.city" class="md-subhead">Город</div>
+                            <div ng-if="user.city">
+                                <i class="mdi mdi-city mdi-hint"></i>
+                                <span>{{user.city}}</span>
+                            </div>
+                            <div ng-if="user.country" class="md-subhead">Страна</div>
+                            <div ng-if="user.country">
+                                <i class="mdi mdi-earth mdi-hint"></i>
+                                <span>{{user.country}}</span>
+                            </div>
+                        </md-card-content>
+                        <md-card-content ng-if="info.editing.location">
+                            <div class="md-subhead">Город</div>
+                            <md-input-container md-no-float class="small-input" layout="row" layout-align="start center">
+                                <i class="mdi mdi-city mdi-hint"></i>
+                                <input ng-model="info.city">
+                            </md-input-container>
+                            <div class="md-subhead">Страна</div>
+                            <md-input-container md-no-float class="small-input" layout="row" layout-align="start center">
+                                <i class="mdi mdi-earth mdi-hint"></i>
+                                <input ng-model="info.country">
+                            </md-input-container>
+                        </md-card-content>
+                    </md-card>
+                    <!--  WORK INFO  -->
+                    <md-card class="info-card" ng-if="user.work && user.work.length" ng-class="{'editing': info.editing.work}">
+                        <md-card-header>
+                            <md-card-avatar layout="row" layout-align="center center">
+                                <i class="mdi mdi-wallet-travel mdi-24px mdi-hint"></i>
+                            </md-card-avatar>
+                            <md-card-header-text layout="row" layout-align="start center">
+                                <span class="md-title">Работа</span>
+                            </md-card-header-text>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="editInfo" ng-if="ownProfile && !info.editing.work" ng-click="editInfo('work')">
+                                <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Редактировать</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="updateInfo" ng-if="info.editing.work" ng-click="updateProfile('work')">
+                                <i class="mdi mdi-content-save mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Сохранить</md-tooltip>
+                            </md-button>
+                            <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                       aria-label="cancel" ng-if="info.editing.work" ng-click="cancelEdit('work')">
+                                <i class="mdi mdi-arrow-right-bold mdi-24 mdi-secondary"></i>
+                                <md-tooltip>Отменить</md-tooltip>
+                        </md-card-header>
+                        <md-card-content ng-if="!info.editing.work">
+                            <div ng-repeat="wo in user.work" class="list-item">
+                                <div>{{wo.company}}</div>
+                                <div class="secondary">{{wo.position}}<span ng-if="wo.position && (wo.startDate || wo.endDate)">,</span>
+                                    <span ng-if="wo.startDate"><span ng-if="!wo.endDate">с </span>{{wo.startDate | date: 'MMM yyyy'}}</span>
+                                    <span ng-if="wo.startDate && wo.endDate">-</span>
+                                    <span ng-if="wo.endDate"><span ng-if="!wo.startDate">по </span>{{wo.endDate | date: 'MMM yyyy'}}</span>
+                                </div>
+                            </div>
+                        </md-card-content>
+                        <md-card-content ng-if="info.editing.work">
+                            <div layout="row" layout-align="space-between center" style="margin: 16px 0;">
+                                <span class="add-info" style="margin-left: 3px;">Компания</span>
+                                <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                           aria-label="addWork" ng-click="addWork()">
+                                    <i class="mdi mdi-plus mdi-24 md-hue-1 add-info"></i>
+                                    <md-tooltip>Добавить</md-tooltip>
+                                </md-button>
+                            </div>
+                            <div ng-repeat="wo in info.work" class="list-item">
+                                <div layout="row">
+                                    <div flex>
+                                        <md-input-container md-no-float class="md-block no-margin-bottom">
+                                            <label>Название компании</label>
+                                            <input ng-model="wo.company">
+                                        </md-input-container>
+                                        <md-input-container md-no-float class="md-block no-margin-bottom no-margin-top">
                                             <label>Должность</label>
-                                            <input type="text" ng-model="info.woPosition">
+                                            <input ng-model="wo.position">
                                         </md-input-container>
+                                        <div layout="row" layout-align="start center">
+                                            <md-input-container md-no-float class="no-margin-top no-margin-bottom" flex>
+                                                <label>Дата начала</label>
+                                                <input type="date" ng-model="wo.startDate" class="edit-date">
+                                            </md-input-container>
+                                            <md-input-container md-no-float class="no-margin-top no-margin-bottom" style="margin-left: 20px;" flex>
+                                                <label>Дата окончания</label>
+                                                <input type="date" ng-model="wo.endDate" class="edit-date">
+                                            </md-input-container>
+                                        </div>
                                     </div>
-                                    <div layout="row">
-                                    <md-input-container flex style="padding-left: 0px;">
-                                        <label>С</label>
-                                        <input type="date" ng-model="info.woStartDate">
-                                    </md-input-container>
-                                    <md-input-container flex>
-                                        <label>По</label>
-                                        <input type="date" ng-model="info.woEndDate">
-                                    </md-input-container>
-                                    <div style="margin-top: 8px;">
-                                        <md-button class="md-raised" ng-click="addWork()">Добавить</md-button>
-                                    </div>
+                                    <md-button class="md-icon-button" layout="row" layout-align="center center"
+                                               aria-label="removeWork" ng-click="removeWork($index)">
+                                        <i class="mdi mdi-close-circle-outline mdi-24 mdi-secondary"></i>
+                                        <md-tooltip>Убрать</md-tooltip>
+                                    </md-button>
                                 </div>
-                                </div>
-                            </md-list-item>
-                        </md-list>
-                        </md-content>
-                    </md-card-content>
-                </md-card>
+                                <md-divider style="background-color: #3D5AFE" ng-if="!$last"></md-divider>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+            </div>
+            <div class="hint-title" layout="row" layout-align="center center"
+                 ng-if="!user.gender && !user.birthday && !user.city && !user.country && !(user.education && user.education.length) && !(user.work && user.work.length)">
+                Информация о пользователе отсутствует...
             </div>
         </div>
     </div>
-    <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
+    <div flex="{{sidenavVisible ? (navtabs.selected != 1 ? 10 : 15) : (navtabs.selected != 1 ? 15 : 20)}}"
+         flex-md="5" hide-sm class="content-main-side"></div>
 </div>
