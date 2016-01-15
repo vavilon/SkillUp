@@ -47,7 +47,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
     });
 });
 
-app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, loadLoggedUser,
+app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, loadLoggedUser, $mdDialog,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, bindToNavtabs,
                                         setNotReceivable, isLoggedIn, $location) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
@@ -217,6 +217,35 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 $scope.info.work.splice(index, 1);
             };
 
+            $scope.showAddInfoDialog = function(ev) {
+                $mdDialog.show({
+                    controller: addInfoDialogController,
+                    templateUrl: '/front/users/addInfoDialog.html',
+                    parent: angular.element(document.body),
+                    targetEvent: ev,
+                    clickOutsideToClose: true
+                }).then(function(answer) {
+                    if (answer) {
+                        $scope.info.editing[answer] = true;
+                        if (answer == 'education') $scope.info.education.push({});
+                        else if (answer == 'work') $scope.info.work.push({});
+                    }
+                });
+            };
+
+            function getUser () { return $scope.user; }
+            function addInfoDialogController($scope, $mdDialog) {
+                $scope.buttons = [];
+                var user = getUser();
+                if (!user.gender && !user.birthday) $scope.buttons.push({name: 'Общие сведения', answer: 'general'});
+                if (!user.city && !user.country) $scope.buttons.push({name: 'Место проживания', answer: 'location'});
+                if (!(user.education && user.education.length)) $scope.buttons.push({name: 'Образование', answer: 'education'});
+                if (!(user.work && user.work.length)) $scope.buttons.push({name: 'Работа', answer: 'work'});
+                $scope.answer = function(answer) {
+                    $mdDialog.hide(answer);
+                };
+            }
+
             if ($scope.user.tasks_done) {
                 var dbTasksDoneOptions = {ids: $scope.user.tasks_done};
                 $http.post('/db/tasks', dbTasksDoneOptions).success(function (tasksDone) {
@@ -310,6 +339,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                         if ($scope.reg.education[i].endYear)
                             $scope.reg.education[i].endYear = +$scope.reg.education[i].endYear;
                     }
+                    if (!$scope.reg.education.length) $scope.reg.education.push({});
                 }
                 if (user.work) {
                     try {
@@ -321,7 +351,9 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                         if (typeof $scope.reg.work[i].endDate == "string")
                             $scope.reg.work[i].endDate = new Date($scope.reg.work[i].endDate);
                     }
+                    if (!$scope.reg.work.length) $scope.reg.work.push({});
                 }
+                console.log(user);
             });
         }
         $rootScope.pageTitle = 'Регистрация';

@@ -25,7 +25,7 @@
             <div layout="row">
                 <div layout="column" flex="50">
                     <!--  GENERAL INFO  -->
-                    <md-card class="info-card" ng-if="user.gender || user.birthday" ng-class="{'editing': info.editing.general}">
+                    <md-card class="info-card" ng-if="user.gender || user.birthday || info.editing.general" ng-class="{'editing': info.editing.general}">
                         <md-card-header>
                             <md-card-avatar layout="row" layout-align="center center">
                                 <i class="mdi mdi-account-box-outline mdi-24px mdi-hint"></i>
@@ -82,7 +82,7 @@
                         </md-card-content>
                     </md-card>
                     <!--  EDUCATION INFO  -->
-                    <md-card class="info-card" ng-if="user.education && user.education.length" ng-class="{'editing': info.editing.education}">
+                    <md-card class="info-card" ng-if="(user.education && user.education.length) || info.editing.education" ng-class="{'editing': info.editing.education}">
                         <md-card-header>
                             <md-card-avatar layout="row" layout-align="center center">
                                 <i class="mdi mdi-school mdi-24px mdi-hint"></i>
@@ -160,7 +160,7 @@
                 </div>
                 <div layout="column" flex="50">
                     <!--  LOCATION INFO  -->
-                    <md-card class="info-card" ng-if="user.city || user.country" ng-class="{'editing': info.editing.location}">
+                    <md-card class="info-card" ng-if="user.city || user.country || info.editing.location" ng-class="{'editing': info.editing.location}">
                         <md-card-header>
                             <md-card-avatar layout="row" layout-align="center center">
                                 <i class="mdi mdi-map-marker mdi-24px mdi-hint"></i>
@@ -210,7 +210,7 @@
                         </md-card-content>
                     </md-card>
                     <!--  WORK INFO  -->
-                    <md-card class="info-card" ng-if="user.work && user.work.length" ng-class="{'editing': info.editing.work}">
+                    <md-card class="info-card" ng-if="(user.work && user.work.length) || info.editing.work" ng-class="{'editing': info.editing.work}">
                         <md-card-header>
                             <md-card-avatar layout="row" layout-align="center center">
                                 <i class="mdi mdi-wallet-travel mdi-24px mdi-hint"></i>
@@ -287,9 +287,18 @@
                 </div>
             </div>
             <div class="hint-title" layout="row" layout-align="center center"
-                 ng-if="!user.gender && !user.birthday && !user.city && !user.country && !(user.education && user.education.length) && !(user.work && user.work.length)">
+                 ng-if="!ownProfile && (!user.gender && !user.birthday && !user.city && !user.country && !(user.education && user.education.length) && !(user.work && user.work.length))">
                 Информация о пользователе отсутствует...
             </div>
+            <div class="hint-title" layout="row" layout-align="center center"
+                 ng-if="ownProfile && (!user.gender && !user.birthday && !user.city && !user.country && !(user.education && user.education.length) && !(user.work && user.work.length))">
+                Расскажите другим пользователям о себе
+            </div>
+            <md-button class="md-fab md-accent" style="position: fixed; left: calc((100vw - 210px) * 0.85 + 210px); bottom: 24px; right: 24px;" ng-click="showAddInfoDialog($event)"
+                 ng-if="ownProfile && ((!user.gender && !user.birthday) || (!user.city && !user.country) || !(user.education && user.education.length) || !(user.work && user.work.length))">
+                <md-tooltip>Добавить сведения</md-tooltip>
+                <div layout="row" layout-align="center center"><i class="mdi mdi-plus mdi-24"></i></div>
+            </md-button>
         </div>
     </div>
     <div flex="{{sidenavVisible ? (navtabs.selected != 1 ? 10 : 15) : (navtabs.selected != 1 ? 15 : 20)}}"
