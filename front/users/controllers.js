@@ -47,10 +47,9 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
     });
 });
 
-app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, educationObjToArr, workObjToArr, loadLoggedUser,
+app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, loadLoggedUser,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, bindToNavtabs,
-                                        setNotReceivable, isLoggedIn, $location, addEducation, removeEducation,
-                                        addWork, removeWork) {
+                                        setNotReceivable, isLoggedIn, $location) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
 
     $scope.scrollWrap = $scope.scrollWrap || {
@@ -283,46 +282,49 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 });
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, loadLoggedUser, isImage, $mdToast,
-                                             $animate, $timeout, educationObjToArr, workObjToArr, addEducation, removeEducation,
-                                             addWork, removeWork, getObjByID, $rootScope) {
-    $scope.reg = {};
+                                             $animate, $timeout, getObjByID, $rootScope, extendedSkills) {
+    $scope.reg = {education: [{}], work: [{}]};
 
     $scope.step = 1;
     $rootScope.ajaxCall.promise.then(function () {
         if ($location.path() === '/registration/step2') {
-            loadLoggedUser(function (user) {
-                if (!user) return;
+            $http.get('/logged_user').success(function (user) {
+                if (!user || !user.length) return;
+                user = user[0];
                 $scope.step = 2;
                 if (user.birthday) $scope.reg.birthday = new Date(user.birthday);
                 if (user.avatar) {
                     $scope.reg.isImageRes = true;
                     $scope.reg.imgSrcRes = user.avatar;
                 }
-                $scope.reg.gender = user.gender || 'мужской';
+                $scope.reg.gender = user.gender || 'male';
                 if (user.city) $scope.reg.city = user.city;
                 if (user.country) $scope.reg.country = user.country;
-                $scope.reg.education = [];
                 if (user.education) {
                     try {
                         $scope.reg.education = JSON.parse(user.education);
                     } catch (e) {}
-                    $scope.reg.educationArr = educationObjToArr($scope.reg.education);
+                    for (var i in $scope.reg.education) {
+                        if ($scope.reg.education[i].startYear)
+                            $scope.reg.education[i].startYear = +$scope.reg.education[i].startYear;
+                        if ($scope.reg.education[i].endYear)
+                            $scope.reg.education[i].endYear = +$scope.reg.education[i].endYear;
+                    }
                 }
-                $scope.reg.work = [];
                 if (user.work) {
                     try {
                         $scope.reg.work = JSON.parse(user.work);
                     } catch (e) {}
-                    $scope.reg.workArr = workObjToArr($scope.reg.work);
+                    for (var i in $scope.reg.work) {
+                        if (typeof $scope.reg.work[i].startDate == "string")
+                            $scope.reg.work[i].startDate = new Date($scope.reg.work[i].startDate);
+                        if (typeof $scope.reg.work[i].endDate == "string")
+                            $scope.reg.work[i].endDate = new Date($scope.reg.work[i].endDate);
+                    }
                 }
             });
         }
         $rootScope.pageTitle = 'Регистрация';
-        var maxYear = (new Date()).getFullYear();
-        $scope.range = [];
-        for (var i = maxYear; i > 1929; i--) {
-            $scope.range.push(i);
-        }
 
         $scope.reg.nick = $routeParams.nick === '0' ? '' : $routeParams.nick;
         $scope.reg.email = $routeParams.email === '0' ? '' : $routeParams.email;
@@ -477,23 +479,30 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             angular.element(document.querySelector('#fileInput'))[0].click();
         };
 
+        $scope.maxYear = (new Date()).getFullYear();
+        $scope.minYear = $scope.maxYear - 100;
+
         $scope.addEducation = function () {
-            addEducation($scope.reg);
+            $scope.reg.education.unshift({});
         };
 
         $scope.removeEducation = function (index) {
-            removeEducation($scope.reg, index);
+            $scope.reg.education.splice(index, 1);
         };
 
         $scope.addWork = function () {
-            addWork($scope.reg);
+            $scope.reg.work.unshift({});
         };
 
         $scope.removeWork = function (index) {
-            removeWork($scope.reg, index);
+            $scope.reg.work.splice(index, 1);
         };
 
         $scope.goToStep3 = function () {
+            for (var i in $scope.reg.education)
+                if (!$scope.reg.education[i].name) $scope.reg.education.splice(i, 1);
+            for (var i in $scope.reg.work)
+                if (!$scope.reg.work[i].name) $scope.reg.work.splice(i, 1);
             $http.post('/update_profile', {
                 avatar: $scope.reg.imgCropRes,
                 birthday: $scope.reg.birthday,
@@ -509,76 +518,84 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             });
         };
         $scope.initStep3 = function () {
-            loadLoggedUser(function (user) {
+            $http.get('/logged_user').success(function (user) {
+                if (!user || !user.length) return;
+                user = user[0];
 
-                $scope.currentSkill = $rootScope.exs.root;
-                $scope.skills = $rootScope.exs.skills;
-                //Объект в котором сохраняются id скиллов, которые надо добавить в needs
-                $scope.dataNeeds = {needs: []};
-                //Объект для поиска скилла по названию
-                $scope.query = {};
+                $http.get('db/skills').success(function (data) {
+                    if (data) {
+                        $rootScope.exs = new extendedSkills(data);
 
-                //Функция для поиска совпадений в названиях скиллов с введенным текстом
-                //Возвращает массив подходящих скиллов
-                $scope.query.search = function (text) {
-                    var lowercaseQuery = angular.lowercase(text);
-                    var filteredSkills = [];
-                    for (var id in $scope.skills) {
-                        if ($scope.skills.hasOwnProperty(id)) {
-                            if ($scope.skills[id].title.toLowerCase().indexOf(lowercaseQuery) !== -1) {
-                                filteredSkills.push($scope.skills[id]);
+                        $scope.currentSkill = $rootScope.exs.root;
+                        $scope.skills = $rootScope.exs.skills;
+                        //Объект в котором сохраняются id скиллов, которые надо добавить в needs
+                        $scope.dataNeeds = {needs: []};
+                        //Объект для поиска скилла по названию
+                        $scope.query = {};
+
+                        //Функция для поиска совпадений в названиях скиллов с введенным текстом
+                        //Возвращает массив подходящих скиллов
+                        $scope.query.search = function (text) {
+                            var lowercaseQuery = angular.lowercase(text);
+                            var filteredSkills = [];
+                            for (var id in $scope.skills) {
+                                if ($scope.skills.hasOwnProperty(id)) {
+                                    if ($scope.skills[id].title.toLowerCase().indexOf(lowercaseQuery) !== -1) {
+                                        filteredSkills.push($scope.skills[id]);
+                                    }
+                                }
                             }
-                        }
+                            return filteredSkills;
+                        };
+
+                        //Делает выбраный в autocomplete скилл текущим
+                        $scope.query.selectedItemChanged = function (skill) {
+                            if (skill) $scope.currentSkill = skill;
+                        };
+
+                        //Делает выбраный скилл текущим (по нажатию на скилл)
+                        $scope.setToCurrent = function (skill) {
+                            if ($scope.addClicked) $scope.addClicked = false;
+                            else $scope.currentSkill = skill;
+                        };
+
+                        $scope.addClicked = false;
+                        //Добавляет id скилла в needs и убирает плюсик с него
+                        $scope.addNeed = function (id) {
+                            $scope.addClicked = true;
+                            if ($scope.dataNeeds.needs.indexOf(id) == -1) {
+                                $scope.dataNeeds.needs.push(id);
+                                if ($scope.currentSkill == $scope.skills[id]) {
+                                    $scope.currentSkill.added = true;
+                                    $scope.skills[id].added = true;
+                                } else {
+                                    $scope.skills[id].added = true;
+                                }
+                            }
+                        };
+
+                        //Убирает id скилла из нидсов
+                        $scope.removeNeed = function (id) {
+                            $scope.dataNeeds.needs.splice($scope.dataNeeds.needs.indexOf(id), 1);
+                            $scope.skills[id].added = false;
+                        };
+
+                        $scope.erase = function () {
+                            $scope.dataNeeds.needs = [];
+                        };
+
+                        //По нажатию "Готово" отправляет выбраные нидсы на сервер для записи в БД
+                        $scope.done = function () {
+                            $http.post('/needs', $scope.dataNeeds).success(function () {
+                                loadLoggedUser(function () {
+                                    $location.path('/users/' + user.id);
+                                });
+                            });
+                        };
+
+                        $scope.step = 3;
                     }
-                    return filteredSkills;
-                };
-
-                //Делает выбраный в autocomplete скилл текущим
-                $scope.query.selectedItemChanged = function (skill) {
-                    if (skill) $scope.currentSkill = skill;
-                };
-
-                //Делает выбраный скилл текущим (по нажатию на скилл)
-                $scope.setToCurrent = function (skill) {
-                    if ($scope.addClicked) $scope.addClicked = false;
-                    else $scope.currentSkill = skill;
-                };
-
-                $scope.addClicked = false;
-                //Добавляет id скилла в needs и убирает плюсик с него
-                $scope.addNeed = function (id) {
-                    $scope.addClicked = true;
-                    if ($scope.dataNeeds.needs.indexOf(id) == -1) {
-                        $scope.dataNeeds.needs.push(id);
-                        if ($scope.currentSkill == $scope.skills[id]) {
-                            $scope.currentSkill.added = true;
-                            $scope.skills[id].added = true;
-                        } else {
-                            $scope.skills[id].added = true;
-                        }
-                    }
-                };
-
-                //Убирает id скилла из нидсов
-                $scope.removeNeed = function (id) {
-                    $scope.dataNeeds.needs.splice($scope.dataNeeds.needs.indexOf(id), 1);
-                    $scope.skills[id].added = false;
-                };
-
-                $scope.erase = function () {
-                    $scope.dataNeeds.needs = [];
-                };
-
-                //По нажатию "Готово" отправляет выбраные нидсы на сервер для записи в БД
-                $scope.done = function () {
-                    $http.post('/needs', $scope.dataNeeds).success(function () {
-                        loadLoggedUser(function () {
-                            $location.path('/users/' + user.id);
-                        });
-                    });
-                };
-
-                $scope.step = 3;
+                });
             });
         };
     });

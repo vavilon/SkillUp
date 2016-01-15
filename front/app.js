@@ -68,7 +68,8 @@ app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgr
     $rootScope.sidenavVisible = true;
     $rootScope.navtabs = {selected: 0, tabs: []};
 
-    loadLoggedUser(function(user) {
+    if ($location.path().indexOf('registration') > -1) $rootScope.ajaxCall.resolve();
+    else loadLoggedUser(function(user) {
         if (user) {
             $http.get('db/skills').success(function (data) {
                 if (data) {

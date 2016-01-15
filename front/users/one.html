@@ -128,20 +128,20 @@
                             <div ng-repeat="ed in info.education" class="list-item">
                                 <div layout="row">
                                     <div flex>
-                                        <md-input-container md-no-float class="md-block no-margin-bottom">
+                                        <md-input-container class="md-block no-margin-bottom">
                                             <label>Название учебного заведения</label>
                                             <input ng-model="ed.name">
                                         </md-input-container>
-                                        <md-input-container md-no-float class="md-block no-margin-bottom no-margin-top">
+                                        <md-input-container class="md-block no-margin-bottom no-margin-top">
                                             <label>Специальность</label>
                                             <input ng-model="ed.speciality">
                                         </md-input-container>
                                         <div layout="row" layout-align="start center">
-                                            <md-input-container md-no-float class="no-margin-top no-margin-bottom" flex>
+                                            <md-input-container class="no-margin-top no-margin-bottom" flex>
                                                 <label>Год начала</label>
                                                 <input type="number" ng-model="ed.startYear" max="{{maxYear}}" min="{{minYear}}" step="1">
                                             </md-input-container>
-                                            <md-input-container md-no-float class="no-margin-top no-margin-bottom" style="margin-left: 20px;" flex>
+                                            <md-input-container class="no-margin-top no-margin-bottom" style="margin-left: 20px;" flex>
                                                 <label>Год окончания</label>
                                                 <input type="number" ng-model="ed.endYear" max="{{maxYear}}" min="{{minYear}}" step="1">
                                             </md-input-container>
@@ -255,20 +255,20 @@
                             <div ng-repeat="wo in info.work" class="list-item">
                                 <div layout="row">
                                     <div flex>
-                                        <md-input-container md-no-float class="md-block no-margin-bottom">
+                                        <md-input-container class="md-block no-margin-bottom">
                                             <label>Название компании</label>
                                             <input ng-model="wo.company">
                                         </md-input-container>
-                                        <md-input-container md-no-float class="md-block no-margin-bottom no-margin-top">
+                                        <md-input-container class="md-block no-margin-bottom no-margin-top">
                                             <label>Должность</label>
                                             <input ng-model="wo.position">
                                         </md-input-container>
                                         <div layout="row" layout-align="start center">
-                                            <md-input-container md-no-float class="no-margin-top no-margin-bottom" flex>
+                                            <md-input-container class="no-margin-top no-margin-bottom" flex>
                                                 <label>Дата начала</label>
                                                 <input type="date" ng-model="wo.startDate" class="edit-date">
                                             </md-input-container>
-                                            <md-input-container md-no-float class="no-margin-top no-margin-bottom" style="margin-left: 20px;" flex>
+                                            <md-input-container class="no-margin-top no-margin-bottom" style="margin-left: 20px;" flex>
                                                 <label>Дата окончания</label>
                                                 <input type="date" ng-model="wo.endDate" class="edit-date">
                                             </md-input-container>

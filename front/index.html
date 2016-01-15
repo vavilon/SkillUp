@@ -64,12 +64,14 @@
                     {{pageTitle}}
                 </h2>
                 <div flex="5"></div>
-                <div flex layout="row" layout-align="center center"
-                     style="border-radius: 3px; background-color: rgba(255, 255, 255, .15); padding: 6px 0;">
-                    <i class="mdi mdi-magnify mdi-24" style="margin-left: 8px;"></i>
-                    <md-input-container md-no-float style="margin: 0 20px 0 0;" flex layout="row" layout-align="center center">
-                        <input type="text" placeholder="Поиск" class="search-main">
-                    </md-input-container>
+                <div flex>
+                    <div flex layout="row" layout-align="center center" ng-if="isLoggedIn()"
+                         style="border-radius: 3px; background-color: rgba(255, 255, 255, .15); padding: 6px 0;">
+                        <i class="mdi mdi-magnify mdi-24" style="margin-left: 8px;"></i>
+                        <md-input-container md-no-float style="margin: 0 20px 0 0;" flex layout="row" layout-align="center center">
+                            <input type="text" placeholder="Поиск" class="search-main">
+                        </md-input-container>
+                    </div>
                 </div>
                 <div flex="5"></div>
                 <div style="padding-right: 30px;">

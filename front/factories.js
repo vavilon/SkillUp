@@ -10,7 +10,7 @@ app.factory('loadLoggedUser', function($rootScope, $http, parseSkills) {
     return function(callback) {
         $http.get('/logged_user').success(function (data) {
             $rootScope.loggedUser = data[0];
-            if (data) {
+            if ($rootScope.loggedUser) {
                 parseSkills($rootScope.loggedUser, true);
                 if ($rootScope.loggedUser.birthday) $rootScope.loggedUser.birthday = new Date($rootScope.loggedUser.birthday);
                 try {
@@ -78,42 +78,6 @@ app.factory('isImage', function($q) {
         };
         image.src = src;
         return deferred.promise;
-    };
-});
-
-app.factory('educationObjToArr', function() {
-    return function(education) {
-        var educationArr = [], s = '', buff = {};
-        for (var i in education) {
-            buff = education[i];
-            s = buff.school.name;
-            if (buff.year && buff.year.name) s += ' (' + buff.year.name + ')';
-            if (buff.concentration && buff.concentration[0] && buff.concentration[0].name) {
-                s += ', ' + buff.concentration[0].name;
-            }
-            educationArr.push(s);
-        }
-        return educationArr.reverse();
-    };
-});
-
-app.factory('workObjToArr', function($filter) {
-    return function(work) {
-        var workArr = [], s = '', buff = {};
-        for (var i in work) {
-            buff = work[i];
-            s = buff.employer.name;
-            if (buff.start_date || buff.end_date) {
-                s += ' (';
-                if (buff.start_date) s += 'с ' + $filter('date')(buff.start_date, 'MMMM yyyy');
-                if (buff.start_date && buff.end_date) s += ' ';
-                if (buff.end_date) s += 'по ' + $filter('date')(buff.end_date, 'MMMM yyyy');
-                s += ')'
-            }
-            if (buff.position && buff.position.name) s += ', ' + buff.position.name;
-            workArr.push(s);
-        }
-        return workArr.reverse();
     };
 });
 
@@ -273,78 +237,6 @@ app.factory('getRowsOnPage', function () {
         if (to > rowsCount) to = rowsCount;
         return rows.slice(rowsPerPage * pageNumber, to);
     }
-});
-
-app.factory('addEducation', function (educationObjToArr) {
-    return function (edObj) {
-        if (!edObj.edName) return;
-        edObj.education = edObj.education || [];
-        var e = {school: {name: edObj.edName}};
-        if (edObj.edConc) e.concentration = [{name: edObj.edConc}];
-        if (edObj.edYear) e.year = {name: edObj.edYear};
-
-        if (edObj.education && edObj.education.length && edObj.edYear) {
-            var inserted = false;
-            var j = 0;
-            for (var i in edObj.education) {
-                if (edObj.education[i].year && parseInt(edObj.education[i].year.name) > edObj.edYear) {
-                    edObj.education.splice(i, 0, e);
-                    inserted = true;
-                    break;
-                } else j = i + 1;
-            }
-            if (!inserted) edObj.education.splice(j, 0, e);
-        }
-        else edObj.education.unshift(e);
-        edObj.educationArr = educationObjToArr(edObj.education);
-        edObj.edName = null;
-        edObj.edConc = null;
-        edObj.edYear = null;
-    };
-});
-
-app.factory('removeEducation', function () {
-    return function (edObj, index) {
-        edObj.education.splice(edObj.education.length - 1 - index, 1);
-        edObj.educationArr.splice(index, 1);
-    };
-});
-
-app.factory('addWork', function (workObjToArr) {
-    return function (workObj) {
-        if (!workObj.woName) return;
-        workObj.work = workObj.work || [];
-        var w = {employer: {name: workObj.woName}};
-        if (workObj.woPosition) w.position = {name: workObj.woPosition};
-        if (workObj.woStartDate) w.start_date = workObj.woStartDate;
-        if (workObj.woEndDate) w.end_date = workObj.woEndDate;
-
-        if (workObj.work && workObj.work.length && workObj.woEndDate) {
-            var inserted = false;
-            var j = 0;
-            for (var i in workObj.work) {
-                if (workObj.work[i].end_date && (new Date(workObj.work[i].end_date)) > workObj.woEndDate) {
-                    workObj.work.splice(i, 0, w);
-                    inserted = true;
-                    break;
-                } else j = i + 1;
-            }
-            if (!inserted) workObj.work.splice(j, 0, w);
-        }
-        else workObj.work.unshift(w);
-        workObj.workArr = workObjToArr(workObj.work);
-        workObj.woName = null;
-        workObj.woPosition = null;
-        workObj.woStartDate = null;
-        workObj.woEndDate = null;
-    };
-});
-
-app.factory('removeWork', function () {
-    return function (workObj, index) {
-        workObj.work.splice(workObj.work.length - 1 - index, 1);
-        workObj.workArr.splice(index, 1);
-    };
 });
 
 app.factory('bindToNavtabs', function ($rootScope) {

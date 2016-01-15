@@ -11,16 +11,12 @@ module.exports = function (cryptoWrap, knex) {
                 pswhash: bcrypt.hashSync(cryptoWrap.decrypt(req.query.cpa))
             };
 
-            knex('users').insert(u).returning('id')
-                .then(function (ids) {
-                    knex('users').where('id', ids[0]).then(function (users) {
-                        req.logIn(users[0], function (err) {
-                            return err
-                                ? next(err)
-                                : res.redirect('/registration/step2');
-                        });
-                    }).catch(function (err) {
-                        next(err);
+            knex('users').insert(u).returning('*')
+                .then(function (user) {
+                    req.logIn(user[0], function (err) {
+                        return err
+                            ? next(err)
+                            : res.redirect('/registration/step2');
                     });
                 }).catch(function (err) {
                     res.end();
