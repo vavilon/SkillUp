@@ -47,7 +47,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
     });
 });
 
-app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, loadLoggedUser, $mdDialog,
+app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, loadLoggedUser, $mdDialog, editNeed,
                                         loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, bindToNavtabs,
                                         setNotReceivable, isLoggedIn, $location) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
@@ -216,6 +216,16 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             $scope.removeWork = function (index) {
                 $scope.info.work.splice(index, 1);
             };
+
+            $scope.addNeed = function (id) {
+                $scope.editNeed(id, false);
+            };
+
+            $scope.removeNeed = function (id) {
+                $scope.editNeed(id, true);
+            };
+
+            $scope.editNeed = editNeed;
 
             $scope.showAddInfoDialog = function(ev) {
                 $mdDialog.show({

@@ -37,7 +37,7 @@
                 <div layout="row" layout-align="start start" layout-wrap>
                     <skill-button ng-repeat="skill in user.skills" id="skill.skill_id" type="skill" count-visible
                                   count="skill.count" with-add="ownProfile && skill.count < 1" tooltip-add="Добавить в 'Хочу'"
-                                  style="margin-right: 8px; margin-bottom: 8px;"></skill-button>
+                                  style="margin-right: 8px; margin-bottom: 8px;" on-add="addNeed"></skill-button>
                 </div>
             </div>
             <div>
@@ -45,7 +45,7 @@
                 <div layout="row" layout-align="start start" layout-wrap>
                     <skill-button ng-repeat="need in user.needs" id="need.skill_id" type="need" count-visible
                                   count="need.count" with-remove="ownProfile" tooltip-remove="Убрать из 'Хочу'"
-                                  style="margin-right: 8px; margin-bottom: 8px;"></skill-button>
+                                  style="margin-right: 8px; margin-bottom: 8px;" on-remove="removeNeed"></skill-button>
                 </div>
             </div>
         </div>
