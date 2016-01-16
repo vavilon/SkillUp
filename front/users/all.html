@@ -32,7 +32,7 @@
                             <div layout="row">
                                 <div layout="row" layout-align="end start" style="padding: 16px 16px 0 0;">
                                     <a ng-href="/users/{{user.id}}">
-                                        <img ng-if="user.avatar" class="user-avatar" ng-src="{{user.avatar}}"
+                                        <img ng-if="user.avatar" class="user-avatar" ng-src="/avatars/{{user.avatar}}"
                                              alt="{{user.nick}}"/>
                                         <i ng-if="!user.avatar" class="mdi mdi-account-circle mdi-36 mdi-secondary user-avatar"></i>
                                     </a>

@@ -64,7 +64,7 @@
                 <md-content style="padding: 20px; width: 100%">
                     <div layout="row" layout-align="start center">
                         <a ng-href="/users/{{user.id}}">
-                            <img ng-if="user.avatar" class="user-avatar" ng-src="{{user.avatar}}"
+                            <img ng-if="user.avatar" class="user-avatar" ng-src="/avatars/{{user.avatar}}"
                                  alt="{{user.nick}}"/>
                             <i ng-if="!user.avatar" class="mdi mdi-account-circle mdi-36 mdi-black user-avatar"></i>
                         </a>

@@ -15,7 +15,7 @@
             <!--  AVATAR BLOCK  -->
             <md-card layout="column" layout-align="start center" class="info-card main">
                 <div class="background"></div>
-                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='{{user.avatar}}' class="avatar">
+                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' class="avatar">
                 <div ng-if="!user.avatar" class="avatar" layout="row" layout-align="center center">
                     <i class="mdi mdi-account-circle mdi-secondary"></i>
                 </div>

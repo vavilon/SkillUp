@@ -104,7 +104,7 @@
                             </td>
                             <td ng-repeat="name in lastExpandedTable.columnNames">
                                 <div ng-if="name === 'avatar'">
-                                    <img class="table-img" ng-if="row[name]" alt="avatar" ng-src="{{row[name]}}">
+                                    <img class="table-img" ng-if="row[name]" alt="avatar" ng-src="/avatars/{{row[name]}}">
                                     <i class="mdi mdi-account-circle mdi-36" ng-if="!row[name]"></i>
                                 </div>
                                 <div ng-if="lastExpandedTable.columns[name].type === 'date'">{{row[name] | date: 'dd/M/yyyy'}}</div>

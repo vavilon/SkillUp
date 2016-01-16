@@ -311,7 +311,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
 });
 
 app.controller('registrationCtrl', function ($scope, $routeParams, $http, $location, loadLoggedUser, isImage, $mdToast,
-                                             $animate, $timeout, getObjByID, $rootScope, extendedSkills) {
+                                             $animate, $timeout, getObjByID, $rootScope, extendedSkills, dataURItoBlob) {
     $scope.reg = {education: [{}], work: [{}]};
 
     $scope.step = 1;
@@ -353,7 +353,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                     }
                     if (!$scope.reg.work.length) $scope.reg.work.push({});
                 }
-                console.log(user);
             });
         }
         $rootScope.pageTitle = 'Регистрация';
@@ -500,7 +499,6 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             reader.onload = function (evt) {
                 $scope.$apply(function ($scope) {
                     $scope.reg.isImageRes = true;
-                    console.log(evt.target.result);
                     $scope.reg.imgSrcRes = evt.target.result;
                 });
             };
@@ -535,14 +533,20 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 if (!$scope.reg.education[i].name) $scope.reg.education.splice(i, 1);
             for (var i in $scope.reg.work)
                 if (!$scope.reg.work[i].name) $scope.reg.work.splice(i, 1);
-            $http.post('/update_profile', {
-                avatar: $scope.reg.imgCropRes,
-                birthday: $scope.reg.birthday,
-                gender: $scope.reg.gender,
-                city: $scope.reg.city,
-                country: $scope.reg.country,
-                education: JSON.stringify($scope.reg.education),
-                work: JSON.stringify($scope.reg.work)
+
+            var fd = new FormData();
+            if ($scope.reg.imgCropRes) fd.append("avatar", dataURItoBlob($scope.reg.imgCropRes));
+            if ($scope.reg.birthday) fd.append("birthday", $scope.reg.birthday);
+            if ($scope.reg.gender) fd.append("gender", $scope.reg.gender);
+            if ($scope.reg.city) fd.append("city", $scope.reg.city);
+            if ($scope.reg.country) fd.append("country", $scope.reg.country);
+            if ($scope.reg.education) fd.append("education", JSON.stringify($scope.reg.education));
+            if ($scope.reg.work) fd.append("work", JSON.stringify($scope.reg.work));
+
+            $http.post('/update_profile', fd, {
+                withCredentials: true,
+                headers: {'Content-Type': undefined },
+                transformRequest: angular.identity
             }).success(function (data) {
                 if (data) {
                     $scope.initStep3();

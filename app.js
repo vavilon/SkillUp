@@ -38,6 +38,25 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var FACEBOOK_APP_ID = "490483854451281";
 var FACEBOOK_APP_SECRET = "387964dc2fbee4a25aace154e3df1c1d";
 
+GLOBAL.avatarsDir = __dirname + '/resources/avatars/';
+var multer = require('multer');
+var upload = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, GLOBAL.avatarsDir);
+        },
+        filename: function (req, file, cb) {
+            cb(null, randomstring.generate() + '.jpg');
+        }
+    }),
+    limits: {fileSize: 5242880},
+    fileFilter: function (req, file, cb) {
+        if (file.mimetype !== 'image/png' && file.mimetype !== 'image/jpg' && file.mimetype !== 'image/jpeg')
+            cb(null, false);
+        else cb(null, true);
+    }
+});
+
 GLOBAL.COUNT_TO_APPROVE = 3;
 GLOBAL.COUNT_TO_CHECK = 3;
 GLOBAL.CORRECT_CONSTANT = 2 / 3;
@@ -152,17 +171,6 @@ app.use('/db/:table/columns', controllers.db.columns(knex));
 //Получение количества строк в таблице
 app.use('/db/:table/rows_count', controllers.db.rows_count(knex));
 
-app.use('/avatars', function (req, res) {
-    if (req.isAuthenticated()) {
-        try {
-            res.sendFile(__dirname + '/avatars' + req.path);
-        }
-        catch (e) {
-            console.log('Avatar not found!');
-        }
-    }
-    else res.end();
-});
 app.use('/logged_user', function (req, res, next) {
     if (req.isAuthenticated()) {
         req.body.id = req.user.id;
@@ -267,8 +275,9 @@ app.post('/login', controllers.users.login);
 app.post('/register', controllers.users.register(cryptoWrap, transporter, randomstring));
 app.get('/confirm', controllers.users.confirm(cryptoWrap, knex));
 app.get('/logout', controllers.users.logout);
-app.post('/update_profile', controllers.users.update(knex));
+app.post('/update_profile', upload.single('avatar'), controllers.users.update(knex));
 app.post('/needs', controllers.users.needs(knex));
+app.use('/avatars', controllers.users.avatars);
 
 app.use('/', function (req, res) {
     res.sendFile(__dirname + '/front/index.html');
