@@ -84,7 +84,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 $scope.user = data[0];
             }
             $rootScope.pageTitle = $scope.user.name;
-            $scope.navtabs = {selected: 0, tabs: ['Прогресс', 'Информация']};
+            $scope.navtabs = {selected: 0, tabs: ['Умения', 'Задания', 'Информация']};
             bindToNavtabs($scope, 'navtabs');
             $scope.ownProfile = (loggedUser().id === $scope.user.id);
 

@@ -5,35 +5,97 @@
                    load-func="scrollWrap.loadFunc" options="scrollWrap.loadOptions"
                    callback="scrollWrap.callback"></scroll-loader>
 
-    <div flex="{{sidenavVisible ? (navtabs.selected != 1 ? 10 : 15) : (navtabs.selected != 1 ? 15 : 20)}}"
+    <div flex="{{sidenavVisible ? (navtabs.selected != 2 ? 10 : 15) : (navtabs.selected != 2 ? 15 : 20)}}"
          flex-md="5" hide-sm class="content-main-side"></div>
     <div ng-switch="navtabs.selected" flex>
-        <md-card layout="column" layout-align="{{navtabs.selected == 1 ? 'start center' : 'end start'}}" class="info-card" ng-class="{'main': navtabs.selected != 1, 'main-info': navtabs.selected == 1}">
+        <md-card layout="column" layout-align="{{navtabs.selected == 2 ? 'start center' : 'end start'}}" class="info-card"
+                 ng-class="{'main': navtabs.selected != 2, 'main-info': navtabs.selected == 2, 'no-radius': navtabs.selected == 1}">
             <div class="background"></div>
             <div style="width: 100%;" layout="row" layout-align="end center">
                 <md-button class="md-icon-button" layout="row" layout-align="center center" style="margin-top: 16px; margin-right: 16px;"
-                           aria-label="editInfo" ng-if="ownProfile && navtabs.selected == 1" ng-click="editInfo('name')">
+                           aria-label="editInfo" ng-if="ownProfile && navtabs.selected == 2" ng-click="editInfo('name')">
                     <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
                     <md-tooltip>Редактировать</md-tooltip>
                 </md-button>
             </div>
-            <div layout="{{navtabs.selected == 1 ? 'column' : 'row'}}" layout-align="center center">
-                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' class="avatar">
-                <div ng-if="!user.avatar" class="avatar empty" layout="row" layout-align="center center">
+            <div layout="{{navtabs.selected == 2 ? 'column' : 'row'}}" layout-align="center center">
+                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' class="avatar" ng-class="{'own': ownProfile}">
+                <div ng-if="!user.avatar" class="avatar" layout="row" layout-align="center center" ng-class="{'own': ownProfile}">
                     <i class="mdi mdi-account-circle mdi-secondary"></i>
                 </div>
-                <div layout="column" layout-align="{{navtabs.selected == 1 ? 'start center' : 'start start'}}">
+                <div layout="column" layout-align="{{navtabs.selected == 2 ? 'start center' : 'start start'}}">
                     <div class="name">{{user.name}}</div>
-                    <div class="nick"><span ng-if="navtabs.selected != 1">exp:
+                    <div class="nick"><span ng-if="navtabs.selected != 2">exp:
                         <span class="exp">{{user.exp}}</span> - </span>{{user.nick}}
                     </div>
                 </div>
             </div>
         </md-card>
         <div ng-switch-when="0">
-
+            <div>
+                <div ng-if="user.skills && user.skills.length" class="secondary-title">Умею: {{user.skills.length}}</div>
+                <div layout="row" layout-align="start start" layout-wrap>
+                    <skill-button ng-repeat="skill in user.skills" id="skill.skill_id" type="skill" count-visible
+                                  count="skill.count" with-add="ownProfile && skill.count < 1" tooltip-add="Добавить в 'Хочу'"
+                                  style="margin-right: 8px; margin-bottom: 8px;"></skill-button>
+                </div>
+            </div>
+            <div>
+                <div ng-if="user.needs && user.needs.length" class="secondary-title">Хочу: {{user.needs.length}}</div>
+                <div layout="row" layout-align="start start" layout-wrap>
+                    <skill-button ng-repeat="need in user.needs" id="need.skill_id" type="need" count-visible
+                                  count="need.count" with-remove="ownProfile" tooltip-remove="Убрать из 'Хочу'"
+                                  style="margin-right: 8px; margin-bottom: 8px;"></skill-button>
+                </div>
+            </div>
         </div>
-        <div ng-switch-when="1" layout="column">
+        <div ng-switch-when="1" class="md-whiteframe-z1" style="margin: 0 1px;">
+            <md-tabs md-selected="tabSelected" ng-click="setScrollOptions(tabSelected)">
+                <md-tab>Решено: <span style="font-weight: bold;">{{user.tasks_done.length || 0}}</span></md-tab>
+                <md-tab>Проверено: <span style="font-weight: bold;">{{user.solutions_checked.length || 0}}</span>
+                </md-tab>
+                <md-tab>Подтверждено: <span
+                        style="font-weight: bold;">{{user.tasks_approved.length || 0}}</span></md-tab>
+                <md-tab>Создано: <span style="font-weight: bold;">{{user.tasks_created.length || 0}}</span>
+                </md-tab>
+            </md-tabs>
+            <md-content flex style="overflow-y: scroll;"
+                        on-scroll-bottom="scrollWrap.scrollOptions">
+                <md-list>
+                    <ng-switch on="tabSelected">
+                        <div ng-switch-when="0">
+                            <tasks-list tasks="tasksDone" show-expand="false"></tasks-list>
+                            <div ng-if="!tasksDone" class="md-tile-content"
+                                 layout="column" layout-align="center center" flex>
+                                <h3 class="list-empty">Пользователь не решил ни одного задания</h3>
+                            </div>
+                        </div>
+                        <div ng-switch-when="1">
+                            <solutions-list solutions="solutionsChecked" show-expand="false"></solutions-list>
+                            <div ng-if="!solutionsChecked" class="md-tile-content"
+                                 layout="column" layout-align="center center" flex>
+                                <h3 class="list-empty">Пользователь не проверил ни одного решения</h3>
+                            </div>
+                        </div>
+                        <div ng-switch-when="2">
+                            <tasks-list tasks="tasksApproved" show-expand="false" show-difficulty="false"></tasks-list>
+                            <div ng-if="!tasksApproved" class="md-tile-content"
+                                 layout="column" layout-align="center center" flex>
+                                <h3 class="list-empty">Пользователь не подтвердил ни одного задания</h3>
+                            </div>
+                        </div>
+                        <div ng-switch-when="3">
+                            <tasks-list tasks="tasksCreated" show-expand="false" show-difficulty="false"></tasks-list>
+                            <div ng-if="!tasksCreated" class="md-tile-content"
+                                 layout="column" layout-align="center center" flex>
+                                <h3 class="list-empty">Пользователь не создал ни одного задания</h3>
+                            </div>
+                        </div>
+                    </ng-switch>
+                </md-list>
+            </md-content>
+        </div>
+        <div ng-switch-when="2" layout="column">
             <!--  AVATAR BLOCK  -->
             <div layout="row">
                 <div layout="column" flex="50">
@@ -314,6 +376,6 @@
             </md-button>
         </div>
     </div>
-    <div flex="{{sidenavVisible ? (navtabs.selected != 1 ? 10 : 15) : (navtabs.selected != 1 ? 15 : 20)}}"
+    <div flex="{{sidenavVisible ? (navtabs.selected != 2 ? 10 : 15) : (navtabs.selected != 2 ? 15 : 20)}}"
          flex-md="5" hide-sm class="content-main-side"></div>
 </div>

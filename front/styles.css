@@ -488,6 +488,15 @@ pre {
     color: rgba(0, 0, 0, .38);
 }
 
+.secondary-title {
+    margin-left: 5px;
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, .54);
+}
+
 .horizontal-divider {
     width: 1px;
     height: 50%;

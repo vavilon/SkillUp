@@ -59,11 +59,16 @@
 .info-card.main {
     border-top-right-radius: 0;
     border-top-left-radius: 0;
+    margin: 0;
     height: 200px;
     background: linear-gradient(#3F51B5, #1A237E);
     color: white;
     padding-bottom: 24px;
     transition: all 0.3s ease-in-out;
+}
+
+.info-card.main.no-radius {
+    border-radius: 0;
 }
 
 .info-card.main .background {
@@ -126,16 +131,15 @@
     border: 2px solid #fff;
     border-radius: 50%;
     height: 120px;
-    margin-top: -118px;
+    margin-top: -62px;
     width: 120px;
     cursor: pointer;
     position: relative;
     transition: all 0.3s ease-in-out;
 }
 
-.info-card.main-info .avatar.empty {
-    margin-top: -62px;
-    transition: all 0.3s ease-in-out;
+.info-card.main-info .avatar.own {
+    margin-top: -118px;
 }
 
 .info-card.main-info .avatar i {
