@@ -57,47 +57,109 @@
 }
 
 .info-card.main {
-    height: 280px;
-    margin-top: 30px;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    height: 200px;
+    background: linear-gradient(#3F51B5, #1A237E);
+    color: white;
+    padding-bottom: 24px;
+    transition: all 0.3s ease-in-out;
 }
 
 .info-card.main .background {
-    height: 140px;
-    width: 100%;
-    background: #3F51B5;
-    background: linear-gradient(#1A237E, #3F51B5);
+    transition: all 0.3s ease-in-out;
 }
 
 .info-card.main .avatar {
     background-color: #fff;
     border: 2px solid #fff;
     border-radius: 50%;
-    height: 120px;
-    margin-top: -62px;
-    width: 120px;
+    height: 60px;
+    width: 60px;
     cursor: pointer;
     position: relative;
+    margin-right: 16px;
+    margin-left: 24px;
+    transition: all 0.3s ease-in-out;
 }
 
 .info-card.main .avatar i {
     max-width: none !important;
-    font-size: 130px !important;
+    font-size: 60px !important;
+    transition: all 0.3s ease-in-out;
 }
 
 .info-card.main .name {
+    font-size: 30px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s ease-in-out;
+}
+
+.info-card.main .nick {
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s ease-in-out;
+}
+.info-card.main .exp {
+    color: #E91E63;
+}
+
+.info-card.main-info {
+    height: 280px;
+    margin-top: 30px;
+    transition: all 0.3s ease-in-out;
+}
+
+.info-card.main-info .background {
+    height: 140px;
+    width: 100%;
+    background: #3F51B5;
+    background: linear-gradient(#1A237E, #3F51B5);
+    transition: all 0.3s ease-in-out;
+}
+
+.info-card.main-info .avatar {
+    background-color: #fff;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    height: 120px;
+    margin-top: -118px;
+    width: 120px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+
+.info-card.main-info .avatar.empty {
+    margin-top: -62px;
+    transition: all 0.3s ease-in-out;
+}
+
+.info-card.main-info .avatar i {
+    max-width: none !important;
+    font-size: 130px !important;
+    transition: all 0.3s ease-in-out;
+}
+
+.info-card.main-info .name {
     font-size: 24px;
     overflow: hidden;
     padding-top: 16px;
     text-overflow: ellipsis;
+    transition: all 0.3s ease-in-out;
 }
 
-.info-card.main .nick {
+.info-card.main-info .nick {
     color: rgba(0, 0, 0, 0.54);
     font-size: 16px;
     margin: 0 16px;
     overflow: hidden;
     padding-top: 8px;
     text-overflow: ellipsis;
+    transition: all 0.3s ease-in-out;
 }
 
 .add-info {

@@ -8,20 +8,33 @@
     <div flex="{{sidenavVisible ? (navtabs.selected != 1 ? 10 : 15) : (navtabs.selected != 1 ? 15 : 20)}}"
          flex-md="5" hide-sm class="content-main-side"></div>
     <div ng-switch="navtabs.selected" flex>
+        <md-card layout="column" layout-align="{{navtabs.selected == 1 ? 'start center' : 'end start'}}" class="info-card" ng-class="{'main': navtabs.selected != 1, 'main-info': navtabs.selected == 1}">
+            <div class="background"></div>
+            <div style="width: 100%;" layout="row" layout-align="end center">
+                <md-button class="md-icon-button" layout="row" layout-align="center center" style="margin-top: 16px; margin-right: 16px;"
+                           aria-label="editInfo" ng-if="ownProfile && navtabs.selected == 1" ng-click="editInfo('name')">
+                    <i class="mdi mdi-pencil mdi-24 mdi-secondary"></i>
+                    <md-tooltip>Редактировать</md-tooltip>
+                </md-button>
+            </div>
+            <div layout="{{navtabs.selected == 1 ? 'column' : 'row'}}" layout-align="center center">
+                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' class="avatar">
+                <div ng-if="!user.avatar" class="avatar empty" layout="row" layout-align="center center">
+                    <i class="mdi mdi-account-circle mdi-secondary"></i>
+                </div>
+                <div layout="column" layout-align="{{navtabs.selected == 1 ? 'start center' : 'start start'}}">
+                    <div class="name">{{user.name}}</div>
+                    <div class="nick"><span ng-if="navtabs.selected != 1">exp:
+                        <span class="exp">{{user.exp}}</span> - </span>{{user.nick}}
+                    </div>
+                </div>
+            </div>
+        </md-card>
         <div ng-switch-when="0">
 
         </div>
         <div ng-switch-when="1" layout="column">
             <!--  AVATAR BLOCK  -->
-            <md-card layout="column" layout-align="start center" class="info-card main">
-                <div class="background"></div>
-                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' class="avatar">
-                <div ng-if="!user.avatar" class="avatar" layout="row" layout-align="center center">
-                    <i class="mdi mdi-account-circle mdi-secondary"></i>
-                </div>
-                <div class="name">{{user.name}}</div>
-                <div class="nick">{{user.nick}}</div>
-            </md-card>
             <div layout="row">
                 <div layout="column" flex="50">
                     <!--  GENERAL INFO  -->
