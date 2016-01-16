@@ -8,7 +8,6 @@ module.exports = function (knex) {
             if (newAvatar && fs.existsSync(newAvatar)) fs.unlink(newAvatar);
             return res.end();
         }
-        console.log(newAvatar);
         var u = {};
         if (req.body.name) u.name = req.body.name;
         if (req.body.birthday) u.birthday = new Date(req.body.birthday);

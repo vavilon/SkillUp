@@ -3,6 +3,9 @@ var requireTree = require('require-tree');
 var config = requireTree('../../../config');
 var knex = require('knex')(config.get('knex'));
 var bcrypt = require('bcryptjs');
+var fs = require('fs');
+var request = require('request');
+var randomstring = require('randomstring');
 
 module.exports = function (token, refreshToken, profile, done) {
     function isValidDate(date) {
@@ -85,62 +88,68 @@ module.exports = function (token, refreshToken, profile, done) {
                             };
 
                             u.avatar = "https://graph.facebook.com/" + profile.id + "/picture" + "?width=9999" + "&access_token=" + token;
+                            var avatarName = randomstring.generate() + '.jpg';
+                            request(u.avatar)
+                                .pipe(fs.createWriteStream(GLOBAL.avatarsDir + avatarName))
+                                .on('close', function() {
+                                    u.avatar = avatarName;
 
-                            if (result.birthday) {
-                                var bd = new Date(result.birthday);
-                                if (isValidDate(bd)) u.birthday = bd;
-                            }
-                            if (!u.birthday && profile._json && profile._json.birthday) {
-                                var bd = new Date(profile._json.birthday);
-                                if (isValidDate(bd)) u.birthday = bd;
-                            }
+                                    if (result.birthday) {
+                                        var bd = new Date(result.birthday);
+                                        if (isValidDate(bd)) u.birthday = bd;
+                                    }
+                                    if (!u.birthday && profile._json && profile._json.birthday) {
+                                        var bd = new Date(profile._json.birthday);
+                                        if (isValidDate(bd)) u.birthday = bd;
+                                    }
 
-                            if (result.gender) {
-                                if (result.gender == 'мужской' || result.gender == 'male') u.gender = 'male';
-                                else if (result.gender == 'женский' || result.gender == 'female') u.gender = 'female';
-                            }
-                            if (!u.gender && profile.gender) {
-                                if (profile.gender == 'мужской' || profile.gender == 'male') u.gender = 'male';
-                                else if (profile.gender == 'женский' || profile.gender == 'female') u.gender = 'female';
-                            }
+                                    if (result.gender) {
+                                        if (result.gender == 'мужской' || result.gender == 'male') u.gender = 'male';
+                                        else if (result.gender == 'женский' || result.gender == 'female') u.gender = 'female';
+                                    }
+                                    if (!u.gender && profile.gender) {
+                                        if (profile.gender == 'мужской' || profile.gender == 'male') u.gender = 'male';
+                                        else if (profile.gender == 'женский' || profile.gender == 'female') u.gender = 'female';
+                                    }
 
-                            if (result.location && result.location.name) {
-                                var loc = result.location.name.split(', ');
-                                if (loc[0]) u.city = loc[0];
-                                if (loc[1]) u.country = loc[1];
-                            }
-                            if ((!u.city || !u.country) && profile._json && profile._json.location && profile._json.location.name) {
-                                var loc = profile._json.location.name.split(', ');
-                                if (!u.city && loc[0]) u.city = loc[0];
-                                if (!u.country && loc[1]) u.country = loc[1];
-                                //TODO: заменить этот костыльный перевод на что-то нормальное (или просто убрать)
-                                if (u.country == 'Ukraine') u.country = 'Украина';
-                                else if (u.country == 'Russia') u.country = 'Россия';
-                            }
+                                    if (result.location && result.location.name) {
+                                        var loc = result.location.name.split(', ');
+                                        if (loc[0]) u.city = loc[0];
+                                        if (loc[1]) u.country = loc[1];
+                                    }
+                                    if ((!u.city || !u.country) && profile._json && profile._json.location && profile._json.location.name) {
+                                        var loc = profile._json.location.name.split(', ');
+                                        if (!u.city && loc[0]) u.city = loc[0];
+                                        if (!u.country && loc[1]) u.country = loc[1];
+                                        //TODO: заменить этот костыльный перевод на что-то нормальное (или просто убрать)
+                                        if (u.country == 'Ukraine') u.country = 'Украина';
+                                        else if (u.country == 'Russia') u.country = 'Россия';
+                                    }
 
-                            if (result.education) {
-                                var edu = parseEducation(result.education);
-                                if (edu && edu.length) u.education = JSON.stringify(edu);
-                            }
-                            if (!u.education && profile._json && profile._json.education) {
-                                var edu = parseEducation(profile._json.education);
-                                if (edu && edu.length) u.education = JSON.stringify(edu);
-                            }
+                                    if (result.education) {
+                                        var edu = parseEducation(result.education);
+                                        if (edu && edu.length) u.education = JSON.stringify(edu);
+                                    }
+                                    if (!u.education && profile._json && profile._json.education) {
+                                        var edu = parseEducation(profile._json.education);
+                                        if (edu && edu.length) u.education = JSON.stringify(edu);
+                                    }
 
-                            if (result.work) {
-                                var wor = parseWork(result.work);
-                                if (wor && wor.length) u.work = JSON.stringify(wor);
-                            }
-                            if (!u.work && profile._json && profile._json.work) {
-                                var wor = parseWork(profile._json.work);
-                                if (wor && wor.length) u.work = JSON.stringify(wor);
-                            }
+                                    if (result.work) {
+                                        var wor = parseWork(result.work);
+                                        if (wor && wor.length) u.work = JSON.stringify(wor);
+                                    }
+                                    if (!u.work && profile._json && profile._json.work) {
+                                        var wor = parseWork(profile._json.work);
+                                        if (wor && wor.length) u.work = JSON.stringify(wor);
+                                    }
 
-                            query.insert(u).then(function (user) {
-                                return done(null, user[0], {message: 'first'});
-                            }).catch(function (err) {
-                                done(err);
-                            });
+                                    query.insert(u).then(function (user) {
+                                        return done(null, user[0], {message: 'first'});
+                                    }).catch(function (err) {
+                                        done(err);
+                                    });
+                                });
                         });
                     }
                     else {

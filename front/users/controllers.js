@@ -324,7 +324,7 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
                 if (user.birthday) $scope.reg.birthday = new Date(user.birthday);
                 if (user.avatar) {
                     $scope.reg.isImageRes = true;
-                    $scope.reg.imgSrcRes = user.avatar;
+                    $scope.reg.imgSrcRes = '/avatars/' + user.avatar;
                 }
                 $scope.reg.gender = user.gender || 'male';
                 if (user.city) $scope.reg.city = user.city;
