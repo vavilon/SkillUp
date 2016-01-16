@@ -532,16 +532,16 @@ app.controller('registrationCtrl', function ($scope, $routeParams, $http, $locat
             for (var i in $scope.reg.education)
                 if (!$scope.reg.education[i].name) $scope.reg.education.splice(i, 1);
             for (var i in $scope.reg.work)
-                if (!$scope.reg.work[i].name) $scope.reg.work.splice(i, 1);
+                if (!$scope.reg.work[i].company) $scope.reg.work.splice(i, 1);
 
             var fd = new FormData();
-            if ($scope.reg.imgCropRes) fd.append("avatar", dataURItoBlob($scope.reg.imgCropRes));
-            if ($scope.reg.birthday) fd.append("birthday", $scope.reg.birthday);
-            if ($scope.reg.gender) fd.append("gender", $scope.reg.gender);
-            if ($scope.reg.city) fd.append("city", $scope.reg.city);
-            if ($scope.reg.country) fd.append("country", $scope.reg.country);
-            if ($scope.reg.education) fd.append("education", JSON.stringify($scope.reg.education));
-            if ($scope.reg.work) fd.append("work", JSON.stringify($scope.reg.work));
+            fd.append("avatar", dataURItoBlob($scope.reg.imgCropRes));
+            fd.append("birthday", $scope.reg.birthday);
+            fd.append("gender", $scope.reg.gender);
+            fd.append("city", $scope.reg.city);
+            fd.append("country", $scope.reg.country);
+            fd.append("education", JSON.stringify($scope.reg.education));
+            fd.append("work", JSON.stringify($scope.reg.work));
 
             $http.post('/update_profile', fd, {
                 withCredentials: true,
