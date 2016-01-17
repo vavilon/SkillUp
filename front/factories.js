@@ -253,6 +253,11 @@ app.factory('bindToNavtabs', function ($rootScope) {
     };
 });
 
+app.factory('getRowsCount', function ($http) {
+    return function (tableName, callback) {
+        $http.get('/db/' + tableName + '/rows_count').success(callback);
+    }
+});
 app.factory('dataURItoBlob', function() {
     return function (dataURI) {
         var byteString;
