@@ -507,18 +507,6 @@ a[role="button"] h1:hover {
     color: rgba(0, 0, 0, 0.26);
 }
 
-.sorted-column-text {
-    color: rgba(0, 0, 0, 0.87);
-}
-
-.sorted-column-icon-color {
-    color: rgba(0, 0, 0, 0.87) !important;
-}
-
-.sort-icon {
-    color: white;
-}
-
 #tables md-card > md-card-content > table > tbody > tr:hover {
     background-color: #EEEEEE;
 }

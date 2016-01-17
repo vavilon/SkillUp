@@ -79,81 +79,165 @@ function applyAllFilters(tasks, skills, users, getObjByID, chips) {
     return filteredTasks;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills, loadTasks,
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills, loadTasks, getRowsCount,
                                          $rootScope, $location, isLoggedIn) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Задания';
         $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
         $scope.getObjByID = getObjByID;
-        $scope.chips = {};
-        $scope.chips.tasksNames = [];
-        $scope.chips.skillsNames = [];
-        $scope.chips.authorsNames = [];
 
-        $scope.chips.selectedTasks = [];
-        $scope.chips.selectedSkills = [];
-        $scope.chips.selectedAuthors = [];
+        //Запилить в расширенный поиск
+        //$scope.chips = {};
+        //$scope.chips.tasksNames = [];
+        //$scope.chips.skillsNames = [];
+        //$scope.chips.authorsNames = [];
+        //
+        //$scope.chips.selectedTasks = [];
+        //$scope.chips.selectedSkills = [];
+        //$scope.chips.selectedAuthors = [];
+        //
+        //$scope.chips.selectedTask = null;
+        //$scope.chips.selectedSkill = null;
+        //$scope.chips.selectedAuthor = null;
+        //
+        //$scope.chips.searchTextTasks = null;
+        //$scope.chips.searchTextSkills = null;
+        //$scope.chips.searchTextAuthors = null;
+        //
+        //$scope.fTasks = [];
+        //
+        //$scope.getfTasks = function () {
+        //    return $scope.fTasks;
+        //};
+        //
+        //$scope.exs = $rootScope.exs;
+        //for (var item in $scope.exs.skills) {
+        //    $scope.chips.skillsNames.push($scope.exs.skills[item].title);
+        //}
+        //$scope.chips.skillsQuerySearch = FiltersFactory($scope.chips.skillsNames);
+        //
+        //$http.get('db/users').success(function (users) {
+        //    $scope.users = users;
+        //    for (var item in users) {
+        //        $scope.chips.authorsNames.push(users[item].name);
+        //    }
+        //    $scope.chips.authorsQuerySearch = FiltersFactory($scope.chips.authorsNames);
+        //});
+        //
+        //var dbTasksOptions = {filters: {for_solving: true}};
+        //$http.post('/db/tasks', dbTasksOptions).success(function (tasks) {
+        //    for (var i in tasks) parseSkills(tasks[i]);
+        //
+        //    $scope.tasks = tasks;
+        //    dbTasksOptions.offset = $scope.tasks.length;
+        //    $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback, options: dbTasksOptions};
+        //
+        //    for (var item in tasks) {
+        //        $scope.chips.tasksNames.push(tasks[item].title);
+        //    }
+        //    $scope.chips.tasksQuerySearch = FiltersFactory($scope.chips.tasksNames);
+        //    $scope.fTasks = tasks;
+        //});
+        //
+        //$scope.$watchCollection('chips.selectedTasks', function () {
+        //    $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
+        //});
+        //
+        //$scope.$watchCollection('chips.selectedSkills', function () {
+        //    $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
+        //});
+        //
+        //$scope.$watchCollection('chips.selectedAuthors', function () {
+        //    $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
+        //});
+        //
+        //$scope.scrollCallback = function (newTasks) {
+        //    for (var i in newTasks) parseSkills(newTasks[i]);
+        //    $scope.tasks = $scope.tasks.concat(newTasks);
+        //    $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
+        //};
 
-        $scope.chips.selectedTask = null;
-        $scope.chips.selectedSkill = null;
-        $scope.chips.selectedAuthor = null;
+        $scope.dynamicTasks = {
+            tasks: [],
+            tasksCount: 0,
 
-        $scope.chips.searchTextTasks = null;
-        $scope.chips.searchTextSkills = null;
-        $scope.chips.searchTextAuthors = null;
+            TASKS_PER_PAGE: 2,
+            _pageNumber: 0,
 
-        $scope.fTasks = [];
+            _tasksFetch: function () {
+                var self = this;
+                loadTasks({limit: self.TASKS_PER_PAGE, offset: self._pageNumber * self.TASKS_PER_PAGE}, function (rows) {
+                    self.tasks = self.tasks.concat(rows);
+                    self._pageNumber++;
+                });
+            },
 
-        $scope.getfTasks = function () {
-            return $scope.fTasks;
+            viewTask: function (id) {
+                if (!$scope.receiveButtonClicked) $location.path('/tasks/' + id);
+                else $scope.receiveButtonClicked = false;
+            },
+
+            taskReceived: function (id, received) {
+                $scope.receiveButtonClicked = true;
+                //TODO: Оповещать пользователя
+            },
+
+            getItemAtIndex: function (index) {
+                if (index >= this._pageNumber * this.TASKS_PER_PAGE) this._tasksFetch();
+                return this.tasks[index];
+            },
+
+            getLength: function () {
+                console.log(this.tasksCount);
+                return this.tasksCount;
+            }
         };
+        loadTasks({limit: 2}, function (rows) {
+            $scope.dynamicTasks.tasks = rows;
+            $scope.sortColumn('byDate');
+        });
+        getRowsCount('tasks', function (count) {
+            $scope.dynamicTasks.tasksCount = count;
+        });
 
-        $scope.exs = $rootScope.exs;
-        for (var item in $scope.exs.skills) {
-            $scope.chips.skillsNames.push($scope.exs.skills[item].title);
+        $scope.columnSort = {};
+
+        function compareFn(firstValue, secondValue) {
+            if (firstValue > secondValue) return 1;
+            else if (firstValue < secondValue) return -1;
+            else return 0;
         }
-        $scope.chips.skillsQuerySearch = FiltersFactory($scope.chips.skillsNames);
 
-        $http.get('db/users').success(function (users) {
-            $scope.users = users;
-            for (var item in users) {
-                $scope.chips.authorsNames.push(users[item].name);
+        //Функция сортировки, при нажатии на название колонки
+        $scope.sortColumn = function (columnName) {
+            //Сортировка списка в зависимости от значения переменной $scope.column[columnName]: (1, 0) соответственно прямая или обратная
+            if (!$scope.columnSort[columnName]) {
+                $scope.columnSort = {};
+                $scope.columnSort[columnName] = 1;
+                //$scope.rowsOnPage.sort(function (a, b) {
+                //    if (a[columnName] > b[columnName]) return 1;
+                //    if (a[columnName] < b[columnName]) return -1;
+                //    return 0;
+                //});
+                if (columnName === 'byName') {
+                    $scope.dynamicTasks.tasks.sort(function (a, b) {
+                        return compareFn(a.title, b.title);
+                    })
+                } else if (columnName === 'byDate') {
+                    $scope.dynamicTasks.tasks.sort(function (a, b) {
+                        return compareFn(new Date(a.date_created), new Date(b.date_created));
+                    })
+                } else if (columnName === 'byExp') {
+                    $scope.dynamicTasks.tasks.sort(function (a, b) {
+                        return compareFn(a.exp, b.exp);
+                    })
+                }
+            } else if ($scope.columnSort[columnName] === 1) {
+                $scope.columnSort[columnName] = 0;
+                $scope.dynamicTasks.tasks = $scope.dynamicTasks.tasks.reverse();
             }
-            $scope.chips.authorsQuerySearch = FiltersFactory($scope.chips.authorsNames);
-        });
-
-        var dbTasksOptions = {filters: {for_solving: true}};
-        $http.post('/db/tasks', dbTasksOptions).success(function (tasks) {
-            for (var i in tasks) parseSkills(tasks[i]);
-
-            $scope.tasks = tasks;
-            dbTasksOptions.offset = $scope.tasks.length;
-            $scope.scrollWrap = {loadFunc: loadTasks, callback: $scope.scrollCallback, options: dbTasksOptions};
-
-            for (var item in tasks) {
-                $scope.chips.tasksNames.push(tasks[item].title);
-            }
-            $scope.chips.tasksQuerySearch = FiltersFactory($scope.chips.tasksNames);
-            $scope.fTasks = tasks;
-        });
-
-        $scope.$watchCollection('chips.selectedTasks', function () {
-            $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
-        });
-
-        $scope.$watchCollection('chips.selectedSkills', function () {
-            $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
-        });
-
-        $scope.$watchCollection('chips.selectedAuthors', function () {
-            $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
-        });
-
-        $scope.scrollCallback = function (newTasks) {
-            for (var i in newTasks) parseSkills(newTasks[i]);
-            $scope.tasks = $scope.tasks.concat(newTasks);
-            $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
+            console.log($scope.columnSort);
         };
     });
 });

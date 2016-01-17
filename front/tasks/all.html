@@ -1,73 +1,101 @@
 
-<div layout="row" flex style="min-height: calc(100vh - 64px);">
+<div  class="md-whiteframe-z1" layout="column" flex>
+    <!--Запилить в расширеннный поиск-->
+    <!--<div class="md-whiteframe-z2" flex="20" style="padding: 16px; z-index: 1; background-color: #FAFAFA;">-->
+        <!--<md-chips ng-model="chips.selectedTasks" md-autocomplete-snap md-require-match>-->
+            <!--<md-autocomplete-->
+                    <!--md-selected-item="chips.selectedTask"-->
+                    <!--md-search-text="chips.searchTextTasks"-->
+                    <!--md-items="task in chips.tasksQuerySearch(chips.searchTextTasks)"-->
+                    <!--md-item-text="task"-->
+                    <!--placeholder="Поиск по названию">-->
+                <!--<span md-highlight-text="chips.searchTextTasks">{{task}}</span>-->
+            <!--</md-autocomplete>-->
+        <!--</md-chips>-->
 
-    <scroll-loader events="'allTasksScrolled'" load-func="scrollWrap.loadFunc" options="scrollWrap.options"
-                   callback="scrollWrap.callback"></scroll-loader>
+        <!--<md-chips ng-model="chips.selectedSkills" md-autocomplete-snap md-require-match>-->
+            <!--<md-autocomplete-->
+                    <!--md-selected-item="chips.selectedSkill"-->
+                    <!--md-search-text="chips.searchTextSkills"-->
+                    <!--md-items="skill in chips.skillsQuerySearch(chips.searchTextSkills)"-->
+                    <!--md-item-text="skill"-->
+                    <!--placeholder="Поиск по умениям">-->
+                <!--<span md-highlight-text="chips.searchTextSkills">{{skill}}</span>-->
+            <!--</md-autocomplete>-->
+        <!--</md-chips>-->
 
-    <div class="md-whiteframe-z2" flex="20" style="padding: 16px; z-index: 1; background-color: #FAFAFA;">
-        <md-chips ng-model="chips.selectedTasks" md-autocomplete-snap md-require-match>
-            <md-autocomplete
-                    md-selected-item="chips.selectedTask"
-                    md-search-text="chips.searchTextTasks"
-                    md-items="task in chips.tasksQuerySearch(chips.searchTextTasks)"
-                    md-item-text="task"
-                    placeholder="Поиск по названию">
-                <span md-highlight-text="chips.searchTextTasks">{{task}}</span>
-            </md-autocomplete>
-        </md-chips>
+        <!--<md-chips ng-model="chips.selectedAuthors" md-autocomplete-snap md-require-match>-->
+            <!--<md-autocomplete-->
+                    <!--md-selected-item="chips.selectedAuthor"-->
+                    <!--md-search-text="chips.searchTextAuthors"-->
+                    <!--md-items="author in chips.authorsQuerySearch(chips.searchTextAuthors)"-->
+                    <!--md-item-text="author"-->
+                    <!--placeholder="Поиск по автору">-->
+                <!--<span md-highlight-text="chips.searchTextAuthors">{{author}}</span>-->
+            <!--</md-autocomplete>-->
+        <!--</md-chips>-->
+    <!--</div>-->
 
-        <md-chips ng-model="chips.selectedSkills" md-autocomplete-snap md-require-match>
-            <md-autocomplete
-                    md-selected-item="chips.selectedSkill"
-                    md-search-text="chips.searchTextSkills"
-                    md-items="skill in chips.skillsQuerySearch(chips.searchTextSkills)"
-                    md-item-text="skill"
-                    placeholder="Поиск по умениям">
-                <span md-highlight-text="chips.searchTextSkills">{{skill}}</span>
-            </md-autocomplete>
-        </md-chips>
-
-        <md-chips ng-model="chips.selectedAuthors" md-autocomplete-snap md-require-match>
-            <md-autocomplete
-                    md-selected-item="chips.selectedAuthor"
-                    md-search-text="chips.searchTextAuthors"
-                    md-items="author in chips.authorsQuerySearch(chips.searchTextAuthors)"
-                    md-item-text="author"
-                    placeholder="Поиск по автору">
-                <span md-highlight-text="chips.searchTextAuthors">{{author}}</span>
-            </md-autocomplete>
-        </md-chips>
-
-        <div>
-            <md-checkbox class="md-accent" ng-model="hideUnconfirmed" ng-init="hideUnconfirmed=false">
-                Неподтвержденные
-            </md-checkbox>
+    <div layout="row" layout-align="start center" style="height: 48px; padding: 0 16px 0 16px;" flex="95">
+        <div class="all-tasks-header-cell all-tasks-sortable-column" layout="row" layout-align="start center" flex="50"
+             ng-click="sortColumn('byName')">
+            <span class="all-tasks-header-cell-text"
+                 ng-class="{'sorted-column-text': columnSort['byName'] === 1 || columnSort['byName'] === 0}">По названию</span>
+            <i class="mdi mdi-arrow-up mdi-24 rotate-base"
+               ng-class="{'sort-icon': columnSort['byName'] === undefined,
+                          'sorted-column-icon-color': columnSort['byName'] === 1 || columnSort['byName'] === 0,
+                          'rotate-btn': columnSort['byName'] === 1}">
+            </i>
         </div>
+        <div class="all-tasks-header-cell" layout="row" layout-align="start center" flex="25">
+            <span class="all-tasks-header-cell-text">Автор</span>
+        </div>
+        <div class="all-tasks-header-cell all-tasks-sortable-column" layout="row" layout-align="start center" flex="15"
+             ng-click="sortColumn('byDate')">
+            <span class="all-tasks-header-cell-text"
+                 ng-class="{'sorted-column-text': columnSort['byDate'] === 1 || columnSort['byDate'] === 0}">По дате создания</span>
+            <i class="mdi mdi-arrow-up mdi-24 rotate-base"
+               ng-class="{'sort-icon': columnSort['byDate'] === undefined,
+                          'sorted-column-icon-color': columnSort['byDate'] === 1 || columnSort['byDate'] === 0,
+                          'rotate-btn': columnSort['byDate'] === 1}">
+            </i>
+        </div>
+        <div class="all-tasks-header-cell all-tasks-sortable-column" layout="row" layout-align="start center" flex="10"
+             ng-click="sortColumn('byExp')">
+            <span class="all-tasks-header-cell-text"
+                 ng-class="{'sorted-column-text': columnSort['byExp'] === 1 || columnSort['byExp'] === 0}">По опыту</span>
+            <i class="mdi mdi-arrow-up mdi-24 rotate-base"
+               ng-class="{'sort-icon': columnSort['byExp'] === undefined,
+                          'sorted-column-icon-color': columnSort['byExp'] === 1 || columnSort['byExp'] === 0,
+                          'rotate-btn': columnSort['byExp'] === 1}">
+            </i>
+        </div>
+        <div flex="5"></div>
     </div>
-
-    <div layout="column" layout-fill class="md-whiteframe-z2" style="background-color: #fff; ">
-        <div>
-            <div layout="row" layout-padding layout-align="start center">
-                <h4 style="margin-left: 8px; margin-bottom: 15px; margin-top: 15px;">Сортировать по: </h4>
-
-                <div class="sortBy" layout="row" layout-align="center center">
-                    <label for="sortAlphabetDown">названию</label>
-                    <i id="sortAlphabetDown" class="mdi mdi-menu-down mdi-24"></i>
+    <md-divider></md-divider>
+    <md-virtual-repeat-container id="all-tasks-virtual-container">
+        <div class="all-tasks-virtual-item-container" md-virtual-repeat="task in dynamicTasks.tasks">
+            <div class="all-tasks-virtual-item" layout="row" layout-align="start center">
+                <div class="all-tasks-virtual-item-clickable-aria" layout="row" layout-align="start center" flex="95"
+                     ng-click="dynamicTasks.viewTask(task.id)">
+                    <div class="all-tasks-body-cell" flex="50">
+                        <span>{{task.title}}</span>
+                    </div>
+                    <div class="all-tasks-body-cell" flex="25">
+                        <span>{{task.author_name}}</span>
+                    </div>
+                    <div class="all-tasks-body-cell" flex="15">
+                        <span>{{task.date_created | date: 'dd/M/yyyy'}}</span>
+                    </div>
+                    <div class="all-tasks-body-cell" flex="10">
+                        {{task.exp | thousand}}
+                    </div>
                 </div>
-                <div class="sortBy" layout="row" layout-align="center center">
-                    <label for="sortDateDown">дате</label>
-                    <i id="sortDateDown" class="mdi mdi-menu-down mdi-24"></i>
-                </div>
-                <div class="sortBy" layout="row" layout-align="center center">
-                    <label for="sortPopularityDown">популярности</label>
-                    <i id="sortPopularityDown" class="mdi mdi-menu-down mdi-24"></i>
+                <div class="all-tasks-body-cell" flex="5">
+                    <receive-button id="task.id" count="task.participants"
+                                    received="task.received" callback="dynamicTasks.taskReceived"></receive-button>
                 </div>
             </div>
         </div>
-        <md-divider></md-divider>
-        <md-content flex on-scroll-bottom="{event: 'allTasksScrolled', percent: 95}"
-                    style="min-height: calc(100vh - 129px); max-height: calc(100vh - 129px);">
-            <tasks-list tasks="getfTasks()" solvable="false" style="min-height: calc(100vh - 129px);"></tasks-list>
-        </md-content>
-    </div>
+    </md-virtual-repeat-container>
 </div>

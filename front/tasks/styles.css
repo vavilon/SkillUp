@@ -1,54 +1,64 @@
 /* all.html */
-.sortBy {
-    margin-left: 5%;
+
+.all-tasks-sortable-column {
+    padding-top: 9px !important;
+    outline: none;
+    cursor: pointer;
 }
 
-.animate.ng-enter,
-.animate.ng-leave {
-    -webkit-transition: 500ms ease-in-out all;
-    -moz-transition: 500ms ease-in-out all;
-    -o-transition: 500ms ease-in-out all;
-    transition: 500ms ease-in-out all;
-    position: relative;
-    display: block;
-    overflow: hidden;
-    text-overflow: clip;
+.all-tasks-header-cell {
+    display: table-cell;
+    color: rgba(0,0,0,0.54);
+    padding-top: 16px;
     white-space: nowrap;
+    height: inherit;
 }
 
-.animate.ng-leave.animate.ng-leave-active,
-.animate.ng-enter {
-    opacity: 0;
-    width: auto;
-    height: auto;
-    max-width: 0;
-    max-height: 0;
+.all-tasks-sortable-column.all-tasks-header-cell:hover {
+    color: rgba(0, 0, 0, 0.87);
 }
 
-.animate.ng-enter.ng-enter-active,
-.animate.ng-leave {
-    opacity: 1;
-    max-width: 2000px;
-    max-height: 150px;
+.all-tasks-sortable-column.all-tasks-header-cell:hover .sort-icon {
+    color: rgba(0, 0, 0, 0.26);
 }
 
-.my-show-hide-animation.ng-hide-add,
-.my-show-hide-animation.ng-hide-remove {
-    -webkit-transition: 500ms ease-in-out all;
-    transition: 500ms ease-in-out all;
-    /* remember to add this */
-    display: block !important;
-    max-height: 300px;
-    overflow: hidden;
-    opacity: 1;
+.all-tasks-header-cell .sort-icon {
+    color: #FAFAFA;
 }
 
-.my-show-hide-animation.ng-hide {
-    height: auto;
-    max-height: 0;
-    opacity: 0;
+.all-tasks-header-cell-text {
+    text-align: left;
+    font-weight: normal !important;
+    font-size: 15px;
 }
 
+.all-tasks-body-cell {
+    display: table-cell;
+}
+
+#all-tasks-virtual-container {
+    height: calc(100vh - 113px);
+    background-color: white;
+}
+
+.all-tasks-virtual-item-container {
+    height: 48px;
+    border-bottom: solid 1px #EEEEEE;
+}
+
+.all-tasks-virtual-item {
+    padding: 0 16px;
+    cursor: pointer;
+}
+
+.all-tasks-virtual-item-clickable-aria {
+    height: 48px;
+    outline: none;
+}
+
+.all-tasks-virtual-item:hover {
+    background-color: #EEEEEE;
+}
 
 /* one.html */
 
@@ -107,10 +117,6 @@
 
 .taskTabs .md-header .md-ripple {
     border-color: #FFFFFF !important;
-}
-
-.taskTabs md-tabs-ink-bar {
-    background-color: #E91E63 !important;
 }
 
 .authorFace {

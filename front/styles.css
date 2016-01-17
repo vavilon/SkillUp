@@ -261,18 +261,9 @@ pre {
     text-decoration: underline;
 }
 
-.task-button {
-    margin: 0;
-    padding: 0;
-    min-width: 0;
-    min-height: 0;
-    line-height: normal;
-}
-
-.task-button md-icon {
-    color: rgba(0,0,0,.26);
-    width: 19px;
-    height: 19px;
+.md-icon-button.task-button {
+    height: 48px;
+    width: 48px;
 }
 
 .task-padding {
@@ -638,5 +629,18 @@ pre {
 .search-main:-ms-input-placeholder      {color:rgba(255, 255, 255, .87);}
 
 .content-main-side {
-    transition: all 0.3s cubic-bezier(0,0,0.2,1)
+    transition: all 0.3s cubic-bezier(0, 0, 0.2, 1)
+}
+
+/*all-tasks*/
+.sorted-column-text {
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.sorted-column-icon-color {
+    color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.sort-icon {
+    color: white;
 }
