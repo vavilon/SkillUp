@@ -365,7 +365,7 @@ pre {
 }
 
 .promo-area {
-    background: #3949AB url('/front/images/octicons-bg.png') center repeat;
+    background: #3949AB url('/dist/images/octicons-bg.png') center repeat;
     padding-top: 5%;
     padding-bottom: 5%;
 }

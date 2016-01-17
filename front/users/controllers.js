@@ -230,7 +230,7 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
             $scope.showAddInfoDialog = function(ev) {
                 $mdDialog.show({
                     controller: addInfoDialogController,
-                    templateUrl: '/front/users/addInfoDialog.html',
+                    templateUrl: '/dist/users/addInfoDialog.html',
                     parent: angular.element(document.body),
                     targetEvent: ev,
                     clickOutsideToClose: true
@@ -800,7 +800,7 @@ app.controller('adminCtrl', function ($scope, $http, $rootScope, $mdDialog, getC
             $mdDialog.show({
                 parent: angular.element(document.body),
                 targetEvent: event,
-                templateUrl: '/front/templates/propertyDialog.html',
+                templateUrl: '/dist/templates/propertyDialog.html',
                 locals: {
                     text: $scope.text,
                     title: $scope.title

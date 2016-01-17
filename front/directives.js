@@ -2,7 +2,7 @@
 app.directive('tasksList', function() {
     return {
         restrict: 'E',
-        templateUrl: '/front/templates/tasks-list.html',
+        templateUrl: '/dist/templates/tasks-list.html',
         scope: {
             tasks: '=',
             exs: '=?',
@@ -116,7 +116,7 @@ app.directive('tasksList', function() {
 app.directive('solutionsList', function() {
     return {
         restrict: 'E',
-        templateUrl: '/front/templates/solutions-list.html',
+        templateUrl: '/dist/templates/solutions-list.html',
         scope: {
             solutions: '=',
             exs: '=?',
@@ -234,7 +234,7 @@ app.directive('solutionsList', function() {
 app.directive('likeButton', function() {
     return {
         restrict: 'E',
-        templateUrl: '/front/templates/like-button.html',
+        templateUrl: '/dist/templates/like-button.html',
         scope: {
             type: '@',
             id: '=',
@@ -265,7 +265,7 @@ app.directive('likeButton', function() {
 app.directive('receiveButton', function() {
     return {
         restrict: 'E',
-        templateUrl: '/front/templates/receive-button.html',
+        templateUrl: '/dist/templates/receive-button.html',
         scope: {
             type: '@?',
             id: '=',
@@ -368,7 +368,7 @@ app.directive('scrollLoader', function() {
 app.directive('skillButton', function($rootScope, $timeout) {
     return {
         restrict: 'E',
-        templateUrl: '/front/templates/skill-button.html',
+        templateUrl: '/dist/templates/skill-button.html',
         scope: {
             type: '@?',
             id: '=',

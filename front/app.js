@@ -18,23 +18,23 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
     $httpProvider.defaults.headers.common["Content-Type"] = "application/json";
 
     $routeProvider
-        .when('/admin', {templateUrl: '/front/users/admin.html', controller: 'adminCtrl'})
-        .when('/main', {templateUrl: '/front/main.html', controller: 'mainPageCtrl'})
-        .when('/users', {templateUrl: '/front/users/all.html', controller: 'usersListCtrl'})
-        .when('/tasks', {templateUrl: '/front/tasks/all.html', controller: 'allTasksCtrl'})
-        .when('/tasks/:task_id', {templateUrl: '/front/tasks/one.html', controller: 'oneTaskCtrl'})
-        .when('/tasks/:task_id/decision', {templateUrl: '/front/tasks/decision.html'})
-        .when('/tasks/:task_id/approve', {templateUrl: '/front/tasks/approve.html'})
-        .when('/tasks/:task_id/check', {templateUrl: '/front/tasks/check.html'})
-        .when('/tasks/:task_id/create', {templateUrl: '/front/tasks/create.html'})
-        .when('/skills', {templateUrl: '/front/skills/skills.html', controller: 'skillsCtrl'})
-        .when('/users/:user_id', {templateUrl: '/front/users/one.html', controller: 'profileCtrl'})
-        .when('/competences', {templateUrl: '/front/competences/competences.html', controller: 'competencesCtrl'})
-        .when('/registration', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
-        .when('/registration/step2', {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
+        .when('/admin', {templateUrl: '/dist/users/admin.html', controller: 'adminCtrl'})
+        .when('/main', {templateUrl: '/dist/main.html', controller: 'mainPageCtrl'})
+        .when('/users', {templateUrl: '/dist/users/all.html', controller: 'usersListCtrl'})
+        .when('/tasks', {templateUrl: '/dist/tasks/all.html', controller: 'allTasksCtrl'})
+        .when('/tasks/:task_id', {templateUrl: '/dist/tasks/one.html', controller: 'oneTaskCtrl'})
+        .when('/tasks/:task_id/decision', {templateUrl: '/dist/tasks/decision.html'})
+        .when('/tasks/:task_id/approve', {templateUrl: '/dist/tasks/approve.html'})
+        .when('/tasks/:task_id/check', {templateUrl: '/dist/tasks/check.html'})
+        .when('/tasks/:task_id/create', {templateUrl: '/dist/tasks/create.html'})
+        .when('/skills', {templateUrl: '/dist/skills/skills.html', controller: 'skillsCtrl'})
+        .when('/users/:user_id', {templateUrl: '/dist/users/one.html', controller: 'profileCtrl'})
+        .when('/competences', {templateUrl: '/dist/competences/competences.html', controller: 'competencesCtrl'})
+        .when('/registration', {templateUrl: '/dist/users/registration.html', controller: 'registrationCtrl'})
+        .when('/registration/step2', {templateUrl: '/dist/users/registration.html', controller: 'registrationCtrl'})
         .when('/registration/nick/:nick/email/:email/password/:password*',
-        {templateUrl: '/front/users/registration.html', controller: 'registrationCtrl'})
-        .when('/restore', {templateUrl: '/front/users/restore.html', controller: 'restoreCtrl'})
+        {templateUrl: '/dist/users/registration.html', controller: 'registrationCtrl'})
+        .when('/restore', {templateUrl: '/dist/users/restore.html', controller: 'restoreCtrl'})
         .otherwise({redirectTo: '/main'});
 
     /*    $mdThemingProvider.theme('default')
@@ -179,7 +179,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
     $scope.showLoginDialog = function (ev) {
         $mdDialog.show({
             controller: LoginDialogController,
-            templateUrl: '/front/users/login.html',
+            templateUrl: '/dist/users/login.html',
             targetEvent: ev
         });
     };

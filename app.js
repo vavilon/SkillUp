@@ -143,7 +143,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
-app.use('/front', express.static(__dirname + '/front'));
+app.use('/dist', express.static(__dirname + '/dist'));
 
 app.use('/db', function (req, res, next) {
     if (req.isAuthenticated()) {
@@ -280,7 +280,7 @@ app.post('/needs', controllers.users.needs(knex));
 app.use('/avatars', controllers.users.avatars);
 
 app.use('/', function (req, res) {
-    res.sendFile(__dirname + '/front/index.html');
+    return res.sendFile(__dirname + '/dist/index.html');
 });
 
 var server = app.listen(config.get('port'), function () {
