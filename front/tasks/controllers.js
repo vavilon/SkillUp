@@ -158,86 +158,89 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
         //    $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
         //};
 
-        $scope.dynamicTasks = {
-            tasks: [],
-            tasksCount: 0,
+        var DynamicItems = function() {
+            /**
+             * @type {!Object<?Array>} Data pages, keyed by page number (0-index).
+             */
+            this.loadedItems = [];
 
-            TASKS_PER_PAGE: 2,
-            _pageNumber: 0,
+            /** @type {number} Total number of downloaded items. */
+            this.numItems = 0;
+            this.toLoad = 0;
 
-            _tasksFetch: function () {
-                var self = this;
-                loadTasks({limit: self.TASKS_PER_PAGE, offset: self._pageNumber * self.TASKS_PER_PAGE}, function (rows) {
-                    self.tasks = self.tasks.concat(rows);
-                    self._pageNumber++;
-                });
-            },
+            /** @const {number} Number of items to fetch per request. */
+            this.LIMIT = 50;
 
-            viewTask: function (id) {
-                if (!$scope.receiveButtonClicked) $location.path('/tasks/' + id);
-                else $scope.receiveButtonClicked = false;
-            },
+            $scope.columnSort = {'date_created': 'desc'};
 
-            taskReceived: function (id, received) {
-                $scope.receiveButtonClicked = true;
-                //TODO: Оповещать пользователя
-            },
+            this.sort = {
+                columnName: Object.keys($scope.columnSort)[0] || 'date_created',
+                direction: $scope.columnSort[Object.keys($scope.columnSort)] || 'desc'
+            };
+        };
 
-            getItemAtIndex: function (index) {
-                if (index >= this._pageNumber * this.TASKS_PER_PAGE) this._tasksFetch();
-                return this.tasks[index];
-            },
-
-            getLength: function () {
-                console.log(this.tasksCount);
-                return this.tasksCount;
+        // Required.
+        DynamicItems.prototype.getItemAtIndex = function(index) {
+            if (index < this.numItems) {
+                return this.loadedItems[index];
+            } else {
+                this._fetchMoreItems(index);
             }
         };
-        loadTasks({limit: 2}, function (rows) {
-            $scope.dynamicTasks.tasks = rows;
-            $scope.sortColumn('byDate');
-        });
-        getRowsCount('tasks', function (count) {
-            $scope.dynamicTasks.tasksCount = count;
-        });
 
-        $scope.columnSort = {};
+        // Required.
+        DynamicItems.prototype.getLength = function() {
+            return this.numItems + 1;
+        };
 
-        function compareFn(firstValue, secondValue) {
-            if (firstValue > secondValue) return 1;
-            else if (firstValue < secondValue) return -1;
-            else return 0;
-        }
+        DynamicItems.prototype._fetchMoreItems = function(index) {
+            if (index > this.toLoad) {
+                this.toLoad += this.LIMIT;
+
+                var self = this;
+                loadTasks({limit: self.LIMIT, offset: self.numItems, sort: self.sort}, function (rows) {
+                    self.loadedItems = self.loadedItems.concat(rows);
+                    self.numItems = self.toLoad;
+                });
+            }
+        };
+
+        DynamicItems.prototype.resetSort = function (sort) {
+            this.sort = sort;
+            this.loadedItems = [];
+            this.toLoad = this.numItems = 0;
+            this._fetchMoreItems(1);
+        };
+
+        DynamicItems.prototype.viewTask = function (id) {
+            if (!$scope.receiveButtonClicked) $location.path('/tasks/' + id);
+            else $scope.receiveButtonClicked = false;
+        };
+
+        DynamicItems.prototype.taskReceived = function (id, received) {
+            $scope.receiveButtonClicked = true;
+            //TODO: Оповещать пользователя
+        };
+
+        $scope.dynamicTasks = new DynamicItems();
 
         //Функция сортировки, при нажатии на название колонки
         $scope.sortColumn = function (columnName) {
-            //Сортировка списка в зависимости от значения переменной $scope.column[columnName]: (1, 0) соответственно прямая или обратная
-            if (!$scope.columnSort[columnName]) {
+            //Сортировка списка в зависимости от значения переменной $scope.column[columnName]: (asc, desc)
+            if (!$scope.columnSort[columnName] || $scope.columnSort[columnName] == 'desc') {
                 $scope.columnSort = {};
-                $scope.columnSort[columnName] = 1;
-                //$scope.rowsOnPage.sort(function (a, b) {
-                //    if (a[columnName] > b[columnName]) return 1;
-                //    if (a[columnName] < b[columnName]) return -1;
-                //    return 0;
-                //});
-                if (columnName === 'byName') {
-                    $scope.dynamicTasks.tasks.sort(function (a, b) {
-                        return compareFn(a.title, b.title);
-                    })
-                } else if (columnName === 'byDate') {
-                    $scope.dynamicTasks.tasks.sort(function (a, b) {
-                        return compareFn(new Date(a.date_created), new Date(b.date_created));
-                    })
-                } else if (columnName === 'byExp') {
-                    $scope.dynamicTasks.tasks.sort(function (a, b) {
-                        return compareFn(a.exp, b.exp);
-                    })
-                }
-            } else if ($scope.columnSort[columnName] === 1) {
-                $scope.columnSort[columnName] = 0;
-                $scope.dynamicTasks.tasks = $scope.dynamicTasks.tasks.reverse();
+                $scope.columnSort[columnName] = 'asc';
+                $scope.dynamicTasks.resetSort({
+                    columnName: columnName,
+                    direction: 'asc'
+                });
+            } else if ($scope.columnSort[columnName] == 'asc') {
+                $scope.columnSort[columnName] = 'desc';
+                $scope.dynamicTasks.resetSort({
+                    columnName: columnName,
+                    direction: 'desc'
+                });
             }
-            console.log($scope.columnSort);
         };
     });
 });
