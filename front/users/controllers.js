@@ -9,7 +9,6 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 
         $http.get('db/users').success(function (data) {
             $scope.users = data;
-
             $scope.scrollWrap = {
                 loadFunc: loadUsers,
                 callback: $scope.scrollCallback,
@@ -23,16 +22,16 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
             }
         });
 
-        $scope.exs = $rootScope.exs;
-
-        $scope.findSkill = function (id) {
-            return $scope.exs.skills[id];
+        $scope.goToUserPage = function(id) {
+            if (!$scope.cardActionClicked) $location.path('/users/' + id);
+            else $scope.cardActionClicked = false;
         };
 
         $scope.expand = function (user) {
             if ($scope.lastExpandedUser !== user) $scope.lastExpandedUser.expanded = false;
             user.expanded = !user.expanded;
             $scope.lastExpandedUser = user;
+            $scope.cardActionClicked = true;
         };
 
         $scope.$watch('username', function () {
@@ -40,6 +39,7 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
         });
 
         $scope.scrollCallback = function (data) {
+            console.log('loaded');
             for (var i in data) {
                 parseSkills(data[i], true);
             }

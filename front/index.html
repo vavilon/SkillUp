@@ -63,9 +63,9 @@
                     <a href="/main" class="header-logo">skill<span style="color: #E91E63;">up</span></a>
                 </h2>
                 <md-divider class="horizontal-divider" ng-if="isLoggedIn()"></md-divider>
-                <h2 ng-if="isLoggedIn()" style="font-weight: 500;">
+                <div ng-if="isLoggedIn()" class="page-title">
                     {{pageTitle}}
-                </h2>
+                </div>
                 <div flex="5"></div>
                 <div flex>
                     <div flex layout="row" layout-align="center center" ng-if="isLoggedIn()"

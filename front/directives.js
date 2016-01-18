@@ -313,7 +313,7 @@ app.directive("onScrollBottom", function ($rootScope) {
 
         angular.element(element).bind("scroll", function() {
             if (element[0].offsetHeight + element[0].scrollTop >= element[0].scrollHeight * options.percent) {
-                if (!reached) {
+                if (!reached || (element[0].offsetHeight + element[0].scrollTop >= element[0].scrollHeight)) {
                     reached = true;
                     $rootScope.$broadcast(options.event, element);
                 }

@@ -751,3 +751,100 @@ a[role="button"] h1:hover {
     margin-top: 15px;
     margin-bottom: 15px;
 }
+
+.user-card {
+    position: relative;
+    min-width: 200px;
+    min-height: 230px;
+    width: 200px;
+    height: 230px;
+    margin: 24px 24px 0 0;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.user-card .expand-button {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.user-card .avatar {
+    width: 90px;
+    height: 90px;
+    margin-top: 24px;
+    transition: all 0.3s ease-in-out;
+}
+
+.user-card img {
+    border-radius: 50%;
+}
+
+.user-card .avatar .empty {
+    border-radius: 50%;
+    margin-top: 5px;
+    margin-left: 5px;
+    width: 80px;
+    height: 80px;
+    background-color: #304FFE;
+    transition: all 0.3s ease-in-out;
+}
+
+.user-card .avatar i {
+    color: #82B1FF;
+    margin-top: -13px;
+    margin-left: -13px;
+    font-size: 106px !important;
+    transition: all 0.3s ease-in-out;
+}
+
+.user-card .name {
+    color: rgba(0,0,0,0.87);
+    font-size: 16px;
+    line-height: 20px;
+    max-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.user-card .secondary {
+    color: rgba(0,0,0,0.54);
+    font-size: 14px;
+}
+
+.user-card .subscribe {
+    color: #304FFE;
+    width: 100%;
+    margin: 0;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    position: absolute;
+}
+
+.user-card.expanded {
+    width: 424px;
+    height: 484px;
+    transition: all 0.3s ease-in-out;
+}
+
+.user-card.expanded .avatar {
+    width: 180px;
+    height: 180px;
+}
+
+.user-card.expanded .avatar .empty {
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 160px;
+    height: 160px;
+}
+
+.user-card.expanded .avatar i {
+    margin-top: -26px;
+    margin-left: -26px;
+    font-size: 212px !important;
+}

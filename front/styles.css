@@ -141,17 +141,27 @@ pre {
     line-height: normal;
 }
 
-.avatar {
+.toolbar-main .avatar {
     width: 34px;
     height: 34px;
     border-radius: 50%;
 }
 
-.avatar.admin {
+.toolbar-main .avatar.admin {
     width: 38px;
     height: 38px;
     padding: 2px;
     border: 2px solid #FFEB3B;
+}
+
+.toolbar-main .page-title {
+    line-height: 32px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 20px;
+    white-space: nowrap;
+    max-width: 200px;
 }
 /*.task-description {
     padding: 10px;
