@@ -1,10 +1,11 @@
-app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $rootScope, getObjByID, parseSkills, loadUsers, isLoggedIn) {
+app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $rootScope, getObjByID, parseSkills,
+                                          loadUsers, isLoggedIn, bindToNavtabs) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Пользователи';
-        $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
+        $scope.navtabs = {selected: 0, tabs: ['Рекомендуемые', 'Подписки', 'Подписчики']};
+        bindToNavtabs($scope, 'navtabs');
         $scope.username = "";
-        $scope.filteredUsers = [];
 
         $http.get('db/users').success(function (data) {
             $scope.users = data;
@@ -80,8 +81,12 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
         $scope.loadProfile = function (data) {
             if (!data) $scope.user = loggedUser();
             else {
-                parseSkills(data[0], true);
                 $scope.user = data[0];
+                if ($scope.user) parseSkills($scope.user, true);
+            }
+            if (!$scope.user) {
+                $rootScope.pageTitle = 'Пользователи';
+                return;
             }
             $rootScope.pageTitle = $scope.user.name;
             $scope.navtabs = {selected: 0, tabs: ['Умения', 'Задания', 'Информация']};

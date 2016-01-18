@@ -1,6 +1,4 @@
 
-<div style="position: absolute; background-color: #3F51B5; height: 232px; width: 100%;"></div>
-
 <div style="position: relative;">
 
     <scroll-loader events="'indexPageScrolled'" load-func="scrollWrap.loadFunc" options="scrollWrap.options"
@@ -8,127 +6,12 @@
 
     <div layout="row">
         <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
-        <div flex
-             style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF;">
-            <md-toolbar class="demo-toolbar">
-                <div class="md-toolbar-tools">
-                    <h2>
-                        <span>Пользователи</span>
-                    </h2>
-                    <span flex></span>
-                    <md-input-container md-no-float style="margin-top: 23px; font-size: 14px;" flex="50">
-                        <input placeholder="Имя пользователя" ng-model="username">
-                    </md-input-container>
-                    <md-button class="md-icon-button toolbar-button" aria-label="Settings">
-                        <i class="mdi mdi-dots-vertical mdi-36 mdi-secondary"></i>
-                    </md-button>
+        <div flex>
+            <div ng-switch="navtabs.selected">
+                <div ng-switch-when="0">
+                    <div class="secondary-header">Общие интересы</div>
                 </div>
-            </md-toolbar>
-            <md-content>
-                <md-list>
-                    <md-list-item class="md-3-line users-list"
-                                  ng-repeat="user in filteredUsers = (users | filter: {name:username})">
-                        <div layout="column" flex>
-                            <div layout="row">
-                                <div layout="row" layout-align="end start" style="padding: 16px 16px 0 0;">
-                                    <a ng-href="/users/{{user.id}}">
-                                        <img ng-if="user.avatar" class="user-avatar" ng-src="/avatars/{{user.avatar}}"
-                                             alt="{{user.nick}}"/>
-                                        <i ng-if="!user.avatar" class="mdi mdi-account-circle mdi-36 mdi-secondary user-avatar"></i>
-                                    </a>
-                                </div>
-                                <div class="md-list-item-text" flex>
-                                    <h3><a class="user-name" ng-href="/users/{{user.id}}">{{ user.name }}</a></h3>
-                                    <h4 class="user-nick">{{ user.nick }}</h4>
-
-                                    <p>exp: {{ user.exp | thousand }}</p>
-                                    <p>
-                                        <span style="margin-right: 20px;">Умею:
-                                            <span style="color: #3F51B5; font-weight: 600;">{{user.skills.length || 0}}</span>
-                                        </span>
-                                        <span>Хочу:
-                                            <span style="color: #E91E63; font-weight: 600;">{{user.needs.length || 0}}</span>
-                                        </span>
-                                    </p>
-                                </div>
-
-                                <div layout="row" flex="30">
-                                    <div flex="10"></div>
-                                    <div layout="row" layout-align="end center">
-                                        <md-button class="count-button" ng-style="s1" ng-mouseenter="s1 = {color: '#4CAF50'}"
-                                                   ng-mouseleave="s1 = {}" aria-label="TasksDone">
-                                            <div layout="row" layout-align="center center">
-                                                {{user.tasks_done.length || 0}}
-                                                <i class="mdi mdi-check mdi-24" ng-class="{'mdi-secondary': !s1.color}"></i>
-                                            </div>
-                                            <md-tooltip>Решено заданий</md-tooltip>
-                                        </md-button>
-                                        <md-button class="count-button" ng-style="s2" ng-mouseenter="s2 = {color: '#FFEB3B'}"
-                                                   ng-mouseleave="s2 = {}" aria-label="CheckedSolutions">
-                                            <div layout="row" layout-align="center center">
-                                                {{user.solutions_checked.length || 0}}
-                                                <i class="mdi mdi-clipboard-check mdi-24" ng-class="{'mdi-secondary': !s2.color}"></i>
-                                            </div>
-                                            <md-tooltip>Проверено решений</md-tooltip>
-                                        </md-button>
-                                        <md-button class="count-button" ng-style="s3" ng-mouseenter="s3 = {color: '#03A9F4'}"
-                                                   ng-mouseleave="s3 = {}" aria-label="ApprovedTasks">
-                                            <div layout="row" layout-align="center center">
-                                                {{user.tasks_approved.length || 0}}
-                                                <i class="mdi mdi-checkbox-marked-circle mdi-24" ng-class="{'mdi-secondary': !s3.color}"></i>
-                                            </div>
-                                            <md-tooltip>Подтверждено заданий</md-tooltip>
-                                        </md-button>
-                                        <md-button class="count-button" ng-style="s4" ng-mouseenter="s4 = {color: '#E91E63'}"
-                                                   ng-mouseleave="s4 = {}" aria-label="CreatedTasks">
-                                            <div layout="row" layout-align="center center">
-                                                {{user.tasks_created.length || 0}}
-                                                <i class="mdi mdi-pencil mdi-24" ng-class="{'mdi-secondary': !s4.color}"></i>
-                                            </div>
-                                            <md-tooltip>Создано заданий</md-tooltip>
-                                        </md-button>
-                                    </div>
-                                </div>
-                                <div layout="row" layout-align="start center" flex="10">
-                                    <md-button class="md-mini md-primary expand-button"
-                                               ng-if="user.skills.length > 0 || user.needs.length > 0"
-                                               ng-click="expand(user)" aria-label="ExpandButton">
-                                        <i class="mdi mdi-chevron-down mdi-24 rotate-base" ng-class="{'rotate-btn': user.expanded}"></i>
-                                    </md-button>
-                                </div>
-                            </div>
-                            <div layout="row" ng-if="user.expanded" class="animate-if">
-                                <div layout="column" flex="80" style="padding-left: 55px;">
-                                    <div layout="row" style="padding-bottom: 10px;" ng-if="user.skills.length > 0">
-                                        <div layout="row" class="ican" flex="10">Умею:</div>
-                                        <div layout="row" layout-wrap flex>
-                                            <skill-button ng-repeat="skill in user.skills" id="skill.skill_id" type="skill"
-                                                          count="skill.count"></skill-button>
-                                        </div>
-                                    </div>
-
-                                    <div layout="row" style="padding-bottom: 15px;" ng-if="user.needs.length > 0">
-                                        <div layout="row" class="ican" flex="10">Хочу:</div>
-                                        <div layout="row" layout-wrap flex>
-                                            <skill-button ng-repeat="need in user.needs" id="need.skill_id" type="need"
-                                                          count="need.count"></skill-button>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <md-divider ng-if="!$last"></md-divider>
-                    </md-list-item>
-                    <md-list-item ng-show="filteredUsers.length == 0">
-                        <div layout="row" layout-align="center center" flex>
-                            <h3 style="color: rgba(0,0,0,0.54);">Пользователь с таким именем не найден :(</h3>
-                        </div>
-                    </md-list-item>
-                </md-list>
-            </md-content>
+            </div>
         </div>
         <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
     </div>

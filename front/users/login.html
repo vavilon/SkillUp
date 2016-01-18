@@ -1,7 +1,7 @@
 
 <md-dialog aria-label="Вход на сайт" style="width: 25%;">
     <form name="logForm">
-        <md-toolbar style="background-color: #E8EAF6; font-weight: 600; color: rgba(0, 0, 0, 0.54);">
+        <md-toolbar style="background-color: #E8EAF6; font-weight: 500; color: rgba(0, 0, 0, 0.54);">
             <div class="md-toolbar-tools" layout="row" layout-align="center center">
                 <span flex>Вход на сайт</span>
                 <md-button href="/auth/facebook" target="_self" class="md-raised md-primary login-social-btn" aria-label="social-login-facebook">
@@ -43,7 +43,7 @@
                     <label>Пароль</label>
                     <input ng-model="log.password" name="passwordN" type="password" required>
                 </md-input-container>
-                <a href="/restore" style="font-size: small; margin-left: 2px; position: absolute; bottom: 0;">Забыли пароль?</a>
+                <a href="/restore" style="font-size: small; margin-left: 2px; position: absolute; bottom: 0; margin-bottom: 8px 0;">Забыли пароль?</a>
             </div>
         </md-dialog-content>
         <md-dialog-actions layout="row">

@@ -474,8 +474,8 @@ pre {
 
 .hint-title {
     margin-top: 32px;
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 500;
     color: rgba(0, 0, 0, .38);
 }
 
@@ -483,9 +483,16 @@ pre {
     margin-left: 5px;
     margin-top: 24px;
     margin-bottom: 16px;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 500;
     color: rgba(0, 0, 0, .54);
+}
+
+.secondary-header {
+    color: rgba(0,0,0,0.54);
+    font-size: 16px;
+    font-weight: 500;
+    margin: 32px 0 0;
 }
 
 .horizontal-divider {
@@ -532,10 +539,10 @@ pre {
     outline: none;
     cursor: pointer;
     padding: 0 12px 0 20px;
-    color: rgba(0,0,0,0.70);
+    color: rgba(0,0,0,0.87);
     font-size: 14px;
     height: 48px;
-    font-weight: 600 !important;
+    font-weight: 500;
     opacity: .85;
     line-height: 50px;
     overflow: hidden;
@@ -595,7 +602,7 @@ pre {
 }
 
 .navtabs-animation span {
-    font-weight: 600 !important;
+    font-weight: 500 !important;
 }
 
 .content-main {

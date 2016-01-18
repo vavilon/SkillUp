@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="/dist/main.min.css">
 
     <link href="/dist/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700' rel='stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="/bower_components/ngImgCrop/compile/minified/ng-img-crop.css">
     <link href="/bower_components/mdi/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
 
@@ -37,6 +36,19 @@
 
     <script src="/dist/main.min.js"></script>
 
+    <script type="text/javascript">
+        WebFontConfig = {
+            google: { families: [ 'Roboto:400,500,700:latin,cyrillic-ext,cyrillic' ] }
+        };
+        (function() {
+            var wf = document.createElement('script');
+            wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+                    '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+            wf.type = 'text/javascript';
+            wf.async = 'true';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(wf, s);
+        })(); </script>
 </head>
 
 <body layout="row" style="background-color: #F5F5F5;">
@@ -93,7 +105,7 @@
                                    ng-href="/registration" aria-label="logout-btn">
                             Регистрация
                         </md-button>
-                        <md-button class="md-raised" style="color: rgba(0, 0, 0, 0.54); font-weight: 600;"
+                        <md-button class="md-raised" style="color: rgba(0, 0, 0, 0.54); font-weight: 500;"
                                    ng-click="showLoginDialog($event)" aria-label="logout-btn">
                             Войти
                         </md-button>

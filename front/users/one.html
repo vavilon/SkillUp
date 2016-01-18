@@ -23,11 +23,14 @@
                 <div ng-if="!user.avatar" class="avatar" layout="row" layout-align="center center" ng-class="{'own': ownProfile}">
                     <i class="mdi mdi-account-circle mdi-secondary"></i>
                 </div>
-                <div layout="column" layout-align="{{navtabs.selected == 2 ? 'start center' : 'start start'}}">
+                <div ng-if="user" layout="column" layout-align="{{navtabs.selected == 2 ? 'start center' : 'start start'}}">
                     <div class="name">{{user.name}}</div>
                     <div class="nick"><span ng-if="navtabs.selected != 2">exp:
-                        <span class="exp">{{user.exp}}</span> - </span>{{user.nick}}
+                        <span class="exp">{{user.exp}}</span> -</span> {{user.nick}}
                     </div>
+                </div>
+                <div ng-if="!user" layout="column" layout-align="start center">
+                    <div class="name">Пользователь не найден...</div>
                 </div>
             </div>
         </md-card>
