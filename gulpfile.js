@@ -65,5 +65,5 @@ gulp.task('default', ['clean-build-reload'], function(){
     browserSync.init({
         proxy: "localhost:80"
     });
-    return gulp.watch('front/*', ['clean-build-reload']);
+    return gulp.watch('front/**/*', ['clean-build-reload']);
 });
