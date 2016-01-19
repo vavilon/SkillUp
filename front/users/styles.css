@@ -757,8 +757,8 @@ a[role="button"] h1:hover {
     min-width: 200px;
     min-height: 230px;
     width: 200px;
-    height: 230px;
-    margin: 24px 24px 0 0;
+    height: 100%;
+    margin: 0;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
 }
@@ -826,8 +826,7 @@ a[role="button"] h1:hover {
 }
 
 .user-card.expanded {
-    width: 424px;
-    height: 484px;
+    width: 100%;
     transition: all 0.3s ease-in-out;
 }
 

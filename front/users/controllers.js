@@ -1,5 +1,5 @@
 app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $rootScope, getObjByID, parseSkills,
-                                          loadUsers, isLoggedIn, bindToNavtabs) {
+                                          loadUsers, isLoggedIn, bindToNavtabs, skillsToIDs) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Пользователи';
@@ -7,12 +7,13 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
         bindToNavtabs($scope, 'navtabs');
         $scope.username = "";
 
-        $http.get('db/users').success(function (data) {
+        var interests = skillsToIDs($rootScope.loggedUser.skills).concat(skillsToIDs($rootScope.loggedUser.needs));
+        $http.post('db/users', {skills: interests}).success(function (data) {
             $scope.users = data;
             $scope.scrollWrap = {
                 loadFunc: loadUsers,
                 callback: $scope.scrollCallback,
-                options: {offset: $scope.users.length}
+                options: {offset: $scope.users.length, skills: interests}
             };
 
             $scope.lastExpandedUser = $scope.users[0];

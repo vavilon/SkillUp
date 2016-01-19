@@ -155,6 +155,32 @@ knex.raw(rawTask).then(function (rows) {
     console.log(error);
 });*/
 
+
+knex('users').select('id').where('id', '>', 384952).then(function(rows) {
+    console.log('Users fetched...');
+    var ins = [];
+    var modified = 0, progress = 0, prevProgress = 0;
+    for (var i in rows) {
+        ins.push({
+            content: 'dumb content',
+            task_id: 287624,
+            user_id: rows[i].id,
+            is_correct: Math.getRandomInt(0, 1) ? true : false
+        });
+        progress = Math.round((modified++ / rows.length) * 100);
+        if (progress != prevProgress) {
+            knex('solutions').insert(ins).then(function() {
+                console.log('\033[2A');
+                console.log('Progress: ' + progress + '%   ');
+            }).catch(function(err) {
+                console.log(err);
+            });
+            ins = [];
+        }
+        prevProgress = progress;
+    }
+});
+
 return;
 
 //Добавить тестовых юзверей и заданий
