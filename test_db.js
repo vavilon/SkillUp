@@ -156,14 +156,17 @@ knex.raw(rawTask).then(function (rows) {
 });*/
 
 
-knex('users').select('id').where('id', '>', 384952).then(function(rows) {
+/* var q = knex('users').select('id').where('id', '>', 384952);
+console.log(q.client);
+return;
+q.then(function(rows) {
     console.log('Users fetched...');
     var ins = [];
     var modified = 0, progress = 0, prevProgress = 0;
     for (var i in rows) {
         ins.push({
             content: 'dumb content',
-            task_id: 287624,
+            task_id: 599151,
             user_id: rows[i].id,
             is_correct: Math.getRandomInt(0, 1) ? true : false
         });
@@ -173,13 +176,40 @@ knex('users').select('id').where('id', '>', 384952).then(function(rows) {
                 console.log('\033[2A');
                 console.log('Progress: ' + progress + '%   ');
             }).catch(function(err) {
-                console.log(err);
             });
             ins = [];
         }
         prevProgress = progress;
     }
+}); */
+
+var q = knex.select("tasks.*").from(function () {
+	this.select("tasks.*").from('tasks').leftJoin('task_skills', 'tasks.id', '=', 'task_skills.task_id')
+		.select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id')
+		.select(knex.raw("array_agg(skill_id) AS skills_ids")).as('tasks');
 });
+q.leftJoin('users', 'tasks.author', '=', 'users.id').select('users.name as author_name');
+q.leftJoin('tasks_meta as tm', {'tasks.id': 'tm.task_id', 'tm.user_id': 599202}).select('done', 'approved', 'created', 'received', 'liked');
+console.time("dbsave");
+q.limit(20).then(function(rows) {
+	var ids = rows.map(function(el) {return el.id;});
+	if (true) {
+		knex('solutions').select(knex.raw('solutions.task_id as id, count("solutions"."id") as "solved_count", SUM(CASE WHEN solutions.is_correct THEN 1 ELSE 0 END) as "solved_count_correct" ')).whereIn('solutions.task_id', ids)
+		.groupBy('solutions.task_id')
+		.then(function(counts) {
+			for (var i in rows) {
+				for (var j in counts) if (rows[i].id == counts[j].id) {
+					rows[i].solved_count = counts[j].solved_count;
+					rows[i].solved_count_correct = counts[j].solved_count_correct;
+					break;
+				}
+			}
+			console.timeEnd("dbsave");
+			console.log(rows);
+		});
+	}	
+});
+
 
 return;
 

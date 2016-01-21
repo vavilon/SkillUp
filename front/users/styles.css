@@ -810,9 +810,80 @@ a[role="button"] h1:hover {
     text-align: center;
 }
 
+.user-card .nick {
+    color: rgba(0,0,0,0.54);
+    font-size: 14px;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+.user-card .nick.ng-enter {
+    transition: all 0.3s ease-in-out;
+    transition-delay: 0.3s;
+}
+.user-card .nick.ng-leave {
+    transition: all 0.3s ease-in-out;
+}
+.user-card .nick.ng-enter, .user-card .nick.ng-leave.ng-leave-active{
+    opacity:0;
+}
+.user-card .nick.ng-enter.ng-enter-active, .user-card .nick.ng-leave {
+    opacity:1;
+}
+
+.user-card .exp {
+    padding: 0 3px;
+    color: #FBC02D;
+}
+
 .user-card .secondary {
     color: rgba(0,0,0,0.54);
     font-size: 14px;
+}
+
+.user-card .skills {
+    width: 100%;
+    padding: 8px 16px;
+    background-color: #FAFAFA;
+    margin-top: 8px;
+    margin-bottom: 68px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+.user-card .skills.ng-enter {
+    transition: all 0.3s ease-in-out;
+    transition-delay: 0.3s;
+}
+.user-card .skills.ng-leave {
+    transition: all 0.3s ease-in-out;
+}
+.user-card .skills.ng-enter, .user-card .skills.ng-leave.ng-leave-active{
+    opacity:0;
+}
+.user-card .skills.ng-enter.ng-enter-active, .user-card .skills.ng-leave {
+    opacity:1;
+}
+
+.user-card .message {
+    width: 36px !important;
+    height: 36px !important;
+    opacity: 0;
+    margin: 0;
+    bottom: 16px;
+    left: 16px;
+    background-color: #eee;
+    position: absolute;
+    transition: all 0.3s linear;
+}
+
+.user-card .message i {
+    margin-top: -1px;
+    margin-left: -4px;
+}
+
+.user-card.expanded .message {
+    transition: all 0.3s linear;
+    transition-delay: 0.3s;
+    opacity: 1;
 }
 
 .user-card .subscribe {
@@ -820,9 +891,15 @@ a[role="button"] h1:hover {
     width: 100%;
     margin: 0;
     bottom: 8px;
-    left: 0;
-    right: 0;
     position: absolute;
+    transition: all 0.3s linear;
+}
+
+.user-card.expanded .subscribe {
+    bottom: 16px;
+    width: auto;
+    right: 16px;
+    transition: all 0.3s linear;
 }
 
 .user-card.expanded {

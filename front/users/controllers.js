@@ -8,19 +8,20 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
         $scope.username = "";
 
         var interests = skillsToIDs($rootScope.loggedUser.skills).concat(skillsToIDs($rootScope.loggedUser.needs));
-        $http.post('db/users', {skills: interests}).success(function (data) {
+        $scope.scrollWrap = {
+            loadFunc: loadUsers,
+            callback: $scope.scrollCallback,
+            options: {skills: interests, without_self: true}
+        };
+        $http.post('db/users', $scope.scrollWrap.options).success(function (data) {
             $scope.users = data;
-            $scope.scrollWrap = {
-                loadFunc: loadUsers,
-                callback: $scope.scrollCallback,
-                options: {offset: $scope.users.length, skills: interests}
-            };
-
+            $scope.scrollWrap.options.offset = $scope.users.length;
             $scope.lastExpandedUser = $scope.users[0];
 
             for (var i in $scope.users) {
                 parseSkills($scope.users[i], true);
             }
+            $scope.usersLoaded = true;
         });
 
         $scope.goToUserPage = function(id) {
@@ -67,7 +68,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
     $scope.scrollCallback = function (data) {
         console.log('asdasdasd');
     };
-
     $rootScope.ajaxCall.promise.then(function () {
         $scope.tabSelected = 0;
 
@@ -120,6 +120,8 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 if (typeof $scope.user.work[i].endDate == "string")
                     $scope.user.work[i].endDate = new Date($scope.user.work[i].endDate);
             }
+
+            $scope.userLoaded = true;
 
             $scope.info = {
                 editing: {},

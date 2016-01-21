@@ -29,11 +29,14 @@
                         <span class="exp">{{user.exp}}</span> -</span> {{user.nick}}
                     </div>
                 </div>
-                <div ng-if="!user" layout="column" layout-align="start center">
+                <div ng-if="!user && userLoaded" layout="column" layout-align="start center">
                     <div class="name">Пользователь не найден...</div>
                 </div>
             </div>
         </md-card>
+        <div layout="row" layout-align="center center" ng-if="!userLoaded">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
         <div ng-switch-when="0">
             <div>
                 <div ng-if="user.skills && user.skills.length" class="secondary-title">Умею: {{user.skills.length}}</div>
