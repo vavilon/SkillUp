@@ -7,6 +7,14 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
         bindToNavtabs($scope, 'navtabs');
         $scope.username = "";
 
+        $scope.scrollCallback = function (data) {
+            console.log('loaded');
+            for (var i in data) {
+                parseSkills(data[i], true);
+            }
+            $scope.users = $scope.users.concat(data);
+        };
+
         var interests = skillsToIDs($rootScope.loggedUser.skills).concat(skillsToIDs($rootScope.loggedUser.needs));
         $scope.scrollWrap = {
             loadFunc: loadUsers,
@@ -39,14 +47,6 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
         $scope.$watch('username', function () {
             if ($scope.lastExpandedUser) $scope.lastExpandedUser.expanded = false;
         });
-
-        $scope.scrollCallback = function (data) {
-            console.log('loaded');
-            for (var i in data) {
-                parseSkills(data[i], true);
-            }
-            $scope.users = $scope.users.concat(data);
-        };
     });
 });
 
