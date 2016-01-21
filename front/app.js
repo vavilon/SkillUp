@@ -5,7 +5,8 @@ var app = angular.module('skills', [
     'hljs',
     'ngCookies',
     'ngMessages',
-    'ngImgCrop'
+    'ngImgCrop',
+    'ngCkeditor'
 ]);
 
 app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
