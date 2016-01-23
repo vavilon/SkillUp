@@ -80,7 +80,7 @@ function applyAllFilters(tasks, skills, users, getObjByID, chips) {
 }
 
 app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills, loadTasks, getRowsCount,
-                                         $rootScope, $location, isLoggedIn) {
+                                         $rootScope, $location, isLoggedIn, $mdToast) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Задания';
@@ -200,6 +200,9 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
                 var self = this;
                 loadTasks({limit: self.LIMIT, offset: self.numItems, sort: self.sort}, function (rows) {
                     self.loadedItems = self.loadedItems.concat(rows);
+                    for (var id in self.loadedItems) {
+                        parseSkills(self.loadedItems[id]);
+                    }
                     self.numItems = self.toLoad;
                 });
             }
@@ -209,17 +212,24 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
             this.sort = sort;
             this.loadedItems = [];
             this.toLoad = this.numItems = 0;
-            this._fetchMoreItems(1);
+            this._fetchMoreItems(0);
         };
 
         DynamicItems.prototype.viewTask = function (id) {
-            if (!$scope.receiveButtonClicked) $location.path('/tasks/' + id);
-            else $scope.receiveButtonClicked = false;
+            if (!$scope.expandButtonClicked) $location.path('/tasks/' + id);
+            else $scope.expandButtonClicked = false;
         };
 
-        DynamicItems.prototype.taskReceived = function (id, received) {
-            $scope.receiveButtonClicked = true;
-            //TODO: Оповещать пользователя
+        DynamicItems.prototype.taskReceived = function (data) {
+            var title = getObjByID(data.id, $scope.dynamicTasks.loadedItems).title;
+            var text = data.received
+                ? 'Задание "' + title + '" взято. Оно появится на главной странице.'
+                : 'Задание "' + title + '" удалено.';
+            $mdToast.show(
+                $mdToast.simple()
+                    .textContent(text)
+                    .hideDelay(2000)
+            );
         };
 
         $scope.dynamicTasks = new DynamicItems();
@@ -240,6 +250,18 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
                     columnName: columnName,
                     direction: 'desc'
                 });
+            }
+        };
+        
+        $scope.lastExpandedTask = {};
+        $scope.expand = function (task) {
+            $scope.expandButtonClicked = true;
+            if ($scope.lastExpandedTask && $scope.lastExpandedTask.id == task.id)
+                $scope.lastExpandedTask.expanded = !$scope.lastExpandedTask.expanded;
+            else {
+                $scope.lastExpandedTask.expanded = false;
+                $scope.lastExpandedTask = task;
+                $scope.lastExpandedTask.expanded = true;
             }
         };
     });

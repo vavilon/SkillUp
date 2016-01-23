@@ -29,9 +29,9 @@ module.exports = function(knex, req, res, next) {
         else if (req.body.filters.liked === false) q.whereNull('liked');
     }
     q.limit(req.body.limit > 100 ? 20 : req.body.limit || 20).offset(req.body.offset || 0);
-    if (!req.body.sort || !req.body.sort.columnName || !req.body.sort.direction) q.orderBy('title', 'asc');
-    else if (req.body.sort.columnName == 'title') q.orderBy(req.body.sort.columnName, req.body.sort.direction);
-    else q.orderBy(req.body.sort.columnName, req.body.sort.direction).orderBy('title', 'asc');
+    if (!req.body.sort || !req.body.sort.columnName || !req.body.sort.direction) q.orderBy('is_approved', 'asc').orderBy('title', 'asc');
+    else if (req.body.sort.columnName == 'title') q.orderBy('is_approved', 'asc').orderBy(req.body.sort.columnName, req.body.sort.direction);
+    else q.orderBy('is_approved', 'asc').orderBy(req.body.sort.columnName, req.body.sort.direction).orderBy('title', 'asc');
 
     q.then(function(tasks) {
         if (!tasks) res.end();
