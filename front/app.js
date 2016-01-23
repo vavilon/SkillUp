@@ -5,10 +5,11 @@ var app = angular.module('skills', [
     'hljs',
     'ngCookies',
     'ngMessages',
-    'ngImgCrop'
+    'ngImgCrop',
+    'hc.marked'
 ]);
 
-app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider) {
+app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljsServiceProvider, $httpProvider, markedProvider) {
     $locationProvider.html5Mode(true);
 
     $httpProvider.defaults.useXDomain = true;
@@ -59,6 +60,18 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
 
     hljsServiceProvider.setOptions({
         tabReplace: '    '
+    });
+
+    markedProvider.setOptions({
+        gfm: true,
+        tables: true,
+        highlight: function (code, lang) {
+            if (lang) {
+                return hljs.highlight(lang, code, true).value;
+            } else {
+                return hljs.highlightAuto(code).value;
+            }
+        }
     });
 });
 
