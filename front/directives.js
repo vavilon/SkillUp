@@ -463,3 +463,34 @@ app.directive("highlightSkill", function ($rootScope, $timeout) {
         }
     };
 });
+
+app.directive('comments', function($rootScope, $http) {
+    return {
+        restrict: 'E',
+        templateUrl: '/dist/templates/comments.html',
+        scope: {
+            srcID: '@',
+            callback: '=?'
+        },
+        link: function (scope, element, attrs) {
+            scope.loggedUser = $rootScope.loggedUser;
+        },
+        controller: function($scope) {
+            $scope.src = {};
+
+            $scope.el = document.getElementById('comment');
+
+            var oldCommentHeight = $scope.el.offsetHeight;
+            $scope.$watch('src.comment', function (newValue) {
+                if (newValue && oldCommentHeight && $scope.el.offsetHeight != oldCommentHeight) {
+                    $scope.el.parentNode.parentNode.style.height =  $scope.el.offsetHeight + 9 + 'px';
+                    oldCommentHeight = $scope.el.offsetHeight;
+                }
+            });
+            $scope.src.addComment = function () {
+                //TODO: запрос на добавление коммента
+                $scope.callback && $scope.callback($scope.src.comment);
+            };
+        }
+    }
+});

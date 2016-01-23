@@ -1,0 +1,14 @@
+<div layout="row" class="comment-wrap" flex>
+    <div layout="row" flex>
+        <div>
+            <img ng-if="loggedUser.avatar" alt="{{loggedUser.nick}}" class="comment-avatar" ng-src="/avatars/{{loggedUser.avatar}}">
+            <i class="mdi mdi-account-circle mdi-36" ng-if="!loggedUser.avatar" style="color: rgba(0, 0, 0, .54);"></i>
+        </div>
+        <form class="comment-form" flex>
+            <md-input-container class="md-block" layout-fill md-no-float>
+                <textarea id="comment" ng-model="src.comment" placeholder="Добавьте коментарий..."></textarea>
+            </md-input-container>
+        </form>
+    </div>
+    <md-button class="comment-button md-primary" ng-click="src.addComment()" ng-disabled="!src.comment">Отправить</md-button>
+</div>
