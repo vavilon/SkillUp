@@ -662,6 +662,34 @@ pre {
     color: white;
 }
 
+/* comments directive*/
+
+.comment-form {
+    padding: 2px 32px 0 16px;
+    height: 38px;
+}
+
+.comment-container {
+    overflow: scroll;
+}
+
+#comment {
+    height: auto;
+    border: unset;
+}
+
+.comment-button {
+    padding-top: 2px;
+    height: 36px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.comment-avatar {
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+}
 .thin-scroll::-webkit-scrollbar {
     height: 12px;
     width: 8px;

@@ -1,114 +1,123 @@
+<div layout="row" style="height: calc(100vh - 64px);">
+    <div class="one-task-sidenav md-whiteframe-z1" layout="column" flex="25">
+        <div class="background"></div>
+        <div class="one-task-sidenav-content-conteiner" layout="column" layout-align="space-between start" flex>
+            <div class="one-task-sidenav-content">
+                <div class="author-avatar-container">
+                    <a ng-href="/users/{{author.id}}">
+                        <img ng-if="author.avatar" alt="{{author.nick}}" class="author-avatar" ng-src="/avatars/{{author.avatar}}"
+                             ng-class="{admin: author.role !== 'пользователь'}">
+                        <i class="mdi mdi-account-circle mdi-48" ng-if="!author.avatar"></i>
+                    </a>
+                </div>
 
-<div layout="column" layout-fill style="background-color: #ffffff; padding: 1%">
-    <div layout="row" layout-align="space-between start" flex>
-        <div>
-            <h2>{{task.title}}</h2>
+                <div class="author-name-container">
+                    <a class="author-name">
+                        {{author.name}}
+                    </a>
+                </div>
 
-            <div style="font-size: 15px; margin-left: 10px; color: rgba(0, 0, 0, 0.57)">
-                <i>Дата создания: {{task.date_created | date: 'dd.MM.yyyy'}}</i>
+                <div class="one-task-sidenav-text" layout="column">
+                    <h2>{{currentTask.title}}</h2>
+                    <h5>exp: {{currentTask.exp}}</h5>
+                    <h5 ng-repeat="link in currentTask.links">{{link}}</h5>
+                    <h6>
+                        <span>
+                            {{currentTask.solved_count_correct || 0}} {{getEndingVariant(currentTask.solved_count_correct, solvedTextVariants)}} -
+                        </span>
+                        <span>{{currentTask.participants || 0}} {{getEndingVariant(currentTask.participants, solvingTextVariants)}} -</span>
+                        <span ng-if="currentTask.is_approved">подтверждено</span>
+                        <span ng-if="!currentTask.is_approved">не подтверждено</span>
+                    </h6>
+                </div>
+
+                <div class="one-task-skills">
+                    <skill-button ng-repeat="skill in currentTask.skills" id="skill.skill_id" type="skill" count="skill.count">
+                    </skill-button>
+                </div>
             </div>
-        </div>
-        <div style="margin-top: 20px; margin-bottom: 10px; font-size: medium">
-            <like-button type="task" id="task.id" likes="task.likes" liked="task.liked" style="margin-right: 25px;"></like-button>
-            <receive-button id="task.id" count="task.participants" received="task.received"></receive-button>
+
+            <div class="one-task-sidenav-action" layout="row" layout-align="end center" layout-fill>
+                <like-button type="task" id="currentTask.id" likes="currentTask.likes"
+                             liked="currentTask.liked"></like-button>
+                <receive-button id="currentTask.id" count="currentTask.participants"
+                                received="currentTask.received" callback=""></receive-button>
+            </div>
         </div>
     </div>
-    <md-divider></md-divider>
 
-    <h3 style="margin-left: 10px;"><i>exp: {{task.exp | thousand}}</i></h3>
+    <div layout="column" flex>
+        <div layout="row">
+            <div flex="5"></div>
+            <div layout="column" flex>
+                <md-card class="one-task-frames" flex>
+                    <md-card-header layout="row" layout-align="space-between center">
+                        <md-card-header-text>
+                            <span>Описание</span>
+                        </md-card-header-text>
+                        <md-button class="md-icon-button one-task-frames-action" aria-label="description-toolbar-menu">
+                            <i class="mdi mdi-dots-vertical mdi-24"></i>
+                        </md-button>
+                    </md-card-header>
+                    <md-card-title>
+                        <md-card-title-text>
+                            <span class="md-headline">{{currentTask.title}}</span>
+                        </md-card-title-text>
+                    </md-card-title>
+                    <md-card-content layout-padding>
+                        <p>
+                            {{currentTask.description}}
+                        </p>
+                    </md-card-content>
+                    <md-card-actions class="one-task-card-action">
+                        <comments srcID="currentTask.id"></comments>
+                    </md-card-actions>
+                </md-card>
 
-    <div class="taskTabs">
-        <md-tabs class="md-primary" md-selected="selectedIndex">
-            <md-tab id="tab1" aria-controls="tab1-content">
-                Условие
-            </md-tab>
-            <md-tab id="tab2" aria-controls="tab2-content">
-                Умения
-            </md-tab>
-            <md-tab id="tab3" aria-controls="tab3-content">
-                Автор
-            </md-tab>
-        </md-tabs>
-        <ng-switch on="selectedIndex" class="tabpanel-container">
-            <div role="tabpanel"
-                 aria-labelledby="tab1"
-                 layout="column"
-                 layout-align="space-between start"
-                 ng-switch-when="0"
-                 md-swipe-left="next()"
-                 md-swipe-right="previous()">
-                <md-content style="padding: 20px; width: 100%">
-                    {{task.description}}
-                </md-content>
-                <div class="tab-content"></div>
-            </div>
-            <div role="tabpanel"
-                 aria-labelledby="tab2"
-                 layout="column"
-                 layout-align="space-between start"
-                 ng-switch-when="1"
-                 md-swipe-left="next()"
-                 md-swipe-right="previous()">
-                <md-content style="padding: 20px; width: 100%">
-                    <skill-button ng-repeat="skill in task.skills" id="skill.skill_id" type="skill"></skill-button>
-                </md-content>
-                <div class="tab-content"></div>
-            </div>
-            <div role="tabpanel"
-                 aria-labelledby="tab3"
-                 layout="column"
-                 layout-align="space-between start"
-                 ng-switch-when="2"
-                 md-swipe-left="next()"
-                 md-swipe-right="previous()">
-                <md-content style="padding: 20px; width: 100%">
-                    <div layout="row" layout-align="start center">
-                        <a ng-href="/users/{{user.id}}">
-                            <img ng-if="user.avatar" class="user-avatar" ng-src="/avatars/{{user.avatar}}"
-                                 alt="{{user.nick}}"/>
-                            <i ng-if="!user.avatar" class="mdi mdi-account-circle mdi-36 mdi-black user-avatar"></i>
-                        </a>
-                        <div>
-                            <h4 style="margin-top: 25px; margin-bottom: 10px;"><a class="user-name" href="/users/{{author.id}}">
-                                {{author.name}}</a>
-                            </h4>
-                            <h5 style="margin-top: 0px;">exp: {{author.exp | thousand}}</h5>
+                <md-card class="one-task-frames" flex>
+                    <md-card-header layout="row" layout-align="space-between center">
+                        <md-card-header-text>
+                            <span>Решение</span>
+                        </md-card-header-text>
+                        <div layout="row">
+                            <a href="https://guides.github.com/features/mastering-markdown" class="markdown-support" layout="row" layout-align="center center">
+                                <i class="mdi mdi-markdown mdi-24" style="margin-right: 5px;"></i>
+                                <span>Поддерживается синтаксис Markdown</span>
+                            </a>
+                            <md-button class="md-icon-button one-task-frames-action" ng-click="solution.showPreview()"
+                                       aria-label="description-toolbar-menu">
+                                <i class="mdi mdi-eye mdi-24" ng-if="!solution.preview"></i>
+                                <md-tooltip ng-if="!solution.preview">Препросмотр</md-tooltip>
+                                <i class="mdi mdi-pencil mdi-24" ng-if="solution.preview"></i>
+                                <md-tooltip ng-if="solution.preview">Редактор</md-tooltip>
+                            </md-button>
                         </div>
-                    </div>
-                    <div ng-if="author.skills.length">
-                        <h5 style="margin-bottom: 10px;">Умею: </h5>
-                        <skill-button ng-repeat="skill in author.skills" id="skill.skill_id" type="skill"></skill-button>
-                    </div>
-                    <div layout="row">
-                        <div ng-if="author.tasks_received.length" flex>
-                            <h5 style="margin-bottom: 10px; margin-top: 10px;">Полученные задания: </h5>
-                            <ul style="margin-top: 0px;">
-                                <li ng-repeat="task_received in author.tasks_received">{{findTask(task_received).title}}</li>
-                            </ul>
-                        </div>
-                        <div ng-if="author.tasks_done.length" flex>
-                            <h5 style="margin-bottom: 10px; margin-top: 10px;">Выполненные задания: </h5>
-                            <ul style="margin-top: 0px;">
-                                <li ng-repeat="task_done in author.tasks_done">{{findTask(task_done).title}}</li>
-                            </ul>
-                        </div>
+                    </md-card-header>
+                    <md-card-content style="min-height: 74px;" layout-padding>
+                        <form name="solutionForm" ng-if="!solution.preview">
+                            <md-input-container layout-fill>
+                                <label>Ваше решение</label>
+                                <textarea ng-model="solution.text" name="solutionT" required></textarea>
 
-                        <div ng-if="author.tasks_approved.length" flex>
-                            <h5 style="margin-bottom: 10px; margin-top: 10px;">Созданные задания: </h5>
-                            <ul style="margin-top: 0px;">
-                                <li ng-repeat="task_approved in author.tasks_approved">{{findTask(task_approved).title}}</li>
-                            </ul>
-                        </div>
-                        <div ng-if="author.tasks_created.length" flex>
-                            <h5 style="margin-bottom: 10px; margin-top: 10px;">Подтвержденные задания: </h5>
-                            <ul style="margin-top: 0px;">
-                                <li ng-repeat="task_created in author.tasks_created">{{findTask(task_created).title}}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </md-content>
-                <div class="tab-content"></div>
+                                <div ng-messages="solutionForm.solutionT.$error">
+                                    <div ng-message="required">Обязательное поле</div>
+                                </div>
+                            </md-input-container>
+                        </form>
+
+                        <div ng-if="solution.preview" marked="solution.text || 'Вы ничего не ввели'"></div>
+                    </md-card-content>
+                    <md-card-actions layout="row" layout-align="end center">
+                        <md-button class="md-icon-button" ng-click="solution.addFiles()">
+                            <i class="mdi mdi-upload mdi-24"></i>
+                            <md-tooltip>Приложить файл к решению</md-tooltip>
+                        </md-button>
+                        <md-button class="md-raised md-primary" ng-click="solution.sendSolution(currentTask.id)">Отправить</md-button>
+                    </md-card-actions>
+                </md-card>
             </div>
-        </ng-switch>
+
+            <div flex="15"></div>
+        </div>
     </div>
 </div>

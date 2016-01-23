@@ -8,18 +8,18 @@
 
 .all-tasks-header-cell {
     display: table-cell;
-    color: rgba(0,0,0,0.54);
+    color: rgba(0, 0, 0, .54);
     padding-top: 16px;
     white-space: nowrap;
     height: inherit;
 }
 
 .all-tasks-sortable-column.all-tasks-header-cell:hover {
-    color: rgba(0, 0, 0, 0.87);
+    color: rgba(0, 0, 0, .87);
 }
 
 .all-tasks-sortable-column.all-tasks-header-cell:hover .sort-icon {
-    color: rgba(0, 0, 0, 0.26);
+    color: rgba(0, 0, 0, .26);
 }
 
 .all-tasks-header-cell .sort-icon {
@@ -62,66 +62,112 @@
 
 /* one.html */
 
-.taskTabs .tab-content {
-    background-color: #3f51b5;
-    width: inherit;
-    height: 30px;
+.one-task-sidenav {
+    background-color: white;
 }
 
-.taskTabs .tabpanel-container {
-    display: block;
-    position: relative;
-    background: white;
-    border: 0 solid black;
-    height: 350px;
-    overflow: hidden;
-}
-
-.taskTabs [role="tabpanel"] {
-    border-left: solid 2px #3f51b5;
-    border-right: solid 2px #3f51b5;
+.one-task-sidenav .background{
+    height: 140px;
     width: 100%;
-    height: 100%;
-    -webkit-transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
-    transition: all cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
-    position: absolute;
+    background: linear-gradient(#1A237E, #3F51B5);
 }
 
-.taskTabs [role="tabpanel"].ng-leave.ng-leave-active, .taskTabs [role="tabpanel"].ng-enter {
-    top: -350px;
+.one-task-sidenav-content-conteiner {
+    margin: -24px 16px 0 16px;
 }
 
-.taskTabs [role="tabpanel"].ng-leave, .taskTabs [role="tabpanel"].ng-enter.ng-enter-active {
-    top: 0;
+.one-task-sidenav-content {
+    max-width: 100%;
 }
 
-.taskTabs [role="tabpanel"].ng-leave {
-    z-index: 100;
-}
-
-.taskTabs .md-header {
-    border-radius: 3px;
-}
-
-.taskTabs md-tab {
-    color: #90caf9 !important;
-}
-
-.taskTabs md-tab.active, .taskTabs md-tab:focus {
-    color: white !important;
-}
-
-.taskTabs md-tab[disabled] {
-    opacity: 0.5;
-}
-
-.taskTabs .md-header .md-ripple {
-    border-color: #FFFFFF !important;
-}
-
-.authorFace {
+.author-avatar-container {
+    width: 48px;
+    background-color: white;
     border-radius: 50%;
-    border: 1px solid #ddd;
-    zoom: 200%;
-    margin: 8px;
+}
+
+.author-avatar-container a {
+    width: auto;
+    color: rgba(0, 0, 0, .54);
+}
+
+.author-avatar {
+    height: 48px;
+    width: 48px;
+    border: #fff 1px solid;
+    border-radius: 50%;
+}
+
+.author-name-container {
+    margin-top: 8px;
+    margin-bottom: 36px;
+}
+
+.author-name {
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.one-task-sidenav-text {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis !important;
+    margin-bottom: 14px;
+}
+
+.one-task-sidenav-text h2 {
+    display: inline;
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 36px;
+    max-height: 105px;
+}
+
+.one-task-sidenav-text h5 {
+    display: block;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    margin: 14px 0;
+}
+
+.one-task-sidenav-text h6 {
+    display: inline;
+    color: rgba(0, 0, 0, .54);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.one-task-sidenav-action {
+    border-top: solid 1px rgba(0, 0, 0, .12);
+    margin: 16px 16px 0 0;
+}
+
+.one-task-frames {
+    margin-top: 24px;
+}
+
+.one-task-frames-action {
+    color: rgba(0, 0, 0, .87) !important;
+}
+
+.markdown-support {
+    text-decoration: none;
+    outline: none;
+    color: rgba(0, 0, 0, .87);
+}
+
+.markdown-support:hover {
+    color: rgb(63,81,181);
+}
+
+.markdown-support span {
+    font-size: 12px;
+}
+
+.one-task-card-action {
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 8px;
 }

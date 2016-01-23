@@ -246,38 +246,32 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 });
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, parseSkills,
-                                        $rootScope, $location, isLoggedIn) {
+                                        $rootScope, $location, isLoggedIn, getEndingVariant, marked) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
+    $rootScope.sidenavVisible = false;
+
+    $scope.getEndingVariant = getEndingVariant;
+    $scope.solvedTextVariants = ['решил', 'решили', 'решило'];
+    $scope.solvingTextVariants = ['решает', 'решают', 'решают'];
+
     $rootScope.ajaxCall.promise.then(function () {
         $scope.exs = $rootScope.exs;
         $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
-        $http.post('db/tasks', {id: $routeParams.task_id}).success(function (task) {
-            task = task[0];
-            $rootScope.pageTitle = task.title;
-            parseSkills(task);
-            $scope.task = task;
+        $scope.currentTask = {};
+        $scope.solution = {};
+        $scope.solution.preview = false;
 
-            $http.post('db/users', {id: $scope.task.author}).success(function (user) {
-                user = user[0];
-                parseSkills(user, true);
-                $scope.author = user;
+        $http.post('/db/tasks',{id: $routeParams.task_id, solutionsCount: true}).success(function (rows) {
+            $scope.currentTask = rows[0];
+            parseSkills($scope.currentTask);
+            console.log(rows[0]);
+            $http.post('/db/users', {id: $scope.currentTask.author}).success(function (rows) {
+                $scope.author = rows[0];
             });
         });
 
-        $scope.findSkill = function (id) {
-            return $scope.exs.skills[id];
-        };
-
-        $scope.findTask = function (id) {
-            return getObjByID(id, $scope.tasks);
-        };
-
-        $scope.selectedIndex = 0;
-        $scope.next = function () {
-            $scope.selectedIndex = Math.min($scope.selectedIndex + 1, 2);
-        };
-        $scope.previous = function () {
-            $scope.selectedIndex = Math.max($scope.selectedIndex - 1, 0);
+        $scope.solution.showPreview = function () {
+            $scope.solution.preview = !$scope.solution.preview;
         };
     });
 });
