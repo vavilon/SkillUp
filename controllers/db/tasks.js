@@ -33,9 +33,29 @@ module.exports = function(knex, req, res, next) {
     else if (req.body.sort.columnName == 'title') q.orderBy(req.body.sort.columnName, req.body.sort.direction);
     else q.orderBy(req.body.sort.columnName, req.body.sort.direction).orderBy('title', 'asc');
 
-    q.then(function(rows) {
-        if (!rows) res.end();
-        else res.end(JSON.stringify(rows));
+    q.then(function(tasks) {
+        if (!tasks) res.end();
+        else if(req.body.solutionsCount) {
+            knex.select('solutions.task_id as id').count('solutions.id as solved_count')
+                .select(knex.raw('SUM(CASE WHEN solutions.is_correct THEN 1 ELSE 0 END) as "solved_count_correct"'))
+                .from('solutions').groupBy('solutions.task_id')
+                .then(function (solutions) {
+                    for (var tskID in tasks) {
+                        var task = tasks[tskID];
+                        for (var sltID in solutions) {
+                            var solution = solutions[sltID];
+                            if (task.id == solution.id) {
+                                task.solved_count = solution.solved_count;
+                                task.solved_count_correct = solution.solved_count_correct;
+                                break;
+                            }
+                        }
+                    }
+                    res.end(JSON.stringify(tasks));
+                })
+        } else {
+            res.end(JSON.stringify(tasks));
+        }
     }).catch(function (error) {
         console.log(error);
         res.end();
