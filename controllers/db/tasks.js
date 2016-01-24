@@ -23,7 +23,7 @@ module.exports = function(knex, req, res, next) {
         if (req.body.filters.for_solving || req.body.filters.not_in_done) q.whereNull('done');
 
         if (req.body.filters.received === true) q.andWhere('received', true);
-        else if (req.body.filters.received === false) q.whereNull('received');
+        else if (req.body.filters.received === false) q.where(function() { this.whereNull('received').orWhere('received', false); });
 
         if (req.body.filters.liked === true) q.andWhere('liked', true);
         else if (req.body.filters.liked === false) q.whereNull('liked');

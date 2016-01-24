@@ -271,9 +271,19 @@ pre {
     text-decoration: underline;
 }
 
-.md-icon-button.task-button {
-    height: 48px;
-    width: 48px;
+.task-button {
+    min-height: 0 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    color: rgba(0, 0, 0, .38);
+}
+
+.task-button .content {
+    height: 28px;
+}
+
+.task-button.focused {
+    color: rgba(0, 0, 0, .54) !important;
 }
 
 .task-padding {
