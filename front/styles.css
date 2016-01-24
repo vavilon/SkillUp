@@ -189,25 +189,25 @@ pre {
     border: 1px solid;
     border-radius: 4px;
     padding: 1px 3px 1px 3px;
-    margin-right: 10px;
     box-shadow: inset 0 0 3px rgba(0, 0, 0, .5);
 }
 
 .diff-label.easy {
     border-color: green;
     color: green;
-    margin-right: 27px;
+    margin-right: 20px;
 }
 
 .diff-label.medium {
     border-color: orange;
     color: orange;
-    margin-right: 15px;
+    margin-right: 10px;
 }
 
 .diff-label.hard {
     border-color: red;
     color: red;
+    margin-right: 4px;
 }
 
 .task-title a{
@@ -309,6 +309,13 @@ pre {
     top: 0;
     border-radius: 2px;
     padding: 0 3px 0 3px;
+}
+
+.skill-count .divider {
+    height: 1px;
+    width: 100%;
+    background-color: #FAFAFA;
+    margin-top: 3px;
 }
 
 .skill-count.ng-enter, .skill-count.ng-leave {
@@ -430,6 +437,12 @@ pre {
 
 .checked-incorrect {
     color: #F44336 !important;
+}
+
+.star-button {
+    background: none !important;
+    padding: 0 !important;
+    line-height: 0 !important;
 }
 
 .star {

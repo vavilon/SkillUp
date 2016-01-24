@@ -7,7 +7,7 @@
     <div ng-if="isLoggedIn()" flex layout="column"
          style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
 
-        <md-content style="max-height: calc(100vh - 175px); overflow-x: hidden;">
+        <md-content>
             <ng-switch on="navtabs.selected">
                 <div role="tabpanel"
                      aria-labelledby="tab1"
@@ -15,9 +15,9 @@
                      md-swipe-left="next()"
                      md-swipe-right="previous()">
                     <tasks-list tasks="tasksReceived" solution="temp.solution" exp-style="-"
-                                subheader="Полученные задания" receive-callback="receiveCallback"></tasks-list>
+                                subheader="Полученные" receive-callback="receiveCallback"></tasks-list>
                     <tasks-list tasks="tasksRecommended" solution="temp.solution" exp-style="-"
-                                subheader="Рекомендованные задания" receive-callback="receiveCallback"></tasks-list>
+                                subheader="Рекомендованные" receive-callback="receiveCallback"></tasks-list>
                     <div ng-if="!tasksReceived.length && !tasksRecommended.length" flex layout="column" layout-align="center center" class="md-tile-content">
                         <h3 class="list-empty">Нет заданий для решения</h3>
                     </div>
@@ -27,7 +27,7 @@
                      ng-switch-when="1"
                      md-swipe-left="next()"
                      md-swipe-right="previous()">
-                    <solutions-list solutions="solutionsForChecking" exp-style="+"></solutions-list>
+                    <solutions-list solutions="solutionsForChecking" subheader="Рекомендованные" exp-style="+"></solutions-list>
                     <div ng-if="!solutionsForChecking.length" flex layout="column" layout-align="center center" class="md-tile-content">
                         <h3 class="list-empty">Нет решений для проверки</h3>
                     </div>
@@ -37,7 +37,7 @@
                      ng-switch-when="2"
                      md-swipe-left="next()"
                      md-swipe-right="previous()">
-                    <tasks-list tasks="tasksForApproving" show-difficulty="false" show-receive="false"
+                    <tasks-list tasks="tasksForApproving" show-difficulty="false" show-receive="false" subheader="Рекомендованные"
                                 solvable="false" approvable="true" exp-style="+"></tasks-list>
                     <div ng-if="!tasksForApproving.length" flex layout="column" layout-align="center center" class="md-tile-content">
                         <h3 class="list-empty">Нет заданий для подтверждения</h3>
