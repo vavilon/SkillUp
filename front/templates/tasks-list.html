@@ -66,7 +66,7 @@
                         </md-card-content>
                     </md-card>
                     <md-card ng-if="approvable" class="task-description-card">
-                        <md-card-content>
+                        <md-card-content layout="column" layout-align="start start">
                             <h2 class="md-title task-description-word">Подтверждение</h2>
                             <md-checkbox ng-model="apprData.title_correct" class="md-primary">
                                 Название:
@@ -88,9 +88,11 @@
                             <span ng-class="{'checked-correct': apprData.links_correct, 'checked-incorrect': !apprData.links_correct}">
                                 {{apprData.links_correct ? 'правильно' : 'неправильно'}}</span>
                             </md-checkbox>
-                            <md-button class="md-raised md-primary" style="float: right; "
-                                       ng-click="approve(task.id)">Отправить
-                            </md-button>
+                            <div layout-fill>
+                                <md-button class="md-raised md-primary" style="float: right !important; margin: 0;"
+                                           ng-click="approve(task.id)">Отправить
+                                </md-button>
+                            </div>
                         </md-card-content>
                     </md-card>
                 </div>
@@ -102,8 +104,8 @@
                     </div>
                     <div layout="row">
                         <like-button ng-if="showLike" type="task" id="task.id" likes="task.likes"
-                                     liked="task.liked"
-                                     style="margin-right: 25px;"></like-button>
+                                     liked="task.liked"></like-button>
+                        <div ng-if="showLike && showReceive" style="height: 1px; width: 25px;"></div>
                         <receive-button ng-if="showReceive" id="task.id" count="task.participants"
                                         received="task.received" disabled="task.notReceivable"
                                         callback="receiveCallback"></receive-button>
