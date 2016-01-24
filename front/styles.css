@@ -290,6 +290,10 @@ pre {
     padding-bottom: 20px;
 }
 
+skill-button {
+    outline: none;
+}
+
 .skill-button {
     text-transform: none;
     white-space: normal !important;

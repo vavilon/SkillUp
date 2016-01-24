@@ -3,7 +3,7 @@
 <div style="position: absolute; height: 50%; width: 50%; margin-left: calc(50% - 150px);" id="toastSuccess"></div>
 
 <div layout="row" ng-class="{'promo-area': !isLoggedIn()}">
-    <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
+    <div flex="{{isLoggedIn() ? (sidenavVisible ? 15 : 20) : 10}}" flex-md="5" hide-sm class="content-main-side"></div>
     <div ng-if="isLoggedIn()" flex layout="column"
          style="margin-top: 30px; margin-bottom: 30px; box-shadow: 0 1px 2px rgba(0,0,0,0.26); background-color: #FFFFFF; z-index: 3;">
 
@@ -43,76 +43,13 @@
                         <h3 class="list-empty">Нет заданий для подтверждения</h3>
                     </div>
                 </div>
-                <div role="tabpanel"
-                     aria-labelledby="tab4"
-                     ng-switch-when="3"
-                     md-swipe-left="next()"
-                     md-swipe-right="previous()">
-                    <md-content class="md-padding">
-                        <form name="createTaskForm">
-                            <md-input-container class="md-block">
-                                <label>Название задания</label>
-                                <input ng-model="sendTask.title" name="taskTitle" md-maxlength="100" required minlength="10">
-                                <div ng-messages="createTaskForm.taskTitle.$error">
-                                    <div ng-message="minlength">Название должно содержать как минимум 10 символов</div>
-                                </div>
-                            </md-input-container>
-                            <md-input-container class="md-block">
-                                <label>Текст задания</label>
-                                <textarea ng-model="sendTask.description" name="taskDescription" columns="1" required minlength="30"></textarea>
-                                <div ng-messages="createTaskForm.taskDescription.$error">
-                                    <div ng-message="minlength">Описание должно содержать как минимум 30 символов</div>
-                                </div>
-                            </md-input-container>
-                            <div layout="row" layout-align="start start">
-                                <div style="margin: 0 0 0 3px; color: rgba(0, 0, 0, 0.54);">Добавьте умения:</div>
-                                <skill-button ng-repeat="skill in sendTask.skills" id="skill.skill_id" type="skill"
-                                              with-arrows count="skill.count" count-visible
-                                              with-remove on-remove="removeSkill"></skill-button>
-                                <md-button class="md-accent md-mini expand-skill" ng-click="showSidenavSkills()" aria-label="showSidenav">
-                                    <i class="mdi mdi-plus"></i>
-                                </md-button>
-                            </div>
-                            <div layout="row" layout-align="start start">
-                                <div flex="30" style="margin: 25px 0 0 3px; color: rgba(0, 0, 0, 0.54);">Ссылки на учебные материалы:</div>
-                                <div layout="column" flex style="margin-top: 20px;">
-                                    <div layout="row" layout-align="center center" flex ng-repeat="li in sendTask.links" ng-class="{'not-last': !$last}">
-                                        <div flex><span ng-if="sendTask.links.length > 1" class="info-header">•</span>
-                                            {{li}}
-                                        </div>
-                                        <md-button class="expand-button" style="margin-left: 10px;"
-                                                   ng-click="removeLink($index)">
-                                            <i class="mdi mdi-close mdi-24 mdi-secondary"></i>
-                                            <md-tooltip>Удалить</md-tooltip>
-                                        </md-button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div layout="row">
-                                <md-input-container flex>
-                                    <label>Вставьте ссылку</label>
-                                    <input type="text" name="taskLinks" ng-model="sendTask.link">
-                                </md-input-container>
-                                <div style="margin-top: 8px;">
-                                    <md-button class="md-raised" ng-click="addLink()">Добавить</md-button>
-                                </div>
-                            </div>
-                            <md-button class="md-raised md-warn" ng-click="createTask()"
-                                       style="float: right; margin-top: 20px;">Создать</md-button>
-                        </form>
-                    </md-content>
-                    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-                        <md-toolbar class="md-theme-light">
-                            <h1 class="md-toolbar-tools">Ваши умения</h1>
-                        </md-toolbar>
-                        <md-content layout="column" layout-padding>
-                            <skill-button ng-repeat="skill in user.completedSkills | orderBy: 'title'" id="skill.skill_id"
-                                          type="skill" with-add ng-click="addSkill(skill)"></skill-button>
-                        </md-content>
-                    </md-sidenav>
-                </div>
             </ng-switch>
         </md-content>
+        <md-button class="md-fab md-accent" style="position: fixed; left: calc((100vw - 210px) * 0.87 + 210px); bottom: 24px; right: 24px;"
+                   ng-click="showCreateTaskDialog($event)" ng-if="user.completedSkills && user.completedSkills.length">
+            <md-tooltip>Создать задание</md-tooltip>
+            <div layout="row" layout-align="center center"><i class="mdi mdi-plus mdi-24"></i></div>
+        </md-button>
     </div>
     <div ng-if="!isLoggedIn()" flex layout="row">
         <div layout="column" layout-align="center center" flex="60">
@@ -146,5 +83,5 @@
             </md-card>
         </div>
     </div>
-    <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
+    <div flex="{{isLoggedIn() ? (sidenavVisible ? 15 : 20) : 10}}" flex-md="5" hide-sm class="content-main-side"></div>
 </div>

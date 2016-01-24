@@ -231,7 +231,7 @@ app.controller('navbarCtrl', function ($scope, $http, $routeParams, $location, $
 
 app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $timeout, parseSkills, loggedUser,
                                          $mdToast, $rootScope, loadLoggedUser, getObjByID, completedSkills,
-                                         skillsToIDs, $mdSidenav, bindToNavtabs) {
+                                         skillsToIDs, $mdSidenav, bindToNavtabs, $mdDialog) {
     $rootScope.pageTitle = 'Главная';
     $scope.registrationPath = "/registration/";
     $scope.reg = {email: '', password: ''};
@@ -269,7 +269,6 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         $scope.exs = $rootScope.exs;
 
         $scope.navtabs = {selected: 0, tabs: ['Решить', 'Проверить', 'Подтвердить']};
-
         bindToNavtabs($scope, 'navtabs');
 
         $scope.next = function () {
@@ -365,73 +364,94 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             $scope.tasksForApproving = data;
         });
 
-
         $scope.temp = {}; //связывает ng-model элемента input директивы tasks-list и temp.solution
 
-        $scope.sendTask = {title: '', description: '', links: [], link: '', skills: []};
-
-        $scope.addLink = function () {
-            if (!$scope.sendTask.link) {
-                $scope.showToast('Введите ссылку!');
-                return;
-            }
-            if (_.includes($scope.sendTask.links, $scope.sendTask.link)) {
-                $scope.showToast('Такая ссылка уже добавлена!');
-                return;
-            }
-            $scope.sendTask.links.push($scope.sendTask.link);
-            $scope.sendTask.link = '';
-        };
-
-        $scope.removeLink = function (index) {
-            $scope.sendTask.links.splice(index, 1);
-        };
-
-        $scope.addSkill = function(skill) {
-            var s = {skill_id: skill.skill_id, count: 0.5};
-            $scope.sendTask.skills.push(s);
-            $scope.user.completedSkills.splice($scope.user.completedSkills.indexOf(skill), 1);
-        };
-
-        $scope.removeSkill = function(skill_id, count) {
-            for (var i in $scope.sendTask.skills)
-                if ($scope.sendTask.skills[i].skill_id == skill_id) {
-                    $scope.sendTask.skills.splice(i, 1);
-                    break;
-                }
-            $scope.user.completedSkills.push({skill_id: skill_id, title: $rootScope.exs.skills[skill_id].title});
-        };
-
-        $scope.showSidenavSkills = function()
-        {
-            $mdSidenav('right').toggle()
-                .then(function () {
-
-                });
-        };
-
-        $scope.createTask = function () {
-            if ($scope.sendTask.title.length < 10) return;
-            if ($scope.sendTask.description.length < 30) return;
-            if (!$scope.sendTask.skills.length) {
-                $scope.showToast('Прикрепите умения к заданию!');
-                return;
-            }
-            if (!$scope.sendTask.links.length) {
-                $scope.showToast('Добавьте ссылки на учебные материалы!');
-                return;
-            }
-            $http.post('/create_task', $scope.sendTask).success(function (data) {
-                if (!data) {
-                    $scope.showToast('Ошибка при создании задания! Попробуйте еще раз...');
-                    return;
-                }
-
-                $scope.showToast('Задание успешно создано!', '#toastSuccess');
-                $scope.sendTask = {title: '', description: '', links: [], link: '', skills: []};
-
-                loadLoggedUser();
+        $scope.showCreateTaskDialog = function(ev) {
+            $mdDialog.show({
+                controller: createTaskDialogController,
+                templateUrl: '/dist/templates/createTaskDialog.html',
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false
             });
         };
+
+        function getParentScope () { return $scope; }
+        function createTaskDialogController($scope, $rootScope, $http, $mdDialog, $mdSidenav, loadLoggedUser) {
+            var $parentScope = getParentScope();
+            $scope.user = $parentScope.user;
+
+            $scope.cancel = function () {
+                $mdDialog.cancel();
+            };
+            $scope.answer = function (answer) {
+                $mdDialog.hide(answer);
+            };
+
+            $scope.sendTask = {title: '', description: '', links: [], link: '', skills: []};
+
+            $scope.addLink = function () {
+                if (!$scope.sendTask.link) {
+                    $parentScope.showToast('Введите ссылку!');
+                    return;
+                }
+                if (_.includes($scope.sendTask.links, $scope.sendTask.link)) {
+                    $parentScope.showToast('Такая ссылка уже добавлена!');
+                    return;
+                }
+                $scope.sendTask.links.push($scope.sendTask.link);
+                $scope.sendTask.link = '';
+            };
+
+            $scope.removeLink = function (index) {
+                $scope.sendTask.links.splice(index, 1);
+            };
+
+            $scope.addSkill = function (skill) {
+                var s = {skill_id: skill.skill_id, count: 0.5};
+                $scope.sendTask.skills.push(s);
+                $scope.user.completedSkills.splice($scope.user.completedSkills.indexOf(skill), 1);
+            };
+
+            $scope.removeSkill = function (skill_id, count) {
+                for (var i in $scope.sendTask.skills)
+                    if ($scope.sendTask.skills[i].skill_id == skill_id) {
+                        $scope.sendTask.skills.splice(i, 1);
+                        break;
+                    }
+                $scope.user.completedSkills.push({skill_id: skill_id, title: $rootScope.exs.skills[skill_id].title});
+            };
+
+            $scope.showSidenavSkills = function () {
+                $mdSidenav('right').toggle().then(function () {});
+            };
+
+            $scope.taskCreated = true;
+            $scope.createTask = function () {
+                $scope.taskCreated = false;
+                if ($scope.sendTask.title.length < 10) return;
+                if ($scope.sendTask.description.length < 30) return;
+                if (!$scope.sendTask.skills.length) {
+                    $parentScope.showToast('Прикрепите умения к заданию!');
+                    return;
+                }
+                if (!$scope.sendTask.links.length) {
+                    $parentScope.showToast('Добавьте ссылки на учебные материалы!');
+                    return;
+                }
+                $http.post('/create_task', $scope.sendTask).success(function (data) {
+                    $scope.taskCreated = true;
+                    if (!data) {
+                        $parentScope.showToast('Ошибка при создании задания! Попробуйте еще раз...');
+                        return;
+                    }
+
+                    $parentScope.showToast('Задание успешно создано!', '#toastSuccess');
+                    $scope.sendTask = {title: '', description: '', links: [], link: '', skills: []};
+
+                    loadLoggedUser();
+                });
+            };
+        }
     });
 });
