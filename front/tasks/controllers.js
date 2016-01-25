@@ -79,7 +79,7 @@ function applyAllFilters(tasks, skills, users, getObjByID, chips) {
     return filteredTasks;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills, loadTasks, getRowsCount,
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills, getRowsCount,
                                          $rootScope, $location, isLoggedIn, $mdToast) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
@@ -198,7 +198,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
                 this.toLoad += this.LIMIT;
 
                 var self = this;
-                loadTasks({limit: self.LIMIT, offset: self.numItems, sort: self.sort}, function (rows) {
+                $http.post('db/tasks', {limit: self.LIMIT, offset: self.numItems, sort: self.sort}).success(function (rows) {
                     self.loadedItems = self.loadedItems.concat(rows);
                     for (var id in self.loadedItems) {
                         parseSkills(self.loadedItems[id]);

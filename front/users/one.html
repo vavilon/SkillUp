@@ -1,10 +1,6 @@
 
 <div layout="row" style="padding-bottom: 30px;">
 
-    <scroll-loader events="['tasksDoneScrolled', 'tasksCheckedScrolled', 'tasksApprovedScrolled', 'tasksCreatedScrolled']"
-                   load-func="scrollWrap.loadFunc" options="scrollWrap.loadOptions"
-                   callback="scrollWrap.callback"></scroll-loader>
-
     <div flex="{{sidenavVisible ? (navtabs.selected != 2 ? 10 : 15) : (navtabs.selected != 2 ? 15 : 20)}}"
          flex-md="5" hide-sm class="content-main-side"></div>
     <div ng-switch="navtabs.selected" flex>

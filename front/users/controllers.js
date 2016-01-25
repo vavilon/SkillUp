@@ -45,23 +45,9 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 });
 
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, loadLoggedUser, $mdDialog, editNeed,
-                                        loggedUser, parseSkills, loadTasks, loadUsers, $rootScope, bindToNavtabs,
-                                        setNotReceivable, isLoggedIn, $location) {
+                                        loggedUser, parseSkills, $rootScope, bindToNavtabs, setNotReceivable, isLoggedIn,
+                                        $location, ScrollLoader) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
-
-    $scope.scrollWrap = $scope.scrollWrap || {
-            loadFunc: loadTasks, callback: $scope.scrollCallback,
-            scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}
-        };
-    $scope.setScrollOptions = function (num) {
-        $scope.scrollWrap.scrollOptions.event = num === 0 ? 'tasksDoneScrolled' :
-            num === 1 ? 'tasksCheckedScrolled' :
-                num === 2 ? 'tasksApprovedScrolled' : 'tasksCreatedScrolled';
-    };
-
-    $scope.scrollCallback = function (data) {
-        console.log('asdasdasd');
-    };
     $rootScope.ajaxCall.promise.then(function () {
         $scope.tabSelected = 0;
 
@@ -258,6 +244,8 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                 };
             }
 
+            //$scope.scrollLoader = ScrollLoader({url: 'db/tasks'});
+            //TODO: добавить подгрузку заданий, переделать то что ниже
             if ($scope.user.tasks_done) {
                 var dbTasksDoneOptions = {ids: $scope.user.tasks_done};
                 $http.post('/db/tasks', dbTasksDoneOptions).success(function (tasksDone) {
@@ -268,11 +256,6 @@ app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID,
                         setNotReceivable($scope.tasksDone, loggedUser().tasks_done, true);
                     }
                     dbTasksDoneOptions.offset = $scope.tasksDone.length;
-
-                    $scope.scrollWrap = {
-                        loadFunc: loadTasks, callback: $scope.scrollCallback,
-                        loadOptions: dbTasksDoneOptions, scrollOptions: {percent: 95, event: 'tasksDoneScrolled'}
-                    };
                 });
             }
 
