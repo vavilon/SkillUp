@@ -328,44 +328,6 @@ app.directive("onScrollBottom", function ($rootScope) {
     };
 });
 
-
-app.directive('scrollLoader', function() {
-    return {
-        restrict: 'E',
-        scope: {
-            events: '=',
-            loadFunc: '=',
-            options: '=',
-            callback: '=?'
-        },
-        controller: function($rootScope, $scope, loggedUser) {
-
-            $scope.options = $scope.options || {};
-            $scope.options.offset = $scope.options.offset || 0;
-            
-            var endOfData = false;
-            $scope.loadMoreData = function() {
-                if (!endOfData) {
-                    $scope.loadFunc($scope.options, function(data) {
-                        if (data.length) {
-                            $scope.options.offset += data.length;
-                            if ($scope.callback) $scope.callback(data);
-                        }
-                        else endOfData = true;
-                    });
-                }
-            };
-
-            if (angular.isArray($scope.events)) {
-                for (var i in $scope.events) {
-                    $scope.$on($scope.events[i], $scope.loadMoreData);
-                }
-            }
-            else $scope.$on($scope.events, $scope.loadMoreData);
-        }
-    };
-});
-
 app.directive('skillButton', function($rootScope, $timeout) {
     return {
         restrict: 'E',

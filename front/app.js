@@ -331,22 +331,29 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         $scope.solutionsForChecking = [];
         $scope.tasksForApproving = [];
 
+        $scope.loaded = {};
+        $scope.isProgressVisible = function() {
+            return ($scope.navtabs.selected === 0 && (!$scope.loaded.received || !$scope.loaded.recommended))
+                || ($scope.navtabs.selected === 1 && !$scope.loaded.check) || ($scope.navtabs.selected === 2 && !$scope.loaded.approve);
+        };
+
         $http.post('/db/tasks', {filters: {for_solving: true, received: true}}).success(function (data) {
             for (var i in data) parseSkills(data[i]);
             $scope.tasksReceived = data;
             $scope.calculateDifficulty(data, $scope.user);
             for (var i in $scope.tasksReceived) $scope.tasksReceived[i].received = true;
+            $scope.loaded.received = true;
         });
 
         $http.post('/db/tasks', {
             filters: {for_solving: true, received: false},
             skills: skillsToIDs($scope.user.skills)
-        })
-            .success(function (data) {
-                for (var i in data) parseSkills(data[i]);
-                $scope.tasksRecommended = data;
-                $scope.calculateDifficulty(data, $scope.user);
-            });
+        }).success(function (data) {
+            for (var i in data) parseSkills(data[i]);
+            $scope.tasksRecommended = data;
+            $scope.calculateDifficulty(data, $scope.user);
+            $scope.loaded.recommended = true;
+        });
 
         $http.post('/db/solutions', {
             filters: {for_checking: true},
@@ -354,6 +361,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }).success(function (data) {
             for (var i in data) parseSkills(data[i]);
             $scope.solutionsForChecking = data;
+            $scope.loaded.check = true;
         });
 
         $http.post('/db/tasks', {
@@ -362,6 +370,7 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
         }).success(function (data) {
             for (var i in data) parseSkills(data[i]);
             $scope.tasksForApproving = data;
+            $scope.loaded.approve = true;
         });
 
         $scope.showCreateTaskDialog = function(ev) {

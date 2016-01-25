@@ -1,16 +1,15 @@
 
 <div style="position: relative;">
-
-    <scroll-loader events="'indexPageScrolled'" load-func="scrollWrap.loadFunc" options="scrollWrap.options"
-                   callback="scrollWrap.callback"></scroll-loader>
-
     <div layout="row">
         <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
         <div flex>
             <div ng-switch="navtabs.selected">
                 <div ng-switch-when="0">
                     <div class="secondary-header">Общие интересы</div>
-                    <div layout="row" layout-align="center center" ng-if="!usersLoaded">
+                    <div ng-if="users && users.length && !scrollLoader.loaded" style="position: fixed; z-index: 99; top: 112px; left: 210px;
+                         width: 100%; height: 100%; background-color: rgba(255, 255, 255, .54);"></div>
+                    <div layout="row" layout-align="center center" ng-if="!scrollLoader.loaded"
+                            style="position: fixed; z-index: 100; top: 188px; left: 0; width: 100%;">
                         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                     </div>
                     <md-grid-list style="margin-top: 24px; margin-left: -3px;" md-cols="4" md-row-height="230px" md-gutter="24px">

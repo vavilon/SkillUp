@@ -160,37 +160,6 @@ app.factory('skillsToIDs', function () {
     };
 });
 
-app.factory('loadFunc', function($http) {
-    return function(options, callback) {
-        if (!options) return;
-        $http.post('/db/' + options.tableName, options).success(callback);
-    };
-});
-
-app.factory('loadTasks', function(loadFunc) {
-    return function(options, callback) {
-        options = options || {};
-        options.tableName = 'tasks';
-        loadFunc(options, callback);
-    };
-});
-
-app.factory('loadUsers', function(loadFunc) {
-    return function(options, callback) {
-        options = options || {};
-        options.tableName = 'users';
-        loadFunc(options, callback);
-    };
-});
-
-app.factory('loadSolutions', function(loadFunc) {
-    return function(options, callback) {
-        options = options || {};
-        options.tableName = 'solutions';
-        loadFunc(options, callback);
-    };
-});
-
 app.factory('completedSkills', function ($rootScope) {
     return function (skillsProgress) {
         var res = [];
@@ -316,5 +285,50 @@ app.factory('getEndingVariant', function() {
             }
         }
         return ending;
+    };
+});
+
+app.factory('ScrollLoader', function($rootScope, $http) {
+    return function(scope, options) {
+        function ScrollLoader() {
+            this.events = options.events || 'indexPageScrolled';
+
+            this.url = options.url || 'db/tasks';
+            this.body = options.body || {};
+            this.method = options.method || 'post';
+            this.body.offset = options.body.offset || 0;
+
+            this.onLoadStart = options.onLoadStart;
+            this.onLoadEnd = options.onLoadEnd;
+
+            this.endOfData = false;
+        }
+
+        ScrollLoader.prototype.loadMoreData = function() {
+            if (!this.endOfData) {
+                var self = this;
+                this.loaded = false;
+                this.onLoadStart && this.onLoadStart();
+                $http[this.method](this.url, this.body).success(function(data) {
+                    if (data.length) {
+                        self.body.offset += data.length;
+                    }
+                    else self.endOfData = true;
+                    self.loaded = true;
+                    self.onLoadEnd && self.onLoadEnd(data);
+                });
+            }
+        };
+
+        var sl = new ScrollLoader();
+
+        if (angular.isArray(sl.events)) {
+            for (var i in sl.events) {
+                scope.$on(sl.events[i], function() { sl.loadMoreData(); });
+            }
+        }
+        else scope.$on(sl.events, function() { sl.loadMoreData(); });
+
+        return sl;
     };
 });

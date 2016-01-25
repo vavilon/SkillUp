@@ -469,6 +469,13 @@ skill-button {
     font-weight: normal;
 }
 
+.main-list-empty {
+    position: fixed;
+    width: 100%;
+    top: 112px;
+    left: 0;
+}
+
 .learning-links {
     font-size: 12px;
     color: rgba(65, 131, 196, .87);

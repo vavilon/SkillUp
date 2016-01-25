@@ -1,5 +1,5 @@
 app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $rootScope, getObjByID, parseSkills,
-                                          loadUsers, isLoggedIn, bindToNavtabs, skillsToIDs) {
+                                          isLoggedIn, bindToNavtabs, skillsToIDs, ScrollLoader) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Пользователи';
@@ -7,8 +7,8 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
         bindToNavtabs($scope, 'navtabs');
         $scope.username = "";
 
-        $scope.scrollCallback = function (data) {
-            console.log('loaded');
+        $scope.users = [];
+        $scope.onUsersLoaded = function (data) {
             for (var i in data) {
                 parseSkills(data[i], true);
             }
@@ -16,21 +16,15 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
         };
 
         var interests = skillsToIDs($rootScope.loggedUser.skills).concat(skillsToIDs($rootScope.loggedUser.needs));
-        $scope.scrollWrap = {
-            loadFunc: loadUsers,
-            callback: $scope.scrollCallback,
-            options: {skills: interests, without_self: true}
-        };
-        $http.post('db/users', $scope.scrollWrap.options).success(function (data) {
-            $scope.users = data;
-            $scope.scrollWrap.options.offset = $scope.users.length;
-            $scope.lastExpandedUser = $scope.users[0];
-
-            for (var i in $scope.users) {
-                parseSkills($scope.users[i], true);
-            }
-            $scope.usersLoaded = true;
+        $scope.scrollLoader = ScrollLoader($scope, {
+            events: 'indexPageScrolled',
+            method: 'post',
+            url: 'db/users',
+            body: {skills: interests, without_self: true},
+            onLoadEnd: $scope.onUsersLoaded
         });
+
+        $scope.scrollLoader.loadMoreData();
 
         $scope.goToUserPage = function(id) {
             if (!$scope.cardActionClicked) $location.path('/users/' + id);
