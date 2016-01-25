@@ -21,7 +21,21 @@
                     <div ng-message="minlength">Название должно содержать как минимум 10 символов</div>
                 </div>
             </md-input-container>
-            <md-input-container class="md-block">
+            <div layout="row" layout-align="end center">
+                <a href="https://guides.github.com/features/mastering-markdown" class="markdown-support" layout="row" layout-align="center center">
+                    <i class="mdi mdi-markdown mdi-24" style="margin-right: 5px;"></i>
+                    <span>Поддерживается синтаксис Markdown</span>
+                </a>
+                <md-button class="md-icon-button preview-button" ng-click="sendTask.preview = !sendTask.preview"
+                           aria-label="description-toolbar-menu">
+                    <i class="mdi mdi-eye mdi-24" ng-if="!sendTask.preview"></i>
+                    <md-tooltip ng-if="!sendTask.preview">Предпросмотр</md-tooltip>
+                    <i class="mdi mdi-pencil mdi-24" ng-if="sendTask.preview"></i>
+                    <md-tooltip ng-if="sendTask.preview">Редактор</md-tooltip>
+                </md-button>
+            </div>
+            <div ng-if="sendTask.preview" marked="sendTask.description || 'Вы ничего не ввели'"></div>
+            <md-input-container ng-if="!sendTask.preview" class="md-block" style="margin-top: 0;">
                 <label>Текст задания</label>
                 <textarea ng-model="sendTask.description" name="taskDescription" columns="1" required minlength="30"></textarea>
                 <div ng-messages="createTaskForm.taskDescription.$error">

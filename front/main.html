@@ -14,10 +14,8 @@
                      ng-switch-when="0"
                      md-swipe-left="next()"
                      md-swipe-right="previous()">
-                    <tasks-list tasks="tasksReceived" solution="temp.solution" exp-style="-"
-                                subheader="Полученные" receive-callback="receiveCallback"></tasks-list>
-                    <tasks-list tasks="tasksRecommended" solution="temp.solution" exp-style="-"
-                                subheader="Рекомендованные" receive-callback="receiveCallback"></tasks-list>
+                    <tasks-list tasks="tasksReceived" exp-style="-" subheader="Полученные" receive-callback="receiveCallback"></tasks-list>
+                    <tasks-list tasks="tasksRecommended" exp-style="-" subheader="Рекомендованные" receive-callback="receiveCallback"></tasks-list>
                     <div ng-if="!tasksReceived.length && !tasksRecommended.length" flex layout="column" layout-align="center center" class="md-tile-content">
                         <h3 class="list-empty">Нет заданий для решения</h3>
                     </div>

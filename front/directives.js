@@ -15,7 +15,7 @@ app.directive('tasksList', function() {
             showSkills: '=?',
             send: '=?',
             callback: '=?',
-            solution: '=',
+            solution: '=?',
             showLike: '=?',
             showReceive: '=?',
             approve: '=?',
@@ -45,13 +45,14 @@ app.directive('tasksList', function() {
             if ($scope.showSkills === undefined) $scope.showSkills = true;
             if ($scope.showLike === undefined) $scope.showLike = true;
             if ($scope.showReceive === undefined) $scope.showReceive = true;
+            if ($scope.solution === undefined) $scope.solution = {preview: false, text: ''};
 
             if ($scope.callback === undefined) $scope.callback = function (data, id) {
                 if (!data) $scope.showToast('Не удалось отправить решение...');
                 else {
                     loadLoggedUser(function() {
                         $scope.showToast('Решение отправлено!', '#toastSuccess');
-                        $scope.solution = '';
+                        $scope.solution.text = '';
                         var index = 0;
                         for (var i in $scope.tasks) {
                             if ($scope.tasks[i].id === id) {
@@ -65,10 +66,10 @@ app.directive('tasksList', function() {
             };
 
             if ($scope.send === undefined) $scope.send = function (id) {
-                if ($scope.solution.length < 1) {
+                if ($scope.solution.text.length < 1) {
                     return;
                 }
-                $http.post('/solve_task', {task_id: $scope.lastExpandedTask.id, content: $scope.solution})
+                $http.post('/solve_task', {task_id: $scope.lastExpandedTask.id, content: $scope.solution.text})
                     .success(function(data) { $scope.callback(data, id); });
             };
 

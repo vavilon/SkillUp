@@ -350,6 +350,16 @@ skill-button {
     line-height: normal;
 }
 
+.preview-button {
+    color: rgba(0, 0, 0, .87) !important;
+    padding: 0 !important;
+    margin: 0 0 0 16px !important;
+    min-height: 26px !important;
+    line-height: normal !important;
+    height: 26px !important;
+    width: 26px !important;
+}
+
 .animate-if.ng-enter, .animate-if.ng-leave {
     -webkit-transition: all cubic-bezier(.250, .460, .450, .940) .5s;
     transition: all cubic-bezier(.250, .460, .450, .940) .5s;

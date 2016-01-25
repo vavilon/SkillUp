@@ -364,8 +364,6 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             $scope.tasksForApproving = data;
         });
 
-        $scope.temp = {}; //связывает ng-model элемента input директивы tasks-list и temp.solution
-
         $scope.showCreateTaskDialog = function(ev) {
             $mdDialog.show({
                 controller: createTaskDialogController,
