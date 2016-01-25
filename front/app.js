@@ -429,13 +429,21 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
             $scope.taskCreated = true;
             $scope.createTask = function () {
                 $scope.taskCreated = false;
-                if ($scope.sendTask.title.length < 10) return;
-                if ($scope.sendTask.description.length < 30) return;
+                if ($scope.sendTask.title.length < 10) {
+                    $scope.taskCreated = true;
+                    return;
+                }
+                if ($scope.sendTask.description.length < 30) {
+                    $scope.taskCreated = true;
+                    return;
+                }
                 if (!$scope.sendTask.skills.length) {
+                    $scope.taskCreated = true;
                     $parentScope.showToast('Прикрепите умения к заданию!');
                     return;
                 }
                 if (!$scope.sendTask.links.length) {
+                    $scope.taskCreated = true;
                     $parentScope.showToast('Добавьте ссылки на учебные материалы!');
                     return;
                 }
@@ -446,10 +454,9 @@ app.controller('mainPageCtrl', function ($scope, $http, isLoggedIn, $location, $
                         return;
                     }
 
-                    $parentScope.showToast('Задание успешно создано!', '#toastSuccess');
-                    $scope.sendTask = {title: '', description: '', links: [], link: '', skills: []};
-
                     loadLoggedUser();
+                    $mdDialog.cancel();
+                    $parentScope.showToast('Задание успешно создано!', '#toastSuccess');
                 });
             };
         }
