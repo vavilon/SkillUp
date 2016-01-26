@@ -296,8 +296,11 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
             $scope.solution.preview = !$scope.solution.preview;
         };
 
-        $scope.solution.sendSolution = function (taskID) {
-            $http.post('/solve_task', {id: taskID}).success(function (data) {
+        $scope.solution.sendSolution = function (taskID, text) {
+            if (!text || !text.length) {
+                return;
+            }
+            $http.post('/solve_task', {id: taskID, content: text}).success(function (data) {
                 if (data == 'ok')
                     $mdToast.show(
                         $mdToast.simple()
