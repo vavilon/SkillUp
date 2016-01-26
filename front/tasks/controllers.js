@@ -268,7 +268,7 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 });
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, parseSkills,
-                                        $rootScope, $location, isLoggedIn, getEndingVariant, marked) {
+                                        $rootScope, $location, isLoggedIn, getEndingVariant, $mdToast) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.sidenavVisible = false;
 
@@ -283,10 +283,10 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
         $scope.solution = {};
         $scope.solution.preview = false;
 
-        $http.post('/db/tasks',{id: $routeParams.task_id, solutionsCount: true}).success(function (rows) {
+        $http.post('/db/tasks', {id: $routeParams.task_id, solutionsCount: true}).success(function (rows) {
             $scope.currentTask = rows[0];
             parseSkills($scope.currentTask);
-            console.log(rows[0]);
+
             $http.post('/db/users', {id: $scope.currentTask.author}).success(function (rows) {
                 $scope.author = rows[0];
             });
@@ -294,6 +294,24 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
 
         $scope.solution.showPreview = function () {
             $scope.solution.preview = !$scope.solution.preview;
+        };
+
+        $scope.solution.sendSolution = function (taskID) {
+            $http.post('/solve_task', {id: taskID}).success(function (data) {
+                if (data == 'ok')
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('Решение успешно отправлено')
+                            .hideDelay(2000)
+                    );
+                //TODO: Где пользователь сможет посмотреть, как продвигается проверка его решения?
+                else
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('При отправке решения произошла ошибка')
+                            .hideDelay(2000)
+                    );
+            })
         };
     });
 });
