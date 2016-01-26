@@ -151,19 +151,16 @@ app.use('/db', function (req, res, next) {
             knex('skills').then(function (rows) {
                 res.end(JSON.stringify(rows));
             });
-        }
-        else if (req.path === '/tasks') {
+        } else if (req.path === '/tasks') {
             controllers.db.tasks(knex, req, res, next);
-        }
-        else if (req.path === '/users') {
+        } else if (req.path === '/users') {
             controllers.db.users(knex, req, res, next);
-        }
-        else if (req.path === '/solutions') {
+        } else if (req.path === '/solutions') {
             controllers.db.solutions(knex, req, res, next);
-        }
-        else next();
-    }
-    else next();
+        } else if (req.path === '/comments') {
+            controllers.db.comments(knex, req, res, next);
+        } else next();
+    } else next();
 });
 
 //Получение информации о колонках в таблице (значение по умолчанию, тип, макс. длину, нулл?)
@@ -175,16 +172,14 @@ app.use('/logged_user', function (req, res, next) {
     if (req.isAuthenticated()) {
         req.body.id = req.user.id;
         controllers.db.users(knex, req, res, next);
-    }
-    else res.end();
+    } else res.end();
 });
 app.use('/check_nick', function (req, res) {
     knex('users').where('nick', req.body.nick).then(function (users) {
         if (users.length) {
             console.log("User with nick '" + req.body.nick + "' already exists!");
             res.end();
-        }
-        else {
+        } else {
             res.end('ok');
         }
     }).catch(function (err) {
@@ -197,8 +192,7 @@ app.use('/check_email', function (req, res) {
         if (users.length) {
             console.log("User with email '" + req.body.email + "' already exists!");
             res.end();
-        }
-        else {
+        } else {
             res.end('ok');
         }
     }).catch(function (err) {
@@ -218,8 +212,7 @@ app.post('/restore', function (req, res) {
         if (err) {
             console.log(err);
             res.end('error');
-        }
-        else res.end('' + secretCode);
+        } else res.end('' + secretCode);
     });
 });
 
@@ -241,6 +234,10 @@ app.post('/approve_task', controllers.tasks.approve(knex, userHasSkills));
 
 app.post('/like_solution', controllers.solutions.like(knex));
 app.post('/check_solution', controllers.solutions.check(knex, userHasSkills));
+
+app.post('/add_comment', controllers.comments.add(knex));
+app.post('/update_comment', controllers.comments.update(knex));
+app.post('/like_comment', controllers.comments.like(knex));
 
 app.get('/auth/facebook', function (req, res, next) {
     passport.authenticate('facebook', {
