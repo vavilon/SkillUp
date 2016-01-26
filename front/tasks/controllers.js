@@ -79,8 +79,8 @@ function applyAllFilters(tasks, skills, users, getObjByID, chips) {
     return filteredTasks;
 }
 
-app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills, getRowsCount,
-                                         $rootScope, $location, isLoggedIn, $mdToast) {
+app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills,
+                                         $rootScope, $location, isLoggedIn, $mdToast, ScrollLoader) {
     if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
         $rootScope.pageTitle = 'Задания';
@@ -158,73 +158,29 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
         //    $scope.fTasks = applyAllFilters($scope.tasks, $scope.exs.skills, $scope.users, $scope.getObjByID, $scope.chips);
         //};
 
-        var DynamicItems = function() {
-            /**
-             * @type {!Object<?Array>} Data pages, keyed by page number (0-index).
-             */
-            this.loadedItems = [];
-
-            /** @type {number} Total number of downloaded items. */
-            this.numItems = 0;
-            this.toLoad = 0;
-
-            /** @const {number} Number of items to fetch per request. */
-            this.LIMIT = 50;
-
-            $scope.columnSort = {'date_created': 'desc'};
-
-            this.sort = {
-                columnName: Object.keys($scope.columnSort)[0] || 'date_created',
-                direction: $scope.columnSort[Object.keys($scope.columnSort)] || 'desc'
-            };
-        };
-
-        // Required.
-        DynamicItems.prototype.getItemAtIndex = function(index) {
-            if (index < this.numItems) {
-                return this.loadedItems[index];
-            } else {
-                this._fetchMoreItems(index);
+        $scope.tasks = [];
+        $scope.onTasksLoaded = function (data) {
+            for (var i in data) {
+                parseSkills(data[i]);
             }
+            $scope.tasks = $scope.tasks.concat(data);
         };
 
-        // Required.
-        DynamicItems.prototype.getLength = function() {
-            return this.numItems + 1;
-        };
+        $scope.scrollLoader = ScrollLoader($scope, {
+            events: 'indexPageScrolled',
+            method: 'post',
+            url: 'db/tasks',
+            body: {sort: {columnName: 'date_created', direction: 'desc'}},
+            onLoadEnd: $scope.onTasksLoaded
+        });
 
-        DynamicItems.prototype._fetchMoreItems = function(index) {
-            if (index > this.toLoad) {
-                this.toLoad += this.LIMIT;
+        $scope.scrollLoader.loadMoreData();
 
-                var self = this;
-                $http.post('db/tasks', {limit: self.LIMIT, offset: self.numItems, sort: self.sort}).success(function (rows) {
-                    self.loadedItems = self.loadedItems.concat(rows);
-                    for (var id in self.loadedItems) {
-                        parseSkills(self.loadedItems[id]);
-                    }
-                    self.numItems = self.toLoad;
-                });
-            }
-        };
-
-        DynamicItems.prototype.resetSort = function (sort) {
-            this.sort = sort;
-            this.loadedItems = [];
-            this.toLoad = this.numItems = 0;
-            this._fetchMoreItems(0);
-        };
-
-        DynamicItems.prototype.viewTask = function (id) {
-            if (!$scope.expandButtonClicked) $location.path('/tasks/' + id);
-            else $scope.expandButtonClicked = false;
-        };
-
-        DynamicItems.prototype.taskReceived = function (data) {
-            var title = getObjByID(data.id, $scope.dynamicTasks.loadedItems).title;
+        $scope.taskReceived = function (data) {
+            var title = getObjByID(data.id, $scope.tasks).title;
             var text = data.received
                 ? 'Задание "' + title + '" взято. Оно появится на главной странице.'
-                : 'Задание "' + title + '" удалено.';
+                : 'Задание "' + title + '" удалено из избранных.';
             $mdToast.show(
                 $mdToast.simple()
                     .textContent(text)
@@ -232,36 +188,28 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
             );
         };
 
-        $scope.dynamicTasks = new DynamicItems();
-
         //Функция сортировки, при нажатии на название колонки
         $scope.sortColumn = function (columnName) {
             //Сортировка списка в зависимости от значения переменной $scope.column[columnName]: (asc, desc)
             if (!$scope.columnSort[columnName] || $scope.columnSort[columnName] == 'desc') {
                 $scope.columnSort = {};
                 $scope.columnSort[columnName] = 'asc';
-                $scope.dynamicTasks.resetSort({
-                    columnName: columnName,
-                    direction: 'asc'
+                $scope.scrollLoader = ScrollLoader($scope, {
+                    events: 'indexPageScrolled',
+                    method: 'post',
+                    url: 'db/tasks',
+                    body: {sort: {columnName: columnName, direction: 'asc'}},
+                    onLoadEnd: $scope.onTasksLoaded
                 });
             } else if ($scope.columnSort[columnName] == 'asc') {
                 $scope.columnSort[columnName] = 'desc';
-                $scope.dynamicTasks.resetSort({
-                    columnName: columnName,
-                    direction: 'desc'
+                $scope.scrollLoader = ScrollLoader($scope, {
+                    events: 'indexPageScrolled',
+                    method: 'post',
+                    url: 'db/tasks',
+                    body: {sort: {columnName: columnName, direction: 'desc'}},
+                    onLoadEnd: $scope.onTasksLoaded
                 });
-            }
-        };
-        
-        $scope.lastExpandedTask = {};
-        $scope.expand = function (task) {
-            $scope.expandButtonClicked = true;
-            if ($scope.lastExpandedTask && $scope.lastExpandedTask.id == task.id)
-                $scope.lastExpandedTask.expanded = !$scope.lastExpandedTask.expanded;
-            else {
-                $scope.lastExpandedTask.expanded = false;
-                $scope.lastExpandedTask = task;
-                $scope.lastExpandedTask.expanded = true;
             }
         };
     });
@@ -296,8 +244,12 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
             $scope.solution.preview = !$scope.solution.preview;
         };
 
-        $scope.solution.sendSolution = function (taskID) {
-            $http.post('/solve_task', {id: taskID}).success(function (data) {
+        $scope.solution.sendSolution = function (taskID, text) {
+            if (!text || !text.length) {
+                return;
+            }
+
+            $http.post('/solve_task', {id: taskID, content: text}).success(function (data) {
                 if (data == 'ok')
                     $mdToast.show(
                         $mdToast.simple()

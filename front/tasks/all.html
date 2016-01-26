@@ -81,45 +81,7 @@
             <div flex="5"></div>
         </div>
         <md-divider></md-divider>
-        <md-virtual-repeat-container id="all-tasks-virtual-container">
-            <div class="all-tasks-virtual-item-container" md-virtual-repeat="task in dynamicTasks" md-on-demand layout="column" ng-show="task"
-                 ng-class="{'not-approved-task-background': !task.is_approved}">
-                <div class="all-tasks-virtual-item" layout="row" layout-align="start center">
-                    <div class="all-tasks-virtual-item-clickable-aria" layout="row" layout-align="start center" flex="95"
-                         ng-click="dynamicTasks.viewTask(task.id)">
-                        <div flex="5">
-                            <md-button class="md-icon-button" ng-click="expand(task)" ng-disabled="!task.skills.length">
-                                <i class="mdi mdi-chevron-down mdi-24 rotate-base" aria-label="all-task-expand-button"
-                                   ng-class="{'rotate-btn': task.expanded}"></i>
-                            </md-button>
-                        </div>
-                        <div class="all-tasks-body-cell" flex="45">
-                            <span>{{task.title}}</span>
-                        </div>
-                        <div class="all-tasks-body-cell" flex="25">
-                            <span>{{task.author_name}}</span>
-                        </div>
-                        <div class="all-tasks-body-cell" flex="15">
-                            <span>{{task.date_created | date: 'dd/M/yyyy'}}</span>
-                        </div>
-                        <div class="all-tasks-body-cell" flex="10">
-                            <span style="float: right">{{task.exp | thousand}}</span>
-                        </div>
-                    </div>
-                    <div class="all-tasks-body-cell" flex="5">
-                        <receive-button id="task.id" count="task.participants" disabled="!task.is_approved"
-                                        received="task.received" callback="dynamicTasks.taskReceived"></receive-button>
-                    </div>
-                </div>
-                <div class="all-tasks-skills-container" layout="row" ng-if="task.expanded">
-                    <skill-button ng-repeat="skill in task.skills" id="skill.skill_id" type="skill" count="skill.count">
-                    </skill-button>
-                </div>
-            </div>
-            <div layout="column" layout-fill layout-align="center center" ng-if="!task">
-                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-            </div>
-        </md-virtual-repeat-container>
+        <tasks-list style="height: calc(100vh - 113px);" tasks="tasks" show-difficulty="false" solvable="false" show-expand="false" receive-callback="taskReceived"></tasks-list>
     </div>
 
     <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
