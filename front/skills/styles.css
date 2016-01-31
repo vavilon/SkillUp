@@ -81,7 +81,7 @@ h4 {
     height: 226px !important;
 }
 
-.w-frame-z2_1 {
+.skills-container {
     background-color: #fff;
     min-height: calc(100vh - 200px);
 }
@@ -105,4 +105,30 @@ ul {
 .expand-skill md-icon {
     width: 19px;
     height: 19px;
+}
+
+.mdi-fab {
+    padding: 5px;
+    color: rgba(0, 0, 0, .54) !important;
+}
+
+.md-accent.mdi-fab {
+    color: white !important;
+}
+
+.floating-fab {
+    position: fixed;
+    right: 50px;
+    bottom: 15px;
+    z-index: 101;
+}
+
+.adding-skills-chips .md-input {
+    width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.adding-skills-chips .md-chips {
+    margin-top: 16px;
 }

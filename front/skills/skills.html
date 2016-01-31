@@ -70,20 +70,20 @@
             </div>
         </md-toolbar>
 
-        <div class="w-frame-z2_1" layout="column" layout-align="center center" ng-show="currentSkill && viewLike !== 'графа'">
+        <div class="skills-container" layout="column" layout-align="center center" ng-show="currentSkill && viewLike !== 'графа'">
             <div ng-if="currentSkill.parents" layout-padding>
                 <skill-button ng-repeat="skill in currentSkill.parents" id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"
-                              with-add="(!skill.need && skill.count < 1) || skill.count === undefined"
+                              with-add="(!skill.need && skill.count < 1) || skill.count === undefined && skill != exs.root"
                               on-add="addNeed" tooltip-add="Добавить в 'Хочу'"
                               with-remove="skill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'"
                               ng-click="setToCurrent(skill)">
                 </skill-button>
             </div>
             <div class="current">
-                <skill-button id="currentSkill.id" type="{{getSkillType(currentSkill) || 'root'}}" count="currentSkill.count"
-                              with-add="(!currentSkill.need && currentSkill.count < 1) || currentSkill.count === undefined"
+                <skill-button ng-repeat="skill in [currentSkill]" id="skill.id" type="{{getSkillType(skill) || 'root'}}" count="skill.count"
+                              with-add="(!skill.need && skill.count < 1) || skill.count === undefined && skill != exs.root"
                               on-add="addNeed" tooltip-add="Добавить в 'Хочу'"
-                              with-remove="currentSkill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'">
+                              with-remove="skill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'">
                 </skill-button>
             </div>
             <div ng-if="currentSkill.children" layout-padding>
@@ -96,8 +96,7 @@
             </div>
         </div>
 
-        <div layout="column" flex class="md-whiteframe-z2 w-frame-z2_1"
-             style="min-height: calc(100vh - 65px);" ng-show="viewLike !== 'дерева'">
+        <div layout="column" flex class="skills-container" ng-show="viewLike !== 'дерева'">
             <div class="animate-if-skill" flex>
                 <div class="exs-root" layout="row" id="exs.root.id">
                     <md-button class="md-mini md-primary expand-skill"
@@ -116,4 +115,25 @@
     </div>
 
     <div flex="{{sidenavVisible ? 10 : 15}}" flex-md="5" hide-sm class="content-main-side"></div>
+</div>
+
+<div class="floating-fab" layout="row" layout-align="center center" ng-if="loggedUser.role != 'пользователь'" ng-cloak>
+    <md-fab-speed-dial class="md-scale md-fab-bottom-right" md-open="isOpened" md-direction="up">
+        <md-fab-trigger>
+            <md-button aria-label="skills-menu" class="md-fab md-accent mdi-fab">
+                <i class="mdi mdi-menu mdi-24"></i>
+            </md-button>
+        </md-fab-trigger>
+        <md-fab-actions>
+            <md-button aria-label="add-skill" class="md-fab md-raised md-mini mdi-fab" ng-click="openAddingDialog($event)">
+                <i class="mdi mdi-plus-circle mdi-24"></i>
+            </md-button>
+            <md-button aria-label="remove-skill" class="md-fab md-raised md-mini mdi-fab" ng-click="openDeletingDialog($event)">
+                <i class="mdi mdi-delete mdi-24"></i>
+            </md-button>
+            <md-button aria-label="update-skill" class="md-fab md-raised md-mini mdi-fab" ng-click="openUpdatingDialog($event)">
+                <i class="mdi mdi-pencil mdi-24"></i>
+            </md-button>
+        </md-fab-actions>
+    </md-fab-speed-dial>
 </div>

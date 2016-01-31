@@ -49,6 +49,7 @@ app.factory('extendedSkills', function () {
             this.skills[id].exp = skills[id].exp;
             this.skills[id].is_leaf = skills[id].is_leaf;
 
+            if (skills[id].parents.length && skills[id].parents[0] == null) skills[id].parents = [];
             for (var i = 0; i < skills[id].parents.length; i++) {
                 this.skills[skills[id].parents[i]] = this.skills[skills[id].parents[i]] || {};
                 if (!_.includes(this.skills[id].parents, this.skills[skills[id].parents[i]]))
@@ -152,9 +153,10 @@ app.factory('extendedSkills', function () {
 
 
 app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $location, isLoggedIn, loadLoggedUser,
-                                       appendProgressToExs, $timeout, editNeed) {
-    if (!isLoggedIn()) { $location.path('/main'); return; }
+                                       appendProgressToExs, $timeout, editNeed, $mdDialog) {
     $rootScope.ajaxCall.promise.then(function () {
+        if (!isLoggedIn()) { $location.path('/main'); return; }
+
         $rootScope.pageTitle = 'Умения';
         $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
 
@@ -169,6 +171,347 @@ app.controller('skillsCtrl', function ($scope, $http, $filter, $rootScope, $loca
         $scope.dataNeeds = {needs: []};
         //Объект для поиска скилла по названию
         $scope.query = {};
+
+        $scope.isOpened = false;
+
+        $scope.openAddingDialog = function (ev) {
+            dialogFactory(ev, '/dist/skills/addingDialog.html', {dialog: 'add'});
+        };
+
+        $scope.openDeletingDialog = function (ev) {
+            dialogFactory(ev, '/dist/skills/deletingDialog.html', {dialog: 'delete'});
+        };
+
+        $scope.openUpdatingDialog = function (ev) {
+            dialogFactory(ev, '/dist/skills/updatingDialog.html', {dialog: 'update'});
+        };
+
+        function dialogFactory(event, templateUrl, locals) {
+            $mdDialog.show({
+                controller: DialogController,
+                templateUrl: templateUrl,
+                parent: angular.element(document.body),
+                targetEvent: event,
+                autoWrap: false,
+                clickOutsideToClose: true,
+                locals: locals,
+                bindToController: false,
+                onRemoving: function () {
+                    $rootScope.ajaxCall.promise.then(function () {
+                        $scope.skills = $rootScope.exs.skills;
+                        $scope.currentSkill = $scope.skills[$scope.currentSkill.id];
+                    })
+                }
+            });
+        }
+
+        function DialogController($scope, $mdDialog, $mdToast, $http, $rootScope, $q, updateSkills, dialog) {
+            $rootScope.ajaxCall.promise.then(function () {
+                ($scope.init = function() {
+                    $scope.allChildren = $rootScope.exs.root.allChildren;
+                    $scope.allParents = [$rootScope.exs.root].concat($scope.allChildren);
+                    $scope.skills = $rootScope.exs.skills;
+
+                    $scope.chips = {};
+                    $scope.chips.allChildrenNames = [];
+                    for (var index in $scope.allChildren) {
+                        $scope.chips.allChildrenNames.push({
+                            id: $scope.allChildren[index].id,
+                            title: $scope.allChildren[index].title
+                        });
+                    }
+                    $scope.chips.allParentsNames = [{
+                        id: $rootScope.exs.root.id,
+                        title: $rootScope.exs.root.title
+                    }].concat($scope.chips.allChildrenNames);
+                })();
+
+                if (dialog === 'add' || dialog === 'update') {
+                    $scope.adding = {};
+                    $scope.chips.selectedParents = [];
+                    $scope.chips.selectedParent = null;
+                    $scope.chips.searchParentTitle = '';
+
+                    $scope.chips.selectedChildren = [];
+                    $scope.chips.selectedChild = null;
+                    $scope.chips.searchChildTitle = '';
+
+                    function existFilter(title) {
+                        return function checkForExist(skill) {
+                            return angular.lowercase(skill.title) === angular.lowercase(title);
+                        };
+                    }
+                }
+
+                if (dialog === 'delete' || dialog === 'update') {
+                    $scope.chips.selectedSkillsForDeleting = [];
+                    $scope.chips.selectedSkill = null;
+                    $scope.chips.searchSkillTitle = '';
+                }
+
+                if (dialog === 'update') {
+                    $scope.updated = {};
+
+                    $scope.selectedItemChanged = function (id) {
+                        if (id) {
+                            for (var index in $scope.skills[id].parents) {
+                                $scope.chips.selectedParents
+                                    .push({
+                                        id: $scope.skills[id].parents[index].id,
+                                        title: $scope.skills[id].parents[index].title
+                                    });
+                            }
+                            for (var index in $scope.skills[id].children) {
+                                $scope.chips.selectedChildren
+                                    .push({
+                                        id: $scope.skills[id].children[index].id,
+                                        title: $scope.skills[id].children[index].title
+                                    });
+                            }
+                            $scope.updated.title = $scope.chips.selectedSkill.title;
+                        } else {
+                            $scope.chips.selectedParents = [];
+                            $scope.chips.selectedChildren = [];
+                            $scope.updated.title = '';
+                        }
+                    };
+                }
+
+                $scope.cancel = function () {
+                    $mdDialog.cancel();
+                };
+
+                $scope.querySearch = function (query, array) {
+                    return query ? array.filter(createFilterFor(query)) : [];
+                };
+                /**
+                 * Create filter function for a query string
+                 */
+                function createFilterFor(query) {
+                    return function filterFn(skill) {
+                        if ($scope.chips.selectedSkill && skill.id == $scope.chips.selectedSkill.id) return false;
+                        return angular.lowercase(skill.title).indexOf(angular.lowercase(query)) !== -1;
+                    };
+                }
+
+                $scope.confirm = function () {
+                    if (dialog === 'add' && $scope.adding.title) {
+                        if (!!$scope.allParents.filter(existFilter($scope.adding.title)).length) {
+                            $mdToast.show(
+                                $mdToast.simple()
+                                    .textContent('Умение с таким именем уже существует')
+                                    .hideDelay(2000)
+                            );
+                            return;
+                        }
+
+                        if ($scope.chips.selectedChildren.length) {
+                            for (var index in $scope.chips.selectedParents) {
+                                var title = $scope.chips.selectedParents[index].title;
+                                if ($scope.chips.selectedChildren.filter(existFilter(title)).length) {
+                                    $mdToast.show(
+                                        $mdToast.simple()
+                                            .textContent('В родительских и дочерних умениях не должно быть совпадений')
+                                            .hideDelay(2000)
+                                    );
+                                    return;
+                                }
+                            }
+                        }
+
+                        var newSkill = {
+                            title: $scope.adding.title,
+                            parents: $scope.chips.selectedParents.length ? $scope.chips.selectedParents : [{
+                                id: $rootScope.exs.root.id,
+                                title: $rootScope.exs.root.title
+                            }],
+                            children: $scope.chips.selectedChildren
+                        };
+
+                        $http.post('/add_skill', {skill: newSkill}).success(function (data) {
+                            if (data == 'ok') {
+                                $mdToast.show(
+                                    $mdToast.simple()
+                                        .textContent('Умение успешно добавлено')
+                                        .hideDelay(2000)
+                                );
+                                //обнуляем переменные
+                                $scope.adding.title = '';
+                                $scope.chips.selectedParents = [];
+                                $scope.chips.selectedParent = null;
+                                $scope.chips.searchParentTitle = '';
+                                $scope.chips.selectedChildren = [];
+                                $scope.chips.selectedChild = null;
+                                $scope.chips.searchChildTitle = '';
+                                updateExs();
+                            } else {
+                                $mdToast.show(
+                                    $mdToast.simple()
+                                        .textContent('При добавлении умения произошла ошибка')
+                                        .hideDelay(2000)
+                                );
+                            }
+                        });
+                    }
+
+                    if (dialog === 'update' && $scope.chips.selectedSkill) {
+                        var skill = $scope.skills[$scope.chips.selectedSkill.id];
+
+                        //Проверка были ли внесены изменения
+                        if ($scope.updated.title === $scope.chips.selectedSkill.title) {
+                            if (skill.parents.length == $scope.chips.selectedParents.length) {
+                                var temp;
+                                for (var obj in skill.parents) {
+                                    temp = false;
+                                    for (var obj1 in $scope.chips.selectedParents) {
+                                        if (skill.parents[obj].id == $scope.chips.selectedParents[obj1].id) temp = true;
+                                    }
+                                    if (!temp) break;
+                                }
+                                if (temp && skill.children.length == $scope.chips.selectedChildren.length) {
+                                    for (var obj in skill.children) {
+                                        temp = false;
+                                        for (var obj1 in $scope.chips.selectedChildren) {
+                                            if (skill.children[obj].id == $scope.chips.selectedChildren[obj1].id) temp = true;
+                                        }
+                                        if (!temp) break;
+                                    }
+                                    if (temp) {
+                                        $mdToast.show(
+                                            $mdToast.simple()
+                                                .textContent('Нет изменений для сохранения')
+                                                .hideDelay(2000)
+                                        );
+                                        return;
+                                    }
+                                }
+                            }
+                        } else {
+                            if (!$scope.updated.title) return;
+                            else if (!!$scope.allParents.filter(existFilter($scope.updated.title)).length) {
+                                $mdToast.show(
+                                    $mdToast.simple()
+                                        .textContent('Умение с таким именем уже существует')
+                                        .hideDelay(2000)
+                                );
+                                return;
+                            }
+                        }
+
+                        //Проверка изменилось ли что-нибудь в родительских умениях
+                        var parentsForInsert, id = $scope.chips.selectedSkill.id;
+                        if ($scope.chips.selectedParents.length == $scope.skills[id].parents.length) {
+                            for (var index in $scope.chips.selectedParents) {
+                                var pTitle = $scope.chips.selectedParents[index].title;
+                                if (!$scope.skills[id].parents.filter(existFilter(pTitle)).length) {
+                                    parentsForInsert = [];
+                                    console.log(parentsForInsert);
+                                }
+                            }
+                            if (!parentsForInsert) parentsForInsert = null; //null - значит, что ничего не изменилось
+                        }
+
+                        if (parentsForInsert !== null)
+                            parentsForInsert = $scope.chips.selectedParents.length
+                                ? $scope.chips.selectedParents.map(function (el) {
+                                return {skill_id: $scope.chips.selectedSkill.id, parent_id: el.id};
+                            })
+                                //Если родительские умения не были выбраны, то родителем будет корневое умение
+                                : [{skill_id: $scope.chips.selectedSkill.id, parent_id: $rootScope.exs.root.id}];
+
+                        //Проверка изменилось ли что-нибудь в дочерних умениях
+                        var childrenForInsert;
+                        if ($scope.chips.selectedChildren.length == $scope.skills[id].children.length) {
+                            for (var index in $scope.chips.selectedChildren) {
+                                var cTitle = $scope.chips.selectedChildren[index].title;
+                                if (!$scope.skills[id].children.filter(existFilter(cTitle)).length) {
+                                    childrenForInsert = [];
+                                }
+                            }
+                            if (!childrenForInsert) childrenForInsert = null; //null - значит, что ничего не изменилось
+                        }
+
+                        if (childrenForInsert !== null)
+                            childrenForInsert = $scope.chips.selectedChildren.map(function (el) {
+                                return {skill_id: el.id, parent_id: $scope.chips.selectedSkill.id};
+                            });
+
+                        var updatedSkill = {
+                            id: $scope.chips.selectedSkill.id,
+                            title: $scope.updated.title,
+                            parents: parentsForInsert,
+                            children: childrenForInsert
+                        };
+
+                        $http.post('/update_skill', {skill: updatedSkill}).success(function (data) {
+                            if (data == 'ok') {
+                                $mdToast.show(
+                                    $mdToast.simple()
+                                        .textContent('Умения успешно обновлены')
+                                        .hideDelay(2000)
+                                );
+                                //обнуляем переменные
+                                $scope.chips.selectedSkill = null;
+                                $scope.chips.searchSkillTitle = '';
+                                updateExs();
+                            } else {
+                                $mdToast.show(
+                                    $mdToast.simple()
+                                        .textContent('При обновлении умений произошла ошибка')
+                                        .hideDelay(2000)
+                                );
+                            }
+                        });
+                    }
+
+                    if (dialog === 'delete' && $scope.chips.selectedSkillsForDeleting.length) {
+                        var ids = $scope.chips.selectedSkillsForDeleting.map(function (el) {
+                            return el.id;
+                        });
+
+                        $http.post('/delete_skill', {skills: ids})
+                            .success(function (data) {
+                                if (data == 'ok') {
+                                    $mdToast.show(
+                                        $mdToast.simple()
+                                            .textContent('Умения успешно удалены')
+                                            .hideDelay(2000)
+                                    );
+                                    updateExs();
+                                    $mdDialog.hide();
+                                } else {
+                                    $mdToast.show(
+                                        $mdToast.simple()
+                                            .textContent('При удалении умений произошла ошибка')
+                                            .hideDelay(2000)
+                                    );
+                                }
+                            });
+                    } else if (dialog === 'delete') {
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .textContent('Вы не выбрали умений для удаления')
+                                .hideDelay(2000)
+                        );
+                    }
+                };
+
+                function updateExs() {
+                    $rootScope.ajaxCall = $q.defer();
+                    loadLoggedUser(function(user) {
+                        if (user) {
+                            $http.get('db/skills').success(function (data) {
+                                if (data) {
+                                    updateSkills(data);
+                                }
+                                $rootScope.ajaxCall.resolve();
+                                $scope.init();
+                            });
+                        } else $rootScope.ajaxCall.resolve();
+                    });
+                }
+            });
+        }
 
         //Функция для поиска совпадений в названиях скиллов с введенным текстом
         //Возвращает массив подходящих скиллов
