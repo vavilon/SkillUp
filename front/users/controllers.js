@@ -1,7 +1,7 @@
 app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $rootScope, getObjByID, parseSkills,
                                           isLoggedIn, bindToNavtabs, skillsToIDs, ScrollLoader) {
-    if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
+        if (!isLoggedIn()) { $location.path('/main'); return; }
         $rootScope.pageTitle = 'Пользователи';
         $scope.navtabs = {selected: 0, tabs: ['Рекомендуемые', 'Подписки', 'Подписчики']};
         bindToNavtabs($scope, 'navtabs');
@@ -47,8 +47,8 @@ app.controller('usersListCtrl', function ($scope, $http, $filter, $location, $ro
 app.controller('profileCtrl', function ($scope, $routeParams, $http, getObjByID, loadLoggedUser, $mdDialog, editNeed,
                                         loggedUser, parseSkills, $rootScope, bindToNavtabs, setNotReceivable, isLoggedIn,
                                         $location, ScrollLoader) {
-    if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
+        if (!isLoggedIn()) { $location.path('/main'); return; }
         $scope.tabSelected = 0;
 
         $scope.findSkill = function (id) {

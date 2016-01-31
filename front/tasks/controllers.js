@@ -81,8 +81,8 @@ function applyAllFilters(tasks, skills, users, getObjByID, chips) {
 
 app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, parseSkills, getRowsCount,
                                          $rootScope, $location, isLoggedIn, $mdToast) {
-    if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.ajaxCall.promise.then(function () {
+        if (!isLoggedIn()) { $location.path('/main'); return; }
         $rootScope.pageTitle = 'Задания';
         $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
         $scope.getObjByID = getObjByID;
@@ -269,7 +269,6 @@ app.controller('allTasksCtrl', function ($scope, $http, getObjByID, loggedUser, 
 
 app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID, loggedUser, parseSkills,
                                         $rootScope, $location, isLoggedIn, getEndingVariant, $mdToast) {
-    if (!isLoggedIn()) { $location.path('/main'); return; }
     $rootScope.sidenavVisible = false;
 
     $scope.getEndingVariant = getEndingVariant;
@@ -277,6 +276,7 @@ app.controller('oneTaskCtrl', function ($scope, $routeParams, $http, getObjByID,
     $scope.solvingTextVariants = ['решает', 'решают', 'решают'];
 
     $rootScope.ajaxCall.promise.then(function () {
+        if (!isLoggedIn()) { $location.path('/main'); return; }
         $scope.exs = $rootScope.exs;
         $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
         $scope.currentTask = {};

@@ -332,3 +332,10 @@ app.factory('ScrollLoader', function($rootScope, $http) {
         return sl;
     };
 });
+
+app.factory('updateSkills', function($rootScope, extendedSkills, appendProgressToExs) {
+    return function (data) {
+        $rootScope.exs = new extendedSkills(data);
+        appendProgressToExs();
+    };
+});
