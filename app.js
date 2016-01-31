@@ -65,25 +65,27 @@ GLOBAL.INCORRECT_TASK_EXP_MULTIPLIER = 0.5;
 GLOBAL.APPROVE_SKILLS_MULTIPLIER = 0.25;
 GLOBAL.CHECK_SKILLS_MULTIPLIER = 0.25;
 
-knex('skills').then(function (rows) {
-    GLOBAL.exs = new exSkills(rows);
-    var skillsKeys = Object.keys(exs.skills);
-    var skillsCount = skillsKeys.length, updatedSkillsCount = 0;
+(GLOBAL.updateExp = function (knex) {
+    knex('skills').select(knex.raw('skills.*, array_agg(sm.parent_id) as parents'))
+        .leftJoin('skills_meta as sm', 'skills.id', 'sm.skill_id').groupBy('skills.id').then(function (rows) {
+        GLOBAL.exs = new exSkills(rows);
+        var skillsKeys = Object.keys(exs.skills);
+        var skillsCount = skillsKeys.length, updatedSkillsCount = 0;
 
-    function updateSkill(skill) {
-        knex('skills').where('id', '=', skill.id).update({exp: skill.exp}).then(function () {
-            if (++updatedSkillsCount < skillsCount) {
-                console.log('Updating skills exp: ' + Math.floor(updatedSkillsCount / skillsCount * 100) + '%');
-                console.log('\033[2A'); //Сдвигает курсор на две строки вверх
-                updateSkill(exs.skills[skillsKeys[updatedSkillsCount]]);
-            }
-            else console.log('Exp for all skills updated!');
-        }).catch(function (err) {
-            console.log(err);
-        });
-    }
-    updateSkill(exs.skills[skillsKeys[updatedSkillsCount]]);
-});
+        (function updateSkill(skill) {
+            knex('skills').where('id', '=', skill.id).update({exp: skill.exp}).then(function () {
+                if (++updatedSkillsCount < skillsCount) {
+                    console.log('Updating skills exp: ' + Math.floor(updatedSkillsCount / skillsCount * 100) + '%');
+                    console.log('\033[2A'); //Сдвигает курсор на две строки вверх
+                    updateSkill(exs.skills[skillsKeys[updatedSkillsCount]]);
+                }
+                else console.log('Exp for all skills updated!');
+            }).catch(function (err) {
+                console.log(err);
+            });
+        })(exs.skills[skillsKeys[updatedSkillsCount]]);
+    });
+})(knex);
 
 app.use(cookieParser());
 app.use(bodyParser.json({limit: '50mb'}));
@@ -148,7 +150,8 @@ app.use('/dist', express.static(__dirname + '/dist'));
 app.use('/db', function (req, res, next) {
     if (req.isAuthenticated()) {
         if (req.path === '/skills') {
-            knex('skills').then(function (rows) {
+            knex('skills').select(knex.raw('skills.*, array_agg(sm.parent_id) as parents'))
+                .leftJoin('skills_meta as sm', 'skills.id', 'sm.skill_id').groupBy('skills.id').then(function (rows) {
                 res.end(JSON.stringify(rows));
             });
         } else if (req.path === '/tasks') {
@@ -238,6 +241,10 @@ app.post('/check_solution', controllers.solutions.check(knex, userHasSkills));
 app.post('/add_comment', controllers.comments.add(knex));
 app.post('/update_comment', controllers.comments.update(knex));
 app.post('/like_comment', controllers.comments.like(knex));
+
+app.post('/add_skill', controllers.skills.add(knex));
+app.post('/update_skill', controllers.skills.update(knex));
+app.post('/delete_skill', controllers.skills.delete(knex));
 
 app.get('/auth/facebook', function (req, res, next) {
     passport.authenticate('facebook', {
