@@ -41,11 +41,6 @@
                      class="md-tile-content hint-title main-list-empty">Нет заданий для подтверждения</div>
             </div>
         </ng-switch>
-        <md-button class="md-fab md-accent" style="position: fixed; left: calc((100vw - 210px) * 0.87 + 210px); bottom: 24px; right: 24px;"
-                   ng-click="showCreateTaskDialog($event)" ng-if="user.completedSkills && user.completedSkills.length">
-            <md-tooltip>Создать задание</md-tooltip>
-            <div layout="row" layout-align="center center"><i class="mdi mdi-plus mdi-24"></i></div>
-        </md-button>
     </div>
     <div ng-if="!isLoggedIn()" flex layout="row">
         <div layout="column" layout-align="center center" flex="60">
@@ -80,4 +75,11 @@
         </div>
     </div>
     <div flex="{{isLoggedIn() ? (sidenavVisible ? 15 : 20) : 10}}" flex-md="5" hide-sm class="content-main-side"></div>
+	
+	<md-button class="md-fab md-accent" style="position: fixed; bottom: 24px; right: 24px;"
+		   ng-click="showCreateTaskDialog($event)" ng-if="isLoggedIn() && user.completedSkills && user.completedSkills.length">
+		<md-tooltip>Создать задание</md-tooltip>
+		<div layout="row" layout-align="center center"><i class="mdi mdi-plus mdi-24"></i></div>
+	</md-button>
 </div>
+
