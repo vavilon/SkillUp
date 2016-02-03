@@ -333,7 +333,7 @@ app.factory('ScrollLoader', function($rootScope, $http) {
     };
 });
 
-app.factory('updateSkills', function($rootScope, extendedSkills, appendProgressToExs) {
+app.factory('updateExs', function($rootScope, extendedSkills, appendProgressToExs) {
     return function (data) {
         $rootScope.exs = new extendedSkills(data);
         appendProgressToExs();

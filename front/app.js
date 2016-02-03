@@ -75,7 +75,7 @@ app.config(function ($locationProvider, $routeProvider, $mdThemingProvider, hljs
     });
 });
 
-app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgressToExs, $q, isLoggedIn, $location, updateSkills) {
+app.run(function ($rootScope, $http, loadLoggedUser, $q, isLoggedIn, $location, updateExs) {
     $rootScope.ajaxCall = $q.defer();
     $rootScope.isLoggedIn = isLoggedIn;
     $rootScope.sidenavVisible = true;
@@ -86,7 +86,7 @@ app.run(function ($rootScope, $http, loadLoggedUser, extendedSkills, appendProgr
         if (user) {
             $http.get('db/skills').success(function (data) {
                 if (data) {
-                    updateSkills(data);
+                    updateExs(data);
                 }
                 $rootScope.ajaxCall.resolve();
             });

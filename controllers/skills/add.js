@@ -14,7 +14,7 @@ module.exports = function(knex) {
             }
 
             knex('skills_meta').insert(parents.concat(children)).then(function () {
-                res.end('ok');
+                res.end(id[0].toString());
             }).catch(function (error) {
                 res.end('error');
                 console.log(error);
