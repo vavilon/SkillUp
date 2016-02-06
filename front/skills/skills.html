@@ -6,11 +6,11 @@
             <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': skill.expanded}"></i>
         </md-button>
         <span ng-if="skill.children.length == 0" style="margin-left: 14px;">• </span>
-            <skill-button highlight-skill="{{highlightedSkillID}}"
+            <skup-skill-button skup-highlight-skill="{{highlightedSkillID}}"
                           id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"
                           with-add="(!skill.need && skill.count < 1) || skill.count === undefined"
                           on-add="addNeed" tooltip-add="Добавить в 'Хочу'"
-                          with-remove="skill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'"></skill-button></div>
+                          with-remove="skill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'"></skup-skill-button></div>
     <ul class="animate-if-skill" ng-if="skill.children && skill.expanded">
         <li ng-repeat="skill in skill.children" ng-include="'skills-tree'">
         </li>
@@ -72,27 +72,27 @@
 
         <div class="skills-container" layout="column" layout-align="center center" ng-show="currentSkill && viewLike !== 'графа'">
             <div ng-if="currentSkill.parents" layout-padding>
-                <skill-button ng-repeat="skill in currentSkill.parents" id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"
+                <skup-skill-button ng-repeat="skill in currentSkill.parents" id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"
                               with-add="(!skill.need && skill.count < 1) || skill.count === undefined && skill != exs.root"
                               on-add="addNeed" tooltip-add="Добавить в 'Хочу'"
                               with-remove="skill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'"
                               ng-click="setToCurrent(skill)">
-                </skill-button>
+                </skup-skill-button>
             </div>
             <div class="current">
-                <skill-button id="currentSkill.id" type="{{getSkillType(currentSkill) || 'root'}}" count="currentSkill.count"
+                <skup-skill-button id="currentSkill.id" type="{{getSkillType(currentSkill) || 'root'}}" count="currentSkill.count"
                               with-add="(!currentSkill.need && currentSkill.count < 1) || currentSkill.count === undefined && currentSkill != exs.root"
                               on-add="addNeed" tooltip-add="Добавить в 'Хочу'"
                               with-remove="currentSkill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'">
-                </skill-button>
+                </skup-skill-button>
             </div>
             <div ng-if="currentSkill.children" layout-padding>
-                <skill-button ng-repeat="skill in currentSkill.children" id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"
+                <skup-skill-button ng-repeat="skill in currentSkill.children" id="skill.id" type="{{getSkillType(skill)}}" count="skill.count"
                               with-add="(!skill.need && skill.count < 1) || skill.count === undefined"
                               on-add="addNeed" tooltip-add="Добавить в 'Хочу'"
                               with-remove="skill.need" on-remove="removeNeed" tooltip-remove="Убрать из 'Хочу'"
                               ng-click="setToCurrent(skill)">
-                </skill-button>
+                </skup-skill-button>
             </div>
         </div>
 
@@ -103,7 +103,7 @@
                                ng-click="expand(exs.root)" aria-label="expand-toogle">
                         <i class="mdi mdi-chevron-down rotate-base" ng-class="{'rotate-btn': exs.root.expanded}"></i>
                     </md-button>
-                    <skill-button id="exs.root.id" type="root"></skill-button>
+                    <skup-skill-button id="exs.root.id" type="root"></skup-skill-button>
                 </div>
 
                 <ul class="animate-if-skill" ng-if="exs.root.expanded" style="margin-left: 19px;">

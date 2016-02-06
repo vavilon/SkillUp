@@ -31,7 +31,8 @@ gulp.task('css',function(){
         .pipe(gulp.dest('dist'));
 });
 gulp.task('js',function(){
-    return gulp.src(['front/**/*.js'])
+    return gulp.src(['front/app.module.js', 'front/app.constants.js', 'front/app.config.js', 'front/app.run.js',
+        'front/**/!(app.module, app.constants, app.config, app.run)*.js'])
         .pipe(plumber())
         .pipe(concat('main.js'))
         .pipe(ngAnnotate())
