@@ -4,9 +4,10 @@
         .controller('SkillsDialogController', SkillsDialogController);
 
     SkillsDialogController.$inject = ['$scope', '$mdDialog', '$mdToast', '$http', '$rootScope', 'appendProgressToExs',
-        'dialog', 'loadLoggedUser'];
+        'loadLoggedUser', 'dialog', 'currentSkill'];
 
-    function SkillsDialogController($scope, $mdDialog, $mdToast, $http, $rootScope, appendProgressToExs, dialog, loadLoggedUser) {
+    function SkillsDialogController($scope, $mdDialog, $mdToast, $http, $rootScope, appendProgressToExs, loadLoggedUser,
+                                    dialog, currentSkill) {
         ($scope.init = function() {
             $scope.allChildren = $rootScope.exs.root.allChildren;
             $scope.allParents = [$rootScope.exs.root].concat($scope.allChildren);
@@ -29,6 +30,11 @@
         if (dialog === 'add' || dialog === 'update') {
             $scope.adding = {};
             $scope.chips.selectedParents = [];
+            if (dialog === 'add')
+                $scope.chips.selectedParents.push({
+                    id: $rootScope.exs.root.id,
+                    title: $rootScope.exs.root.title
+                });
             $scope.chips.selectedParent = null;
             $scope.chips.searchParentTitle = '';
 
@@ -73,14 +79,9 @@
             }
         }
 
-        if (dialog === 'delete' || dialog === 'update') {
-            $scope.chips.selectedSkillsForDeleting = [];
-            $scope.chips.selectedSkill = null;
-            $scope.chips.searchSkillTitle = '';
-        }
-
         if (dialog === 'update') {
             $scope.updated = {};
+            $scope.chips.selectedSkill = currentSkill;
 
             $scope.selectedItemChanged = function (id) {
                 if (id) {
@@ -98,13 +99,25 @@
                                 title: $scope.skills[id].children[index].title
                             });
                     }
-                    $scope.updated.title = $scope.chips.selectedSkill.title;
+                    if ($scope.chips.selectedSkill) $scope.updated.title = $scope.chips.selectedSkill.title;
+                    else if (currentSkill) $scope.updated.title = currentSkill.title;
                 } else {
                     $scope.chips.selectedParents = [];
                     $scope.chips.selectedChildren = [];
                     $scope.updated.title = '';
                 }
             };
+
+            currentSkill && $scope.selectedItemChanged(currentSkill.id);
+        }
+
+        if (dialog === 'delete' || dialog === 'update' && currentSkill) {
+            $scope.chips.selectedSkillsForDeleting = [currentSkill];
+            $scope.chips.searchSkillTitle = '';
+        } else if(dialog === 'delete' || dialog === 'update') {
+            $scope.chips.selectedSkillsForDeleting = [];
+            $scope.chips.selectedSkill = null;
+            $scope.chips.searchSkillTitle = '';
         }
 
         $scope.cancel = function () {
@@ -252,10 +265,10 @@
                 if (parentsForInsert !== null)
                     parentsForInsert = $scope.chips.selectedParents.length
                         ? $scope.chips.selectedParents.map(function (el) {
-                        return {skill_id: $scope.chips.selectedSkill.id, parent_id: el.id};
+                        return {skill_id: id, parent_id: el.id};
                     })
                         //Если родительские умения не были выбраны, то родителем будет корневое умение
-                        : [{skill_id: $scope.chips.selectedSkill.id, parent_id: $rootScope.exs.root.id}];
+                        : [{skill_id: id, parent_id: $rootScope.exs.root.id}];
 
                 //Проверка изменилось ли что-нибудь в дочерних умениях
                 var childrenForInsert;
@@ -271,18 +284,18 @@
 
                 if (childrenForInsert !== null)
                     childrenForInsert = $scope.chips.selectedChildren.map(function (el) {
-                        return {skill_id: el.id, parent_id: $scope.chips.selectedSkill.id};
+                        return {skill_id: el.id, parent_id: id};
                     });
 
                 var updatedSkill = {
-                    id: $scope.chips.selectedSkill.id,
+                    id: id,
                     title: $scope.updated.title,
                     parents: parentsForInsert,
                     children: childrenForInsert
                 };
 
                 var updatedSkillForExsUpdate = {
-                    id: $scope.chips.selectedSkill.id,
+                    id: id,
                     title: $scope.updated.title,
                     parents: $scope.chips.selectedParents.length
                         ? $scope.chips.selectedParents
@@ -310,8 +323,6 @@
                         );
                         //обновляем переменные
                         $rootScope.exs.updateSkill(updatedSkillForExsUpdate);
-                        $scope.chips.selectedSkill = null;
-                        $scope.chips.searchSkillTitle = '';
                         updateSkills();
                     } else {
                         $mdToast.show(
@@ -326,6 +337,26 @@
             if (dialog === 'delete' && $scope.chips.selectedSkillsForDeleting.length) {
                 var ids = $scope.chips.selectedSkillsForDeleting.map(function (el) {
                     return el.id;
+                });
+
+                function checkChildrenForDelete(skill) {
+                    skill.children.forEach(function (el) {
+                        var trigger;
+                        for (var obj2 in el.parents) {
+                            var parent = el.parents[obj2];
+                            if (!_.includes(ids, parent.id)){
+                                trigger = false;
+                                break;
+                            } else trigger = true;
+                        }
+                        if (trigger) ids.push(el.id);
+                        checkChildrenForDelete(el);
+                    })
+                }
+
+                $scope.chips.selectedSkillsForDeleting.forEach(function (skill) {
+                    if (!_.includes(ids, skill.id))
+                        checkChildrenForDelete($scope.skills[skill.id]);
                 });
 
                 $http.post('/delete_skill', {skills: ids})

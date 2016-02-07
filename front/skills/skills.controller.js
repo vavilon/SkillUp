@@ -13,9 +13,8 @@
             $rootScope.pageTitle = 'Умения';
             $rootScope.navtabs = {};//TODO: забиндить какие-нибудь табсы
 
-            //Определяеться в каком виде выводятся скиллы (графа или дерева), используется в md-tooltip
-            //Не испавлять на 'граф'
-            $scope.viewLike = 'дерева';
+            //Определяеться в каком виде выводятся скиллы (графа или дерева)
+            $scope.viewLike = 'graph';
             $scope.skillsLoadCounter = 0;
 
             $scope.currentSkill = $rootScope.exs.root;
@@ -28,15 +27,18 @@
             $scope.isOpened = false;
 
             $scope.openAddingDialog = function (ev) {
-                dialogFactory(ev, templates.addSkillDialog.templateUrl, templates.addSkillDialog.controller, {dialog: 'add'});
+                dialogFactory(ev, templates.addSkillDialog.templateUrl, templates.addSkillDialog.controller,
+                    {dialog: 'add', currentSkill: null});
             };
 
             $scope.openDeletingDialog = function (ev) {
-                dialogFactory(ev, templates.deleteSkillDialog.templateUrl, templates.deleteSkillDialog.controller, {dialog: 'delete'});
+                dialogFactory(ev, templates.deleteSkillDialog.templateUrl, templates.deleteSkillDialog.controller,
+                    {dialog: 'delete', currentSkill: $scope.currentSkill.id != $rootScope.exs.root.id ? $scope.currentSkill : null});
             };
 
             $scope.openUpdatingDialog = function (ev) {
-                dialogFactory(ev, templates.updateSkillDialog.templateUrl, templates.updateSkillDialog.controller, {dialog: 'update'});
+                dialogFactory(ev, templates.updateSkillDialog.templateUrl, templates.updateSkillDialog.controller,
+                    {dialog: 'update', currentSkill: $scope.currentSkill.id != $rootScope.exs.root.id ? $scope.currentSkill : null});
             };
 
             function dialogFactory(event, templateUrl, controller, locals) {
@@ -51,7 +53,7 @@
                     bindToController: false,
                     onRemoving: function () {
                         $scope.skills = $rootScope.exs.skills;
-                        $scope.currentSkill = $scope.skills[$scope.currentSkill.id];
+                        $scope.currentSkill = $scope.skills[$scope.currentSkill.id] || $rootScope.exs.root;
                     }
                 });
             }
@@ -78,7 +80,7 @@
             //Делает выбраный в autocomplete скилл текущим в виде графа или прокручивает до скила в виде дерева
             $scope.query.selectedItemChanged = function (skill) {
                 if (skill)
-                    if ($scope.viewLike !== 'графа') {
+                    if ($scope.viewLike === 'graph') {
                         $scope.currentSkill = skill;
                     } else {
                         $scope.collapseTree();
@@ -156,8 +158,8 @@
             };
 
             $scope.changeView = function () {
-                if($scope.viewLike === 'графа') $scope.viewLike = 'дерева';
-                else $scope.viewLike = 'графа';
+                if($scope.viewLike === 'graph') $scope.viewLike = 'tree';
+                else $scope.viewLike = 'graph';
                 $scope.expandAll.visible = !$scope.expandAll.visible;
             };
 

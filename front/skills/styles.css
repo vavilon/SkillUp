@@ -1,8 +1,8 @@
 /* skills.html */
 
 .animate-if-skill.ng-enter, .animate-if-skill.ng-leave {
-    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    -webkit-transition:all cubic-bezier(.250, .460, .450, .940) .5s;
+    transition:all cubic-bezier(.250, .460, .450, .940) .5s;
 }
 
 .animate-if-skill.ng-enter,
@@ -38,7 +38,7 @@
 }
 
 h4 {
-    color: rgba(0, 0, 0, 0.54);
+    color: rgba(0, 0, 0, .54);
 }
 
 .toogle-expand-all-skills[disabled] {
@@ -47,7 +47,7 @@ h4 {
 
 .toggle-expand-all-skills.ng-enter,
 .toggle-expand-all-skills.ng-leave {
-    transition:all ease-in-out 0.3s;
+    transition:all ease-in-out .3s;
 }
 
 .toggle-expand-all-skills.ng-enter,
@@ -61,7 +61,7 @@ h4 {
 }
 
 .highlighted-skill-animation {
-    transition: background-color ease-out 0.7s;
+    transition: background-color ease-out .7s;
 }
 
 .highlighted-skill {
@@ -71,6 +71,17 @@ h4 {
 
 .secondary-toolbar {
     z-index: 3;
+}
+
+#secondary-toolbar-actions {
+    opacity: 0;
+    transition: opacity ease-in-out .3s;
+}
+
+#secondary-toolbar-actions .vertical-divider {
+    border-color: #AAAAAA;
+    margin: 0 16px;
+    height: 30px;
 }
 
 #tree-container {
@@ -118,8 +129,8 @@ ul {
 
 .floating-fab {
     position: fixed;
-    right: 50px;
-    bottom: 15px;
+    right: 30px;
+    bottom: 35px;
     z-index: 101;
 }
 
