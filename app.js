@@ -124,7 +124,8 @@ passport.use(new LocalStrategy({
 passport.use(new FacebookStrategy({
         clientID: FACEBOOK_APP_ID,
         clientSecret: FACEBOOK_APP_SECRET,
-        callbackURL: "http://localhost/auth/facebook/callback"
+        callbackURL: "http://localhost/auth/facebook/callback",
+        profileFields: ['id', 'displayName', 'email']
     },
     controllers.social.facebook.strategy));
 

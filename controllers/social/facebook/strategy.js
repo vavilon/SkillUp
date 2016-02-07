@@ -59,7 +59,6 @@ module.exports = function (token, refreshToken, profile, done) {
     process.nextTick(function () {
         knex('users').where('id_facebook', profile.id).then(function (users) {
             var user = users[0];
-            //TODO: ошибка авторизации через фб, когда мыла нет в ответе (почему-то только id, имя)
             var email = profile.emails[0].value.toLowerCase();
             if (user) {
                 return done(null, user);
