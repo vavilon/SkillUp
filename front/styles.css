@@ -549,7 +549,7 @@ skup-skill-button {
     margin: 32px 0 0;
 }
 
-.horizontal-divider {
+.vertical-divider {
     width: 1px;
     height: 50%;
     background-color: rgba(255, 255, 255, .12);
