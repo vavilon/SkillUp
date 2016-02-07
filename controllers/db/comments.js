@@ -1,5 +1,4 @@
 module.exports = function(knex, req, res, next) {
-    if (!req.isAuthenticated()) return res.end();
     var q = knex('comments').select('comments.*');
     if (req.body.src) q.where('src', req.body.src);
     else q.where('author', req.user.id);
