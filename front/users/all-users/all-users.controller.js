@@ -39,6 +39,7 @@
             };
 
             $scope.expand = function (user) {
+                if (!$scope.lastExpandedUser) $scope.lastExpandedUser = user;
                 if ($scope.lastExpandedUser !== user) $scope.lastExpandedUser.expanded = false;
                 user.expanded = !user.expanded;
                 $scope.lastExpandedUser = user;

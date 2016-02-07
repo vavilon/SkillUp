@@ -1,0 +1,64 @@
+.notifications-button {
+    margin-right: 16px;
+    padding: 4px;
+    min-width: 0;
+    min-height: 0;
+    line-height: normal;
+    border-radius: 50%;
+}
+
+.notifications-button .md-ripple-container {
+    border-radius: 50% !important;
+}
+
+.notifications {
+    width: 400px;
+    min-height: 400px;
+    max-height: calc(100vh - 180px);
+    background-color: #eee;
+    position: absolute;
+    top: 64px;
+    right: 48px;
+}
+
+.notifications-header {
+    min-height: 48px;
+}
+
+.notifications .settings-button:hover {
+    color: #666;
+}
+
+.notifications-title {
+    margin-left: -40px;
+}
+
+.notifications-body {
+    overflow-y: scroll;
+}
+
+.notifications-footer {
+    margin: 0 20px;
+    min-height: 48px;
+    outline: none;
+    cursor: pointer;
+    background-color: #F5F5F5;
+    font-size: 13px;
+}
+
+.notifications-footer:hover {
+    background-color: #FAFAFA;
+}
+
+.notification {
+    padding: 0 8px;
+}
+
+.notification-icon {
+    width: 72px;
+    padding: 12px 0;
+}
+
+.notification-body {
+
+}

@@ -76,7 +76,7 @@
     </div>
     <div flex="{{isLoggedIn() ? (sidenavVisible ? 15 : 20) : 10}}" flex-md="5" hide-sm class="content-main-side"></div>
 	
-	<md-button class="md-fab md-accent" style="position: fixed; bottom: 24px; right: 24px;"
+	<md-button class="md-fab md-accent md-fab-bottom-right" style="position: fixed;"
 		   ng-click="showCreateTaskDialog($event)" ng-if="isLoggedIn() && user.completedSkills && user.completedSkills.length">
 		<md-tooltip>Создать задание</md-tooltip>
 		<div layout="row" layout-align="center center"><i class="mdi mdi-plus mdi-24"></i></div>

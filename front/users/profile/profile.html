@@ -371,7 +371,7 @@
                  ng-if="ownProfile && (!user.gender && !user.birthday && !user.city && !user.country && !(user.education && user.education.length) && !(user.work && user.work.length))">
                 Расскажите другим пользователям о себе
             </div>
-            <md-button class="md-fab md-accent" style="position: fixed; left: calc((100vw - 210px) * 0.85 + 210px); bottom: 24px; right: 24px;" ng-click="showAddInfoDialog($event)"
+            <md-button class="md-fab md-accent md-fab-bottom-right" style="position: fixed;" ng-click="showAddInfoDialog($event)"
                  ng-if="ownProfile && ((!user.gender && !user.birthday) || (!user.city && !user.country) || !(user.education && user.education.length) || !(user.work && user.work.length))">
                 <md-tooltip>Добавить сведения</md-tooltip>
                 <div layout="row" layout-align="center center"><i class="mdi mdi-plus mdi-24"></i></div>

@@ -81,9 +81,14 @@
                 <div flex="5"></div>
                 <div style="padding-right: 30px;">
                     <div ng-if="isLoggedIn()" flex layout="row" layout-align="end center">
+                        <md-button class="notifications-button" ng-click="openNotifications($event)" aria-label="notifications-btn">
+                            <md-tooltip>Уведомления</md-tooltip>
+                            <i class="mdi mdi-bell mdi-24"></i>
+                        </md-button>
                         <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
                             <img ng-if="loggedUser().avatar" alt="{{loggedUser().nick}}" class="avatar" ng-src="/avatars/{{loggedUser().avatar}}"
-                                 ng-class="{admin: loggedUser().role !== 'пользователь'}">
+                                 ng-class="{admin: loggedUser().role !== 'пользователь'}"
+                                 onerror="angular.element(this).scope().loggedUser().avatar = null">
                             <i class="mdi mdi-account-circle mdi-36" ng-if="!loggedUser().avatar"></i>
                             <div layout="column" layout-align="center center">
                                 <h6 class="nickname" ng-class="{admin: loggedUser().role !== 'пользователь'}">{{loggedUser().nick}}</h6>
@@ -96,8 +101,7 @@
                             <md-tooltip>Админпанель</md-tooltip>
                             <i class="mdi mdi-account-star mdi-24" ng-class="{'navbar-active': getSelectedIndex() == -1}"></i>
                         </a>
-                        <md-button class="md-mini logout-button"
-                                   ng-click="logout()" aria-label="logout-btn">
+                        <md-button class="md-mini logout-button" ng-click="logout()" aria-label="logout-btn">
                             <md-tooltip>Выйти</md-tooltip>
                             <i class="mdi mdi-exit-to-app mdi-24"></i>
                         </md-button>

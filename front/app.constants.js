@@ -11,6 +11,7 @@
         receiveButton: { templateUrl: buildRep + '/components/buttons/receive-button.directive.html' },
         skillButton: { templateUrl: buildRep + '/components/buttons/skill-button.directive.html' },
         comments: { templateUrl: buildRep + '/components/widgets/comments.directive.html' },
+        notification: { templateUrl: buildRep + '/components/widgets/notification.directive.html' },
         solutionsList: { templateUrl: buildRep + '/components/widgets/solutions-list.directive.html' },
         tasksList: { templateUrl: buildRep + '/components/widgets/tasks-list.directive.html' },
 
@@ -23,6 +24,9 @@
         main: {
             templateUrl: buildRep + '/main/main.html',
             controller: 'MainController' },
+        notifications: {
+            templateUrl: buildRep + '/notifications/notifications.html',
+            controller: 'NotificationsController' },
         addSkillDialog: {
             templateUrl: buildRep + '/skills/add-skill-dialog.html',
             controller: 'SkillsDialogController' },

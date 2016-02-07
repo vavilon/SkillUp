@@ -99,5 +99,16 @@
                 });
             });
         };
+
+        $scope.openNotifications = function(ev) {
+            $mdDialog.show({
+                controller: templates.notifications.controller,
+                templateUrl: templates.notifications.templateUrl,
+                targetEvent: ev,
+                hasBackdrop: false,
+                clickOutsideToClose: true,
+                autoWrap: false
+            });
+        };
     }
 })();

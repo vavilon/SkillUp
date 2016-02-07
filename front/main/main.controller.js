@@ -153,9 +153,7 @@
                 $mdDialog.show({
                     controller: templates.createTaskDialog.controller,
                     templateUrl: templates.createTaskDialog.templateUrl,
-                    parent: angular.element(document.body),
                     targetEvent: ev,
-                    clickOutsideToClose: false,
                     locals: {
                         user: $scope.user,
                         showToast: $scope.showToast
