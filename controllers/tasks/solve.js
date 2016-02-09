@@ -7,7 +7,7 @@ module.exports = function(knex) {
                 .leftJoin('tasks_meta as tm', {'tasks.id': 'tm.task_id', 'tm.user_id': req.user.id}).then(function(task) {
                     task = task[0];
                     //Нельзя решить неподтвержденное или подтвержденное некорректное, решенное тобой или созданное тобой задание
-                    if (!task.is_approved || task.done !== null || task.created !== null || req.user.exp < task.exp) {
+                    if (!task.is_approved || task.done || task.created || req.user.exp < task.exp) {
                         res.end();
                     }
                     else knex('solutions').insert({ //Добавляем решение в бд

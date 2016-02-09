@@ -121,7 +121,7 @@ module.exports = function (knex, userHasSkills) {
             knex.raw(rawTask).then(function (task) {
                 task = task.rows[0];
                 //Нельзя подтвердить уже подтвержденное задание, то, что уже подтверждал, и то, что сам создал
-                if (task.is_approved !== null || task.approved !== null || task.created !== null) {
+                if (task.is_approved !== null || task.approved || task.created) {
                     res.end();
                 }
                 else {

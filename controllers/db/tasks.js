@@ -18,15 +18,15 @@ module.exports = function(knex, req, res, next) {
         // отличное от true, false или undefined значение
         else if (req.body.filters.for_approving || req.body.filters.is_approved === undefined) q.whereNull('tasks.is_approved');
 
-        if (req.body.filters.for_solving || req.body.filters.for_approving ||  req.body.filters.not_in_created) q.whereNull('created');
-        if (req.body.filters.for_approving || req.body.filters.not_in_approved) q.whereNull('approved');
-        if (req.body.filters.for_solving || req.body.filters.not_in_done) q.whereNull('done');
+        if (req.body.filters.for_solving || req.body.filters.for_approving ||  req.body.filters.not_in_created) q.andWhere('created', false);
+        if (req.body.filters.for_approving || req.body.filters.not_in_approved) q.andWhere('approved', false);
+        if (req.body.filters.for_solving || req.body.filters.not_in_done) q.andWhere('done', false);
 
         if (req.body.filters.received === true) q.andWhere('received', true);
-        else if (req.body.filters.received === false) q.where(function() { this.whereNull('received').orWhere('received', false); });
+        else if (req.body.filters.received === false) q.andWhere('received', false);
 
         if (req.body.filters.liked === true) q.andWhere('liked', true);
-        else if (req.body.filters.liked === false) q.where(function() { this.whereNull('liked').orWhere('liked', false); });
+        else if (req.body.filters.liked === false) q.andWhere('liked', false);
     }
     q.limit(req.body.limit > 100 ? 20 : req.body.limit || 20).offset(req.body.offset || 0);
     if (!req.body.sort || !req.body.sort.columnName || !req.body.sort.direction) q.orderBy('is_approved', 'asc').orderBy('title', 'asc');
