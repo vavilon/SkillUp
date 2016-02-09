@@ -30,10 +30,12 @@
 }
 
 .notifications-title {
+    color: rgba(0, 0, 0, .54);
     margin-left: -40px;
 }
 
 .notifications-body {
+    padding-top: 16px;
     overflow-y: scroll;
 }
 
@@ -51,7 +53,11 @@
 }
 
 .notification {
+    margin: 0 8px 8px 16px;
     padding: 0 8px;
+    border-radius: 3px;
+    min-height: 64px;
+    background-color: #FAFAFA;
 }
 
 .notification-icon {
@@ -60,5 +66,23 @@
 }
 
 .notification-body {
+    padding: 16px 0;
+}
+
+.notification-title {
+    margin-bottom: 8px;
+}
+
+.notification-time {
+    color: rgba(0, 0, 0, .54);
+    font-size: 14px;
+}
+
+.notification-text {
+    color: rgba(0, 0, 0, .54);
+    font-size: 14px;
+}
+
+.notification-link {
 
 }

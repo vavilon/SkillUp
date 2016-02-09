@@ -8,8 +8,11 @@
     function skupNotification(templates) {
         return {
             restrict: 'E',
+            replace: true,
             templateUrl: templates.notification.templateUrl,
-            scope: {},
+            scope: {
+                notification: '='
+            },
             link: link,
             controller: NotificationController
         };

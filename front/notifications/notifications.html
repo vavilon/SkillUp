@@ -6,8 +6,8 @@
         </md-button>
         <div class="notifications-title" layout="row" layout-align="center center" flex>Уведомления</div>
     </div>
-    <div class="notifications-body thin-scroll" flex>
-        <skup-notification></skup-notification>
+    <div class="notifications-body thin-scroll" layout="column" flex>
+        <skup-notification ng-repeat="ntf in notifications" notification="ntf"></skup-notification>
     </div>
     <div class="notifications-footer" layout="row" layout-align="center center">Просмотренные</div>
 </md-dialog>

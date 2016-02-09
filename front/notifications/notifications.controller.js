@@ -3,9 +3,9 @@
         .module('skillup')
         .controller('NotificationsController', NotificationsController);
 
-    NotificationsController.$inject = [];
+    NotificationsController.$inject = ['$scope'];
 
-    function NotificationsController()
+    function NotificationsController($scope)
     {
 
     }

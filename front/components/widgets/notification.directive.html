@@ -1,4 +1,40 @@
-<div class="md-whiteframe-2dp" layout="row">
+<div class="notification md-whiteframe-2dp" layout="row">
     <div class="notification-icon"></div>
-    <div class="notification-body" flex></div>
+    <div class="notification-body" ng-switch="notification.type" flex>
+        <div ng-switch-when="your_task_solved"></div>
+        <div ng-switch-when="your_solution_checked">
+            <div class="notification-title" layout="row" layout-align="start start">
+                <div flex>Ваше решение проверили</div>
+                <div class="notification-time"></div>
+            </div>
+            <div class="notification-text">
+                <span></span>
+            </div>
+        </div>
+        <div ng-switch-when="solution_checked"></div>
+        <div ng-switch-when="task_approved"></div>
+        <div ng-switch-when="your_task_approved"></div>
+        <div ng-switch-when="your_solution_checked_full"></div>
+        <div ng-switch-when="solution_checked_full"></div>
+        <div ng-switch-when="task_approved_full"></div>
+        <div ng-switch-when="your_task_approved_full"></div>
+        <div ng-switch-when="task_liked"></div>
+        <div ng-switch-when="solution_liked"></div>
+        <div ng-switch-when="task_commented"></div>
+        <div ng-switch-when="solution_commented"></div>
+        <div ng-switch-when="task_received"></div>
+        <div ng-switch-when="user_subscribed"></div>
+        <div ng-switch-when="skill_up"></div>
+        <div ng-switch-when="comment_liked"></div>
+        <div ng-switch-when="comment_replied"></div>
+        <div ng-switch-when="sub_skill_up"></div>
+        <div ng-switch-when="sub_task_created_full"></div>
+        <div ng-switch-when="sub_task_approved_full"></div>
+        <div ng-switch-when="sub_solution_checked_full"></div>
+        <div ng-switch-when="sub_task_solved_full"></div>
+        <div ng-switch-when="sub_task_created"></div>
+        <div ng-switch-when="sub_task_approved"></div>
+        <div ng-switch-when="sub_solution_checked"></div>
+        <div ng-switch-when="sub_task_solved"></div>
+    </div>
 </div>
