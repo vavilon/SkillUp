@@ -183,7 +183,7 @@ q.then(function(rows) {
     }
 }); */
 
-var q = knex.select("tasks.*").from(function () {
+/*var q = knex.select("tasks.*").from(function () {
 	this.select("tasks.*").from('tasks').leftJoin('task_skills', 'tasks.id', '=', 'task_skills.task_id')
 		.select(knex.raw("array_agg((skill_id, count)) AS skills")).groupBy('tasks.id')
 		.select(knex.raw("array_agg(skill_id) AS skills_ids")).as('tasks');
@@ -208,8 +208,37 @@ q.limit(20).then(function(rows) {
 			console.log(rows);
 		});
 	}	
-});
+});*/
 
+var req = {body: {}, user: {id: 277624}};
+
+var query = knex.select("ntfs.*").from('notifications as ntfs').where('ntfs.user_id', req.user.id);
+if (req.body.read) query.where('ntfs.read', true);
+else if (req.body.read === false) query.where('ntfs.read', false);
+if (req.body.type) query.where('ntfs.type', req.body.type);
+query.leftJoin('tasks', 'tasks.id', '=', 'ntfs.task_id')
+    .select('tasks.title as task_title', 'tasks.is_approved as task_is_approved');
+query.leftJoin('solutions as sols', 'sols.id', '=', 'ntfs.solution_id')
+    .select('sols.is_correct as solution_is_correct');
+query.leftJoin('solutions_meta as sm', {'sm.solution_id': 'ntfs.solution_id', 'sm.user_id': 'ntfs.other_user_id'})
+    .select('sm.checked_correct as sm_checked_correct');
+query.leftJoin('approvements as appr', 'appr.id', '=', 'ntfs.approvement_id')
+    .select('appr.title_correct as appr_title_correct', 'appr.skills_correct as appr_skills_correct',
+    'appr.desc_correct as appr_desc_correct', 'appr.links_correct as appr_links_correct');
+query.leftJoin('user_skills as us', {'us.user_id': 'ntfs.other_user_id', 'us.skill_id': 'ntfs.skill_id'})
+    .select('us.count as us_count', 'us.need as us_need');
+query.leftJoin('users', 'users.id', '=', 'ntfs.other_user_id')
+    .select('users.name as other_user_name');
+query.leftJoin('comments as cmnt', 'cmnt.id', '=', 'ntfs.comment_id')
+    .select('cmnt.content as comment_content');
+query.leftJoin('comments as ocmnt', 'ocmnt.id', '=', 'ntfs.other_comment_id')
+    .select('ocmnt.content as other_comment_content');
+query.orderBy('ntfs.date_created').limit(req.body.limit > 100 ? 20 : req.body.limit || 20).offset(req.body.offset || 0);
+query.then(function(rows) {
+    console.log(rows);
+}).catch(function (error) {
+    console.log(error);
+});
 
 return;
 
