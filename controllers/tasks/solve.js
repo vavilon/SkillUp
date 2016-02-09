@@ -7,7 +7,7 @@ module.exports = function(knex) {
                 .leftJoin('tasks_meta as tm', {'tasks.id': 'tm.task_id', 'tm.user_id': req.user.id}).then(function(task) {
                     task = task[0];
                     //Нельзя решить неподтвержденное или подтвержденное некорректное, решенное тобой или созданное тобой задание
-                    if (!task.is_approved || task.done !== null || task.created !== null) {
+                    if (!task.is_approved || task.done !== null || task.created !== null || req.user.exp < task.exp) {
                         res.end();
                     }
                     else knex('solutions').insert({ //Добавляем решение в бд
@@ -15,8 +15,8 @@ module.exports = function(knex) {
                         user_id: req.user.id,
                         content: req.body.content
                     }).then(function () {
-                        var query = knex('tasks_meta'); //Запишем в tasks_meta.done значение true для решающего
-                        var meta = {done: true};
+                        var query = knex('tasks_meta'); //Для решающего запишем в tasks_meta.done значение true,
+                        var meta = {done: true, received: false}; //а в task_meta.received значение false
                         //Если запись для текущего проверяющего есть - update
                         if (task.meta_exists) query.update(meta).where('task_id', req.body.task_id).andWhere('user_id', req.user.id);
                         else { //иначе - insert
@@ -24,9 +24,13 @@ module.exports = function(knex) {
                             meta.user_id = req.user.id;
                             query.insert(meta);
                         }
-                        //Добавляем решающему id задания в tasks_done, снимаем експу и убираем id задания из tasks_received
-                        query.then(function() {
-                            res.end('ok');
+                        query.then(function() { //Снимем экспу за решение задания
+                            knex('users').where('id', req.user.id).decrement('exp', task.exp).then(function() {
+                                res.end('ok');
+                            }).catch(function (error) {
+                                console.log(error);
+                                res.end();
+                            });
                         }).catch(function (error) {
                             console.log(error);
                             res.end();
