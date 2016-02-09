@@ -247,6 +247,10 @@ app.post('/add_skill', controllers.skills.add(knex));
 app.post('/update_skill', controllers.skills.update(knex));
 app.post('/delete_skill', controllers.skills.delete(knex));
 
+app.post('/notifications', controllers.notifications.all(knex));
+app.get('/notifications/count', controllers.notifications.count(knex));
+app.post('/notifications/read', controllers.notifications.read(knex));
+
 app.get('/auth/facebook', function (req, res, next) {
     passport.authenticate('facebook', {
         scope: ['email',

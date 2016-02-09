@@ -212,7 +212,7 @@ q.limit(20).then(function(rows) {
 
 var req = {body: {}, user: {id: 277624}};
 
-var query = knex.select("ntfs.*").from('notifications as ntfs').where('ntfs.user_id', req.user.id);
+/*var query = knex.select("ntfs.*").from('notifications as ntfs').where('ntfs.user_id', req.user.id);
 if (req.body.read) query.where('ntfs.read', true);
 else if (req.body.read === false) query.where('ntfs.read', false);
 if (req.body.type) query.where('ntfs.type', req.body.type);
@@ -238,7 +238,7 @@ query.then(function(rows) {
     console.log(rows);
 }).catch(function (error) {
     console.log(error);
-});
+});*/
 
 return;
 
