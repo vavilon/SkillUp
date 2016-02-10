@@ -25,7 +25,8 @@
                                            aria-label="editInfo" ng-if="user.expandVisible || user.expanded">
                                     <i class="mdi mdi-chevron-down mdi-24 mdi-secondary"></i>
                                 </md-button>
-                                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' class="avatar">
+                                <img ng-if="user.avatar" alt="{{user.nick}}" ng-src='/avatars/{{user.avatar}}' class="avatar"
+                                     onerror="angular.element(this).scope().user.avatar = null">
                                 <div ng-if="!user.avatar" class="avatar">
                                     <div class="empty"><i class="mdi mdi-account-circle"></i></div>
                                 </div>

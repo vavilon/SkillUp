@@ -14,6 +14,7 @@
                 this.body = options.body || {};
                 this.method = options.method || 'post';
                 this.body.offset = options.body.offset || 0;
+                this.body.limit = options.body.limit || 20;
 
                 this.onLoadStart = options.onLoadStart;
                 this.onLoadEnd = options.onLoadEnd;
@@ -30,7 +31,7 @@
                         if (data.length) {
                             self.body.offset += data.length;
                         }
-                        else self.endOfData = true;
+                        if (data.length < self.body.limit || !data.length) self.endOfData = true;
                         self.loaded = true;
                         self.onLoadEnd && self.onLoadEnd(data);
                     });

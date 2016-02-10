@@ -84,6 +84,10 @@
                         <md-button class="notifications-button" ng-click="openNotifications($event)" aria-label="notifications-btn">
                             <md-tooltip>Уведомления</md-tooltip>
                             <i class="mdi mdi-bell mdi-24"></i>
+                            <div class="notifications-triangle" ng-class="{'visible': notificationsShown}"></div>
+                            <div class="notifications-count-wrap">
+                            <div class="notifications-count" ng-bind="notifications.count" ng-show="notifications.count"></div>
+                            </div>
                         </md-button>
                         <a layout="row" layout-align="center center" ng-href="/users/{{loggedUser().id}}">
                             <img ng-if="loggedUser().avatar" alt="{{loggedUser().nick}}" class="avatar" ng-src="/avatars/{{loggedUser().avatar}}"

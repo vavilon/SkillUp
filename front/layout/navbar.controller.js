@@ -4,10 +4,10 @@
         .controller('NavbarController', NavbarController);
 
     NavbarController.$inject = ['$scope', '$http', '$location', '$rootScope', '$timeout', 'extendedSkills',
-        'loadLoggedUser', '$mdDialog', 'loggedUser', 'appendProgressToExs', 'bindToNavtabs', 'templates'];
+        'loadLoggedUser', '$mdDialog', 'loggedUser', 'appendProgressToExs', 'bindToNavtabs', 'templates', 'notifications'];
 
     function NavbarController($scope, $http, $location, $rootScope, $timeout, extendedSkills, loadLoggedUser, $mdDialog,
-                              loggedUser, appendProgressToExs, bindToNavtabs, templates) {
+                              loggedUser, appendProgressToExs, bindToNavtabs, templates, notifications) {
 
         //!!! ОСТОРОЖНО !!!
         //ДАЛЬНЕЙШИЙ КОД МОЖЕТ НАНЕСТИ ВАШЕЙ ПСИХИКЕ НЕПОПРАВИМЫЙ УЩЕРБ
@@ -100,6 +100,10 @@
             });
         };
 
+        $scope.notifications = notifications;
+
+        $scope.notificationsShown = false;
+
         $scope.openNotifications = function(ev) {
             $mdDialog.show({
                 controller: templates.notifications.controller,
@@ -107,7 +111,9 @@
                 targetEvent: ev,
                 hasBackdrop: false,
                 clickOutsideToClose: true,
-                autoWrap: false
+                autoWrap: false,
+                onShowing: function() { $scope.notificationsShown = true; },
+                onRemoving: function() { $scope.notificationsShown = false; }
             });
         };
     }

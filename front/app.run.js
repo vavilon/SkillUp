@@ -3,9 +3,9 @@
         .module('skillup')
         .run(run);
 
-    run.$inject = ['$rootScope', '$http', 'loadLoggedUser', '$q', 'isLoggedIn', '$location', 'updateExs'];
+    run.$inject = ['$rootScope', '$http', 'loadLoggedUser', '$q', 'isLoggedIn', '$location', 'updateExs', 'notifications'];
 
-    function run($rootScope, $http, loadLoggedUser, $q, isLoggedIn, $location, updateExs) {
+    function run($rootScope, $http, loadLoggedUser, $q, isLoggedIn, $location, updateExs, notifications) {
         $rootScope.ajaxCall = $q.defer();
         $rootScope.isLoggedIn = isLoggedIn;
         $rootScope.sidenavVisible = true;
@@ -14,6 +14,8 @@
         if ($location.path().indexOf('registration') > -1) $rootScope.ajaxCall.resolve();
         else loadLoggedUser(function(user) {
             if (user) {
+                notifications.getCount();
+                notifications.startListening();
                 $http.get('db/skills').success(function (data) {
                     if (data) {
                         updateExs(data);

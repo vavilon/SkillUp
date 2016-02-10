@@ -5,6 +5,45 @@
     min-height: 0;
     line-height: normal;
     border-radius: 50%;
+    position: relative;
+    overflow: visible;
+}
+
+.notifications-triangle {
+    opacity: 0;
+    top: 35px;
+    margin: 0 0 0 -3px;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 15px 16px 15px;
+    border-color: transparent transparent #fafafa transparent;
+}
+
+.notifications-count {
+    font-size: 12px;
+    height: auto;
+    width: auto;
+    border: 2px solid #E91E63;
+    background-color: #E91E63;
+    border-radius: 2px;
+    border-top: none;
+    border-bottom: none;
+}
+
+.notifications-count-wrap {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 2px;
+    border: 2px solid #283593;
+    background-color: #283593;
+}
+
+.visible {
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
 }
 
 .notifications-button .md-ripple-container {
@@ -19,6 +58,13 @@
     position: absolute;
     top: 64px;
     right: 48px;
+}
+
+.notifications-end {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, .54);
+    margin-top: 16px;
 }
 
 .notifications-header {
