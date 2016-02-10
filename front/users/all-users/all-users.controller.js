@@ -4,10 +4,14 @@
         .controller('AllUsersController', AllUsersController);
 
     AllUsersController.$inject = ['$scope', '$location', '$rootScope', 'parseSkills', 'isLoggedIn', 'bindToNavtabs',
-        'skillsToIDs', 'ScrollLoader'];
+        'skillsToIDs', 'ScrollLoader', 'notifications'];
 
-    function AllUsersController($scope, $location, $rootScope, parseSkills, isLoggedIn, bindToNavtabs, skillsToIDs, ScrollLoader) {
+    function AllUsersController($scope, $location, $rootScope, parseSkills, isLoggedIn, bindToNavtabs, skillsToIDs, ScrollLoader, notifications) {
         $rootScope.ajaxCall.promise.then(function () {
+            console.log(notifications.someProp);
+            notifications.someProp = 1;
+            console.log(notifications.someProp);
+
             if (!isLoggedIn()) { $location.path('/main'); return; }
             $rootScope.pageTitle = 'Пользователи';
             $scope.navtabs = {selected: 0, tabs: ['Рекомендуемые', 'Подписки', 'Подписчики']};

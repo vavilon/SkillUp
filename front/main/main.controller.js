@@ -4,10 +4,11 @@
         .controller('MainController', MainController);
 
     MainController.$inject = ['$scope', '$http', 'isLoggedIn', '$location', 'parseSkills', 'loggedUser', '$mdToast', '$rootScope',
-        'completedSkills', 'skillsToIDs', 'bindToNavtabs', '$mdDialog', 'templates'];
+        'completedSkills', 'skillsToIDs', 'bindToNavtabs', '$mdDialog', 'templates', 'notifications'];
 
     function MainController($scope, $http, isLoggedIn, $location, parseSkills, loggedUser, $mdToast, $rootScope,
-                            completedSkills, skillsToIDs, bindToNavtabs, $mdDialog, templates) {
+                            completedSkills, skillsToIDs, bindToNavtabs, $mdDialog, templates, notifications) {
+        console.log(notifications.someProp);
         $rootScope.pageTitle = 'Главная';
         $scope.registrationPath = "/registration/";
         $scope.reg = {email: '', password: ''};

@@ -14,7 +14,8 @@
             getCount: getCount,
             setRead: setRead,
             startListening: startListening,
-            stopListening: stopListening
+            stopListening: stopListening,
+            someProp: 0
         };
 
         return service;
