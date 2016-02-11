@@ -21,6 +21,11 @@
     border-color: transparent transparent #fafafa transparent;
 }
 
+.notifications-triangle.visible {
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
+}
+
 .notifications-count {
     font-size: 12px;
     height: auto;
@@ -41,16 +46,12 @@
     background-color: #283593;
 }
 
-.visible {
-    transition: all 0.3s ease-in-out;
-    opacity: 1;
-}
-
 .notifications-button .md-ripple-container {
     border-radius: 50% !important;
 }
 
 .notifications {
+    overflow: hidden;
     width: 400px;
     min-height: 400px;
     max-height: calc(100vh - 180px);
@@ -69,6 +70,7 @@
 
 .notifications-header {
     min-height: 48px;
+    transition: all 0.3s ease-in-out;
 }
 
 .notifications .settings-button:hover {
@@ -83,19 +85,57 @@
 .notifications-body {
     padding-top: 16px;
     overflow-y: scroll;
+    margin-bottom: 48px;
+}
+
+.notifications-read {
+    height: calc(100% - 64px);
+    margin-top: 8px;
+    padding-top: 8px;
+    overflow-y: scroll;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #eee;
+    transition: all 0.3s ease-in-out;
+    z-index: 199;
+}
+
+.notifications-read.visible {
+    top: 48px;
+    transition: all 0.3s ease-in-out;
 }
 
 .notifications-footer {
+    position: absolute;
+    top: calc(100% - 48px);
+    left: 0;
+    right: 0;
     margin: 0 20px;
     min-height: 48px;
     outline: none;
     cursor: pointer;
     background-color: #F5F5F5;
     font-size: 13px;
+    transition: all 0.3s ease-in-out;
+    z-index: 200;
 }
 
 .notifications-footer:hover {
     background-color: #FAFAFA;
+}
+
+.notifications-footer.visible {
+    margin: 0;
+    bottom: auto;
+    top: 0;
+    background-color: #eee;
+    transition: all 0.3s ease-in-out;
+}
+
+.notifications-footer:hover.visible {
+    background-color: #F5F5F5;
 }
 
 .notification {

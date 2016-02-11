@@ -7,21 +7,44 @@
 
     function NotificationsController($scope, notifications, ScrollLoader)
     {
-        $scope.notifications = [];
+        $scope.newNotifications = [];
+        $scope.readNotifications = notifications.readNotifications;
 
-        $scope.onNotsLoaded = function(nots) {
-            $scope.notifications = $scope.notifications.concat(nots);
+        $scope.onNotsLoadedNew = function(nots) {
+            $scope.newNotifications = $scope.newNotifications.concat(nots);
             notifications.setRead(nots);
         };
 
-        $scope.scrollLoader = ScrollLoader($scope, {
-            events: 'notificationsScrolled',
+        $scope.scrollLoaderNew = ScrollLoader($scope, {
+            events: 'newNotificationsScrolled',
             method: 'post',
             url: '/notifications',
-            body: {read: false},
-            onLoadEnd: $scope.onNotsLoaded
+            body: {read: false, limit: notifications.count},
+            onLoadEnd: $scope.onNotsLoadedNew
         });
 
-        $scope.scrollLoader.loadMoreData();
+        if (notifications.count) {
+            $scope.scrollLoaderNew.loadMoreData();
+        }
+
+        $scope.$on('newNotifications', function() {
+            $scope.scrollLoaderNew.body.limit = notifications.count;
+            $scope.scrollLoaderNew.loadMoreData();
+        });
+
+        $scope.onNotsLoadedRead = function(nots) {
+            $scope.readNotifications = $scope.readNotifications.concat(nots);
+            notifications.readNotifications = $scope.readNotifications;
+        };
+
+        $scope.scrollLoaderRead = ScrollLoader($scope, {
+            events: 'readNotificationsScrolled',
+            method: 'post',
+            url: '/notifications',
+            body: {read: true},
+            onLoadEnd: $scope.onNotsLoadedRead
+        });
+
+        if (!$scope.readNotifications.length) $scope.scrollLoaderRead.loadMoreData();
     }
 })();

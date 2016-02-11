@@ -3,9 +3,9 @@
         .module('skillup')
         .factory('notifications', notifications);
 
-    notifications.$inject = ['$http'];
+    notifications.$inject = ['$http', '$rootScope'];
 
-    function notifications($http) {
+    function notifications($http, $rootScope) {
         var count = 0;
         var desc = 0;
 
@@ -14,7 +14,8 @@
             getCount: getCount,
             setRead: setRead,
             startListening: startListening,
-            stopListening: stopListening
+            stopListening: stopListening,
+            readNotifications: []
         };
 
         return service;
@@ -22,6 +23,7 @@
         function getCount() {
             $http.get('/notifications/count').success(function(res) {
                 count = res.count;
+                if (count) $rootScope.$broadcast('newNotifications', count);
             });
         }
 
@@ -30,11 +32,12 @@
             for (var i in notifications) params.ids.push(notifications[i].id);
             $http.post('/notifications/read', params).success(function(res) {
                 if (!res) { /* TODO: some error handling */ }
+                count -= notifications.length;
             });
         }
 
         function startListening() {
-            desc = setInterval(getCount, 30000);
+            desc = setInterval(getCount, 10000);
         }
 
         function stopListening() {
