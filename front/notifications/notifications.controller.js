@@ -23,9 +23,8 @@
             onLoadEnd: $scope.onNotsLoadedNew
         });
 
-        if (notifications.count) {
-            $scope.scrollLoaderNew.loadMoreData();
-        }
+        if (notifications.count) $scope.scrollLoaderNew.loadMoreData();
+        else $scope.scrollLoaderNew.endOfData = true;
 
         $scope.$on('newNotifications', function() {
             $scope.scrollLoaderNew.body.limit = notifications.count;
@@ -35,6 +34,8 @@
         $scope.onNotsLoadedRead = function(nots) {
             $scope.readNotifications = $scope.readNotifications.concat(nots);
             notifications.readNotifications = $scope.readNotifications;
+            notifications.readNotificationsEnd = $scope.scrollLoaderRead.endOfData;
+            console.log(notifications.readNotificationsEnd);
         };
 
         $scope.scrollLoaderRead = ScrollLoader($scope, {
@@ -46,5 +47,6 @@
         });
 
         if (!$scope.readNotifications.length) $scope.scrollLoaderRead.loadMoreData();
+        else $scope.scrollLoaderRead.endOfData = notifications.readNotificationsEnd;
     }
 })();

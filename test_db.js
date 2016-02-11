@@ -210,7 +210,7 @@ q.limit(20).then(function(rows) {
 	}	
 });*/
 
-var req = {body: {}, user: {id: 277624}};
+var req = {body: {task_id: 599152}, user: {id: 30000}};
 
 /*var query = knex.select("ntfs.*").from('notifications as ntfs').where('ntfs.user_id', req.user.id);
 if (req.body.read) query.where('ntfs.read', true);

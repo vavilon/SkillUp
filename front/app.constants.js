@@ -68,7 +68,39 @@
             controller: 'RestorePasswordController' }
     };
 
+    /* text1 - before user, text2 - before task, text3 - before result */
+    var notificationTypes = {
+        'your_task_solved': {icon: 'mdi-pencil', title: 'Ваше задание решили'},
+        'your_solution_checked': {icon: 'mdi-check', title: 'Ваше решение проверили'},
+        'solution_checked': {icon: 'mdi-check', title: 'Проверили решение'},
+        'task_approved': {icon: 'mdi-check', title: 'Подтвердили задание'},
+        'your_task_approved': {icon: 'mdi-check', title: 'Ваше задание подтвердили'},
+        'your_solution_checked_full': {icon: 'mdi-check', title: 'Ваше решение полностью проверено'},
+        'solution_checked_full': {icon: 'mdi-check', title: 'Полностью проверено решение'},
+        'task_approved_full': {icon: 'mdi-check', title: 'Полностью подтверждено задание'},
+        'your_task_approved_full': {icon: 'mdi-check', title: 'Ваше задание полностью подтверждено'},
+        'task_liked': {icon: 'mdi-check', title: 'Ваше задание понравилось'},
+        'solution_liked': {icon: 'mdi-check', title: 'Ваше решение понравилось'},
+        'task_commented': {icon: 'mdi-check', title: 'Ваше задание прокомментировали'},
+        'solution_commented': {icon: 'mdi-check', title: 'Ваше решение прокомментировали'},
+        'task_received': {icon: 'mdi-check', title: 'Ваше задание взяли'},
+        'user_subscribed': {icon: 'mdi-check', title: 'У Вас новый подписчик'},
+        'skill_up': {icon: 'mdi-check', title: 'Вы получили новый уровень умения'},
+        'comment_liked': {icon: 'mdi-check', title: 'Ваш комментарий понравился'},
+        'comment_replied': {icon: 'mdi-check', title: 'На Ваш комментарий ответили'},
+        'sub_skill_up': {icon: 'mdi-check', title: 'У Вашего друга новый уровень умения'},
+        'sub_task_created_full': {icon: 'mdi-check', title: 'Задание Вашего друга полностью подтверждено'},
+        'sub_task_approved_full': {icon: 'mdi-check', title: 'Полностью подтверждено задание'},
+        'sub_solution_checked_full': {icon: 'mdi-check', title: 'Полностью проверено решение'},
+        'sub_task_solved_full': {icon: 'mdi-check', title: 'Решение Вашего друга полностью проверено'},
+        'sub_task_created': {icon: 'mdi-check', title: 'Ваш друг создал задание'},
+        'sub_task_approved': {icon: 'mdi-check', title: 'Ваш друг подтвердил задание'},
+        'sub_solution_checked': {icon: 'mdi-check', title: 'Ваш друг проверил решение'},
+        'sub_task_solved': {icon: 'mdi-check', title: 'Ваш друг решил задание'}
+    };
+
     angular
         .module('skillup')
-        .constant('templates', templates);
+        .constant('templates', templates)
+        .constant('notificationTypes', notificationTypes);
 })();

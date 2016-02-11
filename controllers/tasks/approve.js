@@ -2,7 +2,8 @@
 module.exports = function (knex, userHasSkills) {
     function callback(task, req, res, next) {
         req.body.user_id = req.user.id; //Вставим результаты текущего подтверждающего
-        knex('approvements').insert(req.body).then(function () {
+        knex('approvements').insert(req.body).returning('id').then(function (appr_id) {
+            appr_id = appr_id[0].id;
             var query = knex('tasks_meta'); //Запишем в tasks_meta.approved значение true для подтверждающего
             var meta = {approved: true};
             //Если запись для текущего проверяющего есть - update
@@ -14,9 +15,34 @@ module.exports = function (knex, userHasSkills) {
             }
             query.then(function () {
                 res.end('ok');
+                //Уведомление автору задания
+                knex('notifications').insert({
+                    user_id: task.author,
+                    type: 'your_task_approved',
+                    approvement_id: appr_id,
+                    task_id: req.body.task_id,
+                    other_user_id: req.user.id}).then(function(){});
+                //TODO: Уведомление sub_task_approved друзьям подтвердившего (системы подписок пока что нет)
+
                 //Для того чтобы проверить, можно ли вынести новому заданию приговор - вытащим для него все approvements
                 knex('approvements').where('task_id', req.body.task_id).then(function(approvers) {
                     var count = approvers.length;
+
+                    //Уведомления остальным подтвердившим
+                    if (count) {
+                        for (var i in approvers) {
+                            if (approvers[i].user_id != req.user.id) { //кроме только что подтвердившего
+                                knex('notifications').insert({
+                                    user_id: approvers[i].user_id,
+                                    type: 'task_approved',
+                                    approvement_id: appr_id,
+                                    task_id: req.body.task_id,
+                                    other_user_id: req.user.id
+                                }).then(function () {});
+                            }
+                        }
+                    }
+
                     //Если количество подвердивших достаточное - начинаем процесс подтверждения
                     if (count == GLOBAL.COUNT_TO_APPROVE) {
                         var tc = 0, tic = 0, sc = 0, sic = 0, dc = 0, dic = 0, lc = 0, lic = 0;
@@ -88,6 +114,20 @@ module.exports = function (knex, userHasSkills) {
 
                             knex.raw(rawUpdateExp).then(function () {
                                 knex.raw(rawUpdateSkills).then(function () {
+                                    //Уведомление автору задания
+                                    knex('notifications').insert({
+                                        user_id: task.author,
+                                        type: 'your_task_approved_full',
+                                        task_id: req.body.task_id}).then(function(){});
+                                    //Уведомления остальным подтвердившим
+                                    for (var i in approvers) {
+                                        knex('notifications').insert({
+                                            user_id: approvers[i].user_id,
+                                            type: 'task_approved_full',
+                                            task_id: req.body.task_id
+                                        }).then(function () {});
+                                    }
+                                    //TODO: Уведомление sub_task_created_full друзьям автора задания (системы подписок пока что нет)
                                     console.log('Task with id ' + req.body.task_id + ' approved with result ' + correct);
                                 }).catch(function (error) {
                                     console.log(error);

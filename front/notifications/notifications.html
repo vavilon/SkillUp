@@ -20,5 +20,8 @@
     <div class="notifications-read thin-scroll" ng-class="{'visible': viewRead}"
          skup-on-scroll-bottom="{event: 'readNotificationsScrolled', percent: 95}">
         <skup-notification ng-repeat="ntf in readNotifications" notification="ntf"></skup-notification>
+        <div class="notifications-end" layout="row" layout-align="center center" ng-if="scrollLoaderRead.endOfData">
+            Больше нет уведомлений
+        </div>
     </div>
 </md-dialog>

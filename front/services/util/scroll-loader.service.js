@@ -31,6 +31,8 @@
                         if (data.length) {
                             self.body.offset += data.length;
                         }
+                        console.log(data.length);
+                        console.log(self.body.limit);
                         if (data.length < self.body.limit || !data.length) self.endOfData = true;
                         self.loaded = true;
                         self.onLoadEnd && self.onLoadEnd(data);

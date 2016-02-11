@@ -42,10 +42,7 @@ module.exports = function (knex) {
                 .select('tasks.title as task_title', 'tasks.is_approved as task_is_approved');
             query.leftJoin('solutions as sols', 'sols.id', '=', 'ntfs.solution_id')
                 .select('sols.is_correct as solution_is_correct');
-            query.leftJoin('solutions_meta as sm', {
-                'sm.solution_id': 'ntfs.solution_id',
-                'sm.user_id': 'ntfs.other_user_id'
-            })
+            query.leftJoin('solutions_meta as sm', {'sm.solution_id': 'ntfs.solution_id', 'sm.user_id': 'ntfs.other_user_id'})
                 .select('sm.checked_correct as sm_checked_correct');
             query.leftJoin('approvements as appr', 'appr.id', '=', 'ntfs.approvement_id')
                 .select('appr.title_correct as appr_title_correct', 'appr.skills_correct as appr_skills_correct',

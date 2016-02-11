@@ -15,7 +15,8 @@
             setRead: setRead,
             startListening: startListening,
             stopListening: stopListening,
-            readNotifications: []
+            readNotifications: [],
+            readNotificationsEnd: false
         };
 
         return service;
