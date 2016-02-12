@@ -62,9 +62,17 @@ gulp.task('clean-build-reload', function() {
     return runSequence('clean', ['images', 'js', 'css'], 'html', reload);
 });
 
-gulp.task('default', ['clean-build-reload'], function(){
+gulp.task('watch', function(){
     browserSync.init({
         proxy: "localhost:80"
+    });
+    return gulp.watch('front/**/*', ['clean-build-reload']);
+});
+
+gulp.task('default', ['clean-build-reload'], function(){
+    browserSync.init({
+        proxy: "localhost:80",
+        open: false
     });
     return gulp.watch('front/**/*', ['clean-build-reload']);
 });
