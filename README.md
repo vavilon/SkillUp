@@ -16,8 +16,8 @@ To run server:
 
 team
 ====
-Zinkevych Alex (alexeyckikk) - alexzinkevych@yandex.ua  
-Chernyshenko Sergey (VintorezVS) - vintorezvs@gmail.com  
+Zinkevych Alex (alexeyckikk)
+Chernyshenko Sergey (VintorezVS)
 
 useless people
 ====
